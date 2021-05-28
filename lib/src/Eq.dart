@@ -4,8 +4,6 @@
 /// Moreover, `eqv` should form an [equivalence relation](https://en.wikipedia.org/wiki/Equivalence_relation)
 /// (a binary relation that is reflexive, symmetric, and transitive).
 abstract class Eq<T> {
-  const Eq();
-
   /// Returns `true` if `x` and `y` are equivalent, `false` otherwise.
   bool eqv(T x, T y);
 
@@ -57,7 +55,7 @@ abstract class Eq<T> {
 
 class _Eq<T> extends Eq<T> {
   final bool Function(T x, T y) eq;
-  const _Eq(this.eq);
+  _Eq(this.eq);
 
   @override
   bool eqv(T x, T y) => eq(x, y);
