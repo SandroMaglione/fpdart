@@ -1,0 +1,8 @@
+linter:
+  rules:
+
+analyzer:
+  exclude:
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false
