@@ -1,4 +1,4 @@
-import 'package:fpdart/fpdart.dart';
+import 'Eq.dart';
 
 /// A type class used to represent a hashing scheme for objects of a given type.
 ///
