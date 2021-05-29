@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('Hash', () {
-    test('.fromUniversalHashCode', () async {
+    test('.fromUniversalHashCode', () {
       const source1 = 1;
       const source2 = 1;
       final instance = Hash.fromUniversalHashCode<int>();

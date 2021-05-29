@@ -1,4 +1,4 @@
-import 'package:fpdart/fpdart.dart';
+import 'partial_order.dart';
 
 /// The `Order` type class is used to define a [total ordering](https://en.wikipedia.org/wiki/Total_order)
 /// on some type `A`.

@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('Eq', () {
-    test('.instance (int)', () async {
+    test('.instance (int)', () {
       final instance = Eq.instance<int>((a1, a2) => a1 == (a2 + 1));
 
       // eqv
@@ -17,7 +17,7 @@ void main() {
       expect(instance.neqv(3, 1), true);
     });
 
-    test('.instance (String)', () async {
+    test('.instance (String)', () {
       final instance = Eq.instance<String>(
           (a1, a2) => a1.substring(0, 2) == a2.substring(0, 2));
       expect(instance.eqv('abc', 'abc'), true);
