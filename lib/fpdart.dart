@@ -1,3 +1,4 @@
-export './src/Eq.dart';
-export './src/Hash.dart';
-export './src/PartialOrder.dart';
+export 'src/eq.dart';
+export 'src/hash.dart';
+export 'src/order.dart';
+export 'src/partial_order.dart';

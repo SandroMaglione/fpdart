@@ -1,12 +1,10 @@
-import 'Eq.dart';
+import 'eq.dart';
 
 /// A type class used to represent a hashing scheme for objects of a given type.
 ///
 /// For any two instances `x` and `y` that are considered equivalent under the
 /// equivalence relation defined by this object, `hash(x)` should equal `hash(y)`.
-abstract class Hash<T> with Eq<T> {
-  const Hash();
-
+abstract class Hash<T> extends Eq<T> {
   /// Returns the hash code of the given object under this hashing scheme.
   int hash(T x);
 

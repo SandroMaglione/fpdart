@@ -1,4 +1,4 @@
-import 'Eq.dart';
+import 'eq.dart';
 
 /// The `PartialOrder` type class is used to define a
 /// [partial ordering](https://en.wikipedia.org/wiki/Partially_ordered_set) on some type `A`.
@@ -22,7 +22,7 @@ import 'Eq.dart';
 ///
 /// **Note**: A partial order under which every pair of elements is comparable
 /// is called a [total order](https://en.wikipedia.org/wiki/Total_order) ([Order]).
-abstract class PartialOrder<T> with Eq<T> {
+abstract class PartialOrder<T> extends Eq<T> {
   /// Result of comparing `x` with `y`.
   ///
   /// Returns `null` if operands are not comparable.
@@ -70,6 +70,7 @@ abstract class PartialOrder<T> with Eq<T> {
   // }
 
   /// Returns `true` if `x` == `y`, `false` otherwise.
+  @override
   bool eqv(T x, T y) {
     final c = partialCompare(x, y);
     return c != null && c == 0;
