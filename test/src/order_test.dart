@@ -3,6 +3,18 @@ import 'package:test/test.dart';
 
 void main() {
   group('Order', () {
+    group('is a', () {
+      final instance = Order.from<int>((a1, a2) => a1.compareTo(a2));
+
+      test('Eq', () {
+        expect(instance, isA<Eq>());
+      });
+
+      test('PartialOrder', () {
+        expect(instance, isA<PartialOrder>());
+      });
+    });
+
     test('.from', () {
       final instance = Order.from<int>((a1, a2) => a1.compareTo(a2));
       expect(instance.compare(1, 1), 0);

@@ -1,11 +1,16 @@
 // import 'package:fpdart/fpdart.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:test/test.dart';
 
 void main() {
   // TODO: Testing [PartialOrder]
   group('PartialOrder', () {
-    // test('.from', () {
-    //   final instance = PartialOrder.from<int>((a1, a2) => null);
-    // });
+    group('is a', () {
+      final instance = PartialOrder.from((a1, a2) => 1);
+
+      test('Eq', () {
+        expect(instance, isA<Eq>());
+      });
+    });
   });
 }

@@ -3,6 +3,14 @@ import 'package:test/test.dart';
 
 void main() {
   group('Hash', () {
+    group('is a', () {
+      final instance = Hash.fromUniversalHashCode<int>();
+
+      test('Eq', () {
+        expect(instance, isA<Eq>());
+      });
+    });
+
     test('.fromUniversalHashCode', () {
       const source1 = 1;
       const source2 = 1;
