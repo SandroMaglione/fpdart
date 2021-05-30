@@ -3,8 +3,17 @@ import 'commutative_semigroup.dart';
 import 'eq.dart';
 import 'partial_order.dart';
 
-/// Semilattices are commutative semigroups whose operation
+/// [**Semilattices**](https://en.wikipedia.org/wiki/Semilattice)
+/// are commutative semigroups whose operation
 /// (i.e. `combine`) is also [**idempotent**](https://en.wikipedia.org/wiki/Idempotence).
+///
+/// **Meet-semilattice**
+/// > For all elements `x` and `y` of `A`, the [**greatest lower bound**](https://en.wikipedia.org/wiki/Infimum_and_supremum)
+/// > of the set `{x, y}` exists.
+///
+/// **Join-semilattice**
+/// > For all elements `x` and `y` of `A`, the [**least upper bound**](https://en.wikipedia.org/wiki/Infimum_and_supremum)
+/// > of the set `{x, y}` exists.
 ///
 /// See also [CommutativeSemigroup], [Bind].
 abstract class Semilattice<T> extends Band<T> with CommutativeSemigroup<T> {

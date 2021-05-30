@@ -1,4 +1,5 @@
 export 'src/band.dart';
+export 'src/bounded_semilattice.dart';
 export 'src/commutative_group.dart';
 export 'src/commutative_monoid.dart';
 export 'src/commutative_semigroup.dart';
