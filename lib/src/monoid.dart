@@ -1,7 +1,7 @@
 import 'eq.dart';
 import 'semigroup.dart';
 
-/// A monoid is a semigroup with an identity.
+/// A monoid is a semigroup with an identity (`empty`).
 ///
 /// A monoid is a specialization of a
 /// semigroup, so its operation must be **associative**.
