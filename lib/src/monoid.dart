@@ -1,3 +1,5 @@
+import 'package:fpdart/src/function.dart';
+
 import 'eq.dart';
 import 'semigroup.dart';
 
@@ -90,3 +92,9 @@ class _Monoid<T> extends Monoid<T> {
   @override
   T get empty => emp;
 }
+
+Monoid<Endo<A>> endoMonoid<A>() =>
+    Monoid.instance<Endo<A>>(identity, (e1, e2) => (A a) => e1(e2(a)));
+
+Monoid<Endo<A>> dualEndoMonoid<A>() =>
+    Monoid.instance<Endo<A>>(identity, (e1, e2) => (A a) => e2(e1(a)));
