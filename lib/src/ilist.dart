@@ -1,23 +1,61 @@
+import 'package:fpdart/src/applicative.dart';
 import 'package:fpdart/src/foldable.dart';
-import 'package:fpdart/src/functor.dart';
 import 'package:fpdart/src/hkt.dart';
 import 'package:fpdart/src/maybe.dart';
 
 abstract class IListHKT {}
 
 abstract class IList<T> extends HKT<IListHKT, T>
-    with Functor<IListHKT, T>, Foldable<IListHKT, T> {
+    with Applicative<IListHKT, T>, Foldable<IListHKT, T> {
   @override
   IList<B> map<B>(B Function(T a) f);
 
+  @override
+  IList<B> pure<B>(B a) => Cons(a, Nil());
+
+  @override
+  IList<B> ap<B>(covariant IList<B Function(T a)> a) =>
+      concatMap((t) => a.map((f) => f(t)));
+
+  @override
+  B foldRight<B>(B b, B Function(T a, B b) f) =>
+      reverse().fold(b, (b, a) => f(a, b));
+
+  /// Return [Just] containing the first element of the list.
+  /// If the list is empty, then return [Nothing].
   Maybe<T> head();
+
+  /// Return [Just] containing all the elements of the list excluded the first one.
+  /// If the list is empty, then return [Nothing].
   Maybe<IList<T>> tail();
 
+  /// Execute `onNotEmpty` when the list is not empty, otherwise execute `onEmpty`.
   B match<B>(B Function(IList<T> l) onNotEmpty, B Function() onEmpty) =>
       this is Cons ? onNotEmpty(this) : onEmpty();
 
+  /// Convert [IList] to [List].
   List<T> toList();
 
+  /// Reverse the order of all the elements of the `IList`
+  IList<T> reverse() => fold(Nil(), (a, h) => Cons(h, a));
+
+  /// Insert a new element `T` at the beginning of the `IList`
+  IList<T> prepend(T t) => Cons(t, this);
+
+  /// Insert a new element `T` at the end of the `IList`
+  IList<T> append(T t) => plus(Cons(t, Nil()));
+
+  /// Append an `IList<T>` to the list
+  IList<T> plus(IList<T> l) => foldRight(l, (e, p) => Cons(e, p));
+
+  /// Apply `f` to the elements of this `IList` and `concat` the result.
+  IList<B> concatMap<B>(IList<B> Function(T t) f) => IList.concat(map(f));
+
+  /// Join an `IList` containing a list of `IList`.
+  static IList<A> concat<A>(IList<IList<A>> l) =>
+      l.foldRight(Nil(), (a, b) => a.plus(b));
+
+  /// Create an `IList` from a [List].
   static IList<A> fromList<A>(List<A> l) =>
       l.isNotEmpty ? Cons(l.first, IList.fromList(l.sublist(1))) : Nil();
 }
@@ -28,8 +66,7 @@ class Cons<T> extends IList<T> {
   Cons(this._head, this._tail);
 
   @override
-  B foldRight<B>(B b, B Function(T a, B b) f) =>
-      _tail.foldRight(f(_head, b), f);
+  B fold<B>(B b, B Function(B b, T a) f) => _tail.fold(f(b, _head), f);
 
   @override
   IList<B> map<B>(B Function(T a) f) => Cons(f(_head), _tail.map(f));
@@ -46,7 +83,7 @@ class Cons<T> extends IList<T> {
 
 class Nil<T> extends IList<T> {
   @override
-  B foldRight<B>(B b, B Function(T a, B b) f) => b;
+  B fold<B>(B b, B Function(B b, T a) f) => b;
 
   @override
   IList<B> map<B>(B Function(T a) f) => Nil();

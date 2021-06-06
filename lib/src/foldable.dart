@@ -15,5 +15,5 @@ abstract class Foldable<G, A> extends HKT<G, A> {
   /// the `combine` function to combine the accumulator `B` with the value of
   /// type `B` computed using the function `f` from type `A` (`f(a)`).
   B foldMap<B>(Monoid<B> monoid, B Function(A a) f) =>
-      foldRight(monoid.empty, (a, b) => monoid.combine(b, f(a)));
+      foldRight(monoid.empty, (a, b) => monoid.combine(f(a), b));
 }

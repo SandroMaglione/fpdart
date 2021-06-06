@@ -8,3 +8,5 @@
 /// This is useful because in the expression `HKT<G, A>`, both `G` and `A` have kind `*`,
 /// so we can deal with them with the type system we currently have at our disposal.
 abstract class HKT<G, A> {}
+
+abstract class HKT2<G1, G2, A> {}
