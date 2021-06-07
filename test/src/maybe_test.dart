@@ -81,5 +81,33 @@ void main() {
         expect(flatMap, isA<Nothing>());
       });
     });
+
+    group('getOrElse', () {
+      test('Just', () {
+        final maybe = Just(10);
+        final value = maybe.getOrElse(() => 0);
+        expect(value, 10);
+      });
+
+      test('Nothing', () {
+        final maybe = Nothing<int>();
+        final value = maybe.getOrElse(() => 0);
+        expect(value, 0);
+      });
+    });
+
+    group('alt', () {
+      test('Just', () {
+        final maybe = Just(10);
+        final value = maybe.alt(() => Just(0));
+        value.match((just) => expect(just, 10), () => null);
+      });
+
+      test('Nothing', () {
+        final maybe = Nothing<int>();
+        final value = maybe.alt(() => Just(0));
+        value.match((just) => expect(just, 0), () => null);
+      });
+    });
   });
 }

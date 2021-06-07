@@ -28,6 +28,12 @@ abstract class Maybe<A> extends HKT<MaybeHKT, A>
   @override
   Maybe<B> flatMap<B>(covariant Maybe<B> Function(A a) f);
 
+  /// If `Just` then return the value inside, otherwise return the result of `orElse`.
+  A getOrElse(A Function() orElse);
+
+  /// Return the current `Maybe` if it is a `Just`, otherwise return the result of `orElse`.
+  Maybe<A> alt(Maybe<A> Function() orElse);
+
   B match<B>(B Function(A just) onJust, B Function() onNothing) =>
       this is Just ? onJust((this as Just<A>).a) : onNothing();
 }
@@ -44,6 +50,12 @@ class Just<A> extends Maybe<A> {
 
   @override
   Maybe<B> flatMap<B>(covariant Maybe<B> Function(A a) f) => f(a);
+
+  @override
+  A getOrElse(A Function() orElse) => a;
+
+  @override
+  Maybe<A> alt(Maybe<A> Function() orElse) => this;
 }
 
 class Nothing<A> extends Maybe<A> {
@@ -55,4 +67,10 @@ class Nothing<A> extends Maybe<A> {
 
   @override
   Maybe<B> flatMap<B>(covariant Maybe<B> Function(A a) f) => Nothing();
+
+  @override
+  A getOrElse(A Function() orElse) => orElse();
+
+  @override
+  Maybe<A> alt(Maybe<A> Function() orElse) => orElse();
 }
