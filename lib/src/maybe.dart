@@ -1,4 +1,5 @@
-import 'applicative.dart';
+import 'package:fpdart/src/monad.dart';
+
 import 'foldable.dart';
 import 'hkt.dart';
 
@@ -13,7 +14,7 @@ abstract class MaybeHKT {}
 /// Moreover, it informs us that we are still considering an higher kinded type
 /// with respect to the `MaybeHKT` tag
 abstract class Maybe<A> extends HKT<MaybeHKT, A>
-    with Applicative<MaybeHKT, A>, Foldable<MaybeHKT, A> {
+    with Monad<MaybeHKT, A>, Foldable<MaybeHKT, A> {
   @override
   Maybe<B> map<B>(B Function(A a) f);
 
@@ -23,6 +24,9 @@ abstract class Maybe<A> extends HKT<MaybeHKT, A>
 
   @override
   Maybe<B> pure<B>(B b) => Just(b);
+
+  @override
+  Maybe<B> flatMap<B>(covariant Maybe<B> Function(A a) f);
 
   B match<B>(B Function(A just) onJust, B Function() onNothing) =>
       this is Just ? onJust((this as Just<A>).a) : onNothing();
@@ -37,6 +41,9 @@ class Just<A> extends Maybe<A> {
 
   @override
   B foldRight<B>(B b, B Function(A a, B b) f) => f(a, b);
+
+  @override
+  Maybe<B> flatMap<B>(covariant Maybe<B> Function(A a) f) => f(a);
 }
 
 class Nothing<A> extends Maybe<A> {
@@ -45,4 +52,7 @@ class Nothing<A> extends Maybe<A> {
 
   @override
   B foldRight<B>(B b, B Function(A a, B b) f) => b;
+
+  @override
+  Maybe<B> flatMap<B>(covariant Maybe<B> Function(A a) f) => Nothing();
 }

@@ -67,5 +67,19 @@ void main() {
         expect(pure, isA<Nothing>());
       });
     });
+
+    group('flatMap', () {
+      test('Just', () {
+        final maybe = Just(10);
+        final flatMap = maybe.flatMap<int>((a) => Just(a + 1));
+        flatMap.match((just) => expect(just, 11), () => null);
+      });
+
+      test('Nothing', () {
+        final maybe = Nothing<int>();
+        final flatMap = maybe.flatMap<int>((a) => Just(a + 1));
+        expect(flatMap, isA<Nothing>());
+      });
+    });
   });
 }

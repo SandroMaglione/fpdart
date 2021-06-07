@@ -1,12 +1,12 @@
-import 'package:fpdart/src/applicative.dart';
 import 'package:fpdart/src/foldable.dart';
 import 'package:fpdart/src/hkt.dart';
 import 'package:fpdart/src/maybe.dart';
+import 'package:fpdart/src/monad.dart';
 
 abstract class IListHKT {}
 
 abstract class IList<T> extends HKT<IListHKT, T>
-    with Applicative<IListHKT, T>, Foldable<IListHKT, T> {
+    with Monad<IListHKT, T>, Foldable<IListHKT, T> {
   @override
   IList<B> map<B>(B Function(T a) f);
 
@@ -20,6 +20,9 @@ abstract class IList<T> extends HKT<IListHKT, T>
   @override
   B foldRight<B>(B b, B Function(T a, B b) f) =>
       reverse().fold(b, (b, a) => f(a, b));
+
+  @override
+  IList<B> flatMap<B>(covariant IList<B> Function(T a) f);
 
   /// Return [Just] containing the first element of the list.
   /// If the list is empty, then return [Nothing].
@@ -79,6 +82,10 @@ class Cons<T> extends IList<T> {
 
   @override
   List<T> toList() => [_head, ..._tail.toList()];
+
+  @override
+  IList<B> flatMap<B>(covariant IList<B> Function(T a) f) =>
+      f(_head).plus(_tail.flatMap(f));
 }
 
 class Nil<T> extends IList<T> {
@@ -96,4 +103,7 @@ class Nil<T> extends IList<T> {
 
   @override
   List<T> toList() => [];
+
+  @override
+  IList<B> flatMap<B>(covariant IList<B> Function(T a) f) => Nil();
 }

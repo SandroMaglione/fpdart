@@ -93,5 +93,11 @@ void main() {
       final cmap = iList.ap(IList.fromList([(a) => a + 1, (a) => a * 2]));
       expect(cmap.toList(), [2, 2, 3, 4, 4, 6, 5, 8]);
     });
+
+    test('flatMap', () {
+      final iList = IList.fromList([1, 2, 3, 4]);
+      final fmap = iList.flatMap((a) => IList.fromList([a, a + 1]));
+      expect(fmap.toList(), [1, 2, 2, 3, 3, 4, 4, 5]);
+    });
   });
 }
