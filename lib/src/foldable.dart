@@ -17,3 +17,13 @@ abstract class Foldable<G, A> extends HKT<G, A> {
   B foldMap<B>(Monoid<B> monoid, B Function(A a) f) =>
       foldRight(monoid.empty, (a, b) => monoid.combine(f(a), b));
 }
+
+abstract class Foldable2<G, A, B> extends HKT2<G, A, B> {
+  C foldRight<C>(C b, C Function(B a, C b) f);
+
+  C fold<C>(C b, C Function(C b, B a) f) =>
+      foldMap<Endo<C>>(dualEndoMonoid(), (a) => (C b) => f(b, a))(b);
+
+  C foldMap<C>(Monoid<C> monoid, C Function(B a) f) =>
+      foldRight(monoid.empty, (a, b) => monoid.combine(f(a), b));
+}

@@ -1,7 +1,6 @@
-import 'package:fpdart/src/monad.dart';
-
 import 'foldable.dart';
 import 'hkt.dart';
+import 'monad.dart';
 
 /// Tag the `HKT` interface for the actual `Maybe`
 abstract class MaybeHKT {}
@@ -34,8 +33,7 @@ abstract class Maybe<A> extends HKT<MaybeHKT, A>
   /// Return the current `Maybe` if it is a `Just`, otherwise return the result of `orElse`.
   Maybe<A> alt(Maybe<A> Function() orElse);
 
-  B match<B>(B Function(A just) onJust, B Function() onNothing) =>
-      this is Just ? onJust((this as Just<A>).a) : onNothing();
+  B match<B>(B Function(A just) onJust, B Function() onNothing);
 }
 
 class Just<A> extends Maybe<A> {
@@ -56,6 +54,9 @@ class Just<A> extends Maybe<A> {
 
   @override
   Maybe<A> alt(Maybe<A> Function() orElse) => this;
+
+  @override
+  B match<B>(B Function(A just) onJust, B Function() onNothing) => onJust(a);
 }
 
 class Nothing<A> extends Maybe<A> {
@@ -73,4 +74,7 @@ class Nothing<A> extends Maybe<A> {
 
   @override
   Maybe<A> alt(Maybe<A> Function() orElse) => orElse();
+
+  @override
+  B match<B>(B Function(A just) onJust, B Function() onNothing) => onNothing();
 }

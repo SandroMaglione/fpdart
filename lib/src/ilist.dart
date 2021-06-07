@@ -1,7 +1,7 @@
-import 'package:fpdart/src/foldable.dart';
-import 'package:fpdart/src/hkt.dart';
-import 'package:fpdart/src/maybe.dart';
-import 'package:fpdart/src/monad.dart';
+import 'foldable.dart';
+import 'hkt.dart';
+import 'maybe.dart';
+import 'monad.dart';
 
 abstract class IListHKT {}
 
