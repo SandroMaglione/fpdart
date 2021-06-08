@@ -17,6 +17,10 @@ abstract class Either<L, R> extends HKT2<EitherHKT, L, R>
   @override
   Either<L, C> flatMap<C>(covariant Either<L, C> Function(R a) f);
 
+  @override
+  Either<L, R2> andThen<R2>(covariant Either<L, R2> Function() then) =>
+      flatMap((_) => then());
+
   Either<C, R> mapLeft<C>(C Function(L a) f);
 
   Maybe<R> toMaybe();
@@ -25,8 +29,6 @@ abstract class Either<L, R> extends HKT2<EitherHKT, L, R>
   bool isRight();
 
   Either<R, L> swap();
-
-  Either<L, R2> andThen<R2>(Either<L, R2> Function() then);
 
   C match<C>(C Function(L l) onLeft, C Function(R r) onRight);
 }
@@ -64,9 +66,6 @@ class Right<L, R> extends Either<L, R> {
   Either<R, L> swap() => Left(_value);
 
   @override
-  Either<L, R2> andThen<R2>(Either<L, R2> Function() then) => then();
-
-  @override
   String toString() => 'Right($_value)';
 }
 
@@ -101,10 +100,6 @@ class Left<L, R> extends Either<L, R> {
 
   @override
   Either<R, L> swap() => Right(_value);
-
-  @override
-  Either<L, R2> andThen<R2>(Either<L, R2> Function() then) =>
-      Left<L, R2>(_value);
 
   @override
   String toString() => 'Left($_value)';
