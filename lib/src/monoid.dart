@@ -98,3 +98,6 @@ Monoid<Endo<A>> endoMonoid<A>() =>
 
 Monoid<Endo<A>> dualEndoMonoid<A>() =>
     Monoid.instance<Endo<A>>(identity, (e1, e2) => (A a) => e2(e1(a)));
+
+Monoid<bool> boolOrMonoid() => Monoid.instance(false, (a1, a2) => a1 || a2);
+Monoid<bool> boolAndMonoid() => Monoid.instance(true, (a1, a2) => a1 && a2);
