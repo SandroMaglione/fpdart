@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart';
 import 'package:fpdart/src/applicative.dart';
 import 'package:fpdart/src/hkt.dart';
 
