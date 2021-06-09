@@ -6,6 +6,8 @@ class Task<A> extends HKT<TaskHKT, A> with Monad<TaskHKT, A> {
   final Future<A> Function() _run;
   Task(this._run);
 
+  factory Task.of(A a) => Task(() async => a);
+
   @override
   Task<B> ap<B>(covariant Task<B Function(A a)> a) =>
       Task(() => a.run().then((f) => run().then((v) => f(v))));

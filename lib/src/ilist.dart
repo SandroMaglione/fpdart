@@ -1,7 +1,7 @@
-import 'foldable.dart';
-import 'hkt.dart';
 import 'maybe.dart';
-import 'monad.dart';
+import 'typeclass/foldable.dart';
+import 'typeclass/hkt.dart';
+import 'typeclass/monad.dart';
 
 abstract class IListHKT {}
 

@@ -1,5 +1,4 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:fpdart/src/monoid.dart';
 import 'package:test/test.dart';
 
 void main() {

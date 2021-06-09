@@ -1,4 +1,5 @@
-import 'package:fpdart/fpdart.dart';
+import 'hkt.dart';
+import 'functor.dart';
 
 /// `Alt` type class identifies an associative operation on a type constructor.
 ///

@@ -1,5 +1,5 @@
-import 'package:fpdart/fpdart.dart';
-import 'package:fpdart/src/typeclass/alt.dart';
+import 'maybe.dart';
+import 'typeclass/typeclass.export.dart';
 
 abstract class EitherHKT {}
 
@@ -35,6 +35,8 @@ abstract class Either<L, R> extends HKT2<EitherHKT, L, R>
   Either<R, L> swap();
 
   C match<C>(C Function(L l) onLeft, C Function(R r) onRight);
+
+  static Either<LL, RR> of<LL, RR>(RR r) => Right(r);
 }
 
 class Right<L, R> extends Either<L, R> {

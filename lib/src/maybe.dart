@@ -1,8 +1,9 @@
 import 'package:fpdart/src/typeclass/alt.dart';
+import 'package:fpdart/src/typeclass/extend.dart';
 
-import 'foldable.dart';
-import 'hkt.dart';
-import 'monad.dart';
+import 'typeclass/foldable.dart';
+import 'typeclass/hkt.dart';
+import 'typeclass/monad.dart';
 
 /// Tag the `HKT` interface for the actual `Maybe`
 abstract class MaybeHKT {}
@@ -15,7 +16,11 @@ abstract class MaybeHKT {}
 /// Moreover, it informs us that we are still considering an higher kinded type
 /// with respect to the `MaybeHKT` tag
 abstract class Maybe<A> extends HKT<MaybeHKT, A>
-    with Monad<MaybeHKT, A>, Foldable<MaybeHKT, A>, Alt<MaybeHKT, A> {
+    with
+        Monad<MaybeHKT, A>,
+        Foldable<MaybeHKT, A>,
+        Alt<MaybeHKT, A>,
+        Extend<MaybeHKT, A> {
   @override
   Maybe<B> map<B>(B Function(A a) f);
 
@@ -36,7 +41,14 @@ abstract class Maybe<A> extends HKT<MaybeHKT, A>
   @override
   Maybe<A> alt(covariant Maybe<A> Function() orElse);
 
+  @override
+  Maybe<Z> extend<Z>(Z Function(Maybe<A> t) f);
+
   B match<B>(B Function(A just) onJust, B Function() onNothing);
+  bool isJust();
+  bool isNothing();
+
+  static Maybe<A> of<A>(A a) => Just(a);
 }
 
 class Just<A> extends Maybe<A> {
@@ -60,6 +72,15 @@ class Just<A> extends Maybe<A> {
 
   @override
   B match<B>(B Function(A just) onJust, B Function() onNothing) => onJust(a);
+
+  @override
+  Maybe<Z> extend<Z>(Z Function(Maybe<A> t) f) => Just(f(this));
+
+  @override
+  bool isJust() => true;
+
+  @override
+  bool isNothing() => false;
 }
 
 class Nothing<A> extends Maybe<A> {
@@ -80,4 +101,13 @@ class Nothing<A> extends Maybe<A> {
 
   @override
   B match<B>(B Function(A just) onJust, B Function() onNothing) => onNothing();
+
+  @override
+  Maybe<Z> extend<Z>(Z Function(Maybe<A> t) f) => Nothing();
+
+  @override
+  bool isJust() => false;
+
+  @override
+  bool isNothing() => true;
 }

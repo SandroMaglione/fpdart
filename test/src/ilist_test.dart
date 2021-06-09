@@ -1,8 +1,4 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:fpdart/src/applicative.dart';
-import 'package:fpdart/src/foldable.dart';
-import 'package:fpdart/src/ilist.dart';
-import 'package:fpdart/src/maybe.dart';
 import 'package:test/test.dart';
 
 void main() {

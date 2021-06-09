@@ -1,5 +1,5 @@
-import 'package:fpdart/src/functor.dart';
-import 'package:fpdart/src/hkt.dart';
+import 'functor.dart';
+import 'hkt.dart';
 
 abstract class Applicative<G, A> extends HKT<G, A> with Functor<G, A> {
   HKT<G, B> pure<B>(B a);

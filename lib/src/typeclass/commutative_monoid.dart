@@ -1,5 +1,5 @@
-import 'package:fpdart/fpdart.dart';
-import 'package:fpdart/src/monoid.dart';
+import 'commutative_semigroup.dart';
+import 'monoid.dart';
 
 /// `CommutativeMonoid` represents a commutative monoid.
 ///

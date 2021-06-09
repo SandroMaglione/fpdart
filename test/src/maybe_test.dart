@@ -1,7 +1,4 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:fpdart/src/applicative.dart';
-import 'package:fpdart/src/foldable.dart';
-import 'package:fpdart/src/maybe.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -107,6 +104,20 @@ void main() {
         final maybe = Nothing<int>();
         final value = maybe.alt(() => Just(0));
         value.match((just) => expect(just, 0), () => null);
+      });
+    });
+
+    group('extend', () {
+      test('Just', () {
+        final maybe = Just(10);
+        final value = maybe.extend((t) => t.isJust() ? 'valid' : 'invalid');
+        value.match((just) => expect(just, 'valid'), () => null);
+      });
+
+      test('Nothing', () {
+        final maybe = Nothing<int>();
+        final value = maybe.extend((t) => t.isJust() ? 'valid' : 'invalid');
+        value.match((just) => expect(just, 'invalid'), () => null);
       });
     });
   });
