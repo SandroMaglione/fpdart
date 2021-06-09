@@ -1,3 +1,5 @@
+import 'package:fpdart/src/typeclass/alt.dart';
+
 import 'foldable.dart';
 import 'hkt.dart';
 import 'monad.dart';
@@ -13,7 +15,7 @@ abstract class MaybeHKT {}
 /// Moreover, it informs us that we are still considering an higher kinded type
 /// with respect to the `MaybeHKT` tag
 abstract class Maybe<A> extends HKT<MaybeHKT, A>
-    with Monad<MaybeHKT, A>, Foldable<MaybeHKT, A> {
+    with Monad<MaybeHKT, A>, Foldable<MaybeHKT, A>, Alt<MaybeHKT, A> {
   @override
   Maybe<B> map<B>(B Function(A a) f);
 
@@ -31,7 +33,8 @@ abstract class Maybe<A> extends HKT<MaybeHKT, A>
   A getOrElse(A Function() orElse);
 
   /// Return the current `Maybe` if it is a `Just`, otherwise return the result of `orElse`.
-  Maybe<A> alt(Maybe<A> Function() orElse);
+  @override
+  Maybe<A> alt(covariant Maybe<A> Function() orElse);
 
   B match<B>(B Function(A just) onJust, B Function() onNothing);
 }

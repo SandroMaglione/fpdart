@@ -1,9 +1,13 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:fpdart/src/typeclass/alt.dart';
 
 abstract class EitherHKT {}
 
 abstract class Either<L, R> extends HKT2<EitherHKT, L, R>
-    with Monad2<EitherHKT, L, R>, Foldable2<EitherHKT, L, R> {
+    with
+        Monad2<EitherHKT, L, R>,
+        Foldable2<EitherHKT, L, R>,
+        Alt2<EitherHKT, L, R> {
   @override
   Either<L, C> map<C>(C Function(R a) f);
 
@@ -67,6 +71,9 @@ class Right<L, R> extends Either<L, R> {
 
   @override
   String toString() => 'Right($_value)';
+
+  @override
+  Either<L, R> alt(covariant Either<L, R> Function() orElse) => this;
 }
 
 class Left<L, R> extends Either<L, R> {
@@ -103,4 +110,7 @@ class Left<L, R> extends Either<L, R> {
 
   @override
   String toString() => 'Left($_value)';
+
+  @override
+  Either<L, R> alt(covariant Either<L, R> Function() orElse) => orElse();
 }
