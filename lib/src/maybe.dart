@@ -1,6 +1,9 @@
-import 'package:fpdart/src/typeclass/alt.dart';
-import 'package:fpdart/src/typeclass/extend.dart';
-
+import 'either.dart';
+import 'function.dart';
+import 'tuple.dart';
+import 'typeclass/alt.dart';
+import 'typeclass/extend.dart';
+import 'typeclass/filterable.dart';
 import 'typeclass/foldable.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
@@ -20,7 +23,8 @@ abstract class Maybe<A> extends HKT<MaybeHKT, A>
         Monad<MaybeHKT, A>,
         Foldable<MaybeHKT, A>,
         Alt<MaybeHKT, A>,
-        Extend<MaybeHKT, A> {
+        Extend<MaybeHKT, A>,
+        Filterable<MaybeHKT, A> {
   @override
   Maybe<B> map<B>(B Function(A a) f);
 
@@ -44,11 +48,29 @@ abstract class Maybe<A> extends HKT<MaybeHKT, A>
   @override
   Maybe<Z> extend<Z>(Z Function(Maybe<A> t) f);
 
+  @override
+  Maybe<A> filter(bool Function(A a) f);
+
+  @override
+  Maybe<Z> filterMap<Z>(Maybe<Z> Function(A a) f);
+
+  @override
+  Tuple2<Maybe<A>, Maybe<A>> partition(bool Function(A a) f) =>
+      Tuple2(filter((a) => !f(a)), filter(f));
+
+  @override
+  Tuple2<Maybe<Z>, Maybe<Y>> partitionMap<Z, Y>(Either<Z, Y> Function(A a) f) =>
+      Maybe.separate(map(f));
+
   B match<B>(B Function(A just) onJust, B Function() onNothing);
   bool isJust();
   bool isNothing();
 
   static Maybe<A> of<A>(A a) => Just(a);
+  static Maybe<A> flatten<A>(Maybe<Maybe<A>> m) => m.flatMap(identity);
+  static Tuple2<Maybe<A>, Maybe<B>> separate<A, B>(Maybe<Either<A, B>> m) =>
+      m.match((just) => Tuple2(just.getLeft(), just.getRight()),
+          () => Tuple2(Nothing(), Nothing()));
 }
 
 class Just<A> extends Maybe<A> {
@@ -81,6 +103,13 @@ class Just<A> extends Maybe<A> {
 
   @override
   bool isNothing() => false;
+
+  @override
+  Maybe<A> filter(bool Function(A a) f) => f(a) ? this : Nothing();
+
+  @override
+  Maybe<Z> filterMap<Z>(Maybe<Z> Function(A a) f) =>
+      f(a).match((just) => Just(just), () => Nothing());
 }
 
 class Nothing<A> extends Maybe<A> {
@@ -110,4 +139,10 @@ class Nothing<A> extends Maybe<A> {
 
   @override
   bool isNothing() => true;
+
+  @override
+  Maybe<A> filter(bool Function(A a) f) => Nothing();
+
+  @override
+  Maybe<Z> filterMap<Z>(Maybe<Z> Function(A a) f) => Nothing();
 }

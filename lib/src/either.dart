@@ -32,11 +32,15 @@ abstract class Either<L, R> extends HKT2<EitherHKT, L, R>
   bool isLeft();
   bool isRight();
 
+  Maybe<L> getLeft();
+  Maybe<R> getRight();
+
   Either<R, L> swap();
 
   C match<C>(C Function(L l) onLeft, C Function(R r) onRight);
 
-  static Either<LL, RR> of<LL, RR>(RR r) => Right(r);
+  static Either<L, R> of<L, R>(R r) => Right(r);
+  static Either<L, R> left<L, R>(L l) => Left(l);
 }
 
 class Right<L, R> extends Either<L, R> {
@@ -76,6 +80,12 @@ class Right<L, R> extends Either<L, R> {
 
   @override
   Either<L, R> alt(covariant Either<L, R> Function() orElse) => this;
+
+  @override
+  Maybe<L> getLeft() => Nothing();
+
+  @override
+  Maybe<R> getRight() => Just(_value);
 }
 
 class Left<L, R> extends Either<L, R> {
@@ -115,4 +125,10 @@ class Left<L, R> extends Either<L, R> {
 
   @override
   Either<L, R> alt(covariant Either<L, R> Function() orElse) => orElse();
+
+  @override
+  Maybe<L> getLeft() => Just(_value);
+
+  @override
+  Maybe<R> getRight() => Nothing();
 }

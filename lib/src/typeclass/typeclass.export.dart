@@ -6,6 +6,8 @@ export 'commutative_group.dart';
 export 'commutative_monoid.dart';
 export 'commutative_semigroup.dart';
 export 'eq.dart';
+export 'extend.dart';
+export 'filterable.dart';
 export 'foldable.dart';
 export 'functor.dart';
 export 'hash.dart';

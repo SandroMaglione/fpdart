@@ -13,6 +13,21 @@ void main() {
         final maybe = Just(10);
         expect(maybe, isA<Foldable>());
       });
+
+      test('Alt', () {
+        final maybe = Just(10);
+        expect(maybe, isA<Alt>());
+      });
+
+      test('Extend', () {
+        final maybe = Just(10);
+        expect(maybe, isA<Extend>());
+      });
+
+      test('Filterable', () {
+        final maybe = Just(10);
+        expect(maybe, isA<Filterable>());
+      });
     });
 
     test('map', () {
@@ -118,6 +133,82 @@ void main() {
         final maybe = Nothing<int>();
         final value = maybe.extend((t) => t.isJust() ? 'valid' : 'invalid');
         value.match((just) => expect(just, 'invalid'), () => null);
+      });
+    });
+
+    group('filter', () {
+      test('Just (true)', () {
+        final maybe = Just(10);
+        final value = maybe.filter((a) => a > 5);
+        value.match((just) => expect(just, 10), () => null);
+      });
+
+      test('Just (false)', () {
+        final maybe = Just(10);
+        final value = maybe.filter((a) => a < 5);
+        expect(value, isA<Nothing>());
+      });
+
+      test('Nothing', () {
+        final maybe = Nothing<int>();
+        final value = maybe.filter((a) => a > 5);
+        expect(value, isA<Nothing>());
+      });
+    });
+
+    group('filterMap', () {
+      test('Just', () {
+        final maybe = Just(10);
+        final value = maybe.filterMap<String>((a) => Just('$a'));
+        value.match((just) => expect(just, '10'), () => null);
+      });
+
+      test('Nothing', () {
+        final maybe = Nothing<int>();
+        final value = maybe.filterMap<String>((a) => Just('$a'));
+        expect(value, isA<Nothing>());
+      });
+    });
+
+    group('partition', () {
+      test('Just', () {
+        final maybe = Just(10);
+        final value = maybe.partition((a) => a > 5);
+        expect(value.value1, isA<Nothing>());
+        value.value2.match((just) => expect(just, 10), () => null);
+      });
+
+      test('Nothing', () {
+        final maybe = Nothing<int>();
+        final value = maybe.partition((a) => a > 5);
+        expect(value.value1, isA<Nothing>());
+        expect(value.value2, isA<Nothing>());
+      });
+    });
+
+    group('partitionMap', () {
+      test('Just (right)', () {
+        final maybe = Just(10);
+        final value =
+            maybe.partitionMap<String, double>((a) => Either.of(a / 2));
+        expect(value.value1, isA<Nothing>());
+        value.value2.match((just) => expect(just, 5.0), () => null);
+      });
+
+      test('Just (left)', () {
+        final maybe = Just(10);
+        final value =
+            maybe.partitionMap<String, double>((a) => Either.left('$a'));
+        value.value1.match((just) => expect(just, '10'), () => null);
+        expect(value.value2, isA<Nothing>());
+      });
+
+      test('Nothing', () {
+        final maybe = Nothing<int>();
+        final value =
+            maybe.partitionMap<String, double>((a) => Either.of(a / 2));
+        expect(value.value1, isA<Nothing>());
+        expect(value.value2, isA<Nothing>());
       });
     });
   });
