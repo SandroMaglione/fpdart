@@ -8,14 +8,25 @@ void main() {
     group('tryCatch', () {
       test('Success', () async {
         final task = TaskEither<String, int>.tryCatch(
-            () => Future.value(10), () => 'error');
+            () => Future.value(10), (_, __) => 'error');
         final r = await task.run();
         r.match((l) => null, (r) => expect(r, 10));
       });
 
       test('Failure', () async {
         final task = TaskEither<String, int>.tryCatch(
-            () => Future.error(10), () => 'error');
+            () => Future.error(10), (_, __) => 'error');
+        final r = await task.run();
+        r.match((l) => expect(l, 'error'), (r) => null);
+      });
+
+      test('throws Exception', () async {
+        final task = TaskEither<String, int>.tryCatch(() {
+          throw UnimplementedError();
+        }, (error, _) {
+          expect(error, isA<UnimplementedError>());
+          return 'error';
+        });
         final r = await task.run();
         r.match((l) => expect(l, 'error'), (r) => null);
       });

@@ -1,5 +1,5 @@
-import 'hkt.dart';
 import 'functor.dart';
+import 'hkt.dart';
 
 /// `Alt` type class identifies an associative operation on a type constructor.
 ///

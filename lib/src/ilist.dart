@@ -2,6 +2,7 @@ import 'maybe.dart';
 import 'typeclass/foldable.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
+import 'typeclass/semigroup.dart';
 
 abstract class IListHKT {}
 
@@ -43,13 +44,16 @@ abstract class IList<T> extends HKT<IListHKT, T>
   IList<T> reverse() => fold(Nil(), (a, h) => Cons(h, a));
 
   /// Insert a new element `T` at the beginning of the `IList`
+  @override
   IList<T> prepend(T t) => Cons(t, this);
 
   /// Insert a new element `T` at the end of the `IList`
+  @override
   IList<T> append(T t) => plus(Cons(t, Nil()));
 
   /// Append an `IList<T>` to the list
-  IList<T> plus(IList<T> l) => foldRight(l, (e, p) => Cons(e, p));
+  @override
+  IList<T> plus(covariant IList<T> l) => foldRight(l, (e, p) => Cons(e, p));
 
   /// Apply `f` to the elements of this `IList` and `concat` the result.
   IList<B> concatMap<B>(IList<B> Function(T t) f) => IList.concat(map(f));

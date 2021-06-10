@@ -38,12 +38,13 @@ class TaskEither<L, R> extends Task<Either<L, R>> {
   factory TaskEither.fromEither(Either<L, R> either) =>
       TaskEither(() async => either);
 
-  factory TaskEither.tryCatch(Future<R> Function() run, L Function() onError) =>
+  factory TaskEither.tryCatch(Future<R> Function() run,
+          L Function(Object error, StackTrace stackTrace) onError) =>
       TaskEither<L, R>(() async {
         try {
           return Right<L, R>(await run());
-        } catch (_) {
-          return Left<L, R>(onError());
+        } catch (error, stack) {
+          return Left<L, R>(onError(error, stack));
         }
       });
 }

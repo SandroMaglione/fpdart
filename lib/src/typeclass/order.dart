@@ -21,7 +21,7 @@ import 'partial_order.dart';
 abstract class Order<T> extends PartialOrder<T> {
   /// Result of comparing `x` with `y`. Returns an Int whose sign is:
   /// - negative iff `x < y`
-  /// - zero     iff `x = y`
+  /// - zero     iff `x == y`
   /// - positive iff `x > y`
   int compare(T x, T y);
 

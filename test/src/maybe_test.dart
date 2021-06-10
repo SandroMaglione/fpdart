@@ -136,6 +136,20 @@ void main() {
       });
     });
 
+    group('duplicate', () {
+      test('Just', () {
+        final maybe = Just(10);
+        final value = maybe.duplicate();
+        value.match((just) => expect(just, isA<Just>()), () => null);
+      });
+
+      test('Nothing', () {
+        final maybe = Nothing<int>();
+        final value = maybe.duplicate();
+        expect(value, isA<Nothing>());
+      });
+    });
+
     group('filter', () {
       test('Just (true)', () {
         final maybe = Just(10);
@@ -210,6 +224,86 @@ void main() {
         expect(value.value1, isA<Nothing>());
         expect(value.value2, isA<Nothing>());
       });
+    });
+
+    group('fromEither', () {
+      test('Right', () {
+        final maybe = Maybe.fromEither<String, int>(Right(10));
+        maybe.match((just) => expect(just, 10), () => null);
+      });
+
+      test('Left', () {
+        final maybe = Maybe.fromEither<String, int>(Left('none'));
+        expect(maybe, isA<Nothing>());
+      });
+    });
+
+    group('fromPredicate', () {
+      test('Just', () {
+        final maybe = Maybe.fromPredicate<int>(10, (a) => a > 5);
+        maybe.match((just) => expect(just, 10), () => null);
+      });
+
+      test('Nothing', () {
+        final maybe = Maybe.fromPredicate<int>(10, (a) => a < 5);
+        expect(maybe, isA<Nothing>());
+      });
+    });
+
+    group('flatten', () {
+      test('Right', () {
+        final maybe = Maybe.flatten(Just(Just(10)));
+        maybe.match((just) => expect(just, 10), () => null);
+      });
+
+      test('Left', () {
+        final maybe = Maybe.flatten(Just(Nothing<int>()));
+        expect(maybe, isA<Nothing>());
+      });
+    });
+
+    group('separate', () {
+      test('Right', () {
+        final maybe = Maybe.separate<String, int>(Just(Right(10)));
+        expect(maybe.value1, isA<Nothing>());
+        maybe.value2.match((just) => expect(just, 10), () => null);
+      });
+
+      test('Left', () {
+        final maybe = Maybe.separate<String, int>(Just(Left('none')));
+        maybe.value1.match((just) => expect(just, 'none'), () => null);
+        expect(maybe.value2, isA<Nothing>());
+      });
+    });
+
+    test('nothing', () {
+      final maybe = Maybe.nothing<int>();
+      expect(maybe, isA<Nothing>());
+    });
+
+    test('of', () {
+      final maybe = Maybe.of(10);
+      maybe.match((just) => expect(just, 10), () => null);
+    });
+
+    test('iJust', () {
+      final maybe = Just(10);
+      expect(maybe.isJust(), true);
+      expect(maybe.isNothing(), false);
+    });
+
+    test('isNothing', () {
+      final maybe = Nothing<int>();
+      expect(maybe.isNothing(), true);
+      expect(maybe.isJust(), false);
+    });
+
+    test('getEq', () {
+      final eq = Maybe.getEq<int>(Eq.instance((a1, a2) => a1 == a2));
+      expect(eq.eqv(Just(10), Just(10)), true);
+      expect(eq.eqv(Just(10), Just(9)), false);
+      expect(eq.eqv(Just(10), Nothing()), false);
+      expect(eq.eqv(Nothing(), Nothing()), false);
     });
   });
 }

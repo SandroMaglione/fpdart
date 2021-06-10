@@ -1,7 +1,9 @@
 import '../function.dart';
+import '../maybe.dart';
 import '../tuple.dart';
 import 'hkt.dart';
 import 'monoid.dart';
+import 'semigroup.dart';
 
 abstract class Foldable<G, A> extends HKT<G, A> {
   B foldRight<B>(B b, B Function(A a, B b) f);
@@ -36,6 +38,14 @@ abstract class Foldable<G, A> extends HKT<G, A> {
   bool all(bool Function(A a) predicate) => foldMap(boolAndMonoid(), predicate);
 
   A concatenate(Monoid<A> monoid) => foldMap(monoid, identity);
+
+  HKT<G, A> plus(HKT<G, A> v);
+
+  /// Insert a new element `A` at the beginning.
+  HKT<G, A> prepend(A t);
+
+  /// Insert a new element `A` at the end.
+  HKT<G, A> append(A t);
 }
 
 abstract class Foldable2<G, A, B> extends HKT2<G, A, B> {

@@ -1,3 +1,5 @@
+import 'package:fpdart/fpdart.dart';
+
 import 'functor.dart';
 import 'hkt.dart';
 
@@ -9,4 +11,6 @@ abstract class Extend<KT, A> extends HKT<KT, A> with Functor<KT, A> {
   /// final value = maybe.extend((t) => t.isJust() ? 'valid' : 'invalid'); // -> Just('valid')
   /// ```
   HKT<KT, Z> extend<Z>(Z Function(HKT<KT, A> t) f);
+
+  HKT<KT, HKT<KT, A>> duplicate() => extend(identity);
 }
