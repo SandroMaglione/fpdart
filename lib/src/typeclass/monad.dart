@@ -18,9 +18,9 @@ abstract class Monad<KT, A> extends HKT<KT, A> with Applicative<KT, A> {
   HKT<KT, B> andThen<B>(HKT<KT, B> Function() then) => flatMap((_) => then());
 }
 
-abstract class Monad2<G, A, B> extends HKT2<G, A, B>
-    with Applicative2<G, A, B> {
-  HKT2<G, A, C> flatMap<C>(HKT2<G, A, C> Function(B a) f);
+abstract class Monad2<KT, A, B> extends HKT2<KT, A, B>
+    with Applicative2<KT, A, B> {
+  HKT2<KT, A, C> flatMap<C>(HKT2<KT, A, C> Function(B a) f);
 
   /// Derive `ap` from `flatMap`.
   ///
@@ -28,12 +28,16 @@ abstract class Monad2<G, A, B> extends HKT2<G, A, B>
   /// If both these values are present, apply the function from `a` to the value
   /// of the current [Monad], using `pure` to return the correct type.
   @override
-  HKT2<G, A, C> ap<C>(covariant Monad2<G, A, C Function(B a)> a) =>
+  HKT2<KT, A, C> ap<C>(covariant Monad2<KT, A, C Function(B a)> a) =>
       a.flatMap((f) => flatMap((v) => pure(f(v))));
 
-  HKT2<G, A, D> map2<C, D>(Monad2<G, A, C> a, D Function(B b, C c) f) =>
-      flatMap((b) => a.map((c) => f(b, c)));
+  HKT2<KT, A, D> map2<C, D>(Monad2<KT, A, C> m1, D Function(B b, C c) f) =>
+      flatMap((b) => m1.map((c) => f(b, c)));
 
-  HKT2<G, A, C> andThen<C>(HKT2<G, A, C> Function() then) =>
+  HKT2<KT, A, E> map3<C, D, E>(Monad2<KT, A, C> m1, Monad2<KT, A, D> m2,
+          E Function(B b, C c, D d) f) =>
+      flatMap((b) => m1.flatMap((c) => m2.map((d) => f(b, c, d))));
+
+  HKT2<KT, A, C> andThen<C>(HKT2<KT, A, C> Function() then) =>
       flatMap((_) => then());
 }

@@ -11,7 +11,7 @@ import 'typeclass/foldable.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
-/// Tag the `HKT` interface for the actual `Maybe`
+/// Tag the [HKT] interface for the actual [Maybe].
 abstract class _MaybeHKT {}
 
 // `Maybe<A> implements Functor<MaybeHKT, A>` expresses correctly the

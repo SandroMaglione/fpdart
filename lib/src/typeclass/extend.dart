@@ -14,3 +14,11 @@ abstract class Extend<KT, A> extends HKT<KT, A> with Functor<KT, A> {
 
   HKT<KT, HKT<KT, A>> duplicate() => extend(identity);
 }
+
+abstract class Extend2<KT, A, B> extends HKT2<KT, A, B>
+    with Functor2<KT, A, B> {
+  /// Extend the type by applying function `f` to it.
+  HKT2<KT, A, Z> extend<Z>(Z Function(HKT2<KT, A, B> t) f);
+
+  HKT2<KT, A, HKT2<KT, A, B>> duplicate() => extend(identity);
+}
