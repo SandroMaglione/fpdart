@@ -34,3 +34,32 @@ F Function(E e) Function(D d) Function(C c) Function(B b) Function(A a)
     curry5<A, B, C, D, E, F>(F Function(A a, B b, C c, D d, E e) function) {
   return (A a) => (B b) => (C c) => (D d) => (E e) => function(a, b, c, d, e);
 }
+
+/// Converts a unary function that returns a unary function into a binary function.
+/// ```dart
+/// final function = (int a) => (int b) => a + b;
+/// final uncurried = uncurry(function);
+/// uncurried(2, 3)  // returns 5
+/// ```
+C Function(A a, B b) uncurry2<A, B, C>(C Function(B a) Function(A a) function) {
+  return (A a, B b) => function(a)(b);
+}
+
+/// Converts a series of unary functions into a ternary function.
+D Function(A a, B b, C c) uncurry3<A, B, C, D>(
+    D Function(C c) Function(B b) Function(A a) function) {
+  return (A a, B b, C c) => function(a)(b)(c);
+}
+
+/// Converts a series of unary functions into a 4 parameters function.
+E Function(A a, B b, C c, D d) uncurry4<A, B, C, D, E>(
+    E Function(D d) Function(C c) Function(B b) Function(A a) function) {
+  return (A a, B b, C c, D d) => function(a)(b)(c)(d);
+}
+
+/// Converts a series of unary functions into a 5 parameters function.
+F Function(A a, B b, C c, D d, E e) uncurry5<A, B, C, D, E, F>(
+    F Function(E e) Function(D d) Function(C c) Function(B b) Function(A a)
+        function) {
+  return (A a, B b, C c, D d, E e) => function(a)(b)(c)(d)(e);
+}
