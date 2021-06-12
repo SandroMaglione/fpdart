@@ -136,35 +136,34 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   bool exists(bool Function(R r) predicate);
 
   /// Flat a [Either] contained inside another [Either] to be a single [Either].
-  static Either<L, R> flatten<L, R>(Either<L, Either<L, R>> e) =>
-      e.flatMap(identity);
+  factory Either.flatten(Either<L, Either<L, R>> e) => e.flatMap(identity);
 
   /// Return a `Right(r)`.
-  static Either<L, R> of<L, R>(R r) => Right(r);
+  factory Either.of(R r) => Right(r);
 
   /// Return a `Left(l)`.
-  static Either<L, R> left<L, R>(L l) => Left(l);
+  factory Either.left(L l) => Left(l);
 
   /// Return an [Either] from a [Maybe]:
   /// - If [Maybe] is [Just], then return [Right] containing its value
   /// - If [Maybe] is [Nothing], then return [Left] containing the result of `onNothing`
-  static Either<L, R> fromMaybe<L, R>(Maybe<R> m, L Function() onNothing) =>
+  factory Either.fromMaybe(Maybe<R> m, L Function() onNothing) =>
       m.match((just) => Either.of(just), () => Either.left(onNothing()));
 
   /// If calling `predicate` with `r` returns `true`, then return `Right(r)`.
   /// Otherwise return [Left] containing the result of `onFalse`.
-  static Either<L, R> fromPredicate<L, R>(
+  factory Either.fromPredicate(
           R r, bool Function(R r) predicate, L Function(R r) onFalse) =>
       predicate(r) ? Either.of(r) : Either.left(onFalse(r));
 
   /// If `r` is `null`, then return the result of `onNull` in [Left].
   /// Otherwise return `Right(r)`.
-  static Either<L, R> fromNullable<L, R>(R? r, L Function(R? r) onNull) =>
+  factory Either.fromNullable(R? r, L Function(R? r) onNull) =>
       r != null ? Either.of(r) : Either.left(onNull(r));
 
   /// Try to execute `run`. If no error occurs, then return [Right].
   /// Otherwise return [Left] containing the result of `onError`.
-  static Either<L, R> tryCatch<L, R>(
+  factory Either.tryCatch(
       R Function() run, L Function(Object o, StackTrace s) onError) {
     try {
       return Either.of(run());
@@ -244,7 +243,7 @@ class Right<L, R> extends Either<L, R> {
   Either<L, R> alt(covariant Either<L, R> Function() orElse) => this;
 
   @override
-  Maybe<L> getLeft() => Maybe.nothing<L>();
+  Maybe<L> getLeft() => Maybe.nothing();
 
   @override
   Either<L, Z> extend<Z>(Z Function(Either<L, R> t) f) => Either.of(f(this));
@@ -305,7 +304,7 @@ class Left<L, R> extends Either<L, R> {
       Left<L, C>(_value);
 
   @override
-  Maybe<R> toMaybe() => Maybe.nothing<R>();
+  Maybe<R> toMaybe() => Maybe.nothing();
 
   @override
   bool isLeft() => true;

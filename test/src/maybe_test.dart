@@ -93,7 +93,7 @@ void main() {
       });
 
       test('Nothing', () {
-        final maybe = Maybe.nothing<int>();
+        final maybe = Maybe<int>.nothing();
         final pure = maybe.ap(Maybe.of((int i) => i + 1));
         expect(pure, isA<Nothing>());
       });
@@ -107,7 +107,7 @@ void main() {
       });
 
       test('Nothing', () {
-        final maybe = Maybe.nothing<int>();
+        final maybe = Maybe<int>.nothing();
         final flatMap = maybe.flatMap<int>((a) => Maybe.of(a + 1));
         expect(flatMap, isA<Nothing>());
       });
@@ -121,7 +121,7 @@ void main() {
       });
 
       test('Nothing', () {
-        final maybe = Maybe.nothing<int>();
+        final maybe = Maybe<int>.nothing();
         final value = maybe.getOrElse(() => 0);
         expect(value, 0);
       });
@@ -135,7 +135,7 @@ void main() {
       });
 
       test('Nothing', () {
-        final maybe = Maybe.nothing<int>();
+        final maybe = Maybe<int>.nothing();
         final value = maybe.alt(() => Maybe.of(0));
         value.match((just) => expect(just, 0), () => null);
       });
@@ -149,7 +149,7 @@ void main() {
       });
 
       test('Nothing', () {
-        final maybe = Maybe.nothing<int>();
+        final maybe = Maybe<int>.nothing();
         final value = maybe.extend((t) => t.isJust() ? 'valid' : 'invalid');
         value.match((just) => expect(just, 'invalid'), () => null);
       });
@@ -163,7 +163,7 @@ void main() {
       });
 
       test('Nothing', () {
-        final maybe = Maybe.nothing<int>();
+        final maybe = Maybe<int>.nothing();
         final value = maybe.duplicate();
         expect(value, isA<Nothing>());
       });
@@ -183,7 +183,7 @@ void main() {
       });
 
       test('Nothing', () {
-        final maybe = Maybe.nothing<int>();
+        final maybe = Maybe<int>.nothing();
         final value = maybe.filter((a) => a > 5);
         expect(value, isA<Nothing>());
       });
@@ -197,7 +197,7 @@ void main() {
       });
 
       test('Nothing', () {
-        final maybe = Maybe.nothing<int>();
+        final maybe = Maybe<int>.nothing();
         final value = maybe.filterMap<String>((a) => Maybe.of('$a'));
         expect(value, isA<Nothing>());
       });
@@ -219,7 +219,7 @@ void main() {
       });
 
       test('Nothing', () {
-        final maybe = Maybe.nothing<int>();
+        final maybe = Maybe<int>.nothing();
         final value = maybe.partition((a) => a > 5);
         expect(value.value1, isA<Nothing>());
         expect(value.value2, isA<Nothing>());
@@ -244,7 +244,7 @@ void main() {
       });
 
       test('Nothing', () {
-        final maybe = Maybe.nothing<int>();
+        final maybe = Maybe<int>.nothing();
         final value =
             maybe.partitionMap<String, double>((a) => Either.of(a / 2));
         expect(value.value1, isA<Nothing>());
@@ -254,24 +254,24 @@ void main() {
 
     group('fromEither', () {
       test('Right', () {
-        final maybe = Maybe.fromEither<String, int>(Right(10));
+        final maybe = Maybe.fromEither<String, int>(Either.of(10));
         maybe.match((just) => expect(just, 10), () => null);
       });
 
       test('Left', () {
-        final maybe = Maybe.fromEither<String, int>(Left('none'));
+        final maybe = Maybe.fromEither<String, int>(Either.left('none'));
         expect(maybe, isA<Nothing>());
       });
     });
 
     group('fromPredicate', () {
       test('Just', () {
-        final maybe = Maybe.fromPredicate<int>(10, (a) => a > 5);
+        final maybe = Maybe<int>.fromPredicate(10, (a) => a > 5);
         maybe.match((just) => expect(just, 10), () => null);
       });
 
       test('Nothing', () {
-        final maybe = Maybe.fromPredicate<int>(10, (a) => a < 5);
+        final maybe = Maybe<int>.fromPredicate(10, (a) => a < 5);
         expect(maybe, isA<Nothing>());
       });
     });
@@ -297,27 +297,28 @@ void main() {
       });
 
       test('Left', () {
-        final maybe = Maybe.flatten(Maybe.of(Maybe.nothing<int>()));
+        final maybe = Maybe.flatten(Maybe.of(Maybe<int>.nothing()));
         expect(maybe, isA<Nothing>());
       });
     });
 
     group('separate', () {
       test('Right', () {
-        final maybe = Maybe.separate<String, int>(Maybe.of(Right(10)));
+        final maybe = Maybe.separate<String, int>(Maybe.of(Either.of(10)));
         expect(maybe.value1, isA<Nothing>());
         maybe.value2.match((just) => expect(just, 10), () => null);
       });
 
       test('Left', () {
-        final maybe = Maybe.separate<String, int>(Maybe.of(Left('none')));
+        final maybe =
+            Maybe.separate<String, int>(Maybe.of(Either.left('none')));
         maybe.value1.match((just) => expect(just, 'none'), () => null);
         expect(maybe.value2, isA<Nothing>());
       });
     });
 
     test('nothing', () {
-      final maybe = Maybe.nothing<int>();
+      final maybe = Maybe<int>.nothing();
       expect(maybe, isA<Nothing>());
     });
 
@@ -333,7 +334,7 @@ void main() {
     });
 
     test('isNothing', () {
-      final maybe = Maybe.nothing<int>();
+      final maybe = Maybe<int>.nothing();
       expect(maybe.isNothing(), true);
       expect(maybe.isJust(), false);
     });
@@ -342,8 +343,8 @@ void main() {
       final eq = Maybe.getEq<int>(Eq.instance((a1, a2) => a1 == a2));
       expect(eq.eqv(Maybe.of(10), Maybe.of(10)), true);
       expect(eq.eqv(Maybe.of(10), Maybe.of(9)), false);
-      expect(eq.eqv(Maybe.of(10), Maybe.nothing<int>()), false);
-      expect(eq.eqv(Maybe.nothing<int>(), Maybe.nothing<int>()), true);
+      expect(eq.eqv(Maybe.of(10), Maybe<int>.nothing()), false);
+      expect(eq.eqv(Maybe<int>.nothing(), Maybe<int>.nothing()), true);
     });
 
     test('getOrder', () {
@@ -351,7 +352,7 @@ void main() {
           Maybe.getOrder<int>(Order.from((a1, a2) => a1.compareTo(a2)));
       final maybe1 = Maybe.of(10);
       final maybe2 = Maybe.of(9);
-      final maybe3 = Maybe.nothing<int>();
+      final maybe3 = Maybe<int>.nothing();
       expect(order.compare(maybe1, maybe1), 0);
       expect(order.compare(maybe3, maybe3), 0);
       expect(order.compare(maybe1, maybe2), 1);
@@ -361,8 +362,8 @@ void main() {
     });
 
     test('fromNullable', () {
-      final m1 = Maybe.fromNullable<int>(10);
-      final m2 = Maybe.fromNullable<int>(null);
+      final m1 = Maybe<int>.fromNullable(10);
+      final m2 = Maybe<int>.fromNullable(null);
       expect(m1, isA<Just>());
       expect(m2, isA<Nothing>());
     });
@@ -376,7 +377,7 @@ void main() {
 
     test('toEither', () {
       final m1 = Maybe.of(10);
-      final m2 = Maybe.nothing<int>();
+      final m2 = Maybe<int>.nothing();
       final e1 = m1.toEither(() => 'left');
       final e2 = m2.toEither(() => 'left');
       e1.match((l) => null, (r) => expect(r, 10));
@@ -385,7 +386,7 @@ void main() {
 
     test('toNullable', () {
       final m1 = Maybe.of(10);
-      final m2 = Maybe.nothing<int>();
+      final m2 = Maybe<int>.nothing();
       expect(m1.toNullable(), 10);
       expect(m1.toNullable(), isA<int?>());
       expect(m2.toNullable(), null);
@@ -393,14 +394,14 @@ void main() {
 
     test('pure', () {
       final m1 = Maybe.of(10);
-      final m2 = Maybe.nothing<int>();
+      final m2 = Maybe<int>.nothing();
       m1.pure('abc').match((just) => expect(just, 'abc'), () => null);
       m2.pure('abc').match((just) => expect(just, 'abc'), () => null);
     });
 
     test('andThen', () {
       final m1 = Maybe.of(10);
-      final m2 = Maybe.nothing<int>();
+      final m2 = Maybe<int>.nothing();
       m1
           .andThen(() => Maybe.of('abc'))
           .match((just) => expect(just, 'abc'), () => null);
@@ -409,35 +410,35 @@ void main() {
 
     test('plus', () {
       final m1 = Maybe.of(10);
-      final m2 = Maybe.nothing<int>();
+      final m2 = Maybe<int>.nothing();
       m1.plus(Maybe.of(0)).match((just) => expect(just, 10), () => null);
       m2.plus(Maybe.of(0)).match((just) => expect(just, 0), () => null);
     });
 
     test('prepend', () {
       final m1 = Maybe.of(10);
-      final m2 = Maybe.nothing<int>();
+      final m2 = Maybe<int>.nothing();
       m1.prepend(0).match((just) => expect(just, 0), () => null);
       m2.prepend(0).match((just) => expect(just, 0), () => null);
     });
 
     test('append', () {
       final m1 = Maybe.of(10);
-      final m2 = Maybe.nothing<int>();
+      final m2 = Maybe<int>.nothing();
       m1.append(0).match((just) => expect(just, 10), () => null);
       m2.append(0).match((just) => expect(just, 0), () => null);
     });
 
     test('match', () {
       final m1 = Maybe.of(10);
-      final m2 = Maybe.nothing<int>();
+      final m2 = Maybe<int>.nothing();
       expect(m1.match((just) => 'just', () => 'none'), 'just');
       expect(m2.match((just) => 'just', () => 'none'), 'none');
     });
 
     test('elem', () {
       final m1 = Maybe.of(10);
-      final m2 = Maybe.nothing<int>();
+      final m2 = Maybe<int>.nothing();
       final eq = Eq.instance<int>((a1, a2) => a1 == a2);
       expect(m1.elem(10, eq), true);
       expect(m1.elem(9, eq), false);
@@ -445,7 +446,7 @@ void main() {
     });
 
     test('nothing()', () {
-      final m = Maybe.nothing<int>();
+      final m = Maybe<int>.nothing();
       expect(m, isA<Nothing<int>>());
     });
 
@@ -493,7 +494,7 @@ void main() {
       });
 
       test('Nothing', () {
-        final m = Maybe.nothing<int>();
+        final m = Maybe<int>.nothing();
         expect(m.toString(), 'Nothing');
       });
     });
@@ -506,7 +507,7 @@ void main() {
     test('Just == Just', () {
       final m1 = Maybe.of(10);
       final m2 = Maybe.of(9);
-      final m3 = Maybe.nothing<int>();
+      final m3 = Maybe<int>.nothing();
       final m4 = Maybe.of(10);
       final map1 = <String, Maybe>{'m1': m1, 'm2': m4};
       final map2 = <String, Maybe>{'m1': m1, 'm2': m2};
@@ -526,9 +527,9 @@ void main() {
     test('Nothing == Nothing', () {
       final m1 = Maybe.of(10);
       final m2 = Maybe.of(9);
-      final m3 = Maybe.nothing<int>();
-      final m4 = Maybe.nothing<int>();
-      final m5 = Maybe.nothing<String>();
+      final m3 = Maybe<int>.nothing();
+      final m4 = Maybe<int>.nothing();
+      final m5 = Maybe<String>.nothing();
       final map1 = <String, Maybe>{'m1': m3, 'm2': m3};
       final map2 = <String, Maybe>{'m1': m3, 'm2': m4};
       final map3 = <String, Maybe>{'m1': m3, 'm2': m5};

@@ -75,7 +75,7 @@ abstract class Maybe<A> extends HKT<_MaybeHKT, A>
   /// ```
   @override
   Maybe<B> ap<B>(covariant Maybe<B Function(A a)> a) =>
-      a.match((f) => map(f), () => Maybe.nothing<B>());
+      a.match((f) => map(f), () => Maybe.nothing());
 
   /// Return a [Just] containing the value `b`.
   @override
@@ -201,12 +201,12 @@ abstract class Maybe<A> extends HKT<_MaybeHKT, A>
   /// Build a [Maybe] from a [Either] by returning [Just] when `either` is [Right],
   /// [Nothing] otherwise.
   static Maybe<R> fromEither<L, R>(Either<L, R> either) =>
-      either.match((_) => Maybe.nothing<R>(), (r) => Just(r));
+      either.match((_) => Maybe.nothing(), (r) => Just(r));
 
   /// Return [Just] of `value` when `predicate` applied to `value` returns `true`,
   /// [Nothing] otherwise.
-  static Maybe<A> fromPredicate<A>(A value, bool Function(A a) predicate) =>
-      predicate(value) ? Just(value) : Maybe.nothing<A>();
+  factory Maybe.fromPredicate(A value, bool Function(A a) predicate) =>
+      predicate(value) ? Just(value) : Maybe.nothing();
 
   /// Return [Just] of type `B` by calling `f` with `value` when `predicate` applied to `value` is `true`,
   /// `Nothing` otherwise.
@@ -221,16 +221,28 @@ abstract class Maybe<A> extends HKT<_MaybeHKT, A>
   /// ```
   static Maybe<B> fromPredicateMap<A, B>(
           A value, bool Function(A a) predicate, B Function(A a) f) =>
-      predicate(value) ? Just(f(value)) : Maybe.nothing<B>();
+      predicate(value) ? Just(f(value)) : Maybe.nothing();
 
   /// Return a [Nothing].
-  static Maybe<A> nothing<A>() => Nothing<A>();
+  factory Maybe.nothing() => Nothing<A>();
 
   /// Return a `Just(a)`.
-  static Maybe<A> of<A>(A a) => Just(a);
+  factory Maybe.of(A a) => Just(a);
 
   /// Flat a [Maybe] contained inside another [Maybe] to be a single [Maybe].
-  static Maybe<A> flatten<A>(Maybe<Maybe<A>> m) => m.flatMap(identity);
+  factory Maybe.flatten(Maybe<Maybe<A>> m) => m.flatMap(identity);
+
+  /// Return [Nothing] if `a` is `null`, [Just] otherwise.
+  factory Maybe.fromNullable(A? a) => a == null ? Maybe.nothing() : Just(a);
+
+  /// Try to run `f` and return `Just(a)` when no error are thrown, otherwise return `Nothing`.
+  factory Maybe.tryCatch(A Function() f) {
+    try {
+      return Just(f());
+    } catch (_) {
+      return Maybe.nothing();
+    }
+  }
 
   /// Return a [Tuple2] of [Maybe] from a `Maybe<Either<A, B>>`.
   ///
@@ -238,7 +250,7 @@ abstract class Maybe<A> extends HKT<_MaybeHKT, A>
   /// while the right value of the [Either] will be the second of the tuple.
   static Tuple2<Maybe<A>, Maybe<B>> separate<A, B>(Maybe<Either<A, B>> m) =>
       m.match((just) => Tuple2(just.getLeft(), just.getRight()),
-          () => Tuple2(Maybe.nothing<A>(), Maybe.nothing<B>()));
+          () => Tuple2(Maybe.nothing(), Maybe.nothing()));
 
   /// Build an `Eq<Maybe>` by comparing the values inside two [Maybe].
   ///
@@ -254,12 +266,12 @@ abstract class Maybe<A> extends HKT<_MaybeHKT, A>
   /// Build an instance of [Monoid] in which the `empty` value is [Nothing] and the
   /// `combine` function is based on the **first** [Maybe] if it is [Just], otherwise the second.
   static Monoid<Maybe<A>> getFirstMonoid<A>() =>
-      Monoid.instance(Maybe.nothing<A>(), (a1, a2) => a1.isNothing() ? a2 : a1);
+      Monoid.instance(Maybe.nothing(), (a1, a2) => a1.isNothing() ? a2 : a1);
 
   /// Build an instance of [Monoid] in which the `empty` value is [Nothing] and the
   /// `combine` function is based on the **second** [Maybe] if it is [Just], otherwise the first.
   static Monoid<Maybe<A>> getLastMonoid<A>() =>
-      Monoid.instance(Maybe.nothing<A>(), (a1, a2) => a2.isNothing() ? a1 : a2);
+      Monoid.instance(Maybe.nothing(), (a1, a2) => a2.isNothing() ? a1 : a2);
 
   /// Build an instance of [Monoid] in which the `empty` value is [Nothing] and the
   /// `combine` function uses the given `semigroup` to combine the values of both [Maybe]
@@ -268,7 +280,7 @@ abstract class Maybe<A> extends HKT<_MaybeHKT, A>
   /// If one of the [Maybe] is [Nothing], then calling `combine` returns [Nothing].
   static Monoid<Maybe<A>> getMonoid<A>(Semigroup<A> semigroup) =>
       Monoid.instance(
-          Maybe.nothing<A>(),
+          Maybe.nothing(),
           (a1, a2) => a1.flatMap((j1) => a2.flatMap(
                 (j2) => Just(semigroup.combine(j1, j2)),
               )));
@@ -288,19 +300,6 @@ abstract class Maybe<A> extends HKT<_MaybeHKT, A>
                     ))
                 .getOrElse(() => a1.isJust() ? 1 : -1),
       );
-
-  /// Return [Nothing] if `a` is `null`, [Just] otherwise.
-  static Maybe<A> fromNullable<A>(A? a) =>
-      a == null ? Maybe.nothing<A>() : Just(a);
-
-  /// Try to run `f` and return `Just(a)` when no error are thrown, otherwise return `Nothing`.
-  static Maybe<A> tryCatch<A>(A Function() f) {
-    try {
-      return Just(f());
-    } catch (_) {
-      return Maybe.nothing<A>();
-    }
-  }
 }
 
 class Just<A> extends Maybe<A> {
@@ -348,12 +347,11 @@ class Just<A> extends Maybe<A> {
   bool isNothing() => false;
 
   @override
-  Maybe<A> filter(bool Function(A a) f) =>
-      f(_value) ? this : Maybe.nothing<A>();
+  Maybe<A> filter(bool Function(A a) f) => f(_value) ? this : Maybe.nothing();
 
   @override
   Maybe<Z> filterMap<Z>(Maybe<Z> Function(A a) f) =>
-      f(_value).match((just) => Just(just), () => Maybe.nothing<Z>());
+      f(_value).match((just) => Just(just), () => Maybe.nothing());
 
   @override
   A? toNullable() => _value;
@@ -393,13 +391,13 @@ class Nothing<A> extends Maybe<A> {
       flatMap((a) => mc.flatMap((c) => md.map((d) => f(a, c, d))));
 
   @override
-  Maybe<B> map<B>(B Function(A a) f) => Maybe.nothing<B>();
+  Maybe<B> map<B>(B Function(A a) f) => Maybe.nothing();
 
   @override
   B foldRight<B>(B b, B Function(A a, B b) f) => b;
 
   @override
-  Maybe<B> flatMap<B>(covariant Maybe<B> Function(A a) f) => Maybe.nothing<B>();
+  Maybe<B> flatMap<B>(covariant Maybe<B> Function(A a) f) => Maybe.nothing();
 
   @override
   A getOrElse(A Function() orElse) => orElse();
@@ -411,7 +409,7 @@ class Nothing<A> extends Maybe<A> {
   B match<B>(B Function(A just) onJust, B Function() onNothing) => onNothing();
 
   @override
-  Maybe<Z> extend<Z>(Z Function(Maybe<A> t) f) => Maybe.nothing<Z>();
+  Maybe<Z> extend<Z>(Z Function(Maybe<A> t) f) => Maybe.nothing();
 
   @override
   bool isJust() => false;
@@ -420,10 +418,10 @@ class Nothing<A> extends Maybe<A> {
   bool isNothing() => true;
 
   @override
-  Maybe<A> filter(bool Function(A a) f) => Maybe.nothing<A>();
+  Maybe<A> filter(bool Function(A a) f) => Maybe.nothing();
 
   @override
-  Maybe<Z> filterMap<Z>(Maybe<Z> Function(A a) f) => Maybe.nothing<Z>();
+  Maybe<Z> filterMap<Z>(Maybe<Z> Function(A a) f) => Maybe.nothing();
 
   @override
   A? toNullable() => null;
