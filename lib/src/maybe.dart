@@ -375,6 +375,9 @@ class Just<A> extends Maybe<A> {
 
   @override
   int get hashCode => _value.hashCode;
+
+  @override
+  String toString() => 'Just($_value)';
 }
 
 class Nothing<A> extends Maybe<A> {
@@ -442,4 +445,7 @@ class Nothing<A> extends Maybe<A> {
 
   @override
   int get hashCode => 0;
+
+  @override
+  String toString() => 'Nothing';
 }

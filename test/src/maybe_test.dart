@@ -486,6 +486,23 @@ void main() {
       expect(m.combine(Maybe.nothing(), Maybe.of(10)), isA<Nothing<int>>());
     });
 
+    group('toString', () {
+      test('Just', () {
+        final m = Maybe.of(10);
+        expect(m.toString(), 'Just(10)');
+      });
+
+      test('Nothing', () {
+        final m = Maybe.nothing<int>();
+        expect(m.toString(), 'Nothing');
+      });
+    });
+
+    test('Just value', () {
+      const m = Just(10);
+      expect(m.value, 10);
+    });
+
     test('Just == Just', () {
       final m1 = Maybe.of(10);
       final m2 = Maybe.of(9);
