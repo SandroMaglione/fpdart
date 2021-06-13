@@ -1,5 +1,3 @@
-import 'package:fpdart/fpdart.dart';
-
 import 'function.dart';
 import 'maybe.dart';
 import 'typeclass/typeclass.export.dart';

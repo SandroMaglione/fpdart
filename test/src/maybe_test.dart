@@ -4,33 +4,29 @@ import 'package:test/test.dart';
 void main() {
   group('Maybe', () {
     group('is a', () {
+      final maybe = Maybe.of(10);
+
       test('Monad', () {
-        final maybe = Maybe.of(10);
         expect(maybe, isA<Monad>());
       });
 
       test('Applicative', () {
-        final maybe = Maybe.of(10);
         expect(maybe, isA<Applicative>());
       });
 
       test('Foldable', () {
-        final maybe = Maybe.of(10);
         expect(maybe, isA<Foldable>());
       });
 
       test('Alt', () {
-        final maybe = Maybe.of(10);
         expect(maybe, isA<Alt>());
       });
 
       test('Extend', () {
-        final maybe = Maybe.of(10);
         expect(maybe, isA<Extend>());
       });
 
       test('Filterable', () {
-        final maybe = Maybe.of(10);
         expect(maybe, isA<Filterable>());
       });
     });
@@ -537,7 +533,7 @@ void main() {
       expect(m3, m3);
       expect(m3, m4);
       expect(m5, m5);
-      expect(m3 == m5, true);
+      expect(m3, m5);
       expect(m1 == m3, false);
       expect(m2 == m3, false);
       expect(map1, map1);
