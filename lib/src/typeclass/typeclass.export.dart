@@ -10,6 +10,7 @@ export 'extend.dart';
 export 'filterable.dart';
 export 'foldable.dart';
 export 'functor.dart';
+export 'group.dart';
 export 'hash.dart';
 export 'hkt.dart';
 export 'monad.dart';

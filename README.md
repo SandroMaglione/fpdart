@@ -178,6 +178,14 @@ Fpdart is a rewrite based on fp-ts and cats. The main differences are:
 - Fpdart implements some missing types in dartz.
 - Fpdart (currently) does not provide implementation for immutable collections (`ISet`, `IMap`, `IHashMap`, `AVLTree`).
 
+## Roadmap
+
+The long-term goal is to provide all the main types and typeclasses available in other functional programming languages and packages. All the types should be **completely** documented and fully tested.
+
+A well explained documentation is the key for the long-term success of the project. Any article, blog post, or contribution is welcome.
+
+In general, any contribution or feedback is welcome (and encouraged!).
+
 ## Versioning
 
 - v0.0.2 - 13 June 2021

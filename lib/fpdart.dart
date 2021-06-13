@@ -7,6 +7,6 @@ export 'src/state.dart';
 export 'src/task.dart';
 export 'src/task_either.dart';
 export 'src/tuple.dart';
-export 'src/typeclass/group.dart';
 export 'src/typeclass/typeclass.export.dart';
+export 'src/typedef.dart';
 export 'src/unit.dart';
