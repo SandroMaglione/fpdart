@@ -1,5 +1,5 @@
 import 'function.dart';
-import 'maybe.dart';
+import 'option.dart';
 import 'typeclass/typeclass.export.dart';
 
 /// Tag the [HKT] interface for the actual [Either].
@@ -86,10 +86,10 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// type `C` using function `f`.
   Either<C, R> mapLeft<C>(C Function(L a) f);
 
-  /// Convert this [Either] to a [Maybe]:
-  /// - If the [Either] is [Left], throw away its value and just return [Nothing]
-  /// - If the [Either] is [Right], return a [Just] containing the value inside [Right]
-  Maybe<R> toMaybe();
+  /// Convert this [Either] to a [Option]:
+  /// - If the [Either] is [Left], throw away its value and just return [None]
+  /// - If the [Either] is [Right], return a [Some] containing the value inside [Right]
+  Option<R> toOption();
 
   /// Return `true` when this [Either] is [Left].
   bool isLeft();
@@ -97,17 +97,17 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// Return `true` when this [Either] is [Right].
   bool isRight();
 
-  /// Extract the value from [Left] in a [Maybe].
+  /// Extract the value from [Left] in a [Option].
   ///
-  /// If the [Either] is [Right], return [Nothing].
-  Maybe<L> getLeft();
+  /// If the [Either] is [Right], return [None].
+  Option<L> getLeft();
 
-  /// Extract the value from [Right] in a [Maybe].
+  /// Extract the value from [Right] in a [Option].
   ///
-  /// If the [Either] is [Left], return [Nothing].
+  /// If the [Either] is [Left], return [None].
   ///
-  /// Same as `toMaybe`.
-  Maybe<R> getRight() => toMaybe();
+  /// Same as `toOption`.
+  Option<R> getRight() => toOption();
 
   /// Swap the values contained inside the [Left] and [Right] of this [Either].
   Either<R, L> swap();
@@ -142,11 +142,11 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// Return a `Left(l)`.
   factory Either.left(L l) => Left(l);
 
-  /// Return an [Either] from a [Maybe]:
-  /// - If [Maybe] is [Just], then return [Right] containing its value
-  /// - If [Maybe] is [Nothing], then return [Left] containing the result of `onNothing`
-  factory Either.fromMaybe(Maybe<R> m, L Function() onNothing) =>
-      m.match((just) => Either.of(just), () => Either.left(onNothing()));
+  /// Return an [Either] from a [Option]:
+  /// - If [Option] is [Some], then return [Right] containing its value
+  /// - If [Option] is [None], then return [Left] containing the result of `onNone`
+  factory Either.fromOption(Option<R> m, L Function() onNone) =>
+      m.match((r) => Either.of(r), () => Either.left(onNone()));
 
   /// If calling `predicate` with `r` returns `true`, then return `Right(r)`.
   /// Otherwise return [Left] containing the result of `onFalse`.
@@ -226,7 +226,7 @@ class Right<L, R> extends Either<L, R> {
   Either<L, C> flatMap<C>(covariant Either<L, C> Function(R a) f) => f(_value);
 
   @override
-  Maybe<R> toMaybe() => Just(_value);
+  Option<R> toOption() => Some(_value);
 
   @override
   bool isLeft() => false;
@@ -241,7 +241,7 @@ class Right<L, R> extends Either<L, R> {
   Either<L, R> alt(covariant Either<L, R> Function() orElse) => this;
 
   @override
-  Maybe<L> getLeft() => Maybe.nothing();
+  Option<L> getLeft() => Option.none();
 
   @override
   Either<L, Z> extend<Z>(Z Function(Either<L, R> t) f) => Either.of(f(this));
@@ -302,7 +302,7 @@ class Left<L, R> extends Either<L, R> {
       Left<L, C>(_value);
 
   @override
-  Maybe<R> toMaybe() => Maybe.nothing();
+  Option<R> toOption() => Option.none();
 
   @override
   bool isLeft() => true;
@@ -317,7 +317,7 @@ class Left<L, R> extends Either<L, R> {
   Either<L, R> alt(covariant Either<L, R> Function() orElse) => orElse();
 
   @override
-  Maybe<L> getLeft() => Just(_value);
+  Option<L> getLeft() => Some(_value);
 
   @override
   Either<L, Z> extend<Z>(Z Function(Either<L, R> t) f) => Either.left(_value);

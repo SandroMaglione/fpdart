@@ -1,8 +1,7 @@
-import 'maybe.dart';
+import 'option.dart';
 import 'typeclass/foldable.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
-import 'typeclass/semigroup.dart';
 
 abstract class IListHKT {}
 
@@ -25,13 +24,13 @@ abstract class IList<T> extends HKT<IListHKT, T>
   @override
   IList<B> flatMap<B>(covariant IList<B> Function(T a) f);
 
-  /// Return [Just] containing the first element of the list.
-  /// If the list is empty, then return [Nothing].
-  Maybe<T> head();
+  /// Return [Some] containing the first element of the list.
+  /// If the list is empty, then return [None].
+  Option<T> head();
 
-  /// Return [Just] containing all the elements of the list excluded the first one.
-  /// If the list is empty, then return [Nothing].
-  Maybe<IList<T>> tail();
+  /// Return [Some] containing all the elements of the list excluded the first one.
+  /// If the list is empty, then return [None].
+  Option<IList<T>> tail();
 
   /// Execute `onNotEmpty` when the list is not empty, otherwise execute `onEmpty`.
   B match<B>(B Function(IList<T> l) onNotEmpty, B Function() onEmpty) =>
@@ -79,10 +78,10 @@ class Cons<T> extends IList<T> {
   IList<B> map<B>(B Function(T a) f) => Cons(f(_head), _tail.map(f));
 
   @override
-  Maybe<T> head() => Just(_head);
+  Option<T> head() => Some(_head);
 
   @override
-  Maybe<IList<T>> tail() => _tail.match((l) => Just(l), () => Nothing());
+  Option<IList<T>> tail() => _tail.match((l) => Some(l), () => const None());
 
   @override
   List<T> toList() => [_head, ..._tail.toList()];
@@ -100,10 +99,10 @@ class Nil<T> extends IList<T> {
   IList<B> map<B>(B Function(T a) f) => Nil();
 
   @override
-  Maybe<T> head() => Nothing();
+  Option<T> head() => const None();
 
   @override
-  Maybe<IList<T>> tail() => Nothing();
+  Option<IList<T>> tail() => const None();
 
   @override
   List<T> toList() => [];

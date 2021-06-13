@@ -32,6 +32,6 @@ void main() {
     (r) => print('Right($r)'),
   );
 
-  /// Convert to [Maybe]
-  final maybe = right.toMaybe();
+  /// Convert to [Option]
+  final option = right.toOption();
 }

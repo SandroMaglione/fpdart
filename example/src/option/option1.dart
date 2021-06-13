@@ -19,9 +19,9 @@ void main() {
     printString(str);
   }
 
-  final Maybe<String> mStr = Maybe.of('name');
+  final Option<String> mStr = Option.of('name');
 
-  /// Using [Maybe] you are required to specify every possible case.
+  /// Using [Option] you are required to specify every possible case.
   /// The type system helps you to find and define edge-cases and avoid errors.
   mStr.match(
     printString,

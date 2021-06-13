@@ -254,17 +254,17 @@ void main() {
       });
     });
 
-    group('toMaybe', () {
+    group('toOption', () {
       test('Right', () {
         final value = Either<String, int>.of(10);
-        final ap = value.toMaybe();
-        ap.match((just) => expect(just, 10), () => null);
+        final ap = value.toOption();
+        ap.match((some) => expect(some, 10), () => null);
       });
 
       test('Left', () {
         final value = Either<String, int>.left('none');
-        final ap = value.toMaybe();
-        expect(ap, isA<Nothing<int>>());
+        final ap = value.toOption();
+        expect(ap, isA<None<int>>());
       });
     });
 
@@ -300,13 +300,13 @@ void main() {
       test('Right', () {
         final value = Either<String, int>.of(10);
         final ap = value.getLeft();
-        expect(ap, isA<Nothing<String>>());
+        expect(ap, isA<None<String>>());
       });
 
       test('Left', () {
         final value = Either<String, int>.left('none');
         final ap = value.getLeft();
-        ap.match((just) => expect(just, 'none'), () => null);
+        ap.match((some) => expect(some, 'none'), () => null);
       });
     });
 
@@ -314,13 +314,13 @@ void main() {
       test('Right', () {
         final value = Either<String, int>.of(10);
         final ap = value.getRight();
-        ap.match((just) => expect(just, 10), () => null);
+        ap.match((some) => expect(some, 10), () => null);
       });
 
       test('Left', () {
         final value = Either<String, int>.left('none');
         final ap = value.getRight();
-        expect(ap, isA<Nothing<int>>());
+        expect(ap, isA<None<int>>());
       });
     });
 
@@ -467,16 +467,16 @@ void main() {
       value.match((l) => expect(l, 'none'), (r) => null);
     });
 
-    group('fromMaybe', () {
-      test('Just', () {
-        final value = Maybe.of(10);
-        final either = Either.fromMaybe(value, () => 'none');
+    group('fromOption', () {
+      test('Some', () {
+        final value = Option.of(10);
+        final either = Either.fromOption(value, () => 'none');
         either.match((l) => null, (r) => expect(r, 10));
       });
 
-      test('Nothing', () {
-        final value = Maybe<int>.nothing();
-        final either = Either.fromMaybe(value, () => 'none');
+      test('None', () {
+        final value = Option<int>.none();
+        final either = Either.fromOption(value, () => 'none');
         either.match((l) => expect(l, 'none'), (r) => null);
       });
     });

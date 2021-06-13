@@ -4,7 +4,7 @@ import 'hkt.dart';
 /// `Alt` type class identifies an associative operation on a type constructor.
 ///
 /// It provides an `alt` function used to return an alternative value when the
-/// current one represents a failure (for example, [Nothing] for [Maybe]).
+/// current one represents a failure (for example, [None] for [Option]).
 abstract class Alt<KT, A> extends HKT<KT, A> with Functor<KT, A> {
   HKT<KT, A> alt(HKT<KT, A> Function() orElse);
 }

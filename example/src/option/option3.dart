@@ -16,14 +16,14 @@ double? intToDoubleNull(int a) {
   }
 }
 
-Maybe<int> stringToInt(String a) => Maybe.fromPredicateMap<String, int>(
+Option<int> stringToInt(String a) => Option.fromPredicateMap<String, int>(
       a,
       (str) => str.isNotEmpty,
       (str) => str.length,
     );
 
-Maybe<double> intToDouble(int a) =>
-    Maybe.fromPredicateMap<int, double>(a, (v) => v != 0, (v) => v / 2);
+Option<double> intToDouble(int a) =>
+    Option.fromPredicateMap<int, double>(a, (v) => v != 0, (v) => v / 2);
 
 void main() {
   /// Using `null`, you are required to check that the value is not
@@ -40,10 +40,10 @@ void main() {
   /// Using `flatMap`, you can forget that the value may be missing and just
   /// use it as if it was there.
   ///
-  /// In case one of the values is actually missing, you will get a [Nothing]
+  /// In case one of the values is actually missing, you will get a [None]
   /// at the end of the chain ⛓
-  final a = Maybe.of('name');
-  final Maybe<double> result = a.flatMap(
+  final a = Option.of('name');
+  final Option<double> result = a.flatMap(
     (s) => stringToInt(s).flatMap(
       (i) => intToDouble(i),
     ),

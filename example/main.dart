@@ -2,33 +2,33 @@ import 'package:fpdart/fpdart.dart';
 
 void main() {}
 
-void maybe() {
-  /// Create an instance of [Just]
-  final maybe = Maybe.of(10);
+void option() {
+  /// Create an instance of [Some]
+  final option = Option.of(10);
 
-  /// Create an instance of [Nothing]
-  final nothing = Maybe<int>.nothing();
+  /// Create an instance of [None]
+  final none = Option<int>.none();
 
   /// Map [int] to [String]
-  final map = maybe.map((a) => '$a');
+  final map = option.map((a) => '$a');
 
-  /// Extract the value from [Maybe]
-  final value = maybe.getOrElse(() => -1);
+  /// Extract the value from [Option]
+  final value = option.getOrElse(() => -1);
 
   /// Pattern matching
-  final match = maybe.match(
-    (just) => print('Just($just)'),
-    () => print('Nothing'),
+  final match = option.match(
+    (a) => print('Some($a)'),
+    () => print('None'),
   );
 
   /// Convert to [Either]
-  final either = maybe.toEither(() => 'missing');
+  final either = option.toEither(() => 'missing');
 
   /// Chain computations
-  final flatMap = maybe.flatMap((a) => Maybe.of(a + 10));
+  final flatMap = option.flatMap((a) => Option.of(a + 10));
 
-  /// Return [Nothing] if the function throws an error
-  final tryCatch = Maybe.tryCatch(() => int.parse('invalid'));
+  /// Return [None] if the function throws an error
+  final tryCatch = Option.tryCatch(() => int.parse('invalid'));
 }
 
 void either() {
@@ -63,6 +63,6 @@ void either() {
     (r) => print('Right($r)'),
   );
 
-  /// Convert to [Maybe]
-  final maybe = right.toMaybe();
+  /// Convert to [Option]
+  final option = right.toOption();
 }

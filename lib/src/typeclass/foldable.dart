@@ -1,9 +1,7 @@
 import '../function.dart';
-import '../maybe.dart';
 import '../tuple.dart';
 import 'hkt.dart';
 import 'monoid.dart';
-import 'semigroup.dart';
 
 abstract class Foldable<G, A> extends HKT<G, A> {
   B foldRight<B>(B b, B Function(A a, B b) f);

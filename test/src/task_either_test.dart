@@ -46,15 +46,15 @@ void main() {
       });
     });
 
-    group('fromMaybe', () {
-      test('Just', () async {
-        final task = TaskEither<String, int>.fromMaybe(Just(10), () => 'none');
+    group('fromOption', () {
+      test('Some', () async {
+        final task = TaskEither<String, int>.fromOption(Some(10), () => 'none');
         final r = await task.run();
         r.match((l) => null, (r) => expect(r, 10));
       });
 
-      test('Nothing', () async {
-        final task = TaskEither<String, int>.fromMaybe(Nothing(), () => 'none');
+      test('None', () async {
+        final task = TaskEither<String, int>.fromOption(None(), () => 'none');
         final r = await task.run();
         r.match((l) => expect(l, 'none'), (r) => null);
       });

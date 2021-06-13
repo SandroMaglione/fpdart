@@ -17,7 +17,7 @@ void main() {
 
     test('fromList', () {
       final iList = IList.fromList([1, 2, 3, 4]);
-      expect(iList.head(), isA<Just<int>>());
+      expect(iList.head(), isA<Some<int>>());
     });
 
     test('map', () {

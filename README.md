@@ -5,7 +5,7 @@
     <img src="https://img.shields.io/github/stars/SandroMaglione/fpdart?logo=github" />
   </a>
   <img src="https://img.shields.io/github/license/SandroMaglione/fpdart?logo=github" />
-  <img src="https://img.shields.io/badge/version-0.0.2-blue.svg" />
+  <img src="https://img.shields.io/badge/version-0.0.3-blue.svg" />
   <!-- <img src="https://img.shields.io/badge/flutter-v2.0.2-blue.svg" /> -->
   <img src="https://img.shields.io/badge/dart-v2.13.1-blue.svg" />
   <a href="https://github.com/SandroMaglione">
@@ -30,7 +30,7 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 
 ## Types
 
-- [x] `Maybe` (`Option`)
+- [x] `Option`
 - [x] `Either`
 - [x] `Unit`
 - [x] `Task`
@@ -43,7 +43,7 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 - [ ] `IOEither`
 - [ ] `Writer`
 - [ ] `Lens`
-- [ ] `TaskMaybe`
+- [ ] `TaskOption`
 - [ ] `ReaderEither`
 - [ ] `ReaderTask`
 - [ ] `ReaderTaskEither`
@@ -54,40 +54,40 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.0.2 # Check out the latest version
+  fpdart: ^0.0.3 # Check out the latest version
 ```
 
 ## Examples
 
-### [Maybe](https://github.com/SandroMaglione/fpdart/blob/9da7cae3b9f9dc690ff3255004393c4b979183e9/lib/src/maybe.dart#L40)
+### [Option](https://github.com/SandroMaglione/fpdart/blob/9da7cae3b9f9dc690ff3255004393c4b979183e9/lib/src/option.dart#L40)
 
 ```dart
-/// Create an instance of [Just]
-final maybe = Maybe.of(10);
+/// Create an instance of [Some]
+final option = Option.of(10);
 
-/// Create an instance of [Nothing]
-final nothing = Maybe<int>.nothing();
+/// Create an instance of [None]
+final none = Option<int>.none();
 
 /// Map [int] to [String]
-final map = maybe.map((a) => '$a');
+final map = option.map((a) => '$a');
 
-/// Extract the value from [Maybe]
-final value = maybe.getOrElse(() => -1);
+/// Extract the value from [Option]
+final value = option.getOrElse(() => -1);
 
 /// Pattern matching
-final match = maybe.match(
-  (just) => print('Just($just)'),
-  () => print('Nothing'),
+final match = option.match(
+  (a) => print('Some($a)'),
+  () => print('None'),
 );
 
 /// Convert to [Either]
-final either = maybe.toEither(() => 'missing');
+final either = option.toEither(() => 'missing');
 
 /// Chain computations
-final flatMap = maybe.flatMap((a) => Maybe.of(a + 10));
+final flatMap = option.flatMap((a) => Option.of(a + 10));
 
-/// Return [Nothing] if the function throws an error
-final tryCatch = Maybe.tryCatch(() => int.parse('invalid'));
+/// Return [None] if the function throws an error
+final tryCatch = Option.tryCatch(() => int.parse('invalid'));
 ```
 
 ### [Either](https://github.com/SandroMaglione/fpdart/blob/9da7cae3b9f9dc690ff3255004393c4b979183e9/lib/src/either.dart#L16)
@@ -124,8 +124,8 @@ final match = right.match(
   (r) => print('Right($r)'),
 );
 
-/// Convert to [Maybe]
-final maybe = right.toMaybe();
+/// Convert to [Option]
+final option = right.toOption();
 ```
 
 ### [Reader](https://github.com/SandroMaglione/fpdart/blob/9da7cae3b9f9dc690ff3255004393c4b979183e9/lib/src/reader.dart#L5)
@@ -150,7 +150,7 @@ Many non-functional languages are slowly adopting patterns from functional langu
 
 Many packages are bringing functional patterns to dart, like the amazing [freezed](https://pub.dev/packages/freezed) for unions/pattern matching.
 
-Fpdart aims to provide all the main types found in functional languages to dart. Types like `Maybe` (handle missing values without `null`), `Either` (handle errors and error messages), `Task` (composable async computations), and more.
+Fpdart aims to provide all the main types found in functional languages to dart. Types like `Option` (handle missing values without `null`), `Either` (handle errors and error messages), `Task` (composable async computations), and more.
 
 ### Goal
 
@@ -188,6 +188,7 @@ In general, any contribution or feedback is welcome (and encouraged!).
 
 ## Versioning
 
+- v0.0.3 - 13 June 2021
 - v0.0.2 - 13 June 2021
 - v0.0.1 - 28 May 2021
 
@@ -195,7 +196,7 @@ In general, any contribution or feedback is welcome (and encouraged!).
 
 Currently the best way to support me would be to follow me on my [**Twitter**](https://twitter.com/SandroMaglione).
 
-Another option (or `Maybe`) would be to buy me a coffee.
+Another option (or `Option`) would be to buy me a coffee.
 
 <a href="https://www.buymeacoffee.com/sandromaglione">
 <img src="https://shields.io/badge/sandromaglione-Support--me-FFDD00?logo=buy-me-a-coffee&style=for-the-badge&link=https://www.buymeacoffee.com/sandromaglione" />

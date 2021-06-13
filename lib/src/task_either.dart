@@ -31,9 +31,9 @@ class TaskEither<L, R> extends Task<Either<L, R>> {
       TaskEither(
           () async => predicate(value) ? Right(value) : Left(onFalse(value)));
 
-  factory TaskEither.fromMaybe(Maybe<R> maybe, L Function() onNothing) =>
-      TaskEither(() async =>
-          maybe.match((just) => Right(just), () => Left(onNothing())));
+  factory TaskEither.fromOption(Option<R> option, L Function() onNone) =>
+      TaskEither(
+          () async => option.match((r) => Right(r), () => Left(onNone())));
 
   factory TaskEither.fromEither(Either<L, R> either) =>
       TaskEither(() async => either);
