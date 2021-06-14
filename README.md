@@ -59,7 +59,7 @@ dependencies:
 
 ## Examples
 
-### [Option](https://github.com/SandroMaglione/fpdart/blob/9da7cae3b9f9dc690ff3255004393c4b979183e9/lib/src/option.dart#L40)
+### [Option](https://github.com/SandroMaglione/fpdart/blob/540431746d616d30fadf36cc9d1a77c14baf35f4/lib/src/option.dart#L40)
 
 ```dart
 /// Create an instance of [Some]
@@ -179,6 +179,81 @@ Fpdart is a rewrite based on fp-ts and cats. The main differences are:
 - Fpdart (currently) does not provide implementation for immutable collections (`ISet`, `IMap`, `IHashMap`, `AVLTree`).
 
 ## Roadmap
+
+Being documentation and stability important goals of the package, every type will go through an implementation-documentation-testing cycle before being considered as _'stable'_.
+
+The roadmap for types development is highlighted below (breaking changes to *'stable'* types are to be expected in this early stages):
+
+1. ~~`Option`~~
+   - ~~Implementation~~
+   - ~~Documentation~~
+   - ~~Testing~~
+2. ~~`Either`~~
+   - ~~Implementation~~
+   - ~~Documentation~~
+   - ~~Testing~~
+3. ~~`Unit`~~
+   - ~~Implementation~~
+   - Documentation
+   - ~~Testing~~
+4. `Task`
+   - Implementation
+   - Documentation
+   - Testing
+5. `TaskEither`
+   - Implementation
+   - Documentation
+   - Testing
+6. `Tuple`
+   - Implementation
+   - Documentation
+   - Testing
+7. `State`
+   - Implementation
+   - Documentation
+   - Testing
+8. `Reader`
+   - Implementation
+   - Documentation
+   - Testing
+9. `TaskOption`
+   - Implementation
+   - Documentation
+   - Testing
+10. `IO`
+    - Implementation
+    - Documentation
+    - Testing
+11. `IOEither`
+    - Implementation
+    - Documentation
+    - Testing
+12. `ReaderEither`
+    - Implementation
+    - Documentation
+    - Testing
+13. `ReaderTask`
+    - Implementation
+    - Documentation
+    - Testing
+14. `ReaderTaskEither`
+    - Implementation
+    - Documentation
+    - Testing
+15. `StateReaderTaskEither`
+    - Implementation
+    - Documentation
+    - Testing
+16. `Writer`
+    - Implementation
+    - Documentation
+    - Testing
+17. `Lens`
+    - Implementation
+    - Documentation
+    - Testing
+
+**Note**: Integrations with immutable collections (`IList`, `ISet`, `IMap`, etc.) will be developed after the main functional programming types above are complete (as *'main'* types I consider all until `IOEither`).
 
 The long-term goal is to provide all the main types and typeclasses available in other functional programming languages and packages. All the types should be **completely** documented and fully tested.
 
