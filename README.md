@@ -5,7 +5,7 @@
     <img src="https://img.shields.io/github/stars/SandroMaglione/fpdart?logo=github" />
   </a>
   <img src="https://img.shields.io/github/license/SandroMaglione/fpdart?logo=github" />
-  <img src="https://img.shields.io/badge/version-0.0.3-blue.svg" />
+  <img src="https://img.shields.io/badge/version-0.0.4-blue.svg" />
   <!-- <img src="https://img.shields.io/badge/flutter-v2.0.2-blue.svg" /> -->
   <img src="https://img.shields.io/badge/dart-v2.13.1-blue.svg" />
   <a href="https://github.com/SandroMaglione">
@@ -54,7 +54,7 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.0.3 # Check out the latest version
+  fpdart: ^0.0.4 # Check out the latest version
 ```
 
 ## Examples
@@ -204,10 +204,10 @@ The roadmap for types development is highlighted below (breaking changes to *'st
    - ~~Implementation~~
    - ~~Documentation~~
    - ~~Testing~~
-6. `Tuple`
-   - Implementation
-   - Documentation
-   - Testing
+6. ~~`Tuple`~~
+   - ~~Implementation~~
+   - ~~Documentation~~
+   - ~~Testing~~
 7. `State`
    - Implementation
    - Documentation
@@ -263,6 +263,7 @@ In general, any contribution or feedback is welcome (and encouraged!).
 
 ## Versioning
 
+- v0.0.4 - 15 June 2021
 - v0.0.3 - 13 June 2021
 - v0.0.2 - 13 June 2021
 - v0.0.1 - 28 May 2021

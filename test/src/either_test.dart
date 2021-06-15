@@ -125,6 +125,34 @@ void main() {
       });
     });
 
+    group('foldRightWithIndex', () {
+      test('Right', () {
+        final value = Either<String, int>.of(10);
+        final fold = value.foldRightWithIndex<int>(10, (i, a, b) => a + b);
+        expect(fold, 20);
+      });
+
+      test('Left', () {
+        final value = Either<String, int>.left('abc');
+        final fold = value.foldRightWithIndex<int>(10, (i, a, b) => a + b);
+        expect(fold, 10);
+      });
+    });
+
+    group('foldLeftWithIndex', () {
+      test('Right', () {
+        final value = Either<String, int>.of(10);
+        final fold = value.foldLeftWithIndex<int>(10, (i, a, b) => a + b);
+        expect(fold, 20);
+      });
+
+      test('Left', () {
+        final value = Either<String, int>.left('abc');
+        final fold = value.foldLeftWithIndex<int>(10, (i, a, b) => a + b);
+        expect(fold, 10);
+      });
+    });
+
     group('foldMap', () {
       test('Right', () {
         final value = Either<String, int>.of(10);
@@ -198,6 +226,72 @@ void main() {
         expect(ap, isA<Either<String, Either<String, int>>>());
         ap.match((l) => expect(l, 'none'),
             (r) => r.match((l) => expect(l, 'none'), (r) => null));
+      });
+    });
+
+    group('length', () {
+      test('Right', () {
+        final value = Either<String, int>.of(10);
+        expect(value.length(), 1);
+      });
+
+      test('Left', () {
+        final value = Either<String, int>.left('none');
+        expect(value.length(), 0);
+      });
+    });
+
+    group('concatenate', () {
+      test('Right', () {
+        final value = Either<String, int>.of(10);
+        final ap = value.concatenate(Monoid.instance(0, (a1, a2) => a1 + a2));
+        expect(ap, 10);
+      });
+
+      test('Left', () {
+        final value = Either<String, int>.left('none');
+        final ap = value.concatenate(Monoid.instance(0, (a1, a2) => a1 + a2));
+        expect(ap, 0);
+      });
+    });
+
+    group('any', () {
+      test('Right (true)', () {
+        final value = Either<String, int>.of(10);
+        final ap = value.any((a) => a > 5);
+        expect(ap, true);
+      });
+
+      test('Right (false)', () {
+        final value = Either<String, int>.of(10);
+        final ap = value.any((a) => a < 5);
+        expect(ap, false);
+      });
+
+      test('Left', () {
+        final value = Either<String, int>.left('none');
+        final ap = value.any((a) => a > 5);
+        expect(ap, false);
+      });
+    });
+
+    group('all', () {
+      test('Right (true)', () {
+        final value = Either<String, int>.of(10);
+        final ap = value.all((a) => a > 5);
+        expect(ap, true);
+      });
+
+      test('Right (false)', () {
+        final value = Either<String, int>.of(10);
+        final ap = value.all((a) => a < 5);
+        expect(ap, false);
+      });
+
+      test('Left', () {
+        final value = Either<String, int>.left('none');
+        final ap = value.all((a) => a > 5);
+        expect(ap, true);
       });
     });
 

@@ -1,9 +1,13 @@
-# v0.0.4
+# v0.0.4 - 15 June 2021
 
-- Renamed `fold` method of `Foldable` to `foldLeft` [**BREAKING CHANGE**]
 - Completed `Unit` type documentation
 - Completed `Task` type implementation, documentation, and testing
 - Completed `TaskEither` type implementation, documentation, and testing
+- Completed implementation, documentation, and testing of `Foldable` instance on `Option` and `Either` [**BREAKING CHANGE**]
+- Completed `Tuple2` type implementation, documentation, and testing [**BREAKING CHANGE**]
+- Renamed `fold` method of `Foldable` to `foldLeft` [**BREAKING CHANGE**]
+- Updated methods API (`foldRight`, `foldLeft`, etc.) of `Foldable` instances (`Option`, `Either`, `Tuple`) [**BREAKING CHANGE**]
+- `IList` not longer working correctly (waiting for a [better solution for immutable collections](https://github.com/SandroMaglione/fpdart#roadmap)) [**BREAKING CHANGE**]
 
 # v0.0.3 - 13 June 2021
 

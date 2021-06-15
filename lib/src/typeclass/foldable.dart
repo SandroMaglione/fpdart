@@ -4,9 +4,9 @@ import 'hkt.dart';
 import 'monoid.dart';
 
 abstract class Foldable<G, A> extends HKT<G, A> {
-  B foldRight<B>(B b, B Function(A a, B b) f);
+  B foldRight<B>(B b, B Function(B acc, A a) f);
 
-  B foldLeft<B>(B b, B Function(B b, A a) f) =>
+  B foldLeft<B>(B b, B Function(B acc, A a) f) =>
       foldMap<Endo<B>>(dualEndoMonoid(), (a) => (B b) => f(b, a))(b);
 
   /// Fold implemented by mapping `A` values into `B` and then
@@ -16,18 +16,18 @@ abstract class Foldable<G, A> extends HKT<G, A> {
   /// the `combine` function to combine the accumulator `B` with the value of
   /// type `B` computed using the function `f` from type `A` (`f(a)`).
   B foldMap<B>(Monoid<B> monoid, B Function(A a) f) =>
-      foldRight(monoid.empty, (a, b) => monoid.combine(f(a), b));
+      foldRight(monoid.empty, (b, a) => monoid.combine(f(a), b));
 
-  B foldRightWithIndex<B>(B b, B Function(int i, A a, B b) f) =>
+  B foldRightWithIndex<B>(B b, B Function(int i, B acc, A a) f) =>
       foldRight<Tuple2<B, int>>(
         Tuple2(b, length() - 1),
-        (a, t) => Tuple2(f(t.second, a, t.first), t.second - 1),
+        (t, a) => Tuple2(f(t.second, t.first, a), t.second - 1),
       ).first;
 
-  B foldLeftWithIndex<B>(B b, B Function(int i, A a, B b) f) =>
+  B foldLeftWithIndex<B>(B b, B Function(int i, B acc, A a) f) =>
       foldLeft<Tuple2<B, int>>(
         Tuple2(b, 0),
-        (t, a) => Tuple2(f(t.second, a, t.first), t.second + 1),
+        (t, a) => Tuple2(f(t.second, t.first, a), t.second + 1),
       ).first;
 
   int length() => foldLeft(0, (b, _) => b + 1);
@@ -47,24 +47,24 @@ abstract class Foldable<G, A> extends HKT<G, A> {
 }
 
 abstract class Foldable2<G, A, B> extends HKT2<G, A, B> {
-  C foldRight<C>(C b, C Function(B a, C b) f);
+  C foldRight<C>(C b, C Function(C acc, B b) f);
 
-  C foldLeft<C>(C b, C Function(C b, B a) f) =>
-      foldMap<Endo<C>>(dualEndoMonoid(), (a) => (C b) => f(b, a))(b);
+  C foldLeft<C>(C b, C Function(C acc, B b) f) =>
+      foldMap<Endo<C>>(dualEndoMonoid(), (b) => (C c) => f(c, b))(b);
 
-  C foldMap<C>(Monoid<C> monoid, C Function(B a) f) =>
-      foldRight(monoid.empty, (a, b) => monoid.combine(f(a), b));
+  C foldMap<C>(Monoid<C> monoid, C Function(B b) f) =>
+      foldRight(monoid.empty, (c, b) => monoid.combine(f(b), c));
 
-  C foldRightWithIndex<C>(C c, C Function(int i, B b, C c) f) =>
+  C foldRightWithIndex<C>(C c, C Function(int i, C acc, B b) f) =>
       foldRight<Tuple2<C, int>>(
         Tuple2(c, length() - 1),
-        (a, t) => Tuple2(f(t.second, a, t.first), t.second - 1),
+        (t, b) => Tuple2(f(t.second, t.first, b), t.second - 1),
       ).first;
 
-  C foldLeftWithIndex<C>(C c, C Function(int i, B b, C c) f) =>
+  C foldLeftWithIndex<C>(C c, C Function(int i, C acc, B b) f) =>
       foldLeft<Tuple2<C, int>>(
         Tuple2(c, 0),
-        (t, a) => Tuple2(f(t.second, a, t.first), t.second + 1),
+        (t, b) => Tuple2(f(t.second, t.first, b), t.second + 1),
       ).first;
 
   int length() => foldLeft(0, (b, _) => b + 1);

@@ -1,5 +1,6 @@
 import 'function.dart';
 import 'option.dart';
+import 'tuple.dart';
 import 'typeclass/typeclass.export.dart';
 
 /// Tag the [HKT2] interface for the actual [Either].
@@ -18,6 +19,58 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
         Alt2<_EitherHKT, L, R>,
         Extend2<_EitherHKT, L, R> {
   const Either();
+
+  /// Return the result of `f` called with `b` and the value of [Right].
+  /// If this [Either] is [Left], return `b`.
+  @override
+  C foldRight<C>(C b, C Function(C acc, R b) f);
+
+  /// Return the result of `f` called with `b` and the value of [Right].
+  /// If this [Either] is [Left], return `b`.
+  @override
+  C foldLeft<C>(C b, C Function(C acc, R b) f) =>
+      foldMap<Endo<C>>(dualEndoMonoid(), (b) => (C c) => f(c, b))(b);
+
+  /// Use `monoid` to combine the value of [Right] applied to `f`.
+  @override
+  C foldMap<C>(Monoid<C> monoid, C Function(R b) f) =>
+      foldRight(monoid.empty, (c, b) => monoid.combine(f(b), c));
+
+  /// Return the result of `f` called with `b` and the value of [Right].
+  /// If this [Either] is [Left], return `b`.
+  @override
+  C foldRightWithIndex<C>(C c, C Function(int i, C acc, R b) f) =>
+      foldRight<Tuple2<C, int>>(
+        Tuple2(c, length() - 1),
+        (t, b) => Tuple2(f(t.second, t.first, b), t.second - 1),
+      ).first;
+
+  /// Return the result of `f` called with `b` and the value of [Right].
+  /// If this [Either] is [Left], return `b`.
+  @override
+  C foldLeftWithIndex<C>(C c, C Function(int i, C acc, R b) f) =>
+      foldLeft<Tuple2<C, int>>(
+        Tuple2(c, 0),
+        (t, b) => Tuple2(f(t.second, t.first, b), t.second + 1),
+      ).first;
+
+  /// Returns `1` when [Either] is [Right], `0` otherwise.
+  @override
+  int length() => foldLeft(0, (b, _) => b + 1);
+
+  /// Return the result of `predicate` applied to the value of [Right].
+  /// If the [Either] is [Left], returns `false`.
+  @override
+  bool any(bool Function(R a) predicate) => foldMap(boolOrMonoid(), predicate);
+
+  /// Return the result of `predicate` applied to the value of [Right].
+  /// If the [Either] is [Left], returns `true`.
+  @override
+  bool all(bool Function(R a) predicate) => foldMap(boolAndMonoid(), predicate);
+
+  /// Use `monoid` to combine the value of [Right].
+  @override
+  R concatenate(Monoid<R> monoid) => foldMap(monoid, identity);
 
   /// If the [Either] is [Right], then change its value from type `R` to
   /// type `C` using function `f`.
@@ -216,7 +269,7 @@ class Right<L, R> extends Either<L, R> {
   Either<C, R> mapLeft<C>(C Function(L a) f) => Right<C, R>(_value);
 
   @override
-  C foldRight<C>(C b, C Function(R a, C b) f) => f(_value, b);
+  C foldRight<C>(C b, C Function(C acc, R a) f) => f(b, _value);
 
   @override
   C match<C>(C Function(L l) onLeft, C Function(R r) onRight) =>
@@ -292,7 +345,7 @@ class Left<L, R> extends Either<L, R> {
   Either<C, R> mapLeft<C>(C Function(L a) f) => Left<C, R>(f(_value));
 
   @override
-  C foldRight<C>(C b, C Function(R a, C b) f) => b;
+  C foldRight<C>(C b, C Function(C acc, R a) f) => b;
 
   @override
   C match<C>(C Function(L l) onLeft, C Function(R r) onRight) => onLeft(_value);

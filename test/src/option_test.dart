@@ -63,6 +63,18 @@ void main() {
       expect(fold, 11);
     });
 
+    test('foldRightWithIndex', () {
+      final option = Option.of(10);
+      final foldRight = option.foldRightWithIndex<int>(1, (i, a, b) => a + b);
+      expect(foldRight, 11);
+    });
+
+    test('foldLeftWithIndex', () {
+      final option = Option.of(10);
+      final fold = option.foldLeftWithIndex<int>(1, (i, a, b) => a + b);
+      expect(fold, 11);
+    });
+
     test('foldMap', () {
       final option = Option.of(10);
       final foldMap = option.foldMap<int>(
@@ -393,6 +405,59 @@ void main() {
       final m2 = Option<int>.none();
       m1.pure('abc').match((some) => expect(some, 'abc'), () => null);
       m2.pure('abc').match((some) => expect(some, 'abc'), () => null);
+    });
+
+    test('length', () {
+      final m1 = Option.of(10);
+      final m2 = Option<int>.none();
+      expect(m1.length(), 1);
+      expect(m2.length(), 0);
+    });
+
+    group('any', () {
+      test('Some (true)', () {
+        final m1 = Option.of(10);
+        final ap = m1.any((a) => a > 5);
+        expect(ap, true);
+      });
+
+      test('Some (false)', () {
+        final m1 = Option.of(10);
+        final ap = m1.any((a) => a < 5);
+        expect(ap, false);
+      });
+
+      test('None', () {
+        final m1 = Option<int>.none();
+        final ap = m1.any((a) => a > 5);
+        expect(ap, false);
+      });
+    });
+
+    group('all', () {
+      test('Some (true)', () {
+        final m1 = Option.of(10);
+        final ap = m1.all((a) => a > 5);
+        expect(ap, true);
+      });
+
+      test('Some (false)', () {
+        final m1 = Option.of(10);
+        final ap = m1.all((a) => a < 5);
+        expect(ap, false);
+      });
+
+      test('None', () {
+        final m1 = Option<int>.none();
+        final ap = m1.all((a) => a > 5);
+        expect(ap, true);
+      });
+    });
+
+    test('concatenate', () {
+      final m1 = Option.of(10);
+      final ap = m1.concatenate(Monoid.instance(0, (a1, a2) => a1 + a2));
+      expect(ap, 10);
     });
 
     test('andThen', () {

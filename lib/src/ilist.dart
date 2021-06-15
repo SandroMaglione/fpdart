@@ -18,8 +18,8 @@ abstract class IList<T> extends HKT<IListHKT, T>
       concatMap((t) => a.map((f) => f(t)));
 
   @override
-  B foldRight<B>(B b, B Function(T a, B b) f) =>
-      reverse().foldLeft(b, (b, a) => f(a, b));
+  B foldRight<B>(B b, B Function(B acc, T a) f) =>
+      reverse().foldLeft(b, (b, t) => f(b, t));
 
   @override
   IList<B> flatMap<B>(covariant IList<B> Function(T a) f);
@@ -52,7 +52,7 @@ abstract class IList<T> extends HKT<IListHKT, T>
 
   /// Append an `IList<T>` to the list
   @override
-  IList<T> plus(covariant IList<T> l) => foldRight(l, (e, p) => Cons(e, p));
+  IList<T> plus(covariant IList<T> l) => foldRight(l, (e, p) => Cons(p, e));
 
   /// Apply `f` to the elements of this `IList` and `concat` the result.
   IList<B> concatMap<B>(IList<B> Function(T t) f) => IList.concat(map(f));

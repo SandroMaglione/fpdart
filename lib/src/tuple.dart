@@ -58,12 +58,12 @@ class Tuple2<T1, T2> extends HKT2<_Tuple2HKT, T1, T2>
   ///
   /// Same as `foldLeft`.
   @override
-  C foldRight<C>(C b, C Function(T2 a, C b) f) => f(_value2, b);
+  C foldRight<C>(C b, C Function(C acc, T2 a) f) => f(b, _value2);
 
   /// Return value of type `C` by calling `f` with `b` and the first value of the [Tuple2].
   ///
   /// Same as `foldLeftFirst`.
-  C foldRightFirst<C>(C b, C Function(T1 a, C b) f) => f(_value1, b);
+  C foldRightFirst<C>(C b, C Function(C acc, T1 a) f) => f(b, _value1);
 
   /// Return value of type `C` by calling `f` with `b` and the second value of the [Tuple2].
   ///
@@ -81,40 +81,40 @@ class Tuple2<T1, T2> extends HKT2<_Tuple2HKT, T1, T2>
   /// Return value of type `C` by applying `f` on `monoid`.
   @override
   C foldMap<C>(Monoid<C> monoid, C Function(T2 a) f) =>
-      foldRight(monoid.empty, (a, b) => monoid.combine(f(a), b));
+      foldRight(monoid.empty, (c, b) => monoid.combine(c, f(b)));
 
   /// Return value of type `C` by applying `f` on `monoid`.
   C foldMapFirst<C>(Monoid<C> monoid, C Function(T1 a) f) =>
-      foldRightFirst(monoid.empty, (a, b) => monoid.combine(f(a), b));
+      foldRightFirst(monoid.empty, (c, t) => monoid.combine(f(t), c));
 
   /// Return value of type `C` by calling `f` with `b` and the second value of the [Tuple2].
   @override
-  C foldRightWithIndex<C>(C c, C Function(int i, T2 b, C c) f) =>
+  C foldRightWithIndex<C>(C c, C Function(int i, C acc, T2 b) f) =>
       foldRight<Tuple2<C, int>>(
         Tuple2(c, length() - 1),
-        (a, t) => Tuple2(f(t.second, a, t.first), t.second - 1),
+        (t, a) => Tuple2(f(t.second, t.first, a), t.second - 1),
       ).first;
 
   /// Return value of type `C` by calling `f` with `b` and the first value of the [Tuple2].
-  C foldRightFirstWithIndex<C>(C c, C Function(int i, T1 b, C c) f) =>
+  C foldRightFirstWithIndex<C>(C c, C Function(int i, C c, T1 b) f) =>
       foldRightFirst<Tuple2<C, int>>(
         Tuple2(c, length() - 1),
-        (a, t) => Tuple2(f(t.second, a, t.first), t.second - 1),
+        (t, a) => Tuple2(f(t.second, t.first, a), t.second - 1),
       ).first;
 
   /// Return value of type `C` by calling `f` with `b` and the second value of the [Tuple2].
   @override
-  C foldLeftWithIndex<C>(C c, C Function(int i, T2 b, C c) f) =>
+  C foldLeftWithIndex<C>(C c, C Function(int i, C acc, T2 b) f) =>
       foldLeft<Tuple2<C, int>>(
         Tuple2(c, 0),
-        (t, a) => Tuple2(f(t.second, a, t.first), t.second + 1),
+        (t, a) => Tuple2(f(t.second, t.first, a), t.second + 1),
       ).first;
 
   /// Return value of type `C` by calling `f` with `b` and the first value of the [Tuple2].
-  C foldLeftFirstWithIndex<C>(C c, C Function(int i, T1 b, C c) f) =>
+  C foldLeftFirstWithIndex<C>(C c, C Function(int i, C c, T1 b) f) =>
       foldLeftFirst<Tuple2<C, int>>(
         Tuple2(c, 0),
-        (t, a) => Tuple2(f(t.second, a, t.first), t.second + 1),
+        (t, a) => Tuple2(f(t.second, t.first, a), t.second + 1),
       ).first;
 
   /// Returns `1`.
@@ -131,6 +131,11 @@ class Tuple2<T1, T2> extends HKT2<_Tuple2HKT, T1, T2>
       foldMap(boolAndMonoid(), predicate);
 
   /// Combine the second value of [Tuple2] using `monoid`.
+  /// ```dart
+  /// const tuple = Tuple2('abc', 10);
+  /// final ap = tuple.concatenate(Monoid.instance(0, (a1, a2) => a1 + a2));
+  /// expect(ap, 10);
+  /// ```
   @override
   T2 concatenate(Monoid<T2> monoid) => foldMap(monoid, identity);
 

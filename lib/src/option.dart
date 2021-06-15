@@ -46,6 +46,70 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
         Filterable<_OptionHKT, A> {
   const Option();
 
+  /// Return the result of `f` called with `b` and the value of [Some].
+  /// If this [Option] is [None], return `b`.
+  @override
+  B foldRight<B>(B b, B Function(B acc, A a) f);
+
+  /// Return the result of `f` called with `b` and the value of [Some].
+  /// If this [Option] is [None], return `b`.
+  @override
+  B foldLeft<B>(B b, B Function(B acc, A a) f) =>
+      foldMap<Endo<B>>(dualEndoMonoid(), (a) => (B b) => f(b, a))(b);
+
+  /// Use `monoid` to combine the value of [Some] applied to `f`.
+  @override
+  B foldMap<B>(Monoid<B> monoid, B Function(A a) f) =>
+      foldRight(monoid.empty, (b, a) => monoid.combine(f(a), b));
+
+  /// Return the result of `f` called with `b` and the value of [Some].
+  /// If this [Option] is [None], return `b`.
+  @override
+  B foldRightWithIndex<B>(B b, B Function(int i, B acc, A a) f) =>
+      foldRight<Tuple2<B, int>>(
+        Tuple2(b, length() - 1),
+        (t, a) => Tuple2(f(t.second, t.first, a), t.second - 1),
+      ).first;
+
+  /// Return the result of `f` called with `b` and the value of [Some].
+  /// If this [Option] is [None], return `b`.
+  @override
+  B foldLeftWithIndex<B>(B b, B Function(int i, B acc, A a) f) =>
+      foldLeft<Tuple2<B, int>>(
+        Tuple2(b, 0),
+        (t, a) => Tuple2(f(t.second, t.first, a), t.second + 1),
+      ).first;
+
+  /// Returns `1` when [Option] is [Some], `0` otherwise.
+  @override
+  int length() => foldLeft(0, (b, _) => b + 1);
+
+  /// Return the result of `predicate` applied to the value of [Some].
+  /// If the [Option] is [None], returns `false`.
+  @override
+  bool any(bool Function(A a) predicate) => foldMap(boolOrMonoid(), predicate);
+
+  /// Return the result of `predicate` applied to the value of [Some].
+  /// If the [Option] is [None], returns `true`.
+  @override
+  bool all(bool Function(A a) predicate) => foldMap(boolAndMonoid(), predicate);
+
+  /// Use `monoid` to combine the value of [Some].
+  @override
+  A concatenate(Monoid<A> monoid) => foldMap(monoid, identity);
+
+  /// Return the value of this [Option] if it is [Some], otherwise return `a`.
+  @override
+  Option<A> plus(covariant Option<A> a);
+
+  /// Return `Some(a)`.
+  @override
+  Option<A> prepend(A a) => Some(a);
+
+  /// If this [Option] is [None], return `Some(a)`. Otherwise return this [Some].
+  @override
+  Option<A> append(A a);
+
   /// Change the value of type `A` to a value of type `B` using function `f`.
   /// ```dart
   /// /// Change type `String` (`A`) to type `int` (`B`)
@@ -161,18 +225,6 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
   Option<E> map3<C, D, E>(covariant Option<C> mc, covariant Option<D> md,
           E Function(A a, C c, D d) f) =>
       flatMap((a) => mc.flatMap((c) => md.map((d) => f(a, c, d))));
-
-  /// Return the value of this [Option] if it is [Some], otherwise return `a`.
-  @override
-  Option<A> plus(covariant Option<A> a);
-
-  /// Return `Some(a)`.
-  @override
-  Option<A> prepend(A a) => Some(a);
-
-  /// If this [Option] is [None], return `Some(a)`. Otherwise return this [Some].
-  @override
-  Option<A> append(A a);
 
   /// Execute `onSome` when value is [Some], otherwise execute `onNone`.
   B match<B>(B Function(A a) onSome, B Function() onNone);
@@ -323,7 +375,7 @@ class Some<A> extends Option<A> {
   Option<B> map<B>(B Function(A a) f) => Some(f(_value));
 
   @override
-  B foldRight<B>(B b, B Function(A a, B b) f) => f(_value, b);
+  B foldRight<B>(B b, B Function(B acc, A a) f) => f(b, _value);
 
   @override
   Option<B> flatMap<B>(covariant Option<B> Function(A a) f) => f(_value);
@@ -394,7 +446,7 @@ class None<A> extends Option<A> {
   Option<B> map<B>(B Function(A a) f) => Option.none();
 
   @override
-  B foldRight<B>(B b, B Function(A a, B b) f) => b;
+  B foldRight<B>(B b, B Function(B acc, A a) f) => b;
 
   @override
   Option<B> flatMap<B>(covariant Option<B> Function(A a) f) => Option.none();
