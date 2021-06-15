@@ -57,9 +57,9 @@ void main() {
       expect(foldRight, 11);
     });
 
-    test('fold', () {
+    test('foldLeft', () {
       final option = Option.of(10);
-      final fold = option.fold<int>(1, (a, b) => a + b);
+      final fold = option.foldLeft<int>(1, (a, b) => a + b);
       expect(fold, 11);
     });
 

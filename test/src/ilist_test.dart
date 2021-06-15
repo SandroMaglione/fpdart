@@ -32,9 +32,9 @@ void main() {
       expect(map, '4321');
     });
 
-    test('fold', () {
+    test('foldLeft', () {
       final iList = IList.fromList([1, 2, 3, 4]);
-      final map = iList.fold<String>('', (a, b) => '$a$b');
+      final map = iList.foldLeft<String>('', (a, b) => '$a$b');
       expect(map, '1234');
     });
 

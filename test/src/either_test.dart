@@ -111,16 +111,16 @@ void main() {
       });
     });
 
-    group('fold', () {
+    group('foldLeft', () {
       test('Right', () {
         final value = Either<String, int>.of(10);
-        final fold = value.fold<int>(10, (a, b) => a + b);
+        final fold = value.foldLeft<int>(10, (a, b) => a + b);
         expect(fold, 20);
       });
 
       test('Left', () {
         final value = Either<String, int>.left('abc');
-        final fold = value.fold<int>(10, (a, b) => a + b);
+        final fold = value.foldLeft<int>(10, (a, b) => a + b);
         expect(fold, 10);
       });
     });

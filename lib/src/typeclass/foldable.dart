@@ -6,7 +6,7 @@ import 'monoid.dart';
 abstract class Foldable<G, A> extends HKT<G, A> {
   B foldRight<B>(B b, B Function(A a, B b) f);
 
-  B fold<B>(B b, B Function(B b, A a) f) =>
+  B foldLeft<B>(B b, B Function(B b, A a) f) =>
       foldMap<Endo<B>>(dualEndoMonoid(), (a) => (B b) => f(b, a))(b);
 
   /// Fold implemented by mapping `A` values into `B` and then
@@ -25,12 +25,12 @@ abstract class Foldable<G, A> extends HKT<G, A> {
       ).value1;
 
   B foldLeftWithIndex<B>(B b, B Function(int i, A a, B b) f) =>
-      fold<Tuple2<B, int>>(
+      foldLeft<Tuple2<B, int>>(
         Tuple2(b, 0),
         (t, a) => Tuple2(f(t.value2, a, t.value1), t.value2 + 1),
       ).value1;
 
-  int length() => fold(0, (b, _) => b + 1);
+  int length() => foldLeft(0, (b, _) => b + 1);
 
   bool any(bool Function(A a) predicate) => foldMap(boolOrMonoid(), predicate);
   bool all(bool Function(A a) predicate) => foldMap(boolAndMonoid(), predicate);
@@ -49,7 +49,7 @@ abstract class Foldable<G, A> extends HKT<G, A> {
 abstract class Foldable2<G, A, B> extends HKT2<G, A, B> {
   C foldRight<C>(C b, C Function(B a, C b) f);
 
-  C fold<C>(C b, C Function(C b, B a) f) =>
+  C foldLeft<C>(C b, C Function(C b, B a) f) =>
       foldMap<Endo<C>>(dualEndoMonoid(), (a) => (C b) => f(b, a))(b);
 
   C foldMap<C>(Monoid<C> monoid, C Function(B a) f) =>
@@ -62,12 +62,12 @@ abstract class Foldable2<G, A, B> extends HKT2<G, A, B> {
       ).value1;
 
   C foldLeftWithIndex<C>(C c, C Function(int i, B b, C c) f) =>
-      fold<Tuple2<C, int>>(
+      foldLeft<Tuple2<C, int>>(
         Tuple2(c, 0),
         (t, a) => Tuple2(f(t.value2, a, t.value1), t.value2 + 1),
       ).value1;
 
-  int length() => fold(0, (b, _) => b + 1);
+  int length() => foldLeft(0, (b, _) => b + 1);
 
   bool any(bool Function(B a) predicate) => foldMap(boolOrMonoid(), predicate);
   bool all(bool Function(B a) predicate) => foldMap(boolAndMonoid(), predicate);

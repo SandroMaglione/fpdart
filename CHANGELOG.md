@@ -1,3 +1,8 @@
+# v0.0.4
+
+- Renamed `fold` method of `Foldable` to `foldLeft` [**BREAKING CHANGE**]
+- Completed `Unit` type documentation
+
 # v0.0.3 - 13 June 2021
 
 - Changed name of type `Maybe` to `Option` to be inline with fp-ts, cats, and dartz [**BREAKING CHANGE**]

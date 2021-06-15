@@ -19,7 +19,7 @@ abstract class IList<T> extends HKT<IListHKT, T>
 
   @override
   B foldRight<B>(B b, B Function(T a, B b) f) =>
-      reverse().fold(b, (b, a) => f(a, b));
+      reverse().foldLeft(b, (b, a) => f(a, b));
 
   @override
   IList<B> flatMap<B>(covariant IList<B> Function(T a) f);
@@ -40,7 +40,7 @@ abstract class IList<T> extends HKT<IListHKT, T>
   List<T> toList();
 
   /// Reverse the order of all the elements of the `IList`
-  IList<T> reverse() => fold(Nil(), (a, h) => Cons(h, a));
+  IList<T> reverse() => foldLeft(Nil(), (a, h) => Cons(h, a));
 
   /// Insert a new element `T` at the beginning of the `IList`
   @override
@@ -72,7 +72,7 @@ class Cons<T> extends IList<T> {
   Cons(this._head, this._tail);
 
   @override
-  B fold<B>(B b, B Function(B b, T a) f) => _tail.fold(f(b, _head), f);
+  B foldLeft<B>(B b, B Function(B b, T a) f) => _tail.foldLeft(f(b, _head), f);
 
   @override
   IList<B> map<B>(B Function(T a) f) => Cons(f(_head), _tail.map(f));
@@ -93,7 +93,7 @@ class Cons<T> extends IList<T> {
 
 class Nil<T> extends IList<T> {
   @override
-  B fold<B>(B b, B Function(B b, T a) f) => b;
+  B foldLeft<B>(B b, B Function(B b, T a) f) => b;
 
   @override
   IList<B> map<B>(B Function(T a) f) => Nil();
