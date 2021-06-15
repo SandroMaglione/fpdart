@@ -9,5 +9,9 @@ void main() {
       expect(unit1, unit2);
       expect(unit1.hashCode, unit2.hashCode);
     });
+
+    test('toString', () async {
+      expect(unit.toString(), '()');
+    });
   });
 }
