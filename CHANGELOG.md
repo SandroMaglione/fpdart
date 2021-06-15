@@ -2,11 +2,13 @@
 
 - Renamed `fold` method of `Foldable` to `foldLeft` [**BREAKING CHANGE**]
 - Completed `Unit` type documentation
+- Completed `Task` type implementation, documentation, and testing
+- Completed `TaskEither` type implementation, documentation, and testing
 
 # v0.0.3 - 13 June 2021
 
 - Changed name of type `Maybe` to `Option` to be inline with fp-ts, cats, and dartz [**BREAKING CHANGE**]
-  
+
 # v0.0.2 - 13 June 2021
 
 First major release:

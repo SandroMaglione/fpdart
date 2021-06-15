@@ -19,7 +19,7 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
         Extend2<_EitherHKT, L, R> {
   const Either();
 
-  /// If the [Either] is [Right], then change is value from type `R` to
+  /// If the [Either] is [Right], then change its value from type `R` to
   /// type `C` using function `f`.
   @override
   Either<L, C> map<C>(C Function(R a) f);
@@ -82,7 +82,7 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   Either<L, R> filterOrElse(bool Function(R r) f, L Function(R r) onFalse) =>
       flatMap((r) => f(r) ? Either.of(r) : Either.left(onFalse(r)));
 
-  /// If the [Either] is [Left], then change is value from type `L` to
+  /// If the [Either] is [Left], then change its value from type `L` to
   /// type `C` using function `f`.
   Either<C, R> mapLeft<C>(C Function(L a) f);
 

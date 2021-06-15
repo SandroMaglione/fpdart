@@ -194,16 +194,16 @@ The roadmap for types development is highlighted below (breaking changes to *'st
    - ~~Testing~~
 3. ~~`Unit`~~
    - ~~Implementation~~
-   - Documentation
+   - ~~Documentation~~
    - ~~Testing~~
-4. `Task`
-   - Implementation
-   - Documentation
-   - Testing
-5. `TaskEither`
-   - Implementation
-   - Documentation
-   - Testing
+4. ~~`Task`~~
+   - ~~Implementation~~
+   - ~~Documentation~~
+   - ~~Testing~~
+5. ~~`TaskEither`~~
+   - ~~Implementation~~
+   - ~~Documentation~~
+   - ~~Testing~~
 6. `Tuple`
    - Implementation
    - Documentation
