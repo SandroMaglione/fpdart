@@ -30,18 +30,18 @@ State<Stack, Unit> pushState(String value) =>
 void main() {
   // Without State Monad
   final pop1NoState = pop(stack);
-  final push1NoState = push('d', pop1NoState.value2);
-  final pop2NoState = pop(push1NoState.value2);
+  final push1NoState = push('d', pop1NoState.second);
+  final pop2NoState = pop(push1NoState.second);
   print('No State');
   print(stack);
   print('Pop');
-  print(pop1NoState.value2);
-  print(pop1NoState.value1);
+  print(pop1NoState.second);
+  print(pop1NoState.first);
   print("Push 'd'");
-  print(push1NoState.value2);
+  print(push1NoState.second);
   print('Pop');
-  print(pop2NoState.value2);
-  print(pop2NoState.value1);
+  print(pop2NoState.second);
+  print(pop2NoState.first);
 
   // Using State Monad
   print('---');

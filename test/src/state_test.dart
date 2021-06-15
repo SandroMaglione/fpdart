@@ -8,16 +8,16 @@ void main() {
       final state = State<String, int>((s) => Tuple2(s.length, '${s}a'));
       final ap = state.map((a) => a + 1);
       final result = ap.run('aaa');
-      expect(result.value1, 4);
-      expect(result.value2, 'aaa');
+      expect(result.first, 4);
+      expect(result.second, 'aaa');
     });
 
     test('ap', () {
       final state = State<String, int>((s) => Tuple2(s.length, '${s}a'));
       final ap = state.ap<String>(State((s) => Tuple2((int n) => '$n$s', s)));
       final result = ap.run('aaa');
-      expect(result.value1, '3aaa');
-      expect(result.value2, 'aaa');
+      expect(result.first, '3aaa');
+      expect(result.second, 'aaa');
     });
 
     test('flatMap', () {
@@ -25,23 +25,23 @@ void main() {
       final ap =
           state.flatMap<double>((a) => State((s) => Tuple2(a / 2, '$a$s')));
       final result = ap.run('aaa');
-      expect(result.value1, 1.5);
-      expect(result.value2, '3aaa');
+      expect(result.first, 1.5);
+      expect(result.second, '3aaa');
     });
 
     test('get', () {
       final state = State<String, int>((s) => Tuple2(s.length, '${s}a'));
       final ap = state.get();
       final result = ap.run('aaa');
-      expect(result.value1, 'aaa');
-      expect(result.value2, 'aaa');
+      expect(result.first, 'aaa');
+      expect(result.second, 'aaa');
     });
 
     test('put', () {
       final state = State<String, int>((s) => Tuple2(s.length, '${s}a'));
       final ap = state.put('b');
       final result = ap.run('aaa');
-      expect(result.value2, 'b');
+      expect(result.second, 'b');
     });
 
     test('evalState', () {

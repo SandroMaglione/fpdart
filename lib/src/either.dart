@@ -2,7 +2,7 @@ import 'function.dart';
 import 'option.dart';
 import 'typeclass/typeclass.export.dart';
 
-/// Tag the [HKT] interface for the actual [Either].
+/// Tag the [HKT2] interface for the actual [Either].
 abstract class _EitherHKT {}
 
 /// Represents a value of one of two possible types, [Left] or [Right].

@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:fpdart/src/task.dart';
 
-/// Tag the [HKT] interface for the actual [Task].
+/// Tag the [HKT2] interface for the actual [Task].
 abstract class _TaskEitherHKT {}
 
 /// `TaskEither<L, R>` represents an asynchronous computation that

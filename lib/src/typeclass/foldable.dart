@@ -21,14 +21,14 @@ abstract class Foldable<G, A> extends HKT<G, A> {
   B foldRightWithIndex<B>(B b, B Function(int i, A a, B b) f) =>
       foldRight<Tuple2<B, int>>(
         Tuple2(b, length() - 1),
-        (a, t) => Tuple2(f(t.value2, a, t.value1), t.value2 - 1),
-      ).value1;
+        (a, t) => Tuple2(f(t.second, a, t.first), t.second - 1),
+      ).first;
 
   B foldLeftWithIndex<B>(B b, B Function(int i, A a, B b) f) =>
       foldLeft<Tuple2<B, int>>(
         Tuple2(b, 0),
-        (t, a) => Tuple2(f(t.value2, a, t.value1), t.value2 + 1),
-      ).value1;
+        (t, a) => Tuple2(f(t.second, a, t.first), t.second + 1),
+      ).first;
 
   int length() => foldLeft(0, (b, _) => b + 1);
 
@@ -58,14 +58,14 @@ abstract class Foldable2<G, A, B> extends HKT2<G, A, B> {
   C foldRightWithIndex<C>(C c, C Function(int i, B b, C c) f) =>
       foldRight<Tuple2<C, int>>(
         Tuple2(c, length() - 1),
-        (a, t) => Tuple2(f(t.value2, a, t.value1), t.value2 - 1),
-      ).value1;
+        (a, t) => Tuple2(f(t.second, a, t.first), t.second - 1),
+      ).first;
 
   C foldLeftWithIndex<C>(C c, C Function(int i, B b, C c) f) =>
       foldLeft<Tuple2<C, int>>(
         Tuple2(c, 0),
-        (t, a) => Tuple2(f(t.value2, a, t.value1), t.value2 + 1),
-      ).value1;
+        (t, a) => Tuple2(f(t.second, a, t.first), t.second + 1),
+      ).first;
 
   int length() => foldLeft(0, (b, _) => b + 1);
 

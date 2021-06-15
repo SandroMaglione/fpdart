@@ -3,26 +3,26 @@ import 'package:test/test.dart';
 
 void main() {
   group('Tuple', () {
-    test('value1', () {
+    test('first', () {
       const tuple = Tuple2('abc', 10);
-      expect(tuple.value1, 'abc');
+      expect(tuple.first, 'abc');
     });
 
-    test('value2', () {
+    test('second', () {
       const tuple = Tuple2('abc', 10);
-      expect(tuple.value2, 10);
+      expect(tuple.second, 10);
     });
 
-    test('map1', () {
+    test('mapFirst', () {
       const tuple = Tuple2('abc', 10);
-      final map = tuple.map1((v1) => v1.length);
-      expect(map.value1, 3);
+      final map = tuple.mapFirst((v1) => v1.length);
+      expect(map.first, 3);
     });
 
-    test('map2', () {
+    test('mapSecond', () {
       const tuple = Tuple2('abc', 10);
-      final map = tuple.map2((v2) => '$v2');
-      expect(map.value2, '10');
+      final map = tuple.mapSecond((v2) => '$v2');
+      expect(map.second, '10');
     });
 
     test('apply', () {
@@ -41,10 +41,10 @@ void main() {
       final c1 = tuple.copyWith(value1: 'def');
       final c2 = tuple.copyWith(value2: 11);
       final cb = tuple.copyWith(value1: '0', value2: 0);
-      expect(c1.value1, 'def');
-      expect(c2.value2, 11);
-      expect(cb.value1, '0');
-      expect(cb.value2, 0);
+      expect(c1.first, 'def');
+      expect(c2.second, 11);
+      expect(cb.first, '0');
+      expect(cb.second, 0);
     });
   });
 }

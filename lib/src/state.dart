@@ -13,7 +13,7 @@ class State<S, A> extends HKT2<StateHKT, S, A> with Monad2<StateHKT, S, A> {
 
   @override
   State<S, C> flatMap<C>(covariant State<S, C> Function(A a) f) =>
-      State((state) => f(run(state).value1).run(state));
+      State((state) => f(run(state).first).run(state));
 
   @override
   State<S, C> ap<C>(covariant State<S, C Function(A a)> a) =>
@@ -32,10 +32,10 @@ class State<S, A> extends HKT2<StateHKT, S, A> with Monad2<StateHKT, S, A> {
   State<S, Unit> put(S state) => State((_) => Tuple2(unit, state));
 
   /// Execute `run` and extract the value [A].
-  A evalState(S state) => run(state).value1;
+  A evalState(S state) => run(state).first;
 
   /// Execute `run` and extract the state [S].
-  S execState(S state) => run(state).value2;
+  S execState(S state) => run(state).second;
 
   /// Extract value [A] and state [S] by passing the original state [S].
   Tuple2<A, S> run(S state) => _run(state);
