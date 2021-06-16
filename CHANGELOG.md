@@ -1,3 +1,7 @@
+# v0.0.5
+
+- Completed `State` type implementation, documentation, and testing
+
 # v0.0.4 - 15 June 2021
 
 - Completed `Unit` type documentation

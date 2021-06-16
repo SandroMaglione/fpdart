@@ -208,10 +208,10 @@ The roadmap for types development is highlighted below (breaking changes to *'st
    - ~~Implementation~~
    - ~~Documentation~~
    - ~~Testing~~
-7. `State`
-   - Implementation
-   - Documentation
-   - Testing
+7. ~~`State`~~
+   - ~~Implementation~~
+   - ~~Documentation~~
+   - ~~Testing~~
 8. `Reader`
    - Implementation
    - Documentation
