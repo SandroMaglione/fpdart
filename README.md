@@ -38,16 +38,16 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 - [x] `State`
 - [x] `Reader`
 - [x] `Tuple`
-- [x] `IList`
+- [ ] `TaskOption`
 - [ ] `IO`
 - [ ] `IOEither`
-- [ ] `Writer`
-- [ ] `Lens`
-- [ ] `TaskOption`
 - [ ] `ReaderEither`
 - [ ] `ReaderTask`
 - [ ] `ReaderTaskEither`
 - [ ] `StateReaderTaskEither`
+- [ ] `Lens`
+- [ ] `Writer`
+- ~~`IList`~~
 
 ## Installation
 
@@ -182,7 +182,7 @@ Fpdart is a rewrite based on fp-ts and cats. The main differences are:
 
 Being documentation and stability important goals of the package, every type will go through an implementation-documentation-testing cycle before being considered as _'stable'_.
 
-The roadmap for types development is highlighted below (breaking changes to *'stable'* types are to be expected in this early stages):
+The roadmap for types development is highlighted below (breaking changes to _'stable'_ types are to be expected in this early stages):
 
 1. ~~`Option`~~
    - ~~Implementation~~
@@ -212,10 +212,10 @@ The roadmap for types development is highlighted below (breaking changes to *'st
    - ~~Implementation~~
    - ~~Documentation~~
    - ~~Testing~~
-8. `Reader`
-   - Implementation
-   - Documentation
-   - Testing
+8. ~~`Reader`~~
+   - ~~Implementation~~
+   - ~~Documentation~~
+   - ~~Testing~~
 9. `TaskOption`
    - Implementation
    - Documentation
@@ -253,7 +253,7 @@ The roadmap for types development is highlighted below (breaking changes to *'st
     - Documentation
     - Testing
 
-**Note**: Integrations with immutable collections (`IList`, `ISet`, `IMap`, etc.) will be developed after the main functional programming types above are complete (as *'main'* types I consider all until `IOEither`).
+**Note**: Integrations with immutable collections (`IList`, `ISet`, `IMap`, etc.) will be developed after the main functional programming types above are complete (as _'main'_ types I consider all until `IOEither`).
 
 The long-term goal is to provide all the main types and typeclasses available in other functional programming languages and packages. All the types should be **completely** documented and fully tested.
 
