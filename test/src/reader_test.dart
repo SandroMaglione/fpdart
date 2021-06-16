@@ -3,6 +3,22 @@ import 'package:test/test.dart';
 
 void main() {
   group('Reader', () {
+    group('is a', () {
+      final reader = Reader<String, int>((r) => r.length);
+
+      test('Monad', () {
+        expect(reader, isA<Monad2>());
+      });
+
+      test('Applicative', () {
+        expect(reader, isA<Applicative2>());
+      });
+
+      test('Functor', () {
+        expect(reader, isA<Functor2>());
+      });
+    });
+
     test('map', () {
       final reader = Reader<String, int>((r) => r.length);
       final ap = reader.map((a) => a + 1);

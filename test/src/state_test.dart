@@ -3,6 +3,22 @@ import 'package:test/test.dart';
 
 void main() {
   group('State', () {
+    group('is a', () {
+      final state = State<String, int>((s) => Tuple2(s.length, '${s}a'));
+
+      test('Monad', () {
+        expect(state, isA<Monad2>());
+      });
+
+      test('Applicative', () {
+        expect(state, isA<Applicative2>());
+      });
+
+      test('Functor', () {
+        expect(state, isA<Functor2>());
+      });
+    });
+
     test('map', () {
       final state = State<String, int>((s) => Tuple2(s.length, '${s}a'));
       final ap = state.map((a) => a + 1);

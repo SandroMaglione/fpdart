@@ -2,6 +2,7 @@
 
 - Completed `State` type implementation, documentation, and testing
 - Completed `Reader` type implementation, documentation, and testing
+- Completed `IO` type implementation, documentation, and testing
 
 # v0.0.4 - 15 June 2021
 

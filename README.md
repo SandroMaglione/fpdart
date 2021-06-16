@@ -38,8 +38,8 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 - [x] `State`
 - [x] `Reader`
 - [x] `Tuple`
+- [x] `IO`
 - [ ] `TaskOption`
-- [ ] `IO`
 - [ ] `IOEither`
 - [ ] `ReaderEither`
 - [ ] `ReaderTask`
@@ -216,11 +216,11 @@ The roadmap for types development is highlighted below (breaking changes to _'st
    - ~~Implementation~~
    - ~~Documentation~~
    - ~~Testing~~
-9. `TaskOption`
-   - Implementation
-   - Documentation
-   - Testing
-10. `IO`
+9. ~~`IO`~~
+    - ~~Implementation~~
+    - ~~Documentation~~
+    - ~~Testing~~
+10. `TaskOption`
     - Implementation
     - Documentation
     - Testing

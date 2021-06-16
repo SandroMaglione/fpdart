@@ -14,6 +14,10 @@ void main() {
         expect(either, isA<Applicative2>());
       });
 
+      test('Functor', () {
+        expect(either, isA<Functor2>());
+      });
+
       test('Foldable', () {
         expect(either, isA<Foldable2>());
       });

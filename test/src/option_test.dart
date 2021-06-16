@@ -14,6 +14,10 @@ void main() {
         expect(option, isA<Applicative>());
       });
 
+      test('Functor', () {
+        expect(option, isA<Functor>());
+      });
+
       test('Foldable', () {
         expect(option, isA<Foldable>());
       });
