@@ -48,15 +48,13 @@ void main() {
     group('map2', () {
       test('Right', () {
         final value = Either<String, int>.of(10);
-        final map = value.map2<double, double>(
-            Either<String, double>.of(1.5), (a, b) => a + b);
+        final map = value.map2<double, double>(Either<String, double>.of(1.5), (a, b) => a + b);
         map.match((l) => null, (r) => expect(r, 11.5));
       });
 
       test('Left', () {
         final value = Either<String, int>.left('none');
-        final map = value.map2<double, double>(
-            Either<String, double>.of(1.5), (a, b) => a + b);
+        final map = value.map2<double, double>(Either<String, double>.of(1.5), (a, b) => a + b);
         map.match((l) => expect(l, 'none'), (r) => null);
       });
     });
@@ -64,19 +62,13 @@ void main() {
     group('map3', () {
       test('Right', () {
         final value = Either<String, int>.of(10);
-        final map = value.map3<double, double, double>(
-            Either<String, double>.of(1.5),
-            Either<String, double>.of(1.5),
-            (a, b, c) => a + b + c);
+        final map = value.map3<double, double, double>(Either<String, double>.of(1.5), Either<String, double>.of(1.5), (a, b, c) => a + b + c);
         map.match((l) => null, (r) => expect(r, 13.0));
       });
 
       test('Left', () {
         final value = Either<String, int>.left('none');
-        final map = value.map3<double, double, double>(
-            Either<String, double>.of(1.5),
-            Either<String, double>.of(1.5),
-            (a, b, c) => a + b + c);
+        final map = value.map3<double, double, double>(Either<String, double>.of(1.5), Either<String, double>.of(1.5), (a, b, c) => a + b + c);
         map.match((l) => expect(l, 'none'), (r) => null);
       });
     });
@@ -160,15 +152,13 @@ void main() {
     group('foldMap', () {
       test('Right', () {
         final value = Either<String, int>.of(10);
-        final fold = value.foldMap<int>(
-            Monoid.instance(0, (a1, a2) => a1 + a2), (a) => a);
+        final fold = value.foldMap<int>(Monoid.instance(0, (a1, a2) => a1 + a2), (a) => a);
         expect(fold, 10);
       });
 
       test('Left', () {
         final value = Either<String, int>.left('abc');
-        final fold = value.foldMap<int>(
-            Monoid.instance(0, (a1, a2) => a1 + a2), (a) => a);
+        final fold = value.foldMap<int>(Monoid.instance(0, (a1, a2) => a1 + a2), (a) => a);
         expect(fold, 0);
       });
     });
@@ -220,16 +210,14 @@ void main() {
         final value = Either<String, int>.of(10);
         final ap = value.duplicate();
         expect(ap, isA<Either<String, Either<String, int>>>());
-        ap.match(
-            (l) => null, (r) => r.match((l) => null, (r) => expect(r, 10)));
+        ap.match((l) => null, (r) => r.match((l) => null, (r) => expect(r, 10)));
       });
 
       test('Left', () {
         final value = Either<String, int>.left('none');
         final ap = value.duplicate();
         expect(ap, isA<Either<String, Either<String, int>>>());
-        ap.match((l) => expect(l, 'none'),
-            (r) => r.match((l) => expect(l, 'none'), (r) => null));
+        ap.match((l) => expect(l, 'none'), (r) => r.match((l) => expect(l, 'none'), (r) => null));
       });
     });
 
@@ -329,8 +317,7 @@ void main() {
 
         test('then Left', () {
           final value = Either<String, int>.of(10);
-          final ap =
-              value.flatMap<String>((a) => Either<String, String>.left('none'));
+          final ap = value.flatMap<String>((a) => Either<String, String>.left('none'));
           ap.match((l) => expect(l, 'none'), (r) => null);
         });
       });
@@ -338,15 +325,13 @@ void main() {
       group('Left', () {
         test('then Right', () {
           final value = Either<String, int>.left('0');
-          final ap =
-              value.flatMap<String>((a) => Either<String, String>.of('$a'));
+          final ap = value.flatMap<String>((a) => Either<String, String>.of('$a'));
           ap.match((l) => expect(l, '0'), (r) => null);
         });
 
         test('then Left', () {
           final value = Either<String, int>.left('0');
-          final ap =
-              value.flatMap<String>((a) => Either<String, String>.left('none'));
+          final ap = value.flatMap<String>((a) => Either<String, String>.left('none'));
           ap.match((l) => expect(l, '0'), (r) => null);
         });
       });
@@ -512,8 +497,7 @@ void main() {
       });
 
       test('Right Left', () {
-        final value =
-            Either<String, Either<String, int>>.of(Either.left('none'));
+        final value = Either<String, Either<String, int>>.of(Either.left('none'));
         final ap = Either.flatten(value);
         ap.match((l) => expect(l, 'none'), (r) => null);
       });
@@ -581,14 +565,12 @@ void main() {
 
     group('fromPredicate', () {
       test('Right', () {
-        final either =
-            Either<String, int>.fromPredicate(10, (v) => v > 5, (_) => 'none');
+        final either = Either<String, int>.fromPredicate(10, (v) => v > 5, (_) => 'none');
         either.match((l) => null, (r) => expect(r, 10));
       });
 
       test('Left', () {
-        final either =
-            Either<String, int>.fromPredicate(10, (v) => v < 5, (_) => 'none');
+        final either = Either<String, int>.fromPredicate(10, (v) => v < 5, (_) => 'none');
         either.match((l) => expect(l, 'none'), (r) => null);
       });
     });
@@ -607,21 +589,18 @@ void main() {
 
     group('tryCatch', () {
       test('Right', () {
-        final either = Either<String, int>.tryCatch(
-            () => int.parse('10'), (o, s) => 'none');
+        final either = Either<String, int>.tryCatch(() => int.parse('10'), (o, s) => 'none');
         either.match((l) => null, (r) => expect(r, 10));
       });
 
       test('Left', () {
-        final either = Either<String, int>.tryCatch(
-            () => int.parse('invalid'), (o, s) => 'none');
+        final either = Either<String, int>.tryCatch(() => int.parse('invalid'), (o, s) => 'none');
         either.match((l) => expect(l, 'none'), (r) => null);
       });
     });
 
     test('getEq', () {
-      final eq = Either.getEq<String, int>(
-          Eq.instance((a1, a2) => a1 == a2), Eq.instance((a1, a2) => a1 == a2));
+      final eq = Either.getEq<String, int>(Eq.instance((a1, a2) => a1 == a2), Eq.instance((a1, a2) => a1 == a2));
       final eitherR = Either<String, int>.of(10);
       final eitherL = Either<String, int>.left('none');
       expect(eq.eqv(eitherR, eitherR), true);
@@ -634,8 +613,7 @@ void main() {
     });
 
     test('getSemigroup', () {
-      final sg = Either.getSemigroup<String, int>(
-          Semigroup.instance((a1, a2) => a1 + a2));
+      final sg = Either.getSemigroup<String, int>(Semigroup.instance((a1, a2) => a1 + a2));
       final eitherR = Either<String, int>.of(10);
       final eitherL = Either<String, int>.left('none');
       expect(sg.combine(eitherR, eitherR), Either<String, int>.of(20));
@@ -719,6 +697,36 @@ void main() {
         final value = Either<String, int>.left('none');
         expect(value.toString(), 'Left(none)');
       });
+    });
+  });
+
+  group('bind', () {
+    test('Right', () {
+      final either1 = Either<String, int>.of(10);
+      final result = either1.bind((r) => Either<String, int>.of(r + 10));
+      expect(result.getOrElse((l) => 0), 20);
+    });
+    test('Left', () {
+      final either1 = Either<String, int>.left('String');
+      final result = either1.bind((r) => Either<String, int>.of(r + 10));
+      expect(result.getOrElse((l) => 0), 0);
+      expect(result.getLeft().getOrElse(() => ''), 'String');
+    });
+  });
+
+  group('asyncBind', () {
+    test('Right', () async {
+      final either1 = Either<String, int>.of(10);
+      final asyncEither = either1.asyncBind((r) async => Either<String, int>.of(r + 10));
+      final result = await asyncEither;
+      expect(result.getOrElse((l) => 0), 20);
+    });
+    test('Left', () async {
+      final either1 = Either<String, int>.left('String');
+      final asyncEither = either1.asyncBind((r) async => Either<String, int>.of(r + 10));
+      final result = await asyncEither;
+      expect(result.getOrElse((l) => 0), 0);
+      expect(result.getLeft().getOrElse(() => ''), 'String');
     });
   });
 }
