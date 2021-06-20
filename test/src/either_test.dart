@@ -721,4 +721,36 @@ void main() {
       });
     });
   });
+
+  group('bind', () {
+    test('Right', () {
+      final either1 = Either<String, int>.of(10);
+      final result = either1.bind((r) => Either<String, int>.of(r + 10));
+      expect(result.getOrElse((l) => 0), 20);
+    });
+
+    test('Left', () {
+      final either1 = Either<String, int>.left('String');
+      final result = either1.bind((r) => Either<String, int>.of(r + 10));
+      expect(result.getOrElse((l) => 0), 0);
+      expect(result.getLeft().getOrElse(() => ''), 'String');
+    });
+  });
+
+  group('bindFuture', () {
+    test('Right', () async {
+      final either1 = Either<String, int>.of(10);
+      final asyncEither = either1.bindFuture((r) async => Either.of(r + 10));
+      final result = await asyncEither.run();
+      expect(result.getOrElse((l) => 0), 20);
+    });
+
+    test('Left', () async {
+      final either1 = Either<String, int>.left('String');
+      final asyncEither = either1.bindFuture((r) async => Either.of(r + 10));
+      final result = await asyncEither.run();
+      expect(result.getOrElse((l) => 0), 0);
+      expect(result.getLeft().getOrElse(() => ''), 'String');
+    });
+  });
 }

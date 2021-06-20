@@ -1,7 +1,18 @@
 import 'function.dart';
 import 'option.dart';
+import 'task_either.dart';
 import 'tuple.dart';
 import 'typeclass/typeclass.export.dart';
+
+/// Return a `Right(r)`.
+///
+/// Shortcut for `Either.of(r)`.
+Either<L, R> right<L, R>(R r) => Right<L, R>(r);
+
+/// Return a `Left(l)`.
+///
+/// Shortcut for `Either.left(l)`.
+Either<L, R> left<L, R>(L l) => Left<L, R>(l);
 
 /// Tag the [HKT2] interface for the actual [Either].
 abstract class _EitherHKT {}
@@ -92,6 +103,8 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// You can extract the value of every [Right] in the chain without
   /// handling all possible missing cases.
   /// If any of the functions in the chain returns [Left], the result is [Left].
+  ///
+  /// Same as `bind`.
   @override
   Either<L, C> flatMap<C>(covariant Either<L, C> Function(R a) f);
 
@@ -135,6 +148,22 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   Either<L, R> filterOrElse(bool Function(R r) f, L Function(R r) onFalse) =>
       flatMap((r) => f(r) ? Either.of(r) : Either.left(onFalse(r)));
 
+  /// Used to chain multiple functions that return a [Either].
+  ///
+  /// You can extract the value of every [Right] in the chain without
+  /// handling all possible missing cases.
+  /// If any of the functions in the chain returns [Left], the result is [Left].
+  ///
+  /// Same as `flatMap`.
+  Either<L, R2> bind<R2>(Either<L, R2> Function(R r) f) => flatMap(f);
+
+  /// Used to chain multiple functions that return a `Future<Either>`.
+  ///
+  /// When this value is [Right], it returns a [TaskEither] that will resolve to
+  /// the result of calling `f`.
+  /// Otherwise, if this value is [Left], it returns `TaskEither.left()`.
+  TaskEither<L, R2> bindFuture<R2>(Future<Either<L, R2>> Function(R r) f);
+
   /// If the [Either] is [Left], then change its value from type `L` to
   /// type `C` using function `f`.
   Either<C, R> mapLeft<C>(C Function(L a) f);
@@ -176,7 +205,15 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   R getOrElse(R Function(L l) orElse);
 
   /// Execute `onLeft` when value is [Left], otherwise execute `onRight`.
+  ///
+  /// Same as `fold`.
   C match<C>(C Function(L l) onLeft, C Function(R r) onRight);
+
+  /// Execute `onLeft` when value is [Left], otherwise execute `onRight`.
+  ///
+  /// Same as `match`.
+  C fold<C>(C Function(L l) onLeft, C Function(R r) onRight) =>
+      match<C>(onLeft, onRight);
 
   /// Return `true` when value of `r` is equal to the value inside this [Either].
   /// If this [Either] is [Left], then return `false`.
@@ -320,6 +357,10 @@ class Right<L, R> extends Either<L, R> {
 
   @override
   String toString() => 'Right($_value)';
+
+  @override
+  TaskEither<L, R2> bindFuture<R2>(Future<Either<L, R2>> Function(R r) f) =>
+      TaskEither(() async => f(_value));
 }
 
 class Left<L, R> extends Either<L, R> {
@@ -396,4 +437,8 @@ class Left<L, R> extends Either<L, R> {
 
   @override
   String toString() => 'Left($_value)';
+
+  @override
+  TaskEither<L, R2> bindFuture<R2>(Future<Either<L, R2>> Function(R r) f) =>
+      TaskEither.left(_value);
 }
