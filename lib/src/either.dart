@@ -1,15 +1,17 @@
 import 'function.dart';
 import 'option.dart';
+import 'task_either.dart';
 import 'tuple.dart';
 import 'typeclass/typeclass.export.dart';
 
-/// Function wrapper for return the parameter;
-A id<A>(A a) => a;
-
 /// Return a `Right(r)`.
+///
+/// Shortcut for `Either.of(r)`.
 Either<L, R> right<L, R>(R r) => Right<L, R>(r);
 
 /// Return a `Left(l)`.
+///
+/// Shortcut for `Either.left(l)`.
 Either<L, R> left<L, R>(L l) => Left<L, R>(l);
 
 /// Tag the [HKT2] interface for the actual [Either].
@@ -21,7 +23,12 @@ abstract class _EitherHKT {}
 /// values when a computation may fail (such as `-1`, `null`, etc.), we return an instance
 /// of [Right] containing the correct result when a computation is successful, otherwise we return
 /// an instance of [Left] containing information about the kind of error that occurred.
-abstract class Either<L, R> extends HKT2<_EitherHKT, L, R> with Monad2<_EitherHKT, L, R>, Foldable2<_EitherHKT, L, R>, Alt2<_EitherHKT, L, R>, Extend2<_EitherHKT, L, R> {
+abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
+    with
+        Monad2<_EitherHKT, L, R>,
+        Foldable2<_EitherHKT, L, R>,
+        Alt2<_EitherHKT, L, R>,
+        Extend2<_EitherHKT, L, R> {
   const Either();
 
   /// Return the result of `f` called with `b` and the value of [Right].
@@ -32,16 +39,19 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R> with Monad2<_EitherHK
   /// Return the result of `f` called with `b` and the value of [Right].
   /// If this [Either] is [Left], return `b`.
   @override
-  C foldLeft<C>(C b, C Function(C acc, R b) f) => foldMap<Endo<C>>(dualEndoMonoid(), (b) => (C c) => f(c, b))(b);
+  C foldLeft<C>(C b, C Function(C acc, R b) f) =>
+      foldMap<Endo<C>>(dualEndoMonoid(), (b) => (C c) => f(c, b))(b);
 
   /// Use `monoid` to combine the value of [Right] applied to `f`.
   @override
-  C foldMap<C>(Monoid<C> monoid, C Function(R b) f) => foldRight(monoid.empty, (c, b) => monoid.combine(f(b), c));
+  C foldMap<C>(Monoid<C> monoid, C Function(R b) f) =>
+      foldRight(monoid.empty, (c, b) => monoid.combine(f(b), c));
 
   /// Return the result of `f` called with `b` and the value of [Right].
   /// If this [Either] is [Left], return `b`.
   @override
-  C foldRightWithIndex<C>(C c, C Function(int i, C acc, R b) f) => foldRight<Tuple2<C, int>>(
+  C foldRightWithIndex<C>(C c, C Function(int i, C acc, R b) f) =>
+      foldRight<Tuple2<C, int>>(
         Tuple2(c, length() - 1),
         (t, b) => Tuple2(f(t.second, t.first, b), t.second - 1),
       ).first;
@@ -49,7 +59,8 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R> with Monad2<_EitherHK
   /// Return the result of `f` called with `b` and the value of [Right].
   /// If this [Either] is [Left], return `b`.
   @override
-  C foldLeftWithIndex<C>(C c, C Function(int i, C acc, R b) f) => foldLeft<Tuple2<C, int>>(
+  C foldLeftWithIndex<C>(C c, C Function(int i, C acc, R b) f) =>
+      foldLeft<Tuple2<C, int>>(
         Tuple2(c, 0),
         (t, b) => Tuple2(f(t.second, t.first, b), t.second + 1),
       ).first;
@@ -84,20 +95,24 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R> with Monad2<_EitherHK
   /// Apply the function contained inside `a` to change the value on the [Right] from
   /// type `R` to a value of type `C`.
   @override
-  Either<L, C> ap<C>(covariant Either<L, C Function(R r)> a) => a.flatMap((f) => map(f));
+  Either<L, C> ap<C>(covariant Either<L, C Function(R r)> a) =>
+      a.flatMap((f) => map(f));
 
   /// Used to chain multiple functions that return a [Either].
   ///
   /// You can extract the value of every [Right] in the chain without
   /// handling all possible missing cases.
   /// If any of the functions in the chain returns [Left], the result is [Left].
+  ///
+  /// Same as `bind`.
   @override
   Either<L, C> flatMap<C>(covariant Either<L, C> Function(R a) f);
 
   /// If this [Either] is a [Right], then return the result of calling `then`.
   /// Otherwise return [Left].
   @override
-  Either<L, R2> andThen<R2>(covariant Either<L, R2> Function() then) => flatMap((_) => then());
+  Either<L, R2> andThen<R2>(covariant Either<L, R2> Function() then) =>
+      flatMap((_) => then());
 
   /// Return the current [Either] if it is a [Right], otherwise return the result of `orElse`.
   ///
@@ -108,13 +123,16 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R> with Monad2<_EitherHK
   /// Change type of this [Either] based on its value of type `R` and the
   /// value of type `C` of another [Either].
   @override
-  Either<L, D> map2<C, D>(covariant Either<L, C> m1, D Function(R b, C c) f) => flatMap((b) => m1.map((c) => f(b, c)));
+  Either<L, D> map2<C, D>(covariant Either<L, C> m1, D Function(R b, C c) f) =>
+      flatMap((b) => m1.map((c) => f(b, c)));
 
   /// Change type of this [Either] based on its value of type `R`, the
   /// value of type `C` of a second [Either], and the value of type `D`
   /// of a third [Either].
   @override
-  Either<L, E> map3<C, D, E>(covariant Either<L, C> m1, covariant Either<L, D> m2, E Function(R b, C c, D d) f) => flatMap((b) => m1.flatMap((c) => m2.map((d) => f(b, c, d))));
+  Either<L, E> map3<C, D, E>(covariant Either<L, C> m1,
+          covariant Either<L, D> m2, E Function(R b, C c, D d) f) =>
+      flatMap((b) => m1.flatMap((c) => m2.map((d) => f(b, c, d))));
 
   /// Change the value of [Either] from type `R` to type `Z` based on the
   /// value of `Either<L, R>` using function `f`.
@@ -127,14 +145,24 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R> with Monad2<_EitherHK
 
   /// If `f` applied on this [Either] as [Right] returns `true`, then return this [Either].
   /// If it returns `false`, return the result of `onFalse` in a [Left].
-  Either<L, R> filterOrElse(bool Function(R r) f, L Function(R r) onFalse) => flatMap((r) => f(r) ? Either.of(r) : Either.left(onFalse(r)));
+  Either<L, R> filterOrElse(bool Function(R r) f, L Function(R r) onFalse) =>
+      flatMap((r) => f(r) ? Either.of(r) : Either.left(onFalse(r)));
 
-  /// Bind other [Either] object on current [Either]
-  /// mapping the [Right] and preserving the [Left].
-  Either<L, R2> bind<R2>(Either<L, R2> Function(R r) f) => match<Either<L, R2>>((l) => Either.left(l), f);
+  /// Used to chain multiple functions that return a [Either].
+  ///
+  /// You can extract the value of every [Right] in the chain without
+  /// handling all possible missing cases.
+  /// If any of the functions in the chain returns [Left], the result is [Left].
+  ///
+  /// Same as `flatMap`.
+  Either<L, R2> bind<R2>(Either<L, R2> Function(R r) f) => flatMap(f);
 
-  /// Same as [bind], but receiving and returning a [Future<Either>].
-  Future<Either<L, R2>> asyncBind<R2>(Future<Either<L, R2>> Function(R r) f) => match<Future<Either<L, R2>>>((l) async => Either.left(l), f);
+  /// Used to chain multiple functions that return a `Future<Either>`.
+  ///
+  /// When this value is [Right], it returns a [TaskEither] that will resolve to
+  /// the result of calling `f`.
+  /// Otherwise, if this value is [Left], it returns `TaskEither.left()`.
+  TaskEither<L, R2> bindFuture<R2>(Future<Either<L, R2>> Function(R r) f);
 
   /// If the [Either] is [Left], then change its value from type `L` to
   /// type `C` using function `f`.
@@ -177,10 +205,15 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R> with Monad2<_EitherHK
   R getOrElse(R Function(L l) orElse);
 
   /// Execute `onLeft` when value is [Left], otherwise execute `onRight`.
+  ///
+  /// Same as `fold`.
   C match<C>(C Function(L l) onLeft, C Function(R r) onRight);
 
   /// Execute `onLeft` when value is [Left], otherwise execute `onRight`.
-  C fold<C>(C Function(L l) onLeft, C Function(R r) onRight) => match<C>(onLeft, onRight);
+  ///
+  /// Same as `match`.
+  C fold<C>(C Function(L l) onLeft, C Function(R r) onRight) =>
+      match<C>(onLeft, onRight);
 
   /// Return `true` when value of `r` is equal to the value inside this [Either].
   /// If this [Either] is [Left], then return `false`.
@@ -202,19 +235,24 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R> with Monad2<_EitherHK
   /// Return an [Either] from a [Option]:
   /// - If [Option] is [Some], then return [Right] containing its value
   /// - If [Option] is [None], then return [Left] containing the result of `onNone`
-  factory Either.fromOption(Option<R> m, L Function() onNone) => m.match((r) => Either.of(r), () => Either.left(onNone()));
+  factory Either.fromOption(Option<R> m, L Function() onNone) =>
+      m.match((r) => Either.of(r), () => Either.left(onNone()));
 
   /// If calling `predicate` with `r` returns `true`, then return `Right(r)`.
   /// Otherwise return [Left] containing the result of `onFalse`.
-  factory Either.fromPredicate(R r, bool Function(R r) predicate, L Function(R r) onFalse) => predicate(r) ? Either.of(r) : Either.left(onFalse(r));
+  factory Either.fromPredicate(
+          R r, bool Function(R r) predicate, L Function(R r) onFalse) =>
+      predicate(r) ? Either.of(r) : Either.left(onFalse(r));
 
   /// If `r` is `null`, then return the result of `onNull` in [Left].
   /// Otherwise return `Right(r)`.
-  factory Either.fromNullable(R? r, L Function(R? r) onNull) => r != null ? Either.of(r) : Either.left(onNull(r));
+  factory Either.fromNullable(R? r, L Function(R? r) onNull) =>
+      r != null ? Either.of(r) : Either.left(onNull(r));
 
   /// Try to execute `run`. If no error occurs, then return [Right].
   /// Otherwise return [Left] containing the result of `onError`.
-  factory Either.tryCatch(R Function() run, L Function(Object o, StackTrace s) onError) {
+  factory Either.tryCatch(
+      R Function() run, L Function(Object o, StackTrace s) onError) {
     try {
       return Either.of(run());
     } catch (e, s) {
@@ -227,7 +265,10 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R> with Monad2<_EitherHK
   /// Return `true` when the two [Either] are equal or when both are [Left] or
   /// [Right] and comparing using `eqL` or `eqR` returns `true`.
   static Eq<Either<L, R>> getEq<L, R>(Eq<L> eqL, Eq<R> eqR) =>
-      Eq.instance((e1, e2) => e1 == e2 || (e1.match((l1) => e2.match((l2) => eqL.eqv(l1, l2), (_) => false), (r1) => e2.match((_) => false, (r2) => eqR.eqv(r1, r2)))));
+      Eq.instance((e1, e2) =>
+          e1 == e2 ||
+          (e1.match((l1) => e2.match((l2) => eqL.eqv(l1, l2), (_) => false),
+              (r1) => e2.match((_) => false, (r2) => eqR.eqv(r1, r2)))));
 
   /// Build a `Semigroup<Either>` from a [Semigroup].
   ///
@@ -236,7 +277,10 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R> with Monad2<_EitherHK
   ///
   /// When both are [Left], return the first [Either].
   static Semigroup<Either<L, R>> getSemigroup<L, R>(Semigroup<R> semigroup) =>
-      Semigroup.instance((e1, e2) => e2.match((_) => e1, (r2) => e1.match((_) => e2, (r1) => Either.of(semigroup.combine(r1, r2)))));
+      Semigroup.instance((e1, e2) => e2.match(
+          (_) => e1,
+          (r2) => e1.match(
+              (_) => e2, (r1) => Either.of(semigroup.combine(r1, r2)))));
 }
 
 class Right<L, R> extends Either<L, R> {
@@ -247,10 +291,13 @@ class Right<L, R> extends Either<L, R> {
   R get value => _value;
 
   @override
-  Either<L, D> map2<C, D>(covariant Either<L, C> m1, D Function(R b, C c) f) => flatMap((b) => m1.map((c) => f(b, c)));
+  Either<L, D> map2<C, D>(covariant Either<L, C> m1, D Function(R b, C c) f) =>
+      flatMap((b) => m1.map((c) => f(b, c)));
 
   @override
-  Either<L, E> map3<C, D, E>(covariant Either<L, C> m1, covariant Either<L, D> m2, E Function(R b, C c, D d) f) => flatMap((b) => m1.flatMap((c) => m2.map((d) => f(b, c, d))));
+  Either<L, E> map3<C, D, E>(covariant Either<L, C> m1,
+          covariant Either<L, D> m2, E Function(R b, C c, D d) f) =>
+      flatMap((b) => m1.flatMap((c) => m2.map((d) => f(b, c, d))));
 
   @override
   Either<L, C> map<C>(C Function(R a) f) => Right<L, C>(f(_value));
@@ -262,7 +309,8 @@ class Right<L, R> extends Either<L, R> {
   C foldRight<C>(C b, C Function(C acc, R a) f) => f(b, _value);
 
   @override
-  C match<C>(C Function(L l) onLeft, C Function(R r) onRight) => onRight(_value);
+  C match<C>(C Function(L l) onLeft, C Function(R r) onRight) =>
+      onRight(_value);
 
   @override
   Either<L, C> flatMap<C>(covariant Either<L, C> Function(R a) f) => f(_value);
@@ -289,7 +337,8 @@ class Right<L, R> extends Either<L, R> {
   Either<L, Z> extend<Z>(Z Function(Either<L, R> t) f) => Either.of(f(this));
 
   @override
-  Either<L1, R> orElse<L1>(Either<L1, R> Function(L l) onLeft) => Either.of(_value);
+  Either<L1, R> orElse<L1>(Either<L1, R> Function(L l) onLeft) =>
+      Either.of(_value);
 
   @override
   R getOrElse(R Function(L l) orElse) => _value;
@@ -308,6 +357,10 @@ class Right<L, R> extends Either<L, R> {
 
   @override
   String toString() => 'Right($_value)';
+
+  @override
+  TaskEither<L, R2> bindFuture<R2>(Future<Either<L, R2>> Function(R r) f) =>
+      TaskEither(() async => f(_value));
 }
 
 class Left<L, R> extends Either<L, R> {
@@ -318,10 +371,13 @@ class Left<L, R> extends Either<L, R> {
   L get value => _value;
 
   @override
-  Either<L, D> map2<C, D>(covariant Either<L, C> m1, D Function(R b, C c) f) => flatMap((b) => m1.map((c) => f(b, c)));
+  Either<L, D> map2<C, D>(covariant Either<L, C> m1, D Function(R b, C c) f) =>
+      flatMap((b) => m1.map((c) => f(b, c)));
 
   @override
-  Either<L, E> map3<C, D, E>(covariant Either<L, C> m1, covariant Either<L, D> m2, E Function(R b, C c, D d) f) => flatMap((b) => m1.flatMap((c) => m2.map((d) => f(b, c, d))));
+  Either<L, E> map3<C, D, E>(covariant Either<L, C> m1,
+          covariant Either<L, D> m2, E Function(R b, C c, D d) f) =>
+      flatMap((b) => m1.flatMap((c) => m2.map((d) => f(b, c, d))));
 
   @override
   Either<L, C> map<C>(C Function(R a) f) => Left<L, C>(_value);
@@ -336,7 +392,8 @@ class Left<L, R> extends Either<L, R> {
   C match<C>(C Function(L l) onLeft, C Function(R r) onRight) => onLeft(_value);
 
   @override
-  Either<L, C> flatMap<C>(covariant Either<L, C> Function(R a) f) => Left<L, C>(_value);
+  Either<L, C> flatMap<C>(covariant Either<L, C> Function(R a) f) =>
+      Left<L, C>(_value);
 
   @override
   Option<R> toOption() => Option.none();
@@ -360,7 +417,8 @@ class Left<L, R> extends Either<L, R> {
   Either<L, Z> extend<Z>(Z Function(Either<L, R> t) f) => Either.left(_value);
 
   @override
-  Either<L1, R> orElse<L1>(Either<L1, R> Function(L l) onLeft) => onLeft(_value);
+  Either<L1, R> orElse<L1>(Either<L1, R> Function(L l) onLeft) =>
+      onLeft(_value);
 
   @override
   R getOrElse(R Function(L l) orElse) => orElse(_value);
@@ -379,4 +437,8 @@ class Left<L, R> extends Either<L, R> {
 
   @override
   String toString() => 'Left($_value)';
+
+  @override
+  TaskEither<L, R2> bindFuture<R2>(Future<Either<L, R2>> Function(R r) f) =>
+      TaskEither.left(_value);
 }
