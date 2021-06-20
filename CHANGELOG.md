@@ -1,8 +1,14 @@
-# v0.0.5
+# v0.0.5 - 20 June 2021
 
 - Completed `State` type implementation, documentation, and testing
 - Completed `Reader` type implementation, documentation, and testing
 - Completed `IO` type implementation, documentation, and testing
+- Merged PR ([#2](https://github.com/SandroMaglione/fpdart/pull/2)) by [jacobaraujo7](https://github.com/jacobaraujo7) 🎉
+  - Added `right` and `left` functions to create instance of `Either`
+  - Added `id` function (same as `identity`)
+  - Added `fold` method to `Either` (same as `match`)
+  - Added `bind` method to `Either` (same as `flatMap`)
+  - Added `bindFuture` method to `Either`, which returns `TaskEither`
 
 # v0.0.4 - 15 June 2021
 
