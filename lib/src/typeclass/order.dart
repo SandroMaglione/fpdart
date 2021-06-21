@@ -19,6 +19,8 @@ import 'partial_order.dart';
 ///
 /// **By the totality law, `x <= y` and `y <= x` cannot be both false**.
 abstract class Order<T> extends PartialOrder<T> {
+  const Order();
+
   /// Result of comparing `x` with `y`. Returns an Int whose sign is:
   /// - negative iff `x < y`
   /// - zero     iff `x == y`

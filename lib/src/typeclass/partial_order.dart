@@ -23,6 +23,8 @@ import 'eq.dart';
 /// **Note**: A partial order under which every pair of elements is comparable
 /// is called a [total order](https://en.wikipedia.org/wiki/Total_order) ([Order]).
 abstract class PartialOrder<T> extends Eq<T> {
+  const PartialOrder();
+
   /// Result of comparing `x` with `y`.
   ///
   /// Returns `null` if operands are not comparable.
