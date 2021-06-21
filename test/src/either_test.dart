@@ -559,6 +559,18 @@ void main() {
       value.match((l) => null, (r) => expect(r, 10));
     });
 
+    test('right()', () {
+      final value = Either<String, int>.right(10);
+      expect(value, isA<Right>());
+      value.match((l) => null, (r) => expect(r, 10));
+    });
+
+    test('of() == right()', () {
+      final of = Either<String, int>.of(10);
+      final right = Either<String, int>.right(10);
+      expect(of, right);
+    });
+
     test('left()', () {
       final value = Either<String, int>.left('none');
       expect(value, isA<Left>());
