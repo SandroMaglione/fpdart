@@ -227,7 +227,14 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   factory Either.flatten(Either<L, Either<L, R>> e) => e.flatMap(identity);
 
   /// Return a `Right(r)`.
+  ///
+  /// Same as `Either.right(r)`.
   factory Either.of(R r) => Right(r);
+
+  /// Return a `Right(r)`.
+  ///
+  /// Same as `Either.of(r)`.
+  factory Either.right(R r) => Right(r);
 
   /// Return a `Left(l)`.
   factory Either.left(L l) => Left(l);
