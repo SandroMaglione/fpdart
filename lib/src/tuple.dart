@@ -1,5 +1,8 @@
 import 'package:fpdart/fpdart.dart';
 
+/// Return a `Tuple2(a, b)`.
+Tuple2<A, B> tuple2<A, B>(A a, B b) => Tuple2(a, b);
+
 /// Tag the [HKT2] interface for the actual [Tuple2].
 abstract class _Tuple2HKT {}
 
