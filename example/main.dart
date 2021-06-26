@@ -2,6 +2,49 @@ import 'package:fpdart/fpdart.dart';
 
 void main() {}
 
+void overview() {
+  /// [Option]
+  const int? a = null;
+  final Option<int> b = none<int>();
+
+  /// You must manually handle missing values
+  int resultI = 0;
+  if (a != null) {
+    resultI = a * 2;
+  }
+
+  /// No need to check for `null`
+  final resultF = b.getOrElse(() => 0) * 2;
+}
+
+void imperativeVSfunctional() {
+  /// Sum elements of a list
+  const List<int> list = [1, 2, 3, 4];
+
+  /// Imperative solution
+  int sumI = 0;
+  for (int i = 0; i < list.length; ++i) {
+    sumI = sumI + list[i];
+  }
+
+  /// Functional solution
+  final sumF = list.fold<int>(0, (p, c) => p + c);
+
+  /// Composability
+  /// Sum all elements of a list that are greater than 2
+  /// Imperative solution
+  int sum2I = 0;
+  for (int i = 0; i < list.length; ++i) {
+    final value = list[i];
+    if (value > 2) {
+      sum2I = sum2I + value;
+    }
+  }
+
+  /// Functional solution
+  final sum2F = list.where((e) => e > 2).fold<int>(0, (p, c) => p + c);
+}
+
 void option() {
   /// Create an instance of [Some]
   final option = Option.of(10);

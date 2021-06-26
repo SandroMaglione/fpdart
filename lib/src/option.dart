@@ -11,6 +11,16 @@ import 'typeclass/foldable.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
+/// Return a `Some(t)`.
+///
+/// Shortcut for `Option.of(r)`.
+Option<T> some<T>(T t) => Some(t);
+
+/// Return a [None].
+///
+/// Shortcut for `Option.none()`.
+Option<T> none<T>() => const None();
+
 /// Tag the [HKT] interface for the actual [Option].
 abstract class _OptionHKT {}
 

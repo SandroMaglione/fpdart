@@ -1,5 +1,23 @@
 import 'package:fpdart/fpdart.dart';
 
+/// Don't do that! ⚠
+double divideI(int x, int y) {
+  if (y == 0) {
+    throw Exception('Cannot divide by 0!');
+  }
+
+  return x / y;
+}
+
+/// Error handling using [Option] 🎉
+Option<double> divideF(int x, int y) {
+  if (y == 0) {
+    return none();
+  }
+
+  return some(x / y);
+}
+
 void main() {
   /// Create an instance of [Some]
   final option = Option.of(10);

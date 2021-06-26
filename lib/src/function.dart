@@ -36,6 +36,15 @@ T identity<T>(T a) => a;
 /// ```
 T id<T>(T a) => a;
 
+/// `constf a` is a unary function which evaluates to `a` for all inputs.
+/// ```dart
+/// final c = constF<int>(10);
+/// print(c('none')); // -> 10
+/// print(c('any')); // -> 10
+/// print(c(112.12)); // -> 10
+/// ```
+A Function(dynamic b) constF<A>(A a) => (dynamic b) => a;
+
 /// Converts a binary function into a unary function that returns a unary function.
 ///
 /// Enables the use of partial application of functions.
