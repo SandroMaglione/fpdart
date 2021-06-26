@@ -21,6 +21,18 @@ Option<T> some<T>(T t) => Some(t);
 /// Shortcut for `Option.none()`.
 Option<T> none<T>() => const None();
 
+/// Return [None] if `t` is `null`, [Some] otherwise.
+///
+/// Same as initializing `Option.fromNullable(t)`.
+Option<T> optionOf<T>(T? t) => Option.fromNullable(t);
+
+/// Return [Some] of `value` when `predicate` applied to `value` returns `true`,
+/// [None] otherwise.
+///
+/// Same as initializing `Option.fromPredicate(value, predicate)`.
+Option<T> option<T>(T value, bool Function(T) predicate) =>
+    Option.fromPredicate(value, predicate);
+
 /// Tag the [HKT] interface for the actual [Option].
 abstract class _OptionHKT {}
 
