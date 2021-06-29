@@ -6,12 +6,13 @@ import 'typeclass/order.dart';
 extension FpdartOnMutableIterable<T> on Iterable<T> {
   /// Join elements at the same index from two different [List] into
   /// one [List] containing the result of calling `f` on the elements pair.
-  Iterable<C> zipWith<B, C>(C Function(B b) Function(T t) f, Iterable<B> lb) =>
-      isEmpty || lb.isEmpty
+  Iterable<C> Function(Iterable<B> lb) zipWith<B, C>(
+          C Function(B b) Function(T t) f) =>
+      (Iterable<B> lb) => isEmpty || lb.isEmpty
           ? []
           : [
               f(elementAt(0))(lb.elementAt(0)),
-              ...skip(1).zipWith(f, lb.skip(1)),
+              ...skip(1).zipWith(f)(lb.skip(1)),
             ];
 
   /// `zip` is used to join elements at the same index from two different [List]
@@ -23,7 +24,7 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
   /// print(zipList); // -> [Tuple2(a, 1), Tuple2(b, 2)]
   /// ```
   Iterable<Tuple2<T, B>> zip<B>(Iterable<B> lb) =>
-      zipWith<B, Tuple2<T, B>>((a) => (b) => Tuple2(a, b), lb);
+      zipWith<B, Tuple2<T, B>>((a) => (b) => Tuple2(a, b))(lb);
 
   /// Get the first element of the list.
   /// If the list is empty, return [None].
@@ -98,14 +99,14 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
   Iterable<T> takeWhileRight(bool Function(T t) predicate) =>
       foldRight<Tuple2<bool, Iterable<T>>>(
         const Tuple2(true, []),
-        (a, e) {
+        (e, a) {
           if (!a.first) {
             return a;
           }
 
           final check = predicate(e);
           return check
-              ? Tuple2(check, [...a.second, e])
+              ? Tuple2(check, a.second.prepend(e))
               : Tuple2(check, a.second);
         },
       ).second;
@@ -114,15 +115,15 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
   Iterable<T> dropWhileRight(bool Function(T t) predicate) =>
       foldRight<Tuple2<bool, Iterable<T>>>(
         const Tuple2(true, []),
-        (a, e) {
+        (e, a) {
           if (!a.first) {
-            return Tuple2(a.first, a.second.append(e));
+            return Tuple2(a.first, a.second.prepend(e));
           }
 
           final check = predicate(e);
           return check
               ? Tuple2(check, a.second)
-              : Tuple2(check, a.second.append(e));
+              : Tuple2(check, a.second.prepend(e));
         },
       ).second;
 
@@ -148,11 +149,11 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
   /// with elements that **do not satisfy** `predicate` and second element is the remainder of the [Iterable].
   Tuple2<Iterable<T>, Iterable<T>> breakI(bool Function(T t) predicate) =>
       foldLeft<Tuple2<bool, Tuple2<Iterable<T>, Iterable<T>>>>(
-        const Tuple2(true, Tuple2([], [])),
+        const Tuple2(false, Tuple2([], [])),
         (a, e) {
-          if (!a.first) {
+          if (a.first) {
             return Tuple2(
-                a.first, a.second.mapFirst((first) => first.append(e)));
+                a.first, a.second.mapSecond((second) => second.append(e)));
           }
 
           final check = predicate(e);
@@ -176,15 +177,17 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
 
   /// Insert `element` into the list at the first position where it is less than or equal to the next element
   /// based on `order`.
+  ///
+  /// Note: The element is added **before** an equal element already in the [Iterable].
   Iterable<T> insertBy(Order<T> order, T element) => isEmpty
       ? [element]
       : order.compare(element, first) > 0
           ? [first, ...drop(1).insertBy(order, element)]
-          : [element, ...drop(1)];
+          : [element, first, ...drop(1)];
 
   /// Sort this [Iterable] based on `order`.
   Iterable<T> sortBy(Order<T> order) =>
-      foldRight([], (a, e) => a.insertBy(order, e));
+      foldRight([], (e, a) => a.insertBy(order, e));
 
   /// Return the intersection of two [Iterable] (all the elements that both [Iterable] have in common).
   Iterable<T> intersect(Iterable<T> l) =>
@@ -203,10 +206,14 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
       }).second;
 
   /// The largest element of this [Iterable] based on `order`.
+  ///
+  /// If the list is empty, return [None].
   Option<T> maximumBy(Order<T> order) => foldLeft(none(),
       (a, c) => some(a.match((t) => order.compare(c, t) > 0 ? c : t, () => c)));
 
   /// The least element of this [Iterable] based on `order`.
+  ///
+  /// If the list is empty, return [None].
   Option<T> minimumBy(Order<T> order) => foldLeft(none(),
       (a, c) => some(a.match((t) => order.compare(c, t) < 0 ? c : t, () => c)));
 
@@ -238,21 +245,25 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
 
   /// Fold a [List] into a single value by aggregating each element of the list
   /// **from the last to the first**.
-  B foldRight<B>(B initialValue, B Function(B accumulator, T element) f) =>
-      toList().reversed.fold(initialValue, f);
+  B foldRight<B>(B initialValue, B Function(T element, B accumulator) f) =>
+      toList().reversed.fold(initialValue, (a, e) => f(e, a));
 
   /// Fold a [List] into a single value by aggregating each element of the list
   /// **from the last to the first** using their index.
   B foldRightWithIndex<B>(
-          B initialValue, B Function(B accumulator, T element, int index) f) =>
+          B initialValue, B Function(T element, B accumulator, int index) f) =>
       foldRight<Tuple2<B, int>>(
         Tuple2(initialValue, 0),
-        (p, e) => Tuple2(f(p.first, e, p.second), p.second + 1),
+        (e, p) => Tuple2(f(e, p.first, p.second), p.second + 1),
       ).first;
 
   /// Map [Iterable] from type `T` to type `B` using the index.
   Iterable<B> mapWithIndex<B>(B Function(T t, int index) f) =>
       foldLeftWithIndex([], (a, e, i) => [...a, f(e, i)]);
+
+  /// Apply all the functions inside `fl` to the [Iterable].
+  Iterable<B> ap<B>(Iterable<B Function(T t)> fl) =>
+      fl.concatMap((f) => map(f));
 
   /// Apply `f` to each element of the [Iterable] and flat the result using `concat`.
   ///
@@ -265,10 +276,6 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
   /// Same as `bindWithIndex` and `flatMapWithIndex`.
   Iterable<B> concatMapWithIndex<B>(Iterable<B> Function(T t, int index) f) =>
       mapWithIndex(f).concat;
-
-  /// Apply all the functions inside `fl` to the [Iterable].
-  Iterable<B> ap<B>(Iterable<B Function(T t)> fl) =>
-      fl.concatMap((f) => map(f));
 
   /// For each element of the [Iterable] apply function `f` and flat the result.
   ///
