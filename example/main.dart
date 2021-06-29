@@ -43,6 +43,19 @@ void imperativeVSfunctional() {
 
   /// Functional solution
   final sum2F = list.where((e) => e > 2).fold<int>(0, (p, c) => p + c);
+
+  /// Extreme example
+  ///
+  /// How can you achieve the same result with Imperative code?
+  /// Is it even possible? 🤷‍♂️
+  final result = list
+      .where((e) => e > 2)
+      .plus([1, 2, 3])
+      .drop(2)
+      .intersect([1, 2, 3])
+      .map((e) => e * 2)
+      .take(3)
+      .first;
 }
 
 void option() {
