@@ -1,11 +1,13 @@
-# Fpdart
+# `Fpdart`
 
 <p>
   <a href="https://github.com/SandroMaglione/fpdart">
     <img src="https://img.shields.io/github/stars/SandroMaglione/fpdart?logo=github" />
   </a>
+  <img src="https://img.shields.io/github/repo-size/SandroMaglione/fpdart" />
   <img src="https://img.shields.io/github/license/SandroMaglione/fpdart?logo=github" />
-  <img src="https://img.shields.io/badge/version-0.0.5-blue.svg" />
+  <img src="https://img.shields.io/github/contributors-anon/SandroMaglione/fpdart" />
+  <img src="https://img.shields.io/pub/v/fpdart?include_prereleases" />
   <!-- <img src="https://img.shields.io/badge/flutter-v2.0.2-blue.svg" /> -->
   <img src="https://img.shields.io/badge/dart-v2.13.1-blue.svg" />
   <a href="https://github.com/SandroMaglione">
@@ -28,7 +30,12 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 
 **Note**: The package is still in early development. The API may change frequently and there will be many breaking changes. The documentation and testing is currently under development, but it is coming soon and fast. Follow my [**Twitter**](https://twitter.com/SandroMaglione) for daily updates.
 
-## Types
+## 📖 Learn `functional programming` and `fpdart`
+Would you like to know more about functional programming, fpdart, and how to use the package? Check out this series of articles about functional programming with fpdart:
+
+1. [**Fpdart, Functional Programming in Dart and Flutter**](https://www.sandromaglione.com/fpdart-functional-programming-in-dart-and-flutter/)
+
+## 🎯 Types
 
 - [x] `Option`
 - [x] `Either`
@@ -39,6 +46,7 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 - [x] `Reader`
 - [x] `Tuple`
 - [x] `IO`
+- [x] `Iterable` (`List`) `extension`
 - [ ] `TaskOption`
 - [ ] `IOEither`
 - [ ] `ReaderEither`
@@ -49,15 +57,15 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 - [ ] `Writer`
 - ~~`IList`~~
 
-## Installation
+## 💻 Installation
 
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.0.5 # Check out the latest version
+  fpdart: ^0.0.6 # Check out the latest version
 ```
 
-## Examples
+## ✨ Examples
 
 ### [Option](https://github.com/SandroMaglione/fpdart/blob/540431746d616d30fadf36cc9d1a77c14baf35f4/lib/src/option.dart#L40)
 
@@ -142,7 +150,7 @@ Many more examples are coming soon. Check out [**my website**](https://www.sandr
 
 ---
 
-## Motivation
+## 💡 Motivation
 
 Functional programming is becoming more and more popular, and for good reasons.
 
@@ -178,7 +186,7 @@ Fpdart is a rewrite based on fp-ts and cats. The main differences are:
 - Fpdart implements some missing types in dartz.
 - Fpdart (currently) does not provide implementation for immutable collections (`ISet`, `IMap`, `IHashMap`, `AVLTree`).
 
-## Roadmap
+## 🤔 Roadmap
 
 Being documentation and stability important goals of the package, every type will go through an implementation-documentation-testing cycle before being considered as _'stable'_.
 
@@ -261,15 +269,16 @@ A well explained documentation is the key for the long-term success of the proje
 
 In general, any contribution or feedback is welcome (and encouraged!).
 
-## Versioning
+## 📃 Versioning
 
+- v0.0.6 - 29 June 2021
 - v0.0.5 - 20 June 2021
 - v0.0.4 - 15 June 2021
 - v0.0.3 - 13 June 2021
 - v0.0.2 - 13 June 2021
 - v0.0.1 - 28 May 2021
 
-## Support
+## 😀 Support
 
 Currently the best way to support me would be to follow me on my [**Twitter**](https://twitter.com/SandroMaglione).
 
@@ -279,6 +288,6 @@ Another option (or `Option`) would be to buy me a coffee.
 <img src="https://shields.io/badge/sandromaglione-Support--me-FFDD00?logo=buy-me-a-coffee&style=for-the-badge&link=https://www.buymeacoffee.com/sandromaglione" />
 </a>
 
-## License
+## 👀 License
 
 MIT License, see the [LICENSE.md](https://github.com/SandroMaglione/fpdart/blob/main/LICENSE) file for details.

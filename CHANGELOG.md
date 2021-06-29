@@ -1,3 +1,15 @@
+# v0.0.6 - 29 June 2021
+
+- Released Part 1 of [**Fpdart, Functional Programming in Dart and Flutter**](https://www.sandromaglione.com/fpdart-functional-programming-in-dart-and-flutter/)
+- Added functional extension methods on `Iterable` (`List`)
+- Added `constF` function
+- Added `option` and `optionOf` (same as dartz)
+- Added `Either.right(r)` factory constructor to `Either` class (same as `Either.of(r)`) ([#3](https://github.com/SandroMaglione/fpdart/issues/3))
+- Added example on reading local file using `TaskEither` ([read_write_file](https://github.com/SandroMaglione/fpdart/tree/main/example/read_write_file))
+- Added more [examples](https://github.com/SandroMaglione/fpdart/tree/main/example)
+- Added constant constructors to Eq and variants, by [mateusfccp](https://github.com/mateusfccp) ([#4](https://github.com/SandroMaglione/fpdart/pull/4)) 🎉
+
+
 # v0.0.5 - 20 June 2021
 
 - Completed `State` type implementation, documentation, and testing
