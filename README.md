@@ -47,15 +47,14 @@ Would you like to know more about functional programming, fpdart, and how to use
 - [x] `Tuple`
 - [x] `IO`
 - [x] `Iterable` (`List`) `extension`
+- [x] `IOEither`
 - [ ] `TaskOption`
-- [ ] `IOEither`
 - [ ] `ReaderEither`
 - [ ] `ReaderTask`
 - [ ] `ReaderTaskEither`
 - [ ] `StateReaderTaskEither`
 - [ ] `Lens`
 - [ ] `Writer`
-- ~~`IList`~~
 
 ## 💻 Installation
 
@@ -228,11 +227,11 @@ The roadmap for types development is highlighted below (breaking changes to _'st
     - ~~Implementation~~
     - ~~Documentation~~
     - ~~Testing~~
-10. `TaskOption`
-    - Implementation
-    - Documentation
-    - Testing
-11. `IOEither`
+10. ~~`IOEither`~~
+    - ~~Implementation~~
+    - ~~Documentation~~
+    - ~~Testing~~
+11. `TaskOption`
     - Implementation
     - Documentation
     - Testing
@@ -261,13 +260,13 @@ The roadmap for types development is highlighted below (breaking changes to _'st
     - Documentation
     - Testing
 
-**Note**: Integrations with immutable collections (`IList`, `ISet`, `IMap`, etc.) will be developed after the main functional programming types above are complete (as _'main'_ types I consider all until `IOEither`).
+**Note**: Integrations for immutable collections (`IList`, `ISet`, `IMap`, etc.) are still being discussed with the community. `fpdart` does not want to be another immutable collection solution in the ecosystem. That is why we are working to integrate `fpdart` with other more mature packages that already implements immutable collections. Stay tuned!
 
 The long-term goal is to provide all the main types and typeclasses available in other functional programming languages and packages. All the types should be **completely** documented and fully tested.
 
-A well explained documentation is the key for the long-term success of the project. Any article, blog post, or contribution is welcome.
+A well explained documentation is the key for the long-term success of the project. **Any article, blog post, or contribution is welcome**.
 
-In general, any contribution or feedback is welcome (and encouraged!).
+In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
 

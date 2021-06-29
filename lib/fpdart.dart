@@ -2,6 +2,7 @@ export 'src/either.dart';
 export 'src/function.dart';
 export 'src/ilist.dart';
 export 'src/io.dart';
+export 'src/io_either.dart';
 export 'src/list_extension.dart';
 export 'src/option.dart';
 export 'src/reader.dart';

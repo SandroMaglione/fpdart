@@ -2,6 +2,7 @@
 
 - Released Part 1 of [**Fpdart, Functional Programming in Dart and Flutter**](https://www.sandromaglione.com/fpdart-functional-programming-in-dart-and-flutter/)
 - Added functional extension methods on `Iterable` (`List`)
+- Completed `IOEither` type implementation, documentation, and testing
 - Added `constF` function
 - Added `option` and `optionOf` (same as dartz)
 - Added `Either.right(r)` factory constructor to `Either` class (same as `Either.of(r)`) ([#3](https://github.com/SandroMaglione/fpdart/issues/3))

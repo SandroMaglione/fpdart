@@ -6,7 +6,7 @@ abstract class _IOHKT {}
 /// `IO<A>` represents a **non-deterministic synchronous** computation that
 /// can **cause side effects**, yields a value of type `A` and **never fails**.
 ///
-/// If you want to represent a synchronous computation that may fail, see [IOEither] (coming soon).
+/// If you want to represent a synchronous computation that may fail, see [IOEither].
 class IO<A> extends HKT<_IOHKT, A> with Monad<_IOHKT, A> {
   final A Function() _run;
 
@@ -15,6 +15,9 @@ class IO<A> extends HKT<_IOHKT, A> with Monad<_IOHKT, A> {
 
   /// Flat a [IO] contained inside another [IO] to be a single [IO].
   factory IO.flatten(IO<IO<A>> io) => io.flatMap(identity);
+
+  /// Build a [IO] that returns `a`.
+  factory IO.of(A a) => IO(() => a);
 
   /// Used to chain multiple functions that return a [IO].
   @override
