@@ -267,6 +267,18 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
     }
   }
 
+  /// Try to execute `run`. If no error occurs, then return [Right].
+  /// Otherwise return [Left] containing the result of `onError`.
+  ///
+  /// `run` has one argument, which allows for easier chaining with
+  /// `Either.flatMap`.
+  static Either<L, R> Function(T) tryCatchK<L, R, T>(
+          R Function(T) run, L Function(Object o, StackTrace s) onError) =>
+      (a) => Either.tryCatch(
+            () => run(a),
+            onError,
+          );
+
   /// Build an `Eq<Either>` by comparing the values inside two [Either].
   ///
   /// Return `true` when the two [Either] are equal or when both are [Left] or

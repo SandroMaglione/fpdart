@@ -631,6 +631,26 @@ void main() {
       });
     });
 
+    group('tryCatchK', () {
+      test('Right', () {
+        final either = Either<String, int>.of(10);
+        final ap = either.flatMap(Either.tryCatchK(
+          (n) => n + 5,
+          (_, __) => 'none',
+        ));
+        ap.match((l) => null, (r) => expect(r, 15));
+      });
+
+      test('Left', () {
+        final either = Either<String, int>.of(10);
+        final ap = either.flatMap(Either.tryCatchK(
+          (_) => int.parse('invalid'),
+          (_, __) => 'none',
+        ));
+        ap.match((l) => expect(l, 'none'), (r) => null);
+      });
+    });
+
     test('getEq', () {
       final eq = Either.getEq<String, int>(
           Eq.instance((a1, a2) => a1 == a2), Eq.instance((a1, a2) => a1 == a2));
