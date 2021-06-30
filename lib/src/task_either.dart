@@ -176,4 +176,19 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
           return Left<L, R>(onError(error, stack));
         }
       });
+
+  /// Converts a [Future] that may throw to a [Future] that never throws
+  /// but returns a [Either] instead.
+  ///
+  /// Used to handle asynchronous computations that may throw using [Either].
+  ///
+  /// It wraps the `TaskEither.tryCatch` factory to make chaining with `flatMap`
+  /// easier.
+  static TaskEither<L, R> Function(T a) tryCatchK<L, R, T>(
+          Future<R> Function(T a) run,
+          L Function(Object error, StackTrace stackTrace) onError) =>
+      (a) => TaskEither.tryCatch(
+            () => run(a),
+            onError,
+          );
 }

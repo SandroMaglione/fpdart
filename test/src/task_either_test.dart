@@ -30,6 +30,40 @@ void main() {
       });
     });
 
+    group('tryCatchK', () {
+      test('Success', () async {
+        final task = TaskEither<String, int>.right(10);
+        final ap = task.flatMap(TaskEither.tryCatchK(
+          (n) => Future.value(n + 5),
+          (_, __) => 'error',
+        ));
+        final r = await ap.run();
+        r.match((l) => null, (r) => expect(r, 15));
+      });
+
+      test('Failure', () async {
+        final task = TaskEither<String, int>.right(10);
+        final ap = task.flatMap(TaskEither.tryCatchK(
+          (n) => Future<int>.error(n + 5),
+          (_, __) => 'error',
+        ));
+        final r = await ap.run();
+        r.match((l) => expect(l, 'error'), (r) => null);
+      });
+
+      test('throws Exception', () async {
+        final task = TaskEither<String, int>.right(10);
+        final ap = task.flatMap(TaskEither.tryCatchK<String, int, int>((_) {
+          throw UnimplementedError();
+        }, (error, _) {
+          expect(error, isA<UnimplementedError>());
+          return 'error';
+        }));
+        final r = await ap.run();
+        r.match((l) => expect(l, 'error'), (r) => null);
+      });
+    });
+
     group('flatMap', () {
       test('Right', () async {
         final task = TaskEither<String, int>(() async => Either.of(10));
