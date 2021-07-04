@@ -1,7 +1,5 @@
 import 'package:fpdart/fpdart.dart';
 
-const int _int64MaxValue = 9223372036854775807;
-
 /// A group is a monoid where each element has an [**inverse**](https://en.wikipedia.org/wiki/Inverse_element).
 abstract class Group<T> extends Monoid<T> {
   /// Find the inverse of `a`.
@@ -22,9 +20,6 @@ abstract class Group<T> extends Monoid<T> {
       return _repeatedCombineN(a, n);
     } else if (n == 0) {
       return empty;
-    } else if (n == _int64MaxValue) {
-      // Stack Overflow!
-      return combineN(inverse(combine(a, a)), _int64MaxValue ~/ 2);
     }
 
     return _repeatedCombineN(inverse(a), -n);
