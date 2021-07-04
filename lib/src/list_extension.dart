@@ -298,6 +298,12 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
   /// Same as `flatMapWithIndex` and `concatMapWithIndex`.
   Iterable<B> bindWithIndex<B>(Iterable<B> Function(T t, int index) f) =>
       concatMapWithIndex(f);
+
+  /// Return a [Tuple2] where the first element is an [Iterable] with all the elements
+  /// of this [Iterable] that do not satisfy `f` and the second all the elements that
+  /// do satisfy f.
+  Tuple2<Iterable<T>, Iterable<T>> partition(bool Function(T t) f) =>
+      Tuple2(filter((t) => !f(t)), filter(f));
 }
 
 /// Functional programming functions on a mutable dart `Iterable<Iterable<T>>` using `fpdart`.

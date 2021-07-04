@@ -271,6 +271,13 @@ void main() {
       expect(eq(ap, [2, 3, 3, 4, 4, 5]), true);
     });
 
+    test('partition', () {
+      final list1 = [2, 4, 5, 6, 1, 3];
+      final ap = list1.partition((t) => t > 2);
+      expect(eq(ap.first, [2, 1]), true);
+      expect(eq(ap.second, [4, 5, 6, 3]), true);
+    });
+
     group('all', () {
       test('true', () {
         final list1 = [1, 2, 3, 4];

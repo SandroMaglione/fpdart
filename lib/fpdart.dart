@@ -1,3 +1,4 @@
+export 'src/compose.dart';
 export 'src/either.dart';
 export 'src/function.dart';
 export 'src/ilist.dart';
