@@ -2,6 +2,7 @@
 
 - Added `Compose` and `Compose2`, used to easily compose functions in a chain.
 - Added `curry` and `uncurry` extensions on functions up to 5 parameters.
+- Completed `TaskOption` type implementation, documentation, and testing
 
 # v0.0.6 - 29 June 2021
 

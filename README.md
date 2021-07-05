@@ -48,7 +48,7 @@ Would you like to know more about functional programming, fpdart, and how to use
 - [x] `IO`
 - [x] `Iterable` (`List`) `extension`
 - [x] `IOEither`
-- [ ] `TaskOption`
+- [x] `TaskOption`
 - [ ] `ReaderEither`
 - [ ] `ReaderTask`
 - [ ] `ReaderTaskEither`
@@ -61,7 +61,7 @@ Would you like to know more about functional programming, fpdart, and how to use
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.0.6 # Check out the latest version
+  fpdart: ^0.0.7 # Check out the latest version
 ```
 
 ## ✨ Examples
@@ -231,10 +231,10 @@ The roadmap for types development is highlighted below (breaking changes to _'st
     - ~~Implementation~~
     - ~~Documentation~~
     - ~~Testing~~
-11. `TaskOption`
-    - Implementation
-    - Documentation
-    - Testing
+11. ~~`TaskOption`~~
+    - ~~Implementation~~
+    - ~~Documentation~~
+    - ~~Testing~~
 12. `ReaderEither`
     - Implementation
     - Documentation

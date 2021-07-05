@@ -10,6 +10,7 @@ export 'src/reader.dart';
 export 'src/state.dart';
 export 'src/task.dart';
 export 'src/task_either.dart';
+export 'src/task_option.dart';
 export 'src/tuple.dart';
 export 'src/typeclass/typeclass.export.dart';
 export 'src/typedef.dart';
