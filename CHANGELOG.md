@@ -1,6 +1,7 @@
 # v0.0.7
 
 - Added `Compose` and `Compose2`, used to easily compose functions in a chain.
+- Added `curry` and `uncurry` extensions on functions up to 5 parameters.
 
 # v0.0.6 - 29 June 2021
 
