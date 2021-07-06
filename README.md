@@ -34,6 +34,7 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 Would you like to know more about functional programming, fpdart, and how to use the package? Check out this series of articles about functional programming with fpdart:
 
 1. [**Fpdart, Functional Programming in Dart and Flutter**](https://www.sandromaglione.com/fpdart-functional-programming-in-dart-and-flutter/)
+2. [**How to use fpdart Functional Programming in your Dart and Flutter app**](https://www.sandromaglione.com/how-to-use-fpdart-functional-programming-in-dart-and-flutter/)
 
 ## 🎯 Types
 
@@ -270,6 +271,7 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
 
+- v0.0.7 - 6 July 2021
 - v0.0.6 - 29 June 2021
 - v0.0.5 - 20 June 2021
 - v0.0.4 - 15 June 2021

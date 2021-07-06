@@ -1,8 +1,11 @@
-# v0.0.7
+# v0.0.7 - 6 July 2021
 
-- Added `Compose` and `Compose2`, used to easily compose functions in a chain.
-- Added `curry` and `uncurry` extensions on functions up to 5 parameters.
+- Released Part 2 of [**Fpdart, Functional Programming in Dart and Flutter**](https://www.sandromaglione.com/how-to-use-fpdart-functional-programming-in-dart-and-flutter/)
+- Added `Compose` and `Compose2`, used to easily compose functions in a chain
+- Added `curry` and `uncurry` extensions on functions up to 5 parameters
 - Completed `TaskOption` type implementation, documentation, and testing
+- Expanded documentation and examples
+- Added `TaskEither.tryCatchK` and `Either.tryCatchK`, by [tim-smart](https://github.com/tim-smart) ([#10](https://github.com/SandroMaglione/fpdart/pull/10), [#11](https://github.com/SandroMaglione/fpdart/pull/11)) 🎉
 
 # v0.0.6 - 29 June 2021
 
