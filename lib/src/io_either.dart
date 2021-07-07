@@ -37,7 +37,7 @@ class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
         ),
       );
 
-  /// Chain an [TaskEither] with a [IOEither].
+  /// Chain a [TaskEither] with an [IOEither].
   ///
   /// Allows to chain a function that returns a `Either<L, R>` ([IOEither]) to
   /// a function that returns a `Future<Either<L, C>>` ([TaskEither]).

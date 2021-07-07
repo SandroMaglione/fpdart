@@ -1,3 +1,8 @@
+# v0.0.8
+
+- Added `flatMapTask` and `toTask` methods to `IO` to lift and chain `IO` with `Task`
+- Added `flatMapTask` and `toTask` methods to `IOEither` to lift and chain `IOEither` with `TaskEither`
+
 # v0.0.7 - 6 July 2021
 
 - Released Part 2 of [**Fpdart, Functional Programming in Dart and Flutter**](https://www.sandromaglione.com/how-to-use-fpdart-functional-programming-in-dart-and-flutter/)

@@ -26,6 +26,20 @@ void main() {
       expect(r, 20);
     });
 
+    test('flatMapTask', () async {
+      final io = IO(() => 10);
+      final ap = io.flatMapTask((a) => Task(() async => a + 10));
+      final r = await ap.run();
+      expect(r, 20);
+    });
+
+    test('toTask', () async {
+      final io = IO(() => 10);
+      final ap = io.toTask();
+      final r = await ap.run();
+      expect(r, 10);
+    });
+
     test('ap', () {
       final io = IO(() => 10);
       final ap = io.ap(IO(() => (int a) => a * 3));
