@@ -1,0 +1,25 @@
+name: pokeapi_functional
+description: Functional Programming using fpdart. Fetch and display pokemon from pokeApi.
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+    
+  http: ^0.13.3
+  hooks_riverpod: ^1.0.0-dev.4
+  flutter_hooks: ^0.18.0
+  fpdart:
+    path: ../../.
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
