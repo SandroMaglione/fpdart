@@ -16,10 +16,12 @@ TaskEither<String, Pokemon> fetchPokemon(int pokemonId) => TaskEither.tryCatch(
       (error, __) => 'Request error: $error',
     );
 
-/// Try to parse the user input from [String] to [int].
+/// Try to parse the user input from [String] to [int] using [IOEither].
+/// We use [IOEither] since the `parse` method is **synchronous** (no need of [Future]).
+///
 /// If successful, then fetch the pokemon information from the [int] id.
 TaskEither<String, Pokemon> fetchPokemonFromUserInput(String pokemonId) =>
-    TaskEither<String, int>.tryCatch(
-      () async => int.parse(pokemonId),
+    IOEither<String, int>.tryCatch(
+      () => int.parse(pokemonId),
       (error, __) => 'Input error: $error',
-    ).flatMap(fetchPokemon);
+    ).flatMapTask(fetchPokemon);
