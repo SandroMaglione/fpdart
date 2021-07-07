@@ -2,6 +2,8 @@
 
 - Added `flatMapTask` and `toTask` methods to `IO` to lift and chain `IO` with `Task`
 - Added `flatMapTask` and `toTask` methods to `IOEither` to lift and chain `IOEither` with `TaskEither`
+- Added pattern matching extension methods to `bool` (`boolean.dart`)
+- Added functions to get random `int`, `double`, and `bool` in a functional way (using `IO`) (`random.dart`)
 
 # v0.0.7 - 6 July 2021
 
