@@ -48,6 +48,54 @@ void main() {
       });
     });
 
+    group('flatMapTask', () {
+      test('Right to Right', () async {
+        final task = IOEither<String, int>(() => Either.of(10));
+        final ap = task.flatMapTask((r) => TaskEither.of(r + 1));
+        final r = await ap.run();
+        r.match((l) => null, (r) => expect(r, 11));
+      });
+
+      test('Left to Right', () async {
+        final task = IOEither<String, int>(() => Either.left('abc'));
+        final ap = task.flatMapTask((r) => TaskEither.of(r + 1));
+        final r = await ap.run();
+        r.match((l) => expect(l, 'abc'), (r) => null);
+      });
+
+      test('Right to Left', () async {
+        final task = IOEither<String, int>(() => Either.of(10));
+        final ap =
+            task.flatMapTask((r) => TaskEither<String, int>.left('none'));
+        final r = await ap.run();
+        r.match((l) => expect(l, 'none'), (r) => null);
+      });
+
+      test('Left to Left', () async {
+        final task = IOEither<String, int>(() => Either.left('abc'));
+        final ap =
+            task.flatMapTask((r) => TaskEither<String, int>.left('none'));
+        final r = await ap.run();
+        r.match((l) => expect(l, 'abc'), (r) => null);
+      });
+    });
+
+    group('toTask', () {
+      test('Right', () async {
+        final task = IOEither<String, int>(() => Either.of(10));
+        final ap = task.toTask();
+        final r = await ap.run();
+        r.match((l) => null, (r) => expect(r, 10));
+      });
+
+      test('Left', () async {
+        final task = IOEither<String, int>(() => Either.left('abc'));
+        final ap = task.toTask();
+        final r = await ap.run();
+        r.match((l) => expect(l, 'abc'), (r) => null);
+      });
+    });
+
     group('ap', () {
       test('Right', () {
         final task = IOEither<String, int>(() => Either.of(10));
