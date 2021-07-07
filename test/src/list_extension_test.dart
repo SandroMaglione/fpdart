@@ -1,6 +1,13 @@
 import 'package:test/test.dart';
 import 'package:fpdart/fpdart.dart';
 
+/// Used to test sorting with [DateTime] (`sortWithDate`)
+class SortDate {
+  final int id;
+  final DateTime date;
+  const SortDate(this.id, this.date);
+}
+
 void main() {
   /// Check if two [Iterable] have the same element in the same order
   bool eq<T>(Iterable<T> a, Iterable<T> b) => a.foldLeftWithIndex(
@@ -60,6 +67,60 @@ void main() {
       final ap = list1.insertBy(Order.from((a1, a2) => a1.compareTo(a2)), 4);
 
       expect(eq(ap, [1, 2, 3, 4, 4, 5, 6]), true);
+    });
+
+    test('insertWith', () {
+      final list1 = [
+        SortDate(2, DateTime(2019)),
+        SortDate(4, DateTime(2017)),
+        SortDate(1, DateTime(2020)),
+        SortDate(3, DateTime(2018)),
+      ];
+      final ap = list1.insertWith(
+        (instance) => instance.date,
+        dateOrder,
+        SortDate(5, DateTime(2021)),
+      );
+
+      expect(ap.elementAt(4).id, 5);
+      expect(ap.elementAt(4).date.year, 2021);
+    });
+
+    test('sortBy', () {
+      final list1 = [2, 6, 4, 1, 5, 3];
+      final ap = list1.sortBy(Order.from((a1, a2) => a1.compareTo(a2)));
+
+      expect(eq(ap, [1, 2, 3, 4, 5, 6]), true);
+    });
+
+    test('sortWith', () {
+      final list1 = [
+        SortDate(2, DateTime(2019)),
+        SortDate(4, DateTime(2017)),
+        SortDate(1, DateTime(2020)),
+        SortDate(3, DateTime(2018)),
+      ];
+      final ap = list1.sortWith((instance) => instance.date, dateOrder);
+
+      expect(ap.elementAt(0).id, 4);
+      expect(ap.elementAt(1).id, 3);
+      expect(ap.elementAt(2).id, 2);
+      expect(ap.elementAt(3).id, 1);
+    });
+
+    test('sortWithDate', () {
+      final list1 = [
+        SortDate(2, DateTime(2019)),
+        SortDate(4, DateTime(2017)),
+        SortDate(1, DateTime(2020)),
+        SortDate(3, DateTime(2018)),
+      ];
+      final ap = list1.sortWithDate((instance) => instance.date);
+
+      expect(ap.elementAt(0).date.year, 2017);
+      expect(ap.elementAt(1).date.year, 2018);
+      expect(ap.elementAt(2).date.year, 2019);
+      expect(ap.elementAt(3).date.year, 2020);
     });
 
     test('sortBy', () {

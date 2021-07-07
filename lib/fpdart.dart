@@ -1,5 +1,6 @@
 export 'src/boolean.dart';
 export 'src/compose.dart';
+export 'src/date.dart';
 export 'src/either.dart';
 export 'src/function.dart';
 export 'src/io.dart';

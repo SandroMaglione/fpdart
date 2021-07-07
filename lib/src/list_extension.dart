@@ -1,3 +1,4 @@
+import 'date.dart';
 import 'option.dart';
 import 'tuple.dart';
 import 'typeclass/order.dart';
@@ -185,9 +186,25 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
           ? [first, ...drop(1).insertBy(order, element)]
           : [element, first, ...drop(1)];
 
+  /// Insert `element` into the list at the first position where it is less than or equal to the next element
+  /// based on `order` of an object of type `A` extracted from `element` using `insert`.
+  ///
+  /// Note: The element is added **before** an equal element already in the [Iterable].
+  Iterable<T> insertWith<A>(
+          A Function(T instance) insert, Order<A> order, T element) =>
+      isEmpty
+          ? [element]
+          : order.compare(insert(element), insert(first)) > 0
+              ? [first, ...drop(1).insertWith(insert, order, element)]
+              : [element, first, ...drop(1)];
+
   /// Sort this [Iterable] based on `order`.
   Iterable<T> sortBy(Order<T> order) =>
       foldRight([], (e, a) => a.insertBy(order, e));
+
+  /// Sort this [Iterable] based on `order` of an object of type `A` extracted from `T` using `sort`.
+  Iterable<T> sortWith<A>(A Function(T instance) sort, Order<A> order) =>
+      foldRight([], (e, a) => a.insertWith(sort, order, e));
 
   /// Return the intersection of two [Iterable] (all the elements that both [Iterable] have in common).
   Iterable<T> intersect(Iterable<T> l) =>
@@ -304,6 +321,12 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
   /// do satisfy f.
   Tuple2<Iterable<T>, Iterable<T>> partition(bool Function(T t) f) =>
       Tuple2(filter((t) => !f(t)), filter(f));
+
+  /// Sort [Iterable] based on [DateTime] extracted from type `T` using `getDate`.
+  ///
+  /// Sorting [DateTime] in **ascending** order (older dates first).
+  Iterable<T> sortWithDate(DateTime Function(T instance) getDate) =>
+      sortWith(getDate, dateOrder);
 }
 
 /// Functional programming functions on a mutable dart `Iterable<Iterable<T>>` using `fpdart`.

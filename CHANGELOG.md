@@ -4,6 +4,7 @@
 - Added `flatMapTask` and `toTask` methods to `IOEither` to lift and chain `IOEither` with `TaskEither`
 - Added pattern matching extension methods to `bool` (`boolean.dart`)
 - Added functions to get random `int`, `double`, and `bool` in a functional way (using `IO`) (`random.dart`)
+- Added functions, extension methods, `Ord`, and `Eq` instances to `DateTime` (`date.dart`)
 
 # v0.0.7 - 6 July 2021
 
