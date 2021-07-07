@@ -1,3 +1,5 @@
+import 'package:fpdart/fpdart.dart';
+
 import 'either.dart';
 import 'function.dart';
 import 'io.dart';
@@ -34,6 +36,24 @@ class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
           (r) => f(r).run(),
         ),
       );
+
+  /// Chain an [TaskEither] with a [IOEither].
+  ///
+  /// Allows to chain a function that returns a `Either<L, R>` ([IOEither]) to
+  /// a function that returns a `Future<Either<L, C>>` ([TaskEither]).
+  TaskEither<L, C> flatMapTask<C>(TaskEither<L, C> Function(R r) f) =>
+      TaskEither(
+        () async => run().match(
+          (l) => Either.left(l),
+          (r) => f(r).run(),
+        ),
+      );
+
+  /// Lift this [IOEither] to a [TaskEither].
+  ///
+  /// Return a `Future<Either<L, R>>` ([TaskEither]) instead of
+  /// a `Either<L, R>` ([IOEither]).
+  TaskEither<L, R> toTask() => TaskEither(() async => run());
 
   /// Returns a [IOEither] that returns a `Right(a)`.
   @override
