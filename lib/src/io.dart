@@ -23,6 +23,17 @@ class IO<A> extends HKT<_IOHKT, A> with Monad<_IOHKT, A> {
   @override
   IO<B> flatMap<B>(covariant IO<B> Function(A a) f) => IO(() => f(run()).run());
 
+  /// Chain a [Task] with an [IO].
+  ///
+  /// Allows to chain a function that returns a `R` ([IO]) to
+  /// a function that returns a `Future<B>` ([Task]).
+  Task<B> flatMapTask<B>(Task<B> Function(A a) f) => f(run());
+
+  /// Lift this [IO] to a [Task].
+  ///
+  /// Return a `Future<A>` ([Task]) instead of a `R` ([IO]).
+  Task<A> toTask() => Task(() async => run());
+
   /// Return an [IO] that returns the value `b`.
   @override
   IO<B> pure<B>(B b) => IO(() => b);

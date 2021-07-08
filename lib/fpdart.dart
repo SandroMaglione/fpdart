@@ -1,10 +1,13 @@
+export 'src/boolean.dart';
 export 'src/compose.dart';
+export 'src/date.dart';
 export 'src/either.dart';
 export 'src/function.dart';
 export 'src/io.dart';
 export 'src/io_either.dart';
 export 'src/list_extension.dart';
 export 'src/option.dart';
+export 'src/random.dart';
 export 'src/reader.dart';
 export 'src/state.dart';
 export 'src/task.dart';
