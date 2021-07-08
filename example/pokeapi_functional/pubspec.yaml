@@ -14,12 +14,15 @@ dependencies:
   http: ^0.13.3
   hooks_riverpod: ^1.0.0-dev.4
   flutter_hooks: ^0.18.0
+  freezed: ^0.14.2
   fpdart:
     path: ../../.
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  freezed_annotation: ^0.14.2
+  build_runner: ^2.0.5
 
 flutter:
   uses-material-design: true

@@ -11,10 +11,12 @@ class MyApp extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = useTextEditingController();
-    final eitherPokemon = ref.watch(pokemonProvider);
+    final requestStatus = ref.watch(pokemonProvider);
     useEffect(() {
-      /// Fetch the initial pokemon information
-      ref.read(pokemonProvider.notifier).init(1);
+      /// Fetch the initial pokemon information.
+      Future.delayed(Duration.zero, () {
+        ref.read(pokemonProvider.notifier).fetchRandom();
+      });
     }, []);
 
     return MaterialApp(
@@ -30,22 +32,54 @@ class MyApp extends HookConsumerWidget {
               ),
             ),
             ElevatedButton(
-              onPressed: () =>
-                  ref.read(pokemonProvider.notifier).fetch(controller.text),
+              onPressed: () => ref
+                  .read(
+                    pokemonProvider.notifier,
+                  )
+                  .fetch(
+                    controller.text,
+                  ),
               child: Text('Get my pokemon!'),
             ),
 
-            /// Display either the [Pokemon] or the error [String]
-            eitherPokemon.match(
-              /// When either is [Left], display error message 💥
-              (l) => Text(l),
-
-              /// When either is [Right], display pokemon 🤩
-              (r) => Card(
+            /// Map each [RequestStatus] to a different UI
+            requestStatus.when(
+              initial: () => Center(
                 child: Column(
                   children: [
-                    Image.network(r.sprites.front_default),
-                    Text(r.name),
+                    Text('Loading intial pokemon'),
+                    CircularProgressIndicator(),
+                  ],
+                ),
+              ),
+              loading: () => Center(
+                child: CircularProgressIndicator(),
+              ),
+
+              /// When either is [Left], display error message 💥
+              error: (error) => Text(error),
+
+              /// When either is [Right], display pokemon 🤩
+              success: (pokemon) => Card(
+                child: Column(
+                  children: [
+                    Image.network(
+                      pokemon.sprites.front_default,
+                      width: 200,
+                      height: 200,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 24,
+                      ),
+                      child: Text(
+                        pokemon.name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 24,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
