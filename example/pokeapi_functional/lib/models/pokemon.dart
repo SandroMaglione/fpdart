@@ -1,6 +1,6 @@
 import 'package:pokeapi_functional/models/sprite.dart';
 
-/// Pokemon information, with methods to serialize and deserialize json
+/// Pokemon information, with method to deserialize json
 class Pokemon {
   final int id;
   final String name;
@@ -25,11 +25,4 @@ class Pokemon {
       sprites: Sprite.fromJson(json['sprites'] as Map<String, dynamic>),
     );
   }
-
-  Map<String, dynamic> toJson(Pokemon instance) => <String, dynamic>{
-        'id': instance.id,
-        'name': instance.name,
-        'weight': instance.weight,
-        'height': instance.height,
-      };
 }

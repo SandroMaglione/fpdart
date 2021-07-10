@@ -4,16 +4,18 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:pokeapi_functional/controllers/pokemon_provider.dart';
 
 void main() {
+  /// [ProviderScope] required for riverpod state management
   runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    /// [TextEditingController] using hooks
     final controller = useTextEditingController();
     final requestStatus = ref.watch(pokemonProvider);
     useEffect(() {
-      /// Fetch the initial pokemon information.
+      /// Fetch the initial pokemon information (random pokemon).
       Future.delayed(Duration.zero, () {
         ref.read(pokemonProvider.notifier).fetchRandom();
       });

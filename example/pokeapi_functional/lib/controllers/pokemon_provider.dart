@@ -7,7 +7,7 @@ import 'package:pokeapi_functional/unions/request_status.dart';
 
 /// Manage the [Pokemon] state using [Either] ([TaskEither]) to handle possible errors.
 ///
-/// Each [RequestStatus] change the UI displayed to the user.
+/// Each [RequestStatus] changes the UI displayed to the user.
 class PokemonState extends StateNotifier<RequestStatus> {
   PokemonState() : super(const RequestStatus.initial());
 
@@ -21,7 +21,8 @@ class PokemonState extends StateNotifier<RequestStatus> {
         ),
       );
 
-  /// User request, try to convert user input to [int].
+  /// User request, try to convert user input to [int] and then
+  /// request the pokemon if successful.
   Future<Unit> fetch(String pokemonId) async => _pokemonRequest(
         () => fetchPokemonFromUserInput(pokemonId),
       );
@@ -40,6 +41,7 @@ class PokemonState extends StateNotifier<RequestStatus> {
   }
 }
 
+/// Create and expose provider.
 final pokemonProvider = StateNotifierProvider<PokemonState, RequestStatus>(
   (_) => PokemonState(),
 );
