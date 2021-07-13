@@ -1,5 +1,7 @@
-# v0.0.8
+# v0.0.8 - 13 July 2021
 
+- Released Part 3 of [**Fpdart, Functional Programming in Dart and Flutter**](https://www.sandromaglione.com/pure-functional-app-in-flutter-using-fpdart-functional-programming/)
+- Added Pure Functional Flutter app example (`pokeapi_functional`)
 - Added `flatMapTask` and `toTask` methods to `IO` to lift and chain `IO` with `Task`
 - Added `flatMapTask` and `toTask` methods to `IOEither` to lift and chain `IOEither` with `TaskEither`
 - Added pattern matching extension methods to `bool` (`boolean.dart`)

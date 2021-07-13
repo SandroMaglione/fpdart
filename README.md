@@ -35,6 +35,7 @@ Would you like to know more about functional programming, fpdart, and how to use
 
 1. [**Fpdart, Functional Programming in Dart and Flutter**](https://www.sandromaglione.com/fpdart-functional-programming-in-dart-and-flutter/)
 2. [**How to use fpdart Functional Programming in your Dart and Flutter app**](https://www.sandromaglione.com/how-to-use-fpdart-functional-programming-in-dart-and-flutter/)
+3. [**Pure Functional app in Flutter – Pokemon app using fpdart and Functional Programming**](https://www.sandromaglione.com/pure-functional-app-in-flutter-using-fpdart-functional-programming/)
 
 ## 🎯 Types
 
@@ -62,7 +63,7 @@ Would you like to know more about functional programming, fpdart, and how to use
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.0.7 # Check out the latest version
+  fpdart: ^0.0.8 # Check out the latest version
 ```
 
 ## ✨ Examples
@@ -271,6 +272,7 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
 
+- v0.0.8 - 13 July 2021
 - v0.0.7 - 6 July 2021
 - v0.0.6 - 29 June 2021
 - v0.0.5 - 20 June 2021
