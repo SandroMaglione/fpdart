@@ -19,11 +19,27 @@ Option<double> divideF(int x, int y) {
 }
 
 void main() {
+  // --- Initialize an Option 👇 --- //
+  const someInit = Some(10);
+  const noneInit = None<int>();
+
+  final someInit2 = some(10);
+  final noneInit2 = none<int>();
+
   /// Create an instance of [Some]
   final option = Option.of(10);
 
   /// Create an instance of [None]
-  final none = Option<int>.none();
+  final noneInit3 = Option<int>.none();
+
+  /// If the predicate is `true`, then [Some], otherwise [None]
+  final predicate = Option<int>.fromPredicate(10, (a) => a > 5);
+
+  /// If no exception, then [Some], otherwise [None]
+  final tryCatchInit = Option<int>.tryCatch(() => int.parse('10'));
+
+  /// When the value is not `null`, then [Some], otherwise [None]
+  final nullable = Option<int>.fromNullable(10);
 
   /// Map [int] to [String]
   final map = option.map((a) => '$a');

@@ -19,7 +19,7 @@ Option<T> some<T>(T t) => Some(t);
 /// Return a [None].
 ///
 /// Shortcut for `Option.none()`.
-Option<T> none<T>() => const None();
+Option<T> none<T>() => None<T>();
 
 /// Return [None] if `t` is `null`, [Some] otherwise.
 ///
@@ -138,6 +138,11 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
   /// final Option<String> mStr = Option.of('name');
   /// final Option<int> mInt = mStr.map((a) => a.length);
   /// ```
+  /// 👇
+  /// ```dart
+  /// [🥚].map((🥚) => 👨‍🍳(🥚)) -> [🍳]
+  /// [_].map((🥚) => 👨‍🍳(🥚)) -> [_]
+  /// ```
   @override
   Option<B> map<B>(B Function(A a) f);
 
@@ -185,12 +190,38 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
   ///   ),
   /// );
   /// ```
+  /// 👇
+  /// ```dart
+  /// [😀].flatMap(
+  ///     (😀) => [👻(😀)]
+  ///     ) -> [😱]
+  ///
+  /// [😀].flatMap(
+  ///     (😀) => [👻(😀)]
+  ///     ).flatMap(
+  ///         (😱) => [👨‍⚕️(😱)]
+  ///         ) -> [🤕]
+  ///
+  /// [😀].flatMap(
+  ///     (😀) => [_]
+  ///     ).flatMap(
+  ///         (_) => [👨‍⚕️(_)]
+  ///         ) -> [_]
+  ///
+  /// [_].flatMap(
+  ///     (😀) => [👻(😀)]
+  ///     ) -> [_]
+  /// ```
   @override
   Option<B> flatMap<B>(covariant Option<B> Function(A a) f);
 
   /// Return the current [Option] if it is a [Some], otherwise return the result of `orElse`.
   ///
   /// Used to provide an **alt**ernative [Option] in case the current one is [None].
+  /// ```dart
+  /// [🍌].alt(() => [🍎]) -> [🍌]
+  /// [_].alt(() => [🍎]) -> [🍎]
+  /// ```
   @override
   Option<A> alt(covariant Option<A> Function() orElse);
 
@@ -230,6 +261,10 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
 
   /// If this [Option] is a [Some], then return the result of calling `then`.
   /// Otherwise return [None].
+  /// ```dart
+  /// [🍌].andThen(() => [🍎]) -> [🍎]
+  /// [_].andThen(() => [🍎]) -> [_]
+  /// ```
   @override
   Option<B> andThen<B>(covariant Option<B> Function() then) =>
       flatMap((_) => then());
@@ -249,6 +284,10 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
       flatMap((a) => mc.flatMap((c) => md.map((d) => f(a, c, d))));
 
   /// Execute `onSome` when value is [Some], otherwise execute `onNone`.
+  /// ```dart
+  /// [🍌].match((🍌) => 🍌 * 2, () => 🍎) -> 🍌🍌
+  /// [_].match((🍌) => 🍌 * 2, () => 🍎) -> 🍎
+  /// ```
   B match<B>(B Function(A a) onSome, B Function() onNone);
 
   /// Return `true` when value is [Some].
@@ -259,6 +298,14 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
 
   /// If this [Option] is a [Some] then return the value inside the [Option].
   /// Otherwise return the result of `orElse`.
+  /// ```dart
+  /// [🍌].getOrElse(() => 🍎) -> 🍌
+  /// [_].getOrElse(() => 🍎) -> 🍎
+  ///
+  ///  👆 same as 👇
+  ///
+  /// [🍌].match((🍌) => 🍌, () => 🍎)
+  /// ```
   A getOrElse(A Function() orElse);
 
   /// Return value of type `A` when this [Option] is a [Some], `null` otherwise.

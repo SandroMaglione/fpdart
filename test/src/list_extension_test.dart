@@ -145,14 +145,12 @@ void main() {
         expect(ap.getOrElse(() => -1), 1);
       });
 
-      /// Bug?
-      /// type '() => int' is not a subtype of type '() => Never' of 'orElse'
-      // test('None', () {
-      //   final List<int> list1 = [];
-      //   final ap = list1.head;
-      //   expect(ap, isA<None>());
-      //   expect(ap.getOrElse(() => -1), -1);
-      // });
+      test('None', () {
+        final List<int> list1 = [];
+        final ap = list1.head;
+        expect(ap, isA<None>());
+        expect(ap.getOrElse(() => -1), -1);
+      });
     });
 
     group('firstOption', () {
