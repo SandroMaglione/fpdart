@@ -1,3 +1,7 @@
+# v0.0.9
+
+- Added `toJson` and `fromJson` methods to `Option` to use [`json_serializable`](https://pub.dev/packages/json_serializable) to convert `Option` type _to_ and _from_ Json (using `@JsonSerializable`)
+
 # v0.0.8 - 13 July 2021
 
 - Released Part 3 of [**Fpdart, Functional Programming in Dart and Flutter**](https://www.sandromaglione.com/pure-functional-app-in-flutter-using-fpdart-functional-programming/)
