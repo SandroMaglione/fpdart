@@ -128,15 +128,14 @@ extension FpdartOnMutableMap<K, V> on Map<K, V> {
       (K key, V value) => updateAt(eq)(key, value).getOrElse(() => this);
 
   /// Delete value and key at given `key` in the [Map] and return updated [Map].
-  Map<K, V> Function(K key) deleteAt(Eq<K> eq) => (K key) {
-        remove(key);
-        return this;
-      };
+  Map<K, V> Function(K key) deleteAt(Eq<K> eq) =>
+      (K key) => filterWithKey((k, v) => !eq.eqv(k, key));
 
   /// Insert or replace a key/value pair in a [Map].
   Map<K, V> Function(K key, V value) upsertAt(Eq<K> eq) => (K key, V value) {
-        addEntries([MapEntry(key, value)]);
-        return this;
+        final newMap = {...this};
+        newMap.addEntries([MapEntry(key, value)]);
+        return newMap;
       };
 
   /// Delete a key and value from a this [Map], returning the deleted value as well as the subsequent [Map].
@@ -268,7 +267,7 @@ extension FpdartOnMutableMap<K, V> on Map<K, V> {
 
   /// Combine the key/value of two [Map] using `combine` where the key is the same.
   Map<K, V> Function(Map<K, V> map) union(Eq<K> eq, Magma<V> combine) =>
-      (Map<K, V> map) => foldLeftWithKey<Map<K, V>>(Order.allEqual())(
+      (Map<K, V> map) => map.foldLeftWithKey<Map<K, V>>(Order.allEqual())(
             this,
             (acc, key, value) => acc
                 .modifyAt(eq)(
@@ -282,24 +281,23 @@ extension FpdartOnMutableMap<K, V> on Map<K, V> {
 
   /// Intersect the key/value of two [Map] using `combine` where the key is the same.
   Map<K, V> Function(Map<K, V> map) intersection(Eq<K> eq, Magma<V> combine) =>
-      (Map<K, V> map) => foldLeftWithKey<Map<K, V>>(Order.allEqual())(
-            this,
-            (acc, key, value) => acc.lookup(key).match(
-                (v) => acc.upsertAt(eq)(key, combine(v, value)), () => acc),
+      (Map<K, V> map) => map.foldLeftWithKey<Map<K, V>>(Order.allEqual())(
+            {},
+            (acc, key, value) => lookup(key).match(
+              (v) => acc.upsertAt(eq)(key, combine(v, value)),
+              () => acc,
+            ),
           );
 
   /// Test whether or not the given `map` contains all of the keys and values contained in this [Map].
-  bool Function(Eq<K>) Function(Eq<V>) isSubmap(Map<K, V> map) =>
-      (Eq<V> eqV) => (Eq<K> eqK) => map.foldLeftWithKey<bool>(Order.allEqual())(
+  bool Function(Map<K, V>) Function(Eq<V>) isSubmap(Eq<K> eqK) =>
+      (Eq<V> eqV) => (Map<K, V> map) => foldLeftWithKey<bool>(Order.allEqual())(
             true,
             (b, k, v) =>
                 b &&
-                Option.tryCatch(
-                  () => entries.firstWhere(
-                    (element) =>
-                        eqK.eqv(element.key, k) && eqV.eqv(element.value, v),
-                  ),
-                ).isSome(),
+                map.entries.any(
+                  (e) => eqK.eqv(e.key, k) && eqV.eqv(e.value, v),
+                ),
           );
 
   /// Collect all the entries in this [Map] into an [Iterable] using `fun` with the values ordered using `order`.
@@ -307,11 +305,9 @@ extension FpdartOnMutableMap<K, V> on Map<K, V> {
       (A Function(K key, V value) fun) =>
           toIterable(order).map((item) => fun(item.key, item.value));
 
-  /// Remove from this [Map] all the elements that have key contained in the given `map`.
+  /// Remove from this [Map] all the elements that have **key** contained in the given `map`.
   Map<K, V> Function(Map<K, V> map) difference(Eq<K> eq) =>
       (Map<K, V> map) => filterWithKey(
-            (key, value) => Option.tryCatch(() => map.keys.firstWhere(
-                  (element) => eq.eqv(element, key),
-                )).isNone(),
+            (key, value) => !map.keys.any((element) => eq.eqv(element, key)),
           );
 }
