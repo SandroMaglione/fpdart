@@ -31,11 +31,14 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 **Note**: The package is still in early development. The API may change frequently and there will be many breaking changes. The documentation and testing is currently under development, but it is coming soon and fast. Follow my [**Twitter**](https://twitter.com/SandroMaglione) for daily updates.
 
 ## 📖 Learn `functional programming` and `fpdart`
+
 Would you like to know more about functional programming, fpdart, and how to use the package? Check out this series of articles about functional programming with fpdart:
 
 1. [**Fpdart, Functional Programming in Dart and Flutter**](https://www.sandromaglione.com/fpdart-functional-programming-in-dart-and-flutter/)
 2. [**How to use fpdart Functional Programming in your Dart and Flutter app**](https://www.sandromaglione.com/how-to-use-fpdart-functional-programming-in-dart-and-flutter/)
 3. [**Pure Functional app in Flutter – Pokemon app using fpdart and Functional Programming**](https://www.sandromaglione.com/pure-functional-app-in-flutter-using-fpdart-functional-programming/)
+4. [**Functional Programming Option type – Introduction**](https://www.sandromaglione.com/functional-programming-option-type-tutorial/)
+5. [**Chain functions using Option type – Functional Programming**](https://www.sandromaglione.com/chain-functions-using-option-type-functional-programming/)
 
 ## 🎯 Types
 
@@ -49,8 +52,10 @@ Would you like to know more about functional programming, fpdart, and how to use
 - [x] `Tuple`
 - [x] `IO`
 - [x] `Iterable` (`List`) `extension`
+- [x] `Map` `extension`
 - [x] `IOEither`
 - [x] `TaskOption`
+- [x] `Predicate`
 - [ ] `ReaderEither`
 - [ ] `ReaderTask`
 - [ ] `ReaderTaskEither`
@@ -63,7 +68,7 @@ Would you like to know more about functional programming, fpdart, and how to use
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.0.8 # Check out the latest version
+  fpdart: ^0.0.9 # Check out the latest version
 ```
 
 ## ✨ Examples
@@ -144,6 +149,12 @@ View the [example folder for an explained usecase example](https://github.com/Sa
 ### [State](https://github.com/SandroMaglione/fpdart/blob/9da7cae3b9f9dc690ff3255004393c4b979183e9/lib/src/state.dart#L10)
 
 View the [example folder for an explained usecase example](https://github.com/SandroMaglione/fpdart/tree/main/example/src/state).
+
+### 📦 Immutable Collections
+
+Fpdart provides some extension methods on `Iterable` (`List`) and `Map` that extend the methods available by providing some functional programming signatures (safe methods that never mutate the original collection and that never throw exceptions).
+
+Integrations for immutable collections (`IList`, `ISet`, `IMap`, etc.) are still being discussed with the community. `fpdart` does not want to be another immutable collection solution in the ecosystem. That is why we are working to integrate `fpdart` with other more mature packages that already implements immutable collections. Stay tuned!
 
 ### More
 
@@ -226,9 +237,9 @@ The roadmap for types development is highlighted below (breaking changes to _'st
    - ~~Documentation~~
    - ~~Testing~~
 9. ~~`IO`~~
-    - ~~Implementation~~
-    - ~~Documentation~~
-    - ~~Testing~~
+   - ~~Implementation~~
+   - ~~Documentation~~
+   - ~~Testing~~
 10. ~~`IOEither`~~
     - ~~Implementation~~
     - ~~Documentation~~
@@ -262,8 +273,6 @@ The roadmap for types development is highlighted below (breaking changes to _'st
     - Documentation
     - Testing
 
-**Note**: Integrations for immutable collections (`IList`, `ISet`, `IMap`, etc.) are still being discussed with the community. `fpdart` does not want to be another immutable collection solution in the ecosystem. That is why we are working to integrate `fpdart` with other more mature packages that already implements immutable collections. Stay tuned!
-
 The long-term goal is to provide all the main types and typeclasses available in other functional programming languages and packages. All the types should be **completely** documented and fully tested.
 
 A well explained documentation is the key for the long-term success of the project. **Any article, blog post, or contribution is welcome**.
@@ -272,6 +281,7 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
 
+- v0.0.9 - 3 August 2021
 - v0.0.8 - 13 July 2021
 - v0.0.7 - 6 July 2021
 - v0.0.6 - 29 June 2021

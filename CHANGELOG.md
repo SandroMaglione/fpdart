@@ -1,5 +1,8 @@
-# v0.0.9
+# v0.0.9 - 3 August 2021
 
+- Released two new tutorials on the `Option` type:
+  - [**Functional Programming Option type – Introduction**](https://www.sandromaglione.com/functional-programming-option-type-tutorial/)
+  - [**Chain functions using Option type – Functional Programming**](https://www.sandromaglione.com/chain-functions-using-option-type-functional-programming/)
 - Added `toJson` and `fromJson` methods to `Option` to use [`json_serializable`](https://pub.dev/packages/json_serializable) to convert `Option` type _to_ and _from_ Json (using `@JsonSerializable`)
 - Added functional extension methods on `Map`
 - Added composable `Predicate` type (and `&`, or `|`, not `~`, xor `^`) [#18](https://github.com/SandroMaglione/fpdart/issues/18)
