@@ -15,21 +15,46 @@ class Predicate<T> {
       Predicate((a) => _predicate(fun(a)));
 
   /// Compose this [Predicate] with the given `predicate` using **AND**.
+  ///
+  /// You can also use the `&` operator.
   Predicate<T> and(Predicate<T> predicate) =>
       Predicate((t) => _predicate(t) && predicate(t));
 
   /// Compose this [Predicate] with the given `predicate` using **AND**.
+  Predicate<T> operator &(Predicate<T> predicate) => and(predicate);
+
+  /// Compose this [Predicate] with the given `predicate` using **OR**.
+  ///
+  /// You can also use the `|` operator.
   Predicate<T> or(Predicate<T> predicate) =>
       Predicate((t) => _predicate(t) || predicate(t));
 
+  /// Compose this [Predicate] with the given `predicate` using **OR**.
+  Predicate<T> operator |(Predicate<T> predicate) => or(predicate);
+
   /// Compose this [Predicate] with the given `predicate` using **XOR**.
+  ///
+  /// You can also use the `^` operator.
   Predicate<T> xor(Predicate<T> predicate) => Predicate((t) {
         final boolThis = _predicate(t);
         final boolOther = predicate(t);
         return boolThis ? !boolOther : boolOther;
       });
 
+  /// Compose this [Predicate] with the given `predicate` using **XOR**.
+  Predicate<T> operator ^(Predicate<T> predicate) => xor(predicate);
+
+  /// Compose this [Predicate] with the given `predicate` using **NOT** (**!**).
+  ///
+  /// You can also use the `~` operator.
+  Predicate<T> get not => Predicate((t) => !_predicate(t));
+
   /// Build a [Predicate] that returns **NOT** (**!**) of the given `predicate`.
-  factory Predicate.not(Predicate<T> predicate) =>
+  ///
+  /// You can also use the `~` operator.
+  factory Predicate.not(bool Function(T) predicate) =>
       Predicate((t) => !predicate(t));
+
+  /// Build a [Predicate] that returns **NOT** (**!**) of the given `predicate`.
+  Predicate<T> operator ~() => Predicate((t) => !_predicate(t));
 }
