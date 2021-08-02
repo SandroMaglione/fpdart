@@ -19,7 +19,7 @@ extension FpdartOnMutableMap<K, V> on Map<K, V> {
   }
 
   /// Returns the list of those elements of the [Map] whose **value** satisfies `predicate`.
-  Map<K, V> filter(Predicate<V> predicate) {
+  Map<K, V> filter(bool Function(V value) predicate) {
     final entries = this.entries;
     final filteredMap = <K, V>{};
     for (final item in entries) {
