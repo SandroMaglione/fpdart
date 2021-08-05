@@ -66,6 +66,15 @@ void main() {
       expect(result.second, 'aaaa');
     });
 
+    test('call', () {
+      final state = State<String, int>((s) => Tuple2(s.length, '${s}a'));
+      final ap =
+          state(State<String, double>((s) => Tuple2(s.length / 2, '${s}a')));
+      final result = ap.run('aaa');
+      expect(result.first, 1.5);
+      expect(result.second, 'aaaa');
+    });
+
     test('pure', () {
       final state = State<String, int>((s) => Tuple2(s.length, '${s}a'));
       final ap = state.pure(10);

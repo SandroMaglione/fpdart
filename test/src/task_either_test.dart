@@ -174,6 +174,24 @@ void main() {
       });
     });
 
+    group('call', () {
+      test('Right', () async {
+        final task = TaskEither<String, int>(() async => Either.of(10));
+        final ap =
+            task(TaskEither<String, double>(() async => Either.of(12.5)));
+        final r = await ap.run();
+        r.match((l) => null, (r) => expect(r, 12.5));
+      });
+
+      test('Left', () async {
+        final task = TaskEither<String, int>(() async => Either.left('abc'));
+        final ap =
+            task(TaskEither<String, double>(() async => Either.of(12.5)));
+        final r = await ap.run();
+        r.match((l) => null, (r) => expect(r, 12.5));
+      });
+    });
+
     group('filterOrElse', () {
       test('Right (true)', () async {
         final task = TaskEither<String, int>(() async => Either.of(10));

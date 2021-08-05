@@ -103,6 +103,11 @@ class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
   IOEither<L, R> alt(covariant IOEither<L, R> Function() orElse) =>
       IOEither(() => run().match((_) => orElse().run(), (_) => run()));
 
+  /// Chain multiple functions having the same left type `L`.
+  @override
+  IOEither<L, C> call<C>(covariant IOEither<L, C> chain) =>
+      flatMap((_) => chain);
+
   /// If `f` applied on this [IOEither] as [Right] returns `true`, then return this [IOEither].
   /// If it returns `false`, return the result of `onFalse` in a [Left].
   IOEither<L, R> filterOrElse(bool Function(R r) f, L Function(R r) onFalse) =>

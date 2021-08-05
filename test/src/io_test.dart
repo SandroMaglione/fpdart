@@ -83,6 +83,13 @@ void main() {
       expect(r, 'abc');
     });
 
+    test('call', () {
+      final io = IO(() => 10);
+      final ap = io(IO(() => 'abc'));
+      final r = ap.run();
+      expect(r, 'abc');
+    });
+
     test('flatten', () {
       final io = IO(() => IO(() => 10));
       final ap = IO.flatten(io);

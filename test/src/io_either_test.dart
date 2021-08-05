@@ -186,6 +186,22 @@ void main() {
       });
     });
 
+    group('call', () {
+      test('Right', () {
+        final task = IOEither<String, int>(() => Either.of(10));
+        final ap = task(IOEither<String, double>(() => Either.of(12.5)));
+        final r = ap.run();
+        r.match((l) => null, (r) => expect(r, 12.5));
+      });
+
+      test('Left', () {
+        final task = IOEither<String, int>(() => Either.left('abc'));
+        final ap = task(IOEither<String, double>(() => Either.of(12.5)));
+        final r = ap.run();
+        r.match((l) => null, (r) => expect(r, 12.5));
+      });
+    });
+
     group('filterOrElse', () {
       test('Right (true)', () {
         final task = IOEither<String, int>(() => Either.of(10));

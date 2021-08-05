@@ -473,6 +473,13 @@ void main() {
       expect(m2.andThen(() => Option.of('abc')), isA<None>());
     });
 
+    test('call', () {
+      final m1 = Option.of(10);
+      final m2 = Option<int>.none();
+      m1(Option.of('abc')).match((some) => expect(some, 'abc'), () => null);
+      m2(Option.of('abc')).match((some) => expect(some, 'abc'), () => null);
+    });
+
     test('plus', () {
       final m1 = Option.of(10);
       final m2 = Option<int>.none();

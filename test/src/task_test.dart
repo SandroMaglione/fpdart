@@ -110,5 +110,20 @@ void main() {
         expect(ap.run, throwsA(const TypeMatcher<UnimplementedError>()));
       });
     });
+
+    group('call', () {
+      test('run a Task after another Task', () async {
+        final task = Task(() async => 10);
+        final ap = task(Task.of('abc'));
+        final r = await ap.run();
+        expect(r, 'abc');
+      });
+
+      test('run the second Task but return throw error', () async {
+        final task = Task<String>(() async => throw UnimplementedError());
+        final ap = task(Task.of('abc'));
+        expect(ap.run, throwsA(const TypeMatcher<UnimplementedError>()));
+      });
+    });
   });
 }

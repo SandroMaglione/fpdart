@@ -143,6 +143,10 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   @override
   Either<L, Either<L, R>> duplicate() => extend(identity);
 
+  /// Chain multiple functions having the same left type `L`.
+  @override
+  Either<L, B> call<B>(covariant Either<L, B> chain) => flatMap((_) => chain);
+
   /// If `f` applied on this [Either] as [Right] returns `true`, then return this [Either].
   /// If it returns `false`, return the result of `onFalse` in a [Left].
   Either<L, R> filterOrElse(bool Function(R r) f, L Function(R r) onFalse) =>

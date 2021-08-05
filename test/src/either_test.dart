@@ -553,6 +553,20 @@ void main() {
       });
     });
 
+    group('call', () {
+      test('Right', () {
+        final value = Either<String, int>.of(10);
+        final ap = value(Either<String, String>.of('10'));
+        ap.match((l) => null, (r) => expect(r, '10'));
+      });
+
+      test('Left', () {
+        final value = Either<String, int>.left('none');
+        final ap = value(Either<String, String>.of('10'));
+        ap.match((l) => null, (r) => expect(r, '10'));
+      });
+    });
+
     test('of()', () {
       final value = Either<String, int>.of(10);
       expect(value, isA<Right>());

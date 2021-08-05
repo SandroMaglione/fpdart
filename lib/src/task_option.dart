@@ -57,6 +57,10 @@ class TaskOption<R> extends HKT<_TaskOptionHKT, R>
   TaskOption<C> andThen<C>(covariant TaskOption<C> Function() then) =>
       flatMap((_) => then());
 
+  /// Chain multiple [TaskOption] functions.
+  @override
+  TaskOption<B> call<B>(covariant TaskOption<B> chain) => flatMap((_) => chain);
+
   /// If running this [TaskOption] returns [Some], then change its value from type `R` to
   /// type `C` using function `f`.
   @override

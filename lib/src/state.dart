@@ -58,6 +58,10 @@ class State<S, A> extends HKT2<_StateHKT, S, A> with Monad2<_StateHKT, S, A> {
   State<S, C> andThen<C>(covariant State<S, C> Function() then) =>
       flatMap((_) => then());
 
+  /// Chain multiple functions having the same state `S`.
+  @override
+  State<S, C> call<C>(covariant State<S, C> state) => flatMap((_) => state);
+
   /// Extract the current state `S`.
   State<S, S> get() => State((state) => Tuple2(state, state));
 

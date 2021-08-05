@@ -75,6 +75,13 @@ void main() {
       expect(result, 1.5);
     });
 
+    test('call', () {
+      final reader = Reader<String, int>((r) => r.length);
+      final ap = reader(Reader<String, double>((r) => r.length / 2));
+      final result = ap.run('abc');
+      expect(result, 1.5);
+    });
+
     test('compose', () {
       final reader = Reader<String, int>((r) => r.length);
       final ap = reader.compose(Reader<String, double>((r) => r.length / 2));

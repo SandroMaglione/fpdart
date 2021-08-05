@@ -62,6 +62,10 @@ class IO<A> extends HKT<_IOHKT, A> with Monad<_IOHKT, A> {
           E Function(A a, C c, D d) f) =>
       flatMap((a) => mc.flatMap((c) => md.map((d) => f(a, c, d))));
 
+  /// Chain multiple [IO] functions.
+  @override
+  IO<B> call<B>(covariant IO<B> chain) => flatMap((_) => chain);
+
   /// Chain the result of `then` to this [IO].
   @override
   IO<B> andThen<B>(covariant IO<B> Function() then) => flatMap((_) => then());

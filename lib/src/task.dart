@@ -59,6 +59,10 @@ class Task<A> extends HKT<_TaskHKT, A> with Monad<_TaskHKT, A> {
   Task<B> andThen<B>(covariant Task<B> Function() then) =>
       flatMap((_) => then());
 
+  /// Chain multiple [Task] functions.
+  @override
+  Task<B> call<B>(covariant Task<B> chain) => flatMap((_) => chain);
+
   /// Creates a task that will complete after a time delay specified by a [Duration].
   Task<A> delay(Duration duration) => Task(() => Future.delayed(duration, run));
 

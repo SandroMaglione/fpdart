@@ -65,6 +65,11 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   TaskEither<L, C> ap<C>(covariant TaskEither<L, C Function(R r)> a) =>
       a.flatMap((f) => flatMap((v) => pure(f(v))));
 
+  /// Chain multiple functions having the same left type `L`.
+  @override
+  TaskEither<L, C> call<C>(covariant TaskEither<L, C> chain) =>
+      flatMap((_) => chain);
+
   /// Change this [TaskEither] from `TaskEither<L, R>` to `TaskEither<R, L>`.
   TaskEither<R, L> swap() => TaskEither(
       () async => (await run()).match((l) => Right(l), (r) => Left(r)));

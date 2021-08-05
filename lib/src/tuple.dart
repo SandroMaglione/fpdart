@@ -3,6 +3,16 @@ import 'package:fpdart/fpdart.dart';
 /// Return a `Tuple2(a, b)`.
 Tuple2<A, B> tuple2<A, B>(A a, B b) => Tuple2(a, b);
 
+/// Build a `Tuple2(a, b)` using a curried function in which the first function
+/// accepts `a` and the second function accepts `b`.
+Tuple2<A, B> Function(B b) tuple2CurriedFirst<A, B>(A a) =>
+    (B b) => Tuple2(a, b);
+
+/// Build a `Tuple2(a, b)` using a curried function in which the first function
+/// accepts `b` and the second function accepts `a`.
+Tuple2<A, B> Function(A a) tuple2CurriedSecond<A, B>(B b) =>
+    (A a) => Tuple2(a, b);
+
 /// Tag the [HKT2] interface for the actual [Tuple2].
 abstract class _Tuple2HKT {}
 

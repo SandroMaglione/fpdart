@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:fpdart/fpdart.dart';
 
 import 'either.dart';
@@ -270,6 +268,10 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   @override
   Option<B> andThen<B>(covariant Option<B> Function() then) =>
       flatMap((_) => then());
+
+  /// Chain multiple [Option]s.
+  @override
+  Option<B> call<B>(covariant Option<B> chain) => flatMap((_) => chain);
 
   /// Change type of this [Option] based on its value of type `T` and the
   /// value of type `C` of another [Option].

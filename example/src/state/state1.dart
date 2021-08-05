@@ -46,9 +46,12 @@ void main() {
   // Using State Monad
   print('---');
   print('Using State');
-  final pop1WithState = popState();
-  final push1WithState = pushState('d');
-  final pop2WithState = popState();
-  final stackResult = pop2WithState.run(stack);
-  print(stackResult);
+  final withState = popState().execute(
+    pushState('d').execute(
+      popState().run(stack).second,
+    ),
+  );
+  final withState2 = popState()(pushState('d'))(popState()).run(stack);
+  print(withState);
+  print(withState2);
 }

@@ -54,6 +54,10 @@ class Reader<R, A> extends HKT2<ReaderHKT, R, A> with Monad2<ReaderHKT, R, A> {
   Reader<R, C> andThen<C>(covariant Reader<R, C> Function() then) =>
       flatMap((_) => then());
 
+  /// Chain multiple functions having the reader `R`.
+  @override
+  Reader<R, C> call<C>(covariant Reader<R, C> chain) => flatMap((_) => chain);
+
   /// Compose the dependency `R` of this [Reader] to `reader`.
   Reader<R, C> compose<C>(Reader<R, C> reader) => Reader((r) => reader.run(r));
 

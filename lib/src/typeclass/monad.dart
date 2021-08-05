@@ -16,6 +16,8 @@ abstract class Monad<KT, A> extends HKT<KT, A> with Applicative<KT, A> {
       flatMap((a) => mc.flatMap((c) => md.map((d) => f(a, c, d))));
 
   HKT<KT, B> andThen<B>(HKT<KT, B> Function() then) => flatMap((_) => then());
+
+  HKT<KT, B> call<B>(HKT<KT, B> chain) => flatMap((_) => chain);
 }
 
 abstract class Monad2<KT, A, B> extends HKT2<KT, A, B>
@@ -40,4 +42,6 @@ abstract class Monad2<KT, A, B> extends HKT2<KT, A, B>
 
   HKT2<KT, A, C> andThen<C>(HKT2<KT, A, C> Function() then) =>
       flatMap((_) => then());
+
+  HKT2<KT, A, C> call<C>(HKT2<KT, A, C> chain) => flatMap((_) => chain);
 }

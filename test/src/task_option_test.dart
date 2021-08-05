@@ -164,6 +164,22 @@ void main() {
       });
     });
 
+    group('call', () {
+      test('Some', () async {
+        final task = TaskOption<int>(() async => Option.of(10));
+        final ap = task(TaskOption<double>(() async => Option.of(12.5)));
+        final r = await ap.run();
+        r.match((r) => expect(r, 12.5), () => null);
+      });
+
+      test('None', () async {
+        final task = TaskOption<int>(() async => Option.none());
+        final ap = task(TaskOption<double>(() async => Option.of(12.5)));
+        final r = await ap.run();
+        r.match((r) => expect(r, 12.5), () => null);
+      });
+    });
+
     test('pure', () async {
       final task = TaskOption<int>(() async => Option.none());
       final ap = task.pure('abc');
