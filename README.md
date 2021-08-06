@@ -48,6 +48,7 @@ Would you like to know more about functional programming, fpdart, and how to use
 - [x] `Task`
 - [x] `TaskEither`
 - [x] `State`
+- [x] `StateAsync`
 - [x] `Reader`
 - [x] `Tuple`
 - [x] `IO`

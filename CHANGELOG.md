@@ -1,3 +1,7 @@
+# v0.0.10
+
+- Completed `StateAsync` type implementation, documentation, and testing
+
 # v0.0.9 - 3 August 2021
 
 - Released two new tutorials on the `Option` type:

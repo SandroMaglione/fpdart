@@ -36,6 +36,12 @@ T identity<T>(T a) => a;
 /// ```
 T id<T>(T a) => a;
 
+/// Returns the **first parameter** from a function that takes two parameters as input.
+T1 idFirst<T1, T2>(T1 t1, T2 t2) => t1;
+
+/// Returns the **second parameter** from a function that takes two parameters as input.
+T2 idSecond<T1, T2>(T1 t1, T2 t2) => t2;
+
 /// `constf a` is a unary function which evaluates to `a` for all inputs.
 /// ```dart
 /// final c = constF<int>(10);

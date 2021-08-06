@@ -1,4 +1,5 @@
 import 'function.dart';
+import 'state_async.dart';
 import 'tuple.dart';
 import 'typeclass/typeclass.export.dart';
 import 'unit.dart';
@@ -19,6 +20,9 @@ class State<S, A> extends HKT2<_StateHKT, S, A> with Monad2<_StateHKT, S, A> {
 
   /// Flat a [State] contained inside another [State] to be a single [State].
   factory State.flatten(State<S, State<S, A>> state) => state.flatMap(identity);
+
+  /// Lift a sync [State] to an async [StateAsync].
+  StateAsync<S, A> toStateAsync() => StateAsync.fromState(this);
 
   /// Used to chain multiple functions that return a [State].
   @override

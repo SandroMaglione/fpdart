@@ -75,6 +75,14 @@ void main() {
       expect(result.second, 'aaaa');
     });
 
+    test('toStateAsync', () async {
+      final state = State<String, int>((s) => Tuple2(s.length, '${s}a'));
+      final ap = state.toStateAsync();
+      final result = await ap.run('aaa');
+      expect(result.first, 3);
+      expect(result.second, 'aaaa');
+    });
+
     test('pure', () {
       final state = State<String, int>((s) => Tuple2(s.length, '${s}a'));
       final ap = state.pure(10);
