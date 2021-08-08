@@ -24,7 +24,7 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   TaskEither<L, C> flatMap<C>(covariant TaskEither<L, C> Function(R r) f) =>
       TaskEither(() => run().then(
             (either) async => either.match(
-              (l) => Either.left(l),
+              left,
               (r) => f(r).run(),
             ),
           ));
@@ -71,8 +71,8 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
       flatMap((_) => chain);
 
   /// Change this [TaskEither] from `TaskEither<L, R>` to `TaskEither<R, L>`.
-  TaskEither<R, L> swap() => TaskEither(
-      () async => (await run()).match((l) => Right(l), (r) => Left(r)));
+  TaskEither<R, L> swap() =>
+      TaskEither(() async => (await run()).match(right, left));
 
   /// When this [TaskEither] returns [Right], then return the current [TaskEither].
   /// Otherwise return the result of `orElse`.
@@ -80,8 +80,7 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   /// Used to provide an **alt**ernative [TaskEither] in case the current one returns [Left].
   @override
   TaskEither<L, R> alt(covariant TaskEither<L, R> Function() orElse) =>
-      TaskEither(
-          () async => (await run()).match((_) => orElse().run(), (_) => run()));
+      TaskEither(() async => (await run()).match((_) => orElse().run(), right));
 
   /// If `f` applied on this [TaskEither] as [Right] returns `true`, then return this [TaskEither].
   /// If it returns `false`, return the result of `onFalse` in a [Left].
@@ -135,7 +134,7 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
 
   /// Build a [TaskEither] that returns a [Left] containing the result of running `task`.
   factory TaskEither.leftTask(Task<L> task) =>
-      TaskEither(() => task.run().then((l) => Either.left(l)));
+      TaskEither(() => task.run().then(left));
 
   /// Build a [TaskEither] that returns a [Right] containing the result of running `task`.
   ///
@@ -161,8 +160,7 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   /// When `option` is [Some], then return [Right] when
   /// running [TaskEither]. Otherwise return `onNone`.
   factory TaskEither.fromOption(Option<R> option, L Function() onNone) =>
-      TaskEither(
-          () async => option.match((r) => Right(r), () => Left(onNone())));
+      TaskEither(() async => option.match(right, () => Left(onNone())));
 
   /// Build a [TaskEither] that returns `either`.
   factory TaskEither.fromEither(Either<L, R> either) =>

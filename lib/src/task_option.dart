@@ -77,8 +77,8 @@ class TaskOption<R> extends HKT<_TaskOptionHKT, R>
   ///
   /// Used to provide an **alt**ernative [TaskOption] in case the current one returns [None].
   @override
-  TaskOption<R> alt(covariant TaskOption<R> Function() orElse) => TaskOption(
-      () async => (await run()).match((_) => run(), () => orElse().run()));
+  TaskOption<R> alt(covariant TaskOption<R> Function() orElse) =>
+      TaskOption(() async => (await run()).match(some, () => orElse().run()));
 
   /// When this [TaskOption] returns a [None] then return the result of `orElse`.
   /// Otherwise return this [TaskOption].

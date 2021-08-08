@@ -101,7 +101,7 @@ class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
   /// Used to provide an **alt**ernative [IOEither] in case the current one returns [Left].
   @override
   IOEither<L, R> alt(covariant IOEither<L, R> Function() orElse) =>
-      IOEither(() => run().match((_) => orElse().run(), (_) => run()));
+      IOEither(() => run().match((_) => orElse().run(), right));
 
   /// Chain multiple functions having the same left type `L`.
   @override
