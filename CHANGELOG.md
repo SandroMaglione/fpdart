@@ -1,6 +1,9 @@
-# v0.0.10
+# v0.0.10 - 13 August 2021
 
+- Released introduction to [**Practical Functional Programming**](https://www.sandromaglione.com/practical-functional-programming-step-by-step-haskell-typescript-dart-part-1/)
 - Completed `StateAsync` type implementation, documentation, and testing
+- Fixed problem with `Alt` typeclass ([#21](https://github.com/SandroMaglione/fpdart/issues/21))
+- Added `call` method to more easily chain functions in `Monad` and `Monad2`
 
 # v0.0.9 - 3 August 2021
 
@@ -9,7 +12,7 @@
   - [**Chain functions using Option type – Functional Programming**](https://www.sandromaglione.com/chain-functions-using-option-type-functional-programming/)
 - Added `toJson` and `fromJson` methods to `Option` to use [`json_serializable`](https://pub.dev/packages/json_serializable) to convert `Option` type _to_ and _from_ Json (using `@JsonSerializable`)
 - Added functional extension methods on `Map`
-- Added composable `Predicate` type (and `&`, or `|`, not `~`, xor `^`) [#18](https://github.com/SandroMaglione/fpdart/issues/18)
+- Added composable `Predicate` type (and `&`, or `|`, not `~`, xor `^`) ([#18](https://github.com/SandroMaglione/fpdart/issues/18))
 
 # v0.0.8 - 13 July 2021
 

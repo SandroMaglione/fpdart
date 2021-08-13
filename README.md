@@ -39,6 +39,7 @@ Would you like to know more about functional programming, fpdart, and how to use
 3. [**Pure Functional app in Flutter – Pokemon app using fpdart and Functional Programming**](https://www.sandromaglione.com/pure-functional-app-in-flutter-using-fpdart-functional-programming/)
 4. [**Functional Programming Option type – Introduction**](https://www.sandromaglione.com/functional-programming-option-type-tutorial/)
 5. [**Chain functions using Option type – Functional Programming**](https://www.sandromaglione.com/chain-functions-using-option-type-functional-programming/)
+6. [**Practical Functional Programming - Part 1**](https://www.sandromaglione.com/practical-functional-programming-step-by-step-haskell-typescript-dart-part-1/)
 
 ## 🎯 Types
 
@@ -69,7 +70,7 @@ Would you like to know more about functional programming, fpdart, and how to use
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.0.9 # Check out the latest version
+  fpdart: ^0.0.10 # Check out the latest version
 ```
 
 ## ✨ Examples
@@ -282,6 +283,7 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
 
+- v0.0.10 - 13 August 2021
 - v0.0.9 - 3 August 2021
 - v0.0.8 - 13 July 2021
 - v0.0.7 - 6 July 2021
