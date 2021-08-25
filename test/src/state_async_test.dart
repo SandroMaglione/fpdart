@@ -26,62 +26,81 @@ void main() {
       final ap = state.map((a) => a + 1);
       final result = await ap.run('aaa');
       expect(result.first, 4);
-      expect(result.second, 'aaa');
+      expect(result.second, 'aaaa');
     });
 
     test('map2', () async {
       final state =
           StateAsync<String, int>((s) async => Tuple2(s.length, '${s}a'));
       final state1 = StateAsync<String, double>(
-          (s) async => Tuple2(s.length / 2, '${s}b'));
+        (s) async => Tuple2(s.length / 2, '${s}b'),
+      );
       final ap = state.map2<double, double>(state1, (a, c) => c * a);
       final result = await ap.run('aaa');
-      expect(result.first, 4.5);
-      expect(result.second, 'aaa');
+      expect(result.first, 6);
+      expect(result.second, 'aaaab');
     });
 
     test('map3', () async {
-      final state =
-          StateAsync<String, int>((s) async => Tuple2(s.length, '${s}a'));
+      final state = StateAsync<String, int>(
+        (s) async => Tuple2(s.length, '${s}a'),
+      );
       final state1 = StateAsync<String, double>(
-          (s) async => Tuple2(s.length / 2, '${s}b'));
-      final state2 =
-          StateAsync<String, String>((s) async => Tuple2('${s}aaa', '${s}b'));
+        (s) async => Tuple2(s.length / 2, '${s}b'),
+      );
+      final state2 = StateAsync<String, String>(
+        (s) async => Tuple2('${s}aaa', '${s}b'),
+      );
       final ap = state.map3<double, String, double>(
-          state1, state2, (a, c, d) => d.length + (c * a));
+        state1,
+        state2,
+        (a, c, d) => d.length + (c * a),
+      );
       final result = await ap.run('aaa');
-      expect(result.first, 10.5);
-      expect(result.second, 'aaa');
+      expect(result.first, 14);
+      expect(result.second, 'aaaabb');
     });
 
     test('ap', () async {
-      final state =
-          StateAsync<String, int>((s) async => Tuple2(s.length, '${s}a'));
-      final ap = state
-          .ap<String>(StateAsync((s) async => Tuple2((int n) => '$n$s', s)));
+      final state = StateAsync<String, int>(
+        (s) async => Tuple2(s.length, '${s}a'),
+      );
+      final ap = state.ap<String>(
+        StateAsync(
+          (s) async => Tuple2((int n) => '$n$s', s),
+        ),
+      );
       final result = await ap.run('aaa');
       expect(result.first, '3aaa');
-      expect(result.second, 'aaa');
+      expect(result.second, 'aaaa');
     });
 
     test('andThen', () async {
-      final state =
-          StateAsync<String, int>((s) async => Tuple2(s.length, '${s}a'));
-      final ap = state.andThen(() => StateAsync<String, double>(
-          (s) async => Tuple2(s.length / 2, '${s}a')));
+      final state = StateAsync<String, int>(
+        (s) async => Tuple2(s.length, '${s}a'),
+      );
+      final ap = state.andThen(
+        () => StateAsync<String, double>(
+          (s) async => Tuple2(s.length / 2, '${s}a'),
+        ),
+      );
       final result = await ap.run('aaa');
-      expect(result.first, 1.5);
-      expect(result.second, 'aaaa');
+      expect(result.first, 2);
+      expect(result.second, 'aaaaa');
     });
 
     test('call', () async {
-      final state =
-          StateAsync<String, int>((s) async => Tuple2(s.length, '${s}a'));
-      final ap = state(StateAsync<String, double>(
-          (s) async => Tuple2(s.length / 2, '${s}a')));
+      final state = StateAsync<String, int>(
+        (s) async => Tuple2(s.length, '${s}a'),
+      );
+      final ap = state(
+        StateAsync<String, double>(
+          (s) async => Tuple2(s.length / 2, '${s}a'),
+        ),
+      );
       final result = await ap.run('aaa');
-      expect(result.first, 1.5);
-      expect(result.second, 'aaaa');
+      expect(result.first, 2);
+      expect(result.second, 'aaaaa');
     });
 
     test('fromState', () async {
@@ -102,13 +121,16 @@ void main() {
     });
 
     test('flatMap', () async {
-      final state =
-          StateAsync<String, int>((s) async => Tuple2(s.length, '${s}a'));
+      final state = StateAsync<List<int>, int>(
+          (s) async => Tuple2(s.first, s.sublist(1)));
       final ap = state.flatMap<double>(
-          (a) => StateAsync((s) async => Tuple2(a / 2, '$a$s')));
-      final result = await ap.run('aaa');
-      expect(result.first, 1.5);
-      expect(result.second, '3aaa');
+        (a) => StateAsync(
+          (s) async => Tuple2(a / 2, s.sublist(1)),
+        ),
+      );
+      final result = await ap.run([1, 2, 3, 4, 5]);
+      expect(result.first, 0.5);
+      expect(result.second, [3, 4, 5]);
     });
 
     test('get', () async {
@@ -170,15 +192,19 @@ void main() {
     });
 
     test('flatten', () async {
-      final state = StateAsync<String, StateAsync<String, int>>((s) async =>
-          Tuple2(
-              StateAsync<String, int>((s) async => Tuple2(s.length, '${s}a')),
-              '${s}a'));
+      final state = StateAsync<String, StateAsync<String, int>>(
+        (s) async => Tuple2(
+          StateAsync<String, int>(
+            (s) async => Tuple2(s.length, '${s}a'),
+          ),
+          '${s}a',
+        ),
+      );
       final ap = StateAsync.flatten(state);
       expect(ap, isA<StateAsync<String, int>>());
       final result = await ap.run('aaa');
-      expect(result.first, 3);
-      expect(result.second, 'aaaa');
+      expect(result.first, 4);
+      expect(result.second, 'aaaaa');
     });
   });
 }

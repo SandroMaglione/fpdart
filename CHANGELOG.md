@@ -1,3 +1,8 @@
+# v0.0.11
+
+- Fixed major issue in `State` and `StateAsync` implementation [**BREAKING CHANGE**]
+  - Methods `flatMap`, `map`, `map2`, `map3`, `ap`, `andThen`, `call`, and `flatten` had an implementation issue that has been now fixed
+
 # v0.0.10 - 13 August 2021
 
 - Released introduction to [**Practical Functional Programming**](https://www.sandromaglione.com/practical-functional-programming-step-by-step-haskell-typescript-dart-part-1/)

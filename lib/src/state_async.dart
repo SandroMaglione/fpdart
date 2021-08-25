@@ -32,7 +32,10 @@ class StateAsync<S, A> extends HKT2<_StateAsyncHKT, S, A>
   /// Used to chain multiple functions that return a [StateAsync].
   @override
   StateAsync<S, C> flatMap<C>(covariant StateAsync<S, C> Function(A a) f) =>
-      StateAsync((state) async => f((await run(state)).first).run(state));
+      StateAsync((state) async {
+        final tuple = await run(state);
+        return f(tuple.first).run(tuple.second);
+      });
 
   /// Apply the function contained inside `a` to change the value of type `A` to
   /// a value of type `C`.

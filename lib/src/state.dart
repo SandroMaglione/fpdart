@@ -27,7 +27,10 @@ class State<S, A> extends HKT2<_StateHKT, S, A> with Monad2<_StateHKT, S, A> {
   /// Used to chain multiple functions that return a [State].
   @override
   State<S, C> flatMap<C>(covariant State<S, C> Function(A a) f) =>
-      State((state) => f(run(state).first).run(state));
+      State((state) {
+        final tuple = run(state);
+        return f(tuple.first).run(tuple.second);
+      });
 
   /// Apply the function contained inside `a` to change the value of type `A` to
   /// a value of type `C`.
