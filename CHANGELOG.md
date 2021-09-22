@@ -1,4 +1,4 @@
-# v0.0.11
+# v0.0.11 - 22 September 2021
 
 - Fixed major issue in `State` and `StateAsync` implementation [**BREAKING CHANGE**]
   - Methods `flatMap`, `map`, `map2`, `map3`, `ap`, `andThen`, `call`, and `flatten` had an implementation issue that has been now fixed
