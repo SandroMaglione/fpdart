@@ -10,7 +10,7 @@ import 'package:fpdart/fpdart.dart';
 /// In most cases, the [State] monad should be used, and [IORef] must be
 /// viewed as a last resort, as it holds a mutable field inside itself that can
 /// be modified inside of the [IO] monad.
-class IORef<T> implements Eq<IORef<T>> {
+class IORef<T> {
   T _value;
 
   IORef._(this._value);
@@ -18,7 +18,7 @@ class IORef<T> implements Eq<IORef<T>> {
   /// {@template create_io_ref}
   /// Creates a new IORef inside an [IO] monad with a given initial value.
   /// {@endtemplate}
-  static IO<IORef<T>> create<T>(T initial) => IO.of(IORef._(initial));
+  static IO<IORef<T>> create<T>(T initial) => IO(() => IORef._(initial));
 
   /// {@template read_io_ref}
   /// Extracts a current value of the [IORef] and returns it inside the
@@ -38,13 +38,10 @@ class IORef<T> implements Eq<IORef<T>> {
   /// [IORef]'s current value to it and writes the result to the [IORef].
   /// {@endtemplate}
   IO<Unit> modify(Endo<T> update) => read().map(update).flatMap(write);
-
-  @override
-  bool eqv(IORef<T> x, IORef<T> y) => identical(x, y);
-
-  @override
-  bool neqv(IORef<T> x, IORef<T> y) => !eqv(x, y);
 }
+
+/// [Eq] instance to compare [IORef]s using pointer equality
+final ioRefEq = Eq.instance<IORef<Object?>>((a, b) => identical(a, b));
 
 /// {@macro create_io_ref}
 IO<IORef<T>> newIORef<T>(T initial) => IORef.create(initial);
