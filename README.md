@@ -55,6 +55,7 @@ Would you like to know more about functional programming, fpdart, and how to use
 - [x] `Reader`
 - [x] `Tuple`
 - [x] `IO`
+- [x] `IORef`
 - [x] `Iterable` (`List`) `extension`
 - [x] `Map` `extension`
 - [x] `IOEither`
@@ -72,7 +73,7 @@ Would you like to know more about functional programming, fpdart, and how to use
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.0.11 # Check out the latest version
+  fpdart: ^0.0.12 # Check out the latest version
 ```
 
 ## ✨ Examples
@@ -285,6 +286,7 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
 
+- v0.0.12 - 24 October 2021
 - v0.0.11 - 22 September 2021
 - v0.0.10 - 13 August 2021
 - v0.0.9 - 3 August 2021

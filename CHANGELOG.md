@@ -1,3 +1,8 @@
+# v0.0.12 - 24 October 2021
+
+- Completed `IORef` type implementation, documentation, and testing
+  - Merged PR ([#25](https://github.com/SandroMaglione/fpdart/pull/25)) by [purplenoodlesoop](https://github.com/purplenoodlesoop) 🎉
+
 # v0.0.11 - 22 September 2021
 
 - Fixed major issue in `State` and `StateAsync` implementation [**BREAKING CHANGE**]
