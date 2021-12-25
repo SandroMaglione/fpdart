@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_constructors_over_static_methods
+
 import 'package:pokeapi_functional/models/sprite.dart';
 
 /// Pokemon information, with method to deserialize json
