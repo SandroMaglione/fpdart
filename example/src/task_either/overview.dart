@@ -1,12 +1,16 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
+
 import 'package:fpdart/fpdart.dart';
 
 /// What error is that? What is [dynamic]?
 Future<int> asyncI() {
   return Future<int>.error('Some error!')
       .then((value) => value * 10)
-      .catchError((dynamic error) => print(error));
+      .catchError((Object error) {
+    print(error);
+  });
 }
 
 /// Handle all the errors easily ✨
