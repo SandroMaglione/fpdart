@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, avoid_void_async
 
 import 'dart:io';
 import 'package:fpdart/fpdart.dart';
