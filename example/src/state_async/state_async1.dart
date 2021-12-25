@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:fpdart/fpdart.dart';
 
 Future<int> add10(int previous) async => previous + 10;

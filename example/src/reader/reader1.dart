@@ -1,4 +1,6 @@
 /// Source: https://gist.github.com/ruizb/554c17afb9cd3dedc76706862a9fa035
+// ignore_for_file: avoid_print
+
 import 'package:fpdart/src/reader.dart';
 
 /// Dependency

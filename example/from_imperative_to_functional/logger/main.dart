@@ -3,7 +3,7 @@
 ///
 /// Repository: https://github.com/leisim/logger
 
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, prefer_final_locals
 
 import 'package:fpdart/fpdart.dart';
 import 'logger.dart';
