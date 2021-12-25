@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+// ignore: depend_on_referenced_packages
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:pokeapi_functional/models/pokemon.dart';
 
