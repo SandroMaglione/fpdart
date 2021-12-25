@@ -1,5 +1,5 @@
-import 'package:test/test.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:test/test.dart';
 
 void main() {
   group('FpdartOnMutableMap', () {

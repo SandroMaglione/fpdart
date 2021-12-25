@@ -1,3 +1,5 @@
+// ignore_for_file: unrelated_type_equality_checks
+
 import 'package:fpdart/fpdart.dart';
 import 'package:test/test.dart';
 
