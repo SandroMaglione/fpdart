@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 int? getPrice(String productName) {
   if (productName.length > 6) {
     return null;

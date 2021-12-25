@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:fpdart/fpdart.dart';
 
 int sum(int param1, int param2) => param1 + param2;

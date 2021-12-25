@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:fpdart/fpdart.dart';
 
 int x2(int a) => a * 2;

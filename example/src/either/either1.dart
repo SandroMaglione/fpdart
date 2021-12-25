@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:fpdart/fpdart.dart';
 
 int? getNoEither(int index, List<int> list) {

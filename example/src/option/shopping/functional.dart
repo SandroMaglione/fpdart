@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:fpdart/fpdart.dart';
 
 Option<T> getRandomOption<T>(T value) => randomBool()

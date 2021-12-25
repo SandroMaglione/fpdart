@@ -1,4 +1,6 @@
 /// Source: http://www.learnyouahaskell.com/for-a-few-monads-more
+// ignore_for_file: avoid_print
+
 import 'package:fpdart/src/state.dart';
 import 'package:fpdart/src/tuple.dart';
 import 'package:fpdart/src/unit.dart';
