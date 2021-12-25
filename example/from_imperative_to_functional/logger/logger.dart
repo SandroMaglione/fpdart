@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, prefer_final_locals
+// ignore_for_file: avoid_print, prefer_final_locals, prefer_final_fields
 
 enum Level {
   verbose,
