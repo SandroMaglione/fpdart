@@ -1,0 +1,14 @@
+include: package:lint/analysis_options_package.yaml
+
+linter:
+  rules:
+    annotate_overrides: true
+
+analyzer:
+  exclude:
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false
+  errors:
+    annotate_overrides: error
+    mixin_inherits_from_not_object: ignore
