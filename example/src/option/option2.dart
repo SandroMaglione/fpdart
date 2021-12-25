@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:fpdart/fpdart.dart';
 
 double sumToDouble(int a, int b) => (a + b).toDouble();
