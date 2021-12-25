@@ -2,8 +2,8 @@
 
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
 import 'package:fpdart/fpdart.dart';
+import 'package:http/http.dart' as http;
 import 'package:pokeapi_functional/constants/constants.dart';
 import 'package:pokeapi_functional/models/pokemon.dart';
 
