@@ -55,7 +55,7 @@ class MyApp extends HookConsumerWidget {
             requestStatus.when(
               initial: () => Center(
                 child: Column(
-                  children: [
+                  children: const [
                     Text('Loading intial pokemon'),
                     CircularProgressIndicator(),
                   ],
