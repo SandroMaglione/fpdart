@@ -14,12 +14,15 @@ class MyApp extends HookConsumerWidget {
     /// [TextEditingController] using hooks
     final controller = useTextEditingController();
     final requestStatus = ref.watch(pokemonProvider);
-    useEffect(() {
-      /// Fetch the initial pokemon information (random pokemon).
-      Future.delayed(Duration.zero, () {
-        ref.read(pokemonProvider.notifier).fetchRandom();
-      });
-    }, []);
+    useEffect(
+      () {
+        /// Fetch the initial pokemon information (random pokemon).
+        Future.delayed(Duration.zero, () {
+          ref.read(pokemonProvider.notifier).fetchRandom();
+        });
+      },
+      [],
+    );
 
     return MaterialApp(
       title: 'Fpdart PokeAPI',

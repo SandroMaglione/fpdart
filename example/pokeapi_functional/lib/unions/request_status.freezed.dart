@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, lines_longer_than_80_chars
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, lines_longer_than_80_chars, require_trailing_commas
 
 part of 'request_status.dart';
 
@@ -10,7 +10,8 @@ part of 'request_status.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods',
+);
 
 /// @nodoc
 class _$RequestStatusTearOff {
@@ -322,12 +323,14 @@ class _$ErrorRequestStatusCopyWithImpl<$Res>
   $Res call({
     Object? string = freezed,
   }) {
-    return _then(ErrorRequestStatus(
-      string == freezed
-          ? _value.string
-          : string // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+    return _then(
+      ErrorRequestStatus(
+        string == freezed
+            ? _value.string
+            : string // ignore: cast_nullable_to_non_nullable
+                as String,
+      ),
+    );
   }
 }
 
@@ -456,12 +459,14 @@ class _$SuccessRequestStatusCopyWithImpl<$Res>
   $Res call({
     Object? pokemon = freezed,
   }) {
-    return _then(SuccessRequestStatus(
-      pokemon == freezed
-          ? _value.pokemon
-          : pokemon // ignore: cast_nullable_to_non_nullable
-              as Pokemon,
-    ));
+    return _then(
+      SuccessRequestStatus(
+        pokemon == freezed
+            ? _value.pokemon
+            : pokemon // ignore: cast_nullable_to_non_nullable
+                as Pokemon,
+      ),
+    );
   }
 }
 
@@ -504,7 +509,9 @@ class _$SuccessRequestStatus
   @override
   $SuccessRequestStatusCopyWith<SuccessRequestStatus> get copyWith =>
       _$SuccessRequestStatusCopyWithImpl<SuccessRequestStatus>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   @optionalTypeArgs
