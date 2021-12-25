@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, prefer_const_declarations
+// ignore_for_file: avoid_print, prefer_const_declarations, unnecessary_nullable_for_final_variable_declarations
 
 import 'package:fpdart/fpdart.dart';
 
