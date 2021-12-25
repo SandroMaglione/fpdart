@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import 'either.dart';
 import 'function.dart';
 import 'task_option.dart';
@@ -13,6 +14,24 @@ import 'typeclass/monoid.dart';
 import 'typeclass/order.dart';
 import 'typeclass/semigroup.dart';
 
+||||||| parent of f2749c9 (fix warnings in lib)
+import 'package:fpdart/fpdart.dart';
+
+import 'either.dart';
+import 'function.dart';
+import 'tuple.dart';
+import 'typeclass/alt.dart';
+import 'typeclass/eq.dart';
+import 'typeclass/extend.dart';
+import 'typeclass/filterable.dart';
+import 'typeclass/foldable.dart';
+import 'typeclass/hkt.dart';
+import 'typeclass/monad.dart';
+
+=======
+import 'package:fpdart/fpdart.dart';
+
+>>>>>>> f2749c9 (fix warnings in lib)
 /// Return a `Some(t)`.
 ///
 /// Shortcut for `Option.of(r)`.
