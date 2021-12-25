@@ -1,4 +1,6 @@
 /// Pokemon sprite image, with method to deserialize json
+// ignore_for_file: non_constant_identifier_names
+
 class Sprite {
   final String front_default;
 
