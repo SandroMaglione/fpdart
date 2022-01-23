@@ -1,5 +1,10 @@
-import 'package:fpdart/fpdart.dart';
-import 'package:fpdart/src/task.dart';
+import 'either.dart';
+import 'function.dart';
+import 'option.dart';
+import 'task.dart';
+import 'typeclass/alt.dart';
+import 'typeclass/hkt.dart';
+import 'typeclass/monad.dart';
 
 /// Tag the [HKT2] interface for the actual [TaskEither].
 abstract class _TaskEitherHKT {}
@@ -58,6 +63,19 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   /// type `C` using function `f`.
   @override
   TaskEither<L, C> map<C>(C Function(R r) f) => ap(pure(f));
+
+  /// Change the value in the [Left] of [TaskEither].
+  TaskEither<C, R> mapLeft<C>(C Function(L l) f) => TaskEither(() async =>
+      (await run()).match((l) => Either.left(f(l)), (r) => Either.of(r)));
+
+  /// Define two functions to change both the [Left] and [Right] value of the
+  /// [TaskEither].
+  ///
+  /// Same as `map`+`mapLeft` but for both [Left] and [Right]
+  /// (`map` is only to change [Right], while `mapLeft` is only to change [Left]).
+  TaskEither<C, D> bimap<C, D>(
+          C Function(L l) mapLeft, D Function(R r) mapRight) =>
+      map(mapRight).mapLeft(mapLeft);
 
   /// Apply the function contained inside `a` to change the value on the [Right] from
   /// type `R` to a value of type `C`.
