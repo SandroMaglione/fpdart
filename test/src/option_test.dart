@@ -571,6 +571,22 @@ void main() {
       });
     });
 
+    group('toTaskOption', () {
+      test('Some', () async {
+        final m = Option.of(10);
+        final taskOption = m.toTaskOption();
+        final result = await taskOption.run();
+        expect(result, m);
+      });
+
+      test('None', () async {
+        final m = Option<int>.none();
+        final taskOption = m.toTaskOption();
+        final result = await taskOption.run();
+        expect(result, m);
+      });
+    });
+
     test('Some value', () {
       const m = Some(10);
       expect(m.value, 10);
