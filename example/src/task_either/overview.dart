@@ -14,4 +14,11 @@ TaskEither<String, int> asyncF() {
   ).map((r) => r * 10);
 }
 
-void main() {}
+void main() {
+  /// You have an [Either]. Now, suddenly a [Future] appears!
+  /// What do you do?
+  ///
+  /// You need to change the context, moving from a sync [Either]
+  /// to an async [TaskEither]! Simply use `toTaskEither`.
+  final eitherToTaskEither = Either<String, int>.of(10).toTaskEither();
+}
