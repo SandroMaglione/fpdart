@@ -1,3 +1,12 @@
+# v0.0.13 - 26 January 2022
+- New methods to `TaskEither`, `TaskOption`, `Either`, and `Option`
+  - `mapLeft` (`TaskEither`)
+  - `bimap` (`TaskEither`)
+  - `toTaskEither` (`Either`)
+  - `toTaskOption` (`Option`)
+- New **Blog posts and tutorials** section in [`README`](README.md)
+  - New blog post [How to map an Either to a Future in fpdart](https://blog.sandromaglione.com/techblog/from-sync-to-async-functional-programming)
+
 # v0.0.12 - 24 October 2021
 
 - Completed `IORef` type implementation, documentation, and testing

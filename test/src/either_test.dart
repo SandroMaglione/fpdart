@@ -366,6 +366,22 @@ void main() {
       });
     });
 
+    group('toTaskEither', () {
+      test('Right', () async {
+        final value = Either<String, int>.of(10);
+        final ap = value.toTaskEither();
+        final result = await ap.run();
+        expect(result, value);
+      });
+
+      test('Left', () async {
+        final value = Either<String, int>.left('none');
+        final ap = value.toTaskEither();
+        final result = await ap.run();
+        expect(result, value);
+      });
+    });
+
     group('isLeft', () {
       test('Right', () {
         final value = Either<String, int>.of(10);

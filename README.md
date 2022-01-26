@@ -8,7 +8,6 @@
   <img src="https://img.shields.io/github/license/SandroMaglione/fpdart?logo=github" />
   <img src="https://img.shields.io/github/contributors-anon/SandroMaglione/fpdart" />
   <img src="https://img.shields.io/pub/v/fpdart?include_prereleases" />
-  <!-- <img src="https://img.shields.io/badge/flutter-v2.0.2-blue.svg" /> -->
   <img src="https://img.shields.io/badge/dart-v2.13.1-blue.svg" />
   <a href="https://github.com/SandroMaglione">
     <img alt="GitHub: SandroMaglione" src="https://img.shields.io/github/followers/SandroMaglione?label=Follow&style=social" target="_blank" />
@@ -43,6 +42,9 @@ Would you like to know more about functional programming, fpdart, and how to use
 7. [**Practical Functional Programming - Part 2**](https://www.sandromaglione.com/practical-functional-programming-pure-functions-part-2/)
 8. [**Practical Functional Programming - Part 3**](https://www.sandromaglione.com/immutability-practical-functional-programming-part-3/)
 
+### 👨‍💻 Blog posts and tutorials
+- [How to map an Either to a Future in fpdart](https://blog.sandromaglione.com/techblog/from-sync-to-async-functional-programming)
+
 ## 🎯 Types
 
 - [x] `Option`
@@ -73,7 +75,7 @@ Would you like to know more about functional programming, fpdart, and how to use
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.0.12 # Check out the latest version
+  fpdart: ^0.0.13 # Check out the latest version
 ```
 
 ## ✨ Examples
@@ -286,6 +288,7 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
 
+- v0.0.13 - 26 January 2022
 - v0.0.12 - 24 October 2021
 - v0.0.11 - 22 September 2021
 - v0.0.10 - 13 August 2021

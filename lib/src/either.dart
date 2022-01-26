@@ -177,6 +177,13 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// - If the [Either] is [Right], return a [Some] containing the value inside [Right]
   Option<R> toOption();
 
+  /// Convert this [Either] to a [TaskEither].
+  ///
+  /// Used to convert a sync context ([Either]) to an async context ([TaskEither]).
+  /// You should convert [Either] to [TaskEither] every time you need to
+  /// call an async ([Future]) function based on the value in [Either].
+  TaskEither<L, R> toTaskEither();
+
   /// Return `true` when this [Either] is [Left].
   bool isLeft();
 
@@ -384,6 +391,9 @@ class Right<L, R> extends Either<L, R> {
   @override
   TaskEither<L, R2> bindFuture<R2>(Future<Either<L, R2>> Function(R r) f) =>
       TaskEither(() async => f(_value));
+
+  @override
+  TaskEither<L, R> toTaskEither() => TaskEither.of(_value);
 }
 
 class Left<L, R> extends Either<L, R> {
@@ -464,4 +474,7 @@ class Left<L, R> extends Either<L, R> {
   @override
   TaskEither<L, R2> bindFuture<R2>(Future<Either<L, R2>> Function(R r) f) =>
       TaskEither.left(_value);
+
+  @override
+  TaskEither<L, R> toTaskEither() => TaskEither.left(_value);
 }

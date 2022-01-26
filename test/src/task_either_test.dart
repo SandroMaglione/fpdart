@@ -116,6 +116,38 @@ void main() {
       });
     });
 
+    group('mapLeft', () {
+      test('Right', () async {
+        final task = TaskEither<String, int>(() async => Either.of(10));
+        final ap = task.mapLeft((l) => '$l and more');
+        final r = await ap.run();
+        r.match((l) => null, (r) => expect(r, 10));
+      });
+
+      test('Left', () async {
+        final task = TaskEither<String, int>(() async => Either.left('abc'));
+        final ap = task.mapLeft((l) => '$l and more');
+        final r = await ap.run();
+        r.match((l) => expect(l, 'abc and more'), (r) => null);
+      });
+    });
+
+    group('bimap', () {
+      test('Right', () async {
+        final task = TaskEither<String, int>(() async => Either.of(10));
+        final ap = task.bimap((l) => '$l and more', (a) => a * 2);
+        final r = await ap.run();
+        r.match((l) => null, (r) => expect(r, 20));
+      });
+
+      test('Left', () async {
+        final task = TaskEither<String, int>(() async => Either.left('abc'));
+        final ap = task.bimap((l) => '$l and more', (a) => a * 2);
+        final r = await ap.run();
+        r.match((l) => expect(l, 'abc and more'), (r) => null);
+      });
+    });
+
     group('map2', () {
       test('Right', () async {
         final task = TaskEither<String, int>(() async => Either.of(10));

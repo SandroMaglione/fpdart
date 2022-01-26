@@ -1,7 +1,6 @@
-import 'package:fpdart/fpdart.dart';
-
 import 'either.dart';
 import 'function.dart';
+import 'task_option.dart';
 import 'tuple.dart';
 import 'typeclass/alt.dart';
 import 'typeclass/eq.dart';
@@ -10,6 +9,9 @@ import 'typeclass/filterable.dart';
 import 'typeclass/foldable.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
+import 'typeclass/monoid.dart';
+import 'typeclass/order.dart';
+import 'typeclass/semigroup.dart';
 
 /// Return a `Some(t)`.
 ///
@@ -321,6 +323,13 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   /// the result of calling `onLeft`.
   Either<L, T> toEither<L>(L Function() onLeft);
 
+  /// Convert this [Option] to a [TaskOption].
+  ///
+  /// Used to convert a sync context ([Option]) to an async context ([TaskOption]).
+  /// You should convert [Option] to [TaskOption] every time you need to
+  /// call an async ([Future]) function based on the value in [Option].
+  TaskOption<T> toTaskOption();
+
   /// Return `true` when value of `a` is equal to the value inside the [Option].
   bool elem(T t, Eq<T> eq);
 
@@ -514,6 +523,9 @@ class Some<T> extends Option<T> {
 
   @override
   Object? toJson(Object? Function(T p1) toJsonT) => toJsonT(_value);
+
+  @override
+  TaskOption<T> toTaskOption() => TaskOption.of(_value);
 }
 
 class None<T> extends Option<T> {
@@ -587,4 +599,7 @@ class None<T> extends Option<T> {
 
   @override
   Object? toJson(Object? Function(T p1) toJsonT) => null;
+
+  @override
+  TaskOption<T> toTaskOption() => TaskOption.none();
 }
