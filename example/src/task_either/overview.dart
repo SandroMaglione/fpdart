@@ -14,4 +14,20 @@ TaskEither<String, int> asyncF() {
   ).map((r) => r * 10);
 }
 
+// Methods 👇
+
+TaskEither<int, int> mapLeftExample(TaskEither<String, int> taskEither) =>
+    taskEither.mapLeft(
+      (string) => string.length,
+    );
+
+TaskEither<int, double> bimapExample(TaskEither<String, int> taskEither) =>
+    taskEither.bimap(
+      (string) => string.length,
+      (number) => number / 2,
+    );
+
+TaskEither<String, int> toTaskEitherExample(Either<String, int> taskEither) =>
+    taskEither.toTaskEither();
+
 void main() {}
