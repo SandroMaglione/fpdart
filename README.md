@@ -43,6 +43,9 @@ Would you like to know more about functional programming, fpdart, and how to use
 7. [**Practical Functional Programming - Part 2**](https://www.sandromaglione.com/practical-functional-programming-pure-functions-part-2/)
 8. [**Practical Functional Programming - Part 3**](https://www.sandromaglione.com/immutability-practical-functional-programming-part-3/)
 
+### 👨‍💻 Blog posts and tutorials
+- [How to map an Either to a Future in fpdart](https://blog.sandromaglione.com/techblog/from-sync-to-async-functional-programming)
+
 ## 🎯 Types
 
 - [x] `Option`
