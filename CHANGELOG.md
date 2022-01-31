@@ -1,3 +1,6 @@
+# v0.0.14 - 31 January 2022
+- Updated package linting to [`lints`](https://pub.dev/packages/lints)
+
 # v0.0.13 - 26 January 2022
 - New methods to `TaskEither`, `TaskOption`, `Either`, and `Option`
   - `mapLeft` (`TaskEither`)
