@@ -507,7 +507,7 @@ class Some<T> extends Option<T> {
   Either<L, T> toEither<L>(L Function() onLeft) => Right(_value);
 
   @override
-  Option<T> plus(covariant Option<T> v) => this;
+  Option<T> plus(covariant Option<T> a) => this;
 
   @override
   Option<T> append(T t) => this;
@@ -532,8 +532,8 @@ class None<T> extends Option<T> {
   const None();
 
   @override
-  Option<D> map2<C, D>(covariant Option<C> a, D Function(T t, C c) f) =>
-      flatMap((b) => a.map((c) => f(b, c)));
+  Option<D> map2<C, D>(covariant Option<C> mc, D Function(T t, C c) f) =>
+      flatMap((b) => mc.map((c) => f(b, c)));
 
   @override
   Option<E> map3<C, D, E>(covariant Option<C> mc, covariant Option<D> md,
@@ -583,7 +583,7 @@ class None<T> extends Option<T> {
   Either<L, T> toEither<L>(L Function() onLeft) => Left(onLeft());
 
   @override
-  Option<T> plus(covariant Option<T> v) => v;
+  Option<T> plus(covariant Option<T> a) => a;
 
   @override
   Option<T> append(T t) => Some(t);

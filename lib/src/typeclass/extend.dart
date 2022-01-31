@@ -1,5 +1,4 @@
-import 'package:fpdart/fpdart.dart';
-
+import '../function.dart';
 import 'functor.dart';
 import 'hkt.dart';
 

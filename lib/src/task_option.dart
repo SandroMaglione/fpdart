@@ -1,5 +1,10 @@
-import 'package:fpdart/fpdart.dart';
-import 'package:fpdart/src/task.dart';
+import 'either.dart';
+import 'function.dart';
+import 'option.dart';
+import 'task.dart';
+import 'typeclass/alt.dart';
+import 'typeclass/hkt.dart';
+import 'typeclass/monad.dart';
 
 /// Tag the [HKT] interface for the actual [TaskOption].
 abstract class _TaskOptionHKT {}

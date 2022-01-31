@@ -127,13 +127,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.3"
-  lint:
+  lints:
     dependency: "direct dev"
     description:
-      name: lint
+      name: lints
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.5.3"
+    version: "1.0.1"
   logging:
     dependency: transitive
     description:

@@ -1,9 +1,8 @@
-import 'package:fpdart/fpdart.dart';
-
 import 'either.dart';
 import 'function.dart';
 import 'io.dart';
 import 'option.dart';
+import 'task_either.dart';
 import 'typeclass/alt.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
