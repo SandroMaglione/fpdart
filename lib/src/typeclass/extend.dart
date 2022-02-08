@@ -1,18 +1,7 @@
-<<<<<<< HEAD
 import '../function.dart';
 import 'functor.dart';
 import 'hkt.dart';
 
-||||||| parent of f2749c9 (fix warnings in lib)
-import 'package:fpdart/fpdart.dart';
-
-import 'functor.dart';
-import 'hkt.dart';
-
-=======
-import 'package:fpdart/fpdart.dart';
-
->>>>>>> f2749c9 (fix warnings in lib)
 abstract class Extend<KT, A> extends HKT<KT, A> with Functor<KT, A> {
   /// Extend the type by applying function `f` to it.
   ///

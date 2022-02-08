@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import 'either.dart';
 import 'function.dart';
 import 'io.dart';
@@ -8,21 +7,6 @@ import 'typeclass/alt.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
-||||||| parent of f2749c9 (fix warnings in lib)
-import 'package:fpdart/fpdart.dart';
-
-import 'either.dart';
-import 'function.dart';
-import 'io.dart';
-import 'option.dart';
-import 'typeclass/alt.dart';
-import 'typeclass/hkt.dart';
-import 'typeclass/monad.dart';
-
-=======
-import 'package:fpdart/fpdart.dart';
-
->>>>>>> f2749c9 (fix warnings in lib)
 /// Tag the [HKT2] interface for the actual [IOEither].
 abstract class _IOEitherHKT {}
 

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import 'either.dart';
 import 'function.dart';
 import 'option.dart';
@@ -6,12 +5,6 @@ import 'task.dart';
 import 'typeclass/alt.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
-||||||| parent of f2749c9 (fix warnings in lib)
-import 'package:fpdart/fpdart.dart';
-import 'package:fpdart/src/task.dart';
-=======
-import 'package:fpdart/fpdart.dart';
->>>>>>> f2749c9 (fix warnings in lib)
 
 /// Tag the [HKT2] interface for the actual [TaskEither].
 abstract class _TaskEitherHKT {}
