@@ -17,13 +17,29 @@ TaskEither<ApiFailure, List<Course>> getCoursesOfStudents(
       (_, __) => CourseFailure(),
     );
 
-Future<void> logFailure(ApiFailure apiFailure) {
-  /// Logs to online service like crashlytics
-  throw UnimplementedError();
+String logFailure(ApiFailure apiFailure) {
+  if (apiFailure is StudentFailure) {
+    return 'Error while fetching list of students';
+  } else if (apiFailure is CourseFailure) {
+    return 'Error while fetching list of courses';
+  } else {
+    throw UnimplementedError();
+  }
 }
 
-void main() {
+void main() async {
   /// How to call `getCoursesOfStudents` only if students is `Right`?
-  /// In case there aren't loaded, `logFailure`
-  getStudents.flatMap(getCoursesOfStudents).match(logFailure, Future.value);
+  ///
+  /// Type: `TaskEither<ApiFailure, List<Course>>`
+  final taskEitherRequest = getStudents.flatMap(getCoursesOfStudents);
+
+  /// In case of error map `ApiFailure` to `String` using `logFailure`
+  ///
+  /// Type: `TaskEither<String, List<Course>>`
+  final taskRequest = taskEitherRequest.mapLeft(logFailure);
+
+  /// Run everything at the end!
+  ///
+  /// Type: `Either<String, List<Course>>`
+  final result = await taskRequest.run();
 }
