@@ -5,10 +5,10 @@ linter:
     annotate_overrides: true
 
 analyzer:
-  exclude:
-  strong-mode:
-    implicit-casts: false
-    implicit-dynamic: false
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
   errors:
     annotate_overrides: error
     mixin_inherits_from_not_object: ignore

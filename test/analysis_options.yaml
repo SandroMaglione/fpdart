@@ -1,0 +1,3 @@
+analyzer:
+  errors:
+    strict_raw_type: ignore
