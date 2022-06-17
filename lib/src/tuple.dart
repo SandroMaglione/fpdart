@@ -48,6 +48,12 @@ class Tuple2<T1, T2> extends HKT2<_Tuple2HKT, T1, T2>
   Tuple2<T1, TN> mapSecond<TN>(TN Function(T2 second) f) =>
       Tuple2(_value1, f(_value2));
 
+  /// Change type of both values of the [Tuple] using `f`.
+  ///
+  /// This is the same as `mapFirst` and `mapSecond` combined.
+  Tuple2<C, D> mapBoth<C, D>(Tuple2<C, D> Function(T1 first, T2 second) f) =>
+      f(_value1, _value2);
+
   /// Change type of second value of the [Tuple] from `T2` to `C` using `f`.
   ///
   /// Same as `mapSecond`.

@@ -26,6 +26,13 @@ void main() {
       expect(map.second, '10');
     });
 
+    test('mapBoth', () {
+      const tuple = Tuple2('abc', 10);
+      final map = tuple.mapBoth((v1, v2) => Tuple2('$v2', v1.length));
+      expect(map.first, '10');
+      expect(map.second, 3);
+    });
+
     test('map', () {
       const tuple = Tuple2('abc', 10);
       final map = tuple.map((v2) => '$v2');
