@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/github/license/SandroMaglione/fpdart?logo=github" />
   <img src="https://img.shields.io/github/contributors-anon/SandroMaglione/fpdart" />
   <img src="https://img.shields.io/pub/v/fpdart?include_prereleases" />
-  <img src="https://img.shields.io/badge/dart-v2.13.1-blue.svg" />
+  <img src="https://img.shields.io/badge/dart-v2.17.3-blue.svg" />
   <a href="https://github.com/SandroMaglione">
     <img alt="GitHub: SandroMaglione" src="https://img.shields.io/github/followers/SandroMaglione?label=Follow&style=social" target="_blank" />
   </a>
@@ -27,7 +27,7 @@ Functional programming in Dart and Flutter. All the main functional programming 
 
 Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://typelevel.org/cats/typeclasses.html#type-classes-in-cats), and [dartz](https://github.com/spebbe/dartz).
 
-**Note**: The package is still in early development. The API may change frequently and there will be many breaking changes. The documentation and testing is currently under development, but it is coming soon and fast. Follow my [**Twitter**](https://twitter.com/SandroMaglione) for daily updates.
+> **Note**: The API is still evolving and it may change. New documentation and testing is always ongoing. Follow my [**Twitter**](https://twitter.com/SandroMaglione) for updates
 
 ## 📖 Learn `functional programming` and `fpdart`
 
@@ -75,7 +75,7 @@ Would you like to know more about functional programming, fpdart, and how to use
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.0.14 # Check out the latest version
+  fpdart: ^0.1.0 # Check out the latest version
 ```
 
 ## ✨ Examples
@@ -288,6 +288,7 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
 
+- **v0.1.0** - 17 June 2022
 - v0.0.14 - 31 January 2022
 - v0.0.13 - 26 January 2022
 - v0.0.12 - 24 October 2021

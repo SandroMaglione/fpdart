@@ -1,3 +1,13 @@
+# v0.1.0 - 17 June 2022
+- Added `idFuture` and `identityFuture` methods ([#38](https://github.com/SandroMaglione/fpdart/pull/38) by [f-person](https://github.com/f-person) 🎉)
+- Added `mapBoth` method to `Tuple2` ([#30](https://github.com/SandroMaglione/fpdart/issues/30))
+- Fixed linting warnings
+- Fixed issue with `upsert` method for `Map` ([#37](https://github.com/SandroMaglione/fpdart/issues/37)) ⚠️
+- Minimum environment dart sdk to `2.16.0` ⚠️
+```yaml
+environment:
+  sdk: ">=2.16.0 <3.0.0"
+```
 # v0.0.14 - 31 January 2022
 - Updated package linting to [`lints`](https://pub.dev/packages/lints)
 
