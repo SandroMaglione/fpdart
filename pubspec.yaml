@@ -6,8 +6,8 @@ description: Functional programming in Dart and Flutter. All the main functional
 author: Maglione Sandro <lass.maglio@gmail.com>
 
 environment:
-  sdk: ">=2.13.0 <3.0.0"
+  sdk: ">=2.16.0 <3.0.0"
 
 dev_dependencies:
-  lints: ^1.0.1
-  test: ^1.17.5
+  lints: ^2.0.0
+  test: ^1.21.2
