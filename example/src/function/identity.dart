@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 
-void main() {
+Future<void> main() async {
   final either = Either<String, int>.of(10);
 
   /// Without using `identity`, you must write a function to return
@@ -10,4 +10,12 @@ void main() {
   /// Using `identity`/`id`, the function just returns its input parameter.
   final withIdentity = either.match(identity, (r) => '$r');
   final withId = either.match(id, (r) => '$r');
+
+  /// Using `identityFuture`/`idFuture`, the function just returns its input
+  /// parameter, wrapped in `Future.value`.
+  final withIdentityFuture = await either.match(
+    identityFuture,
+    (r) async => '$r',
+  );
+  final withidFuture = await either.match(idFuture, (r) async => '$r');
 }

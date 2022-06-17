@@ -36,6 +36,42 @@ T identity<T>(T a) => a;
 /// ```
 T id<T>(T a) => a;
 
+/// Returns the given `a`, wrapped in `Future.value`.
+///
+/// Same as `idFuture`.
+///
+/// Shortcut function to return the input parameter:
+/// ```dart
+/// final either = Either<String, int>.of(10);
+///
+/// /// Without using `identityFuture`, you must write a function to return
+/// /// the input parameter `(l) async => l`.
+/// final noId = await either.match((l) async => l, (r) async => '$r');
+///
+/// /// Using `identityFuture`/`idFuture`, the function just returns its input parameter.
+/// final withIdentityFuture = either.match(identityFuture, (r) async => '$r');
+/// final withIdFuture = await either.match(idFuture, (r) async => '$r');
+/// ```
+Future<T> identityFuture<T>(T a) => Future.value(a);
+
+/// Returns the given `a`, wrapped in `Future.value`.
+///
+/// Same as `identityFuture`.
+///
+/// Shortcut function to return the input parameter:
+/// ```dart
+/// final either = Either<String, int>.of(10);
+///
+/// /// Without using `idFuture`, you must write a function to return
+/// /// the input parameter `(l) async => l`.
+/// final noId = await either.match((l) async => l, (r) async => '$r');
+///
+/// /// Using `identityFuture`/`idFuture`, the function just returns its input parameter.
+/// final withIdentity = either.match(identityFuture, (r) async => '$r');
+/// final withId = await either.match(idFuture, (r) async => '$r');
+/// ```
+Future<T> idFuture<T>(T a) => Future.value(a);
+
 /// Returns the **first parameter** from a function that takes two parameters as input.
 T1 idFirst<T1, T2>(T1 t1, T2 t2) => t1;
 
