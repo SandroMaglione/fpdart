@@ -6,6 +6,7 @@ import 'package:fpdart/fpdart.dart';
 /// if for all `x` and `y`, `combine(x, y) == combine(y, x)`.
 abstract class CommutativeSemigroup<T> extends Semigroup<T> {
   /// Create a `CommutativeSemigroup` instance from the given function.
+  // ignore: library_private_types_in_public_api
   static _CommutativeSemigroup<A> instance<A>(A Function(A a1, A a2) f) =>
       _CommutativeSemigroup(f);
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 /// Compose a series of functions, the output of the previous function in the chain
 /// is automatically passed as input to the next function in the chain.
 ///```dart
@@ -8,6 +10,7 @@
 ///```
 /// Used to compose functions with **only one input** of type `Input`.
 /// If the function has more than one input, use [Compose2], [Compose3] (coming soon), etc.
+
 class Compose<Input, Output> {
   final Input _input;
   final Output Function(Input input) _compose;

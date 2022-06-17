@@ -38,7 +38,7 @@ abstract class LogOutput {
 
 class Logger {
   static Level level = Level.verbose;
-  bool _active = true;
+  final bool _active = true;
   final LogFilter _filter;
   final LogPrinter _printer;
   final LogOutput _output;

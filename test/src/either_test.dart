@@ -762,7 +762,6 @@ void main() {
       expect(l1, l1);
       expect(l1, l3);
       expect(l1 == l2, false);
-      expect(l1 == l4, false);
       expect(l1 == r1, false);
       expect(map1, map1);
       expect(map1, map2);

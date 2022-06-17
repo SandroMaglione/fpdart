@@ -1,5 +1,5 @@
-import 'package:fpdart/fpdart.dart';
 import 'package:fpdart/src/tuple.dart';
+import 'package:fpdart/src/typeclass/monoid.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -186,7 +186,6 @@ void main() {
       expect(t1, t1);
       expect(t1, t2);
       expect(t1 == t3, false);
-      expect(t1 == t4, false);
       expect(map1, map1);
       expect(map1, map2);
       expect(map1 == map3, false);

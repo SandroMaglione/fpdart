@@ -41,9 +41,9 @@ void main() {
         "phone": null,
       });
 
-      expect(user.id, isA<None>());
-      expect(user.birthDate, isA<None>());
-      expect(user.phone, isA<None>());
+      expect(user.id, isA<None<dynamic>>());
+      expect(user.birthDate, isA<None<dynamic>>());
+      expect(user.phone, isA<None<dynamic>>());
     });
 
     test('fromJson (Some)', () {
@@ -53,7 +53,7 @@ void main() {
         "phone": "phone",
       });
 
-      expect(user.id, isA<Some>());
+      expect(user.id, isA<Some<int>>());
       expect(user.id.getOrElse(() => -1), 1);
       expect(user.birthDate.getOrElse(() => DateTime(1990)), DateTime(2020));
       expect(user.phone.getOrElse(() => ''), 'phone');

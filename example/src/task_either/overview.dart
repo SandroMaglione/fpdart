@@ -4,7 +4,11 @@ import 'package:fpdart/fpdart.dart';
 Future<int> asyncI() {
   return Future<int>.error('Some error!')
       .then((value) => value * 10)
-      .catchError((dynamic error) => print(error));
+      .catchError(
+    (dynamic error) {
+      print(error);
+    },
+  );
 }
 
 /// Handle all the errors easily ✨

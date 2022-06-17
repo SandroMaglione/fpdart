@@ -19,6 +19,7 @@ class MyApp extends HookConsumerWidget {
       Future.delayed(Duration.zero, () {
         ref.read(pokemonProvider.notifier).fetchRandom();
       });
+      return;
     }, []);
 
     return MaterialApp(

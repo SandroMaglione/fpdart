@@ -12,3 +12,4 @@ analyzer:
   errors:
     annotate_overrides: error
     mixin_inherits_from_not_object: ignore
+    deprecated_field: ignore
