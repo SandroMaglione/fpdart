@@ -1,5 +1,5 @@
-import 'package:test/test.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:test/test.dart';
 
 void main() {
   group('FpdartOnMutableMap', () {
@@ -174,6 +174,18 @@ void main() {
         final ap = map.upsertAt(Eq.instance((a1, a2) => a1 == a2))('b', 10);
         map.lookup('b').match((t) => expect(t, 2), () => null);
         ap.lookup('b').match((t) => expect(t, 10), () => null);
+      });
+
+      test('modify by eq date year', () {
+        final d1 = DateTime(2001, 1, 1);
+        final d2 = DateTime(2001, 1, 2);
+        final map = <DateTime, int>{}
+            .upsertAt(dateEqYear)(d1, 1)
+            .upsertAt(dateEqYear)(d2, 2);
+
+        expect(map.lookup(d1), isA<None>());
+        expect(map.lookup(d2), isA<Some>());
+        map.lookup(d2).match((t) => expect(t, 2), () => null);
       });
     });
 

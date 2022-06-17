@@ -135,7 +135,7 @@ extension FpdartOnMutableMap<K, V> on Map<K, V> {
   Map<K, V> Function(K key, V value) upsertAt(Eq<K> eq) => (K key, V value) {
         final newMap = {...this};
         newMap.addEntries([MapEntry(key, value)]);
-        return newMap;
+        return newMap.modifyAtIfPresent(eq)(key, (_) => value);
       };
 
   /// Delete a key and value from a this [Map], returning the deleted value as well as the subsequent [Map].
