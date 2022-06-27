@@ -119,4 +119,16 @@ void main() {
       expect(result, 3);
     });
   });
+
+  test('chainFirst', () async {
+    final task = Reader<String, int>(((r) => r.length));
+    var sideEffect = 10;
+    final chain = task.chainFirst((b) {
+      sideEffect = 100;
+      return Reader<String, double>((r) => r.length / 2);
+    });
+    final r = await chain.run("abc");
+    expect(r, 3);
+    expect(sideEffect, 100);
+  });
 }

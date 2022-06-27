@@ -161,6 +161,14 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// Same as `flatMap`.
   Either<L, R2> bind<R2>(Either<L, R2> Function(R r) f) => flatMap(f);
 
+  /// Chain a request that returns another [Either], execute it, ignore
+  /// the result, and return the same value as the current [Either].
+  @override
+  Either<L, R> chainFirst<C>(
+    covariant Either<L, C> Function(R b) chain,
+  ) =>
+      flatMap((b) => chain(b).map((c) => b));
+
   /// Used to chain multiple functions that return a `Future<Either>`.
   ///
   /// When this value is [Right], it returns a [TaskEither] that will resolve to

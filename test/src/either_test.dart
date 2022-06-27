@@ -814,4 +814,17 @@ void main() {
       expect(result.getLeft().getOrElse(() => ''), 'String');
     });
   });
+
+  test('chainFirst', () {
+    final either = Either<String, int>.of(10);
+    var sideEffect = 10;
+    final chain = either.chainFirst((b) {
+      sideEffect = 100;
+      return Either.left("abc");
+    });
+    chain.match((l) => null, (r) {
+      expect(r, 10);
+      expect(sideEffect, 100);
+    });
+  });
 }

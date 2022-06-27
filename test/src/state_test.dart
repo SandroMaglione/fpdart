@@ -195,4 +195,19 @@ void main() {
       expect(result.second, 'aaaaa');
     });
   });
+
+  test('chainFirst', () {
+    final state = State<String, int>((s) => Tuple2(s.length, '${s}a'));
+    var sideEffect = 10;
+    final chain = state.chainFirst((b) {
+      sideEffect = 100;
+      return State<String, double>((s) => Tuple2(s.length / 2, 'z${s}'));
+    });
+    final result = chain.run('abc');
+    expect(result.first, 3);
+
+    // It changes the value of `second`!
+    expect(result.second, 'zabca');
+    expect(sideEffect, 100);
+  });
 }

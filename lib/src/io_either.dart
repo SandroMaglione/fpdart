@@ -132,6 +132,14 @@ class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
   IO<A> match<A>(A Function(L l) onLeft, A Function(R r) onRight) =>
       IO(() => run().match(onLeft, onRight));
 
+  /// Chain a request that returns another [IOEither], execute it, ignore
+  /// the result, and return the same value as the current [IOEither].
+  @override
+  IOEither<L, R> chainFirst<C>(
+    covariant IOEither<L, C> Function(R b) chain,
+  ) =>
+      flatMap((b) => chain(b).map((c) => b));
+
   /// Run the IO and return a `Either<L, R>`.
   Either<L, R> run() => _run();
 

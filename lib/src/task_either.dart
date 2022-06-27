@@ -130,6 +130,14 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   TaskEither<L, R> delay(Duration duration) =>
       TaskEither(() => Future.delayed(duration, run));
 
+  /// Chain a request that returns another [TaskEither], execute it, ignore
+  /// the result, and return the same value as the current [TaskEither].
+  @override
+  TaskEither<L, R> chainFirst<C>(
+    covariant TaskEither<L, C> Function(R b) chain,
+  ) =>
+      flatMap((b) => chain(b).map((c) => b));
+
   /// Run the task and return a `Future<Either<L, R>>`.
   Future<Either<L, R>> run() => _run();
 

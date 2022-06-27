@@ -1,3 +1,13 @@
+# v0.1.1 - Coming soon
+- Added `chainFirst` method for the following classes ([#39](https://github.com/SandroMaglione/fpdart/issues/39))
+  - `TaskEither`
+  - `Either`
+  - `IO`
+  - `IOEither`
+  - `State`
+  - `StateAsync`
+  - `Reader`
+
 # v0.1.0 - 17 June 2022
 - Added `idFuture` and `identityFuture` methods ([#38](https://github.com/SandroMaglione/fpdart/pull/38) by [f-person](https://github.com/f-person) 🎉)
 - Added `mapBoth` method to `Tuple2` ([#30](https://github.com/SandroMaglione/fpdart/issues/30))

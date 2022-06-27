@@ -83,6 +83,17 @@ class State<S, A> extends HKT2<_StateHKT, S, A> with Monad2<_StateHKT, S, A> {
   /// Set a new state and return nothing ([Unit]).
   State<S, Unit> put(S state) => State((_) => Tuple2(unit, state));
 
+  /// Chain a request that returns another [State], execute it, ignore
+  /// the result, and return the same value as the current [State].
+  ///
+  /// **Note**: `chainFirst` will not change the value of `first` for the state,
+  /// but **it will change the value of `second`** when calling `run()`.
+  @override
+  State<S, A> chainFirst<C>(
+    covariant State<S, C> Function(A a) chain,
+  ) =>
+      flatMap((a) => chain(a).map((_) => a));
+
   /// Execute `run` and extract the value `A`.
   ///
   /// To extract both the value and the state use `run`.

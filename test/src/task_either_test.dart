@@ -425,6 +425,20 @@ void main() {
       r.match((l) => null, (r) => expect(r, 10));
     });
 
+    test('chainFirst', () async {
+      final task = TaskEither<String, int>.of(10);
+      var sideEffect = 10;
+      final chain = task.chainFirst((b) {
+        sideEffect = 100;
+        return TaskEither.left("abc");
+      });
+      final r = await chain.run();
+      r.match((l) => null, (r) {
+        expect(r, 10);
+        expect(sideEffect, 100);
+      });
+    });
+
     test('delay', () async {
       final task = TaskEither<String, int>(() async => Either.of(10));
       final ap = task.delay(const Duration(seconds: 2));

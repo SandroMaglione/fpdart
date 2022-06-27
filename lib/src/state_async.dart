@@ -106,6 +106,17 @@ class StateAsync<S, A> extends HKT2<_StateAsyncHKT, S, A>
   /// To extract only the value `A` use `evaluate`.
   Future<S> execute(S state) async => (await run(state)).second;
 
+  /// Chain a request that returns another [StateAsync], execute it, ignore
+  /// the result, and return the same value as the current [StateAsync].
+  ///
+  /// **Note**: `chainFirst` will not change the value of `first` for the state,
+  /// but **it will change the value of `second`** when calling `run()`.
+  @override
+  StateAsync<S, A> chainFirst<C>(
+    covariant StateAsync<S, C> Function(A a) chain,
+  ) =>
+      flatMap((a) => chain(a).map((_) => a));
+
   /// Extract value `A` and state `S` by passing the original state `S`.
   ///
   /// To extract only the value `A` use `evaluate`.

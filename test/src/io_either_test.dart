@@ -401,4 +401,18 @@ void main() {
       r.match((l) => null, (r) => expect(r, 10));
     });
   });
+
+  test('chainFirst', () async {
+    final task = IOEither<String, int>.of(10);
+    var sideEffect = 10;
+    final chain = task.chainFirst((b) {
+      sideEffect = 100;
+      return IOEither.left("abc");
+    });
+    final r = await chain.run();
+    r.match((l) => null, (r) {
+      expect(r, 10);
+      expect(sideEffect, 100);
+    });
+  });
 }
