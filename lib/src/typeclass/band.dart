@@ -3,7 +3,7 @@ import 'package:fpdart/fpdart.dart';
 /// Bands are semigroups whose operation
 /// (i.e. `combine`) is also [**idempotent**](https://en.wikipedia.org/wiki/Idempotence)
 /// (an operation that can be applied multiple times without changing the result beyond the initial application).
-abstract class Band<T> extends Semigroup<T> {
+mixin Band<T> on Semigroup<T> {
   /// Only apply `combine` operation the first time:
   /// - `n == 1`, then return `a`
   /// - Otherwise return `combine(a, a)`
@@ -21,7 +21,7 @@ abstract class Band<T> extends Semigroup<T> {
   static Band<A> instance<A>(A Function(A a1, A a2) f) => _Band(f);
 }
 
-class _Band<T> extends Band<T> {
+class _Band<T> with Semigroup<T>, Band<T> {
   final T Function(T x, T y) comb;
 
   _Band(this.comb);

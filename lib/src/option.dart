@@ -3,10 +3,12 @@ import 'function.dart';
 import 'task_option.dart';
 import 'tuple.dart';
 import 'typeclass/alt.dart';
+import 'typeclass/applicative.dart';
 import 'typeclass/eq.dart';
 import 'typeclass/extend.dart';
 import 'typeclass/filterable.dart';
 import 'typeclass/foldable.dart';
+import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 import 'typeclass/monoid.dart';
@@ -63,6 +65,8 @@ abstract class _OptionHKT {}
 /// ```
 abstract class Option<T> extends HKT<_OptionHKT, T>
     with
+        Functor<_OptionHKT, T>,
+        Applicative<_OptionHKT, T>,
         Monad<_OptionHKT, T>,
         Foldable<_OptionHKT, T>,
         Alt<_OptionHKT, T>,

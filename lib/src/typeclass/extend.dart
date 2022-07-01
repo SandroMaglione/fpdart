@@ -2,7 +2,7 @@ import '../function.dart';
 import 'functor.dart';
 import 'hkt.dart';
 
-abstract class Extend<KT, A> extends HKT<KT, A> with Functor<KT, A> {
+mixin Extend<KT, A> on HKT<KT, A>, Functor<KT, A> {
   /// Extend the type by applying function `f` to it.
   ///
   /// ```dart
@@ -13,9 +13,7 @@ abstract class Extend<KT, A> extends HKT<KT, A> with Functor<KT, A> {
 
   HKT<KT, HKT<KT, A>> duplicate() => extend(identity);
 }
-
-abstract class Extend2<KT, A, B> extends HKT2<KT, A, B>
-    with Functor2<KT, A, B> {
+mixin Extend2<KT, A, B> on HKT2<KT, A, B>, Functor2<KT, A, B> {
   /// Extend the type by applying function `f` to it.
   HKT2<KT, A, Z> extend<Z>(Z Function(HKT2<KT, A, B> t) f);
 

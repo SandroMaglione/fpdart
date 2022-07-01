@@ -3,6 +3,8 @@ import 'function.dart';
 import 'option.dart';
 import 'task.dart';
 import 'typeclass/alt.dart';
+import 'typeclass/applicative.dart';
+import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
@@ -17,7 +19,11 @@ abstract class _TaskOptionHKT {}
 /// If you want to represent an asynchronous computation that returns an object when it fails,
 /// see [TaskEither].
 class TaskOption<R> extends HKT<_TaskOptionHKT, R>
-    with Monad<_TaskOptionHKT, R>, Alt<_TaskOptionHKT, R> {
+    with
+        Functor<_TaskOptionHKT, R>,
+        Applicative<_TaskOptionHKT, R>,
+        Monad<_TaskOptionHKT, R>,
+        Alt<_TaskOptionHKT, R> {
   final Future<Option<R>> Function() _run;
 
   /// Build a [TaskOption] from a function returning a `Future<Option<R>>`.

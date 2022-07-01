@@ -4,14 +4,21 @@ import 'package:fpdart/fpdart.dart';
 /// is a group whose combine operation is [**commutative**](https://en.wikipedia.org/wiki/Commutative_property).
 ///
 /// See also [Group]
-abstract class CommutativeGroup<T> extends Group<T> with CommutativeMonoid<T> {
+mixin CommutativeGroup<T> on Group<T>, CommutativeMonoid<T> {
   /// Create a `CommutativeGroup` instance from the given function, empty value, and inverse function.
   static CommutativeGroup<A> instance<A>(
           A emptyValue, A Function(A a1, A a2) f, A Function(A a) inv) =>
       _CommutativeGroup(emptyValue, f, inv);
 }
 
-class _CommutativeGroup<T> extends CommutativeGroup<T> {
+class _CommutativeGroup<T>
+    with
+        Semigroup<T>,
+        CommutativeSemigroup<T>,
+        Monoid<T>,
+        CommutativeMonoid<T>,
+        Group<T>,
+        CommutativeGroup<T> {
   final T Function(T a) inv;
   final T emp;
   final T Function(T x, T y) comb;

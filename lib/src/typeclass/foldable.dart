@@ -3,7 +3,7 @@ import '../tuple.dart';
 import 'hkt.dart';
 import 'monoid.dart';
 
-abstract class Foldable<G, A> extends HKT<G, A> {
+mixin Foldable<G, A> on HKT<G, A> {
   B foldRight<B>(B b, B Function(B acc, A a) f);
 
   B foldLeft<B>(B b, B Function(B acc, A a) f) =>
@@ -46,7 +46,7 @@ abstract class Foldable<G, A> extends HKT<G, A> {
   HKT<G, A> append(A t);
 }
 
-abstract class Foldable2<G, A, B> extends HKT2<G, A, B> {
+mixin Foldable2<G, A, B> on HKT2<G, A, B> {
   C foldRight<C>(C b, C Function(C acc, B b) f);
 
   C foldLeft<C>(C b, C Function(C acc, B b) f) =>

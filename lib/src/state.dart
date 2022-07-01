@@ -12,7 +12,11 @@ abstract class _StateHKT {}
 /// `S` is a State (e.g. the current _State_ of your Bank Account).
 /// `A` is value that you _extract out of the [State]_
 /// (Account Balance fetched from the current state of your Bank Account `S`).
-class State<S, A> extends HKT2<_StateHKT, S, A> with Monad2<_StateHKT, S, A> {
+class State<S, A> extends HKT2<_StateHKT, S, A>
+    with
+        Functor2<_StateHKT, S, A>,
+        Applicative2<_StateHKT, S, A>,
+        Monad2<_StateHKT, S, A> {
   final Tuple2<A, S> Function(S state) _run;
 
   /// Build a new [State] given a `Tuple2<A, S> Function(S)`.

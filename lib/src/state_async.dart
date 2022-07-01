@@ -15,7 +15,10 @@ abstract class _StateAsyncHKT {}
 ///
 /// Used when fetching and updating the state is **asynchronous**. Use [State] otherwise.
 class StateAsync<S, A> extends HKT2<_StateAsyncHKT, S, A>
-    with Monad2<_StateAsyncHKT, S, A> {
+    with
+        Functor2<_StateAsyncHKT, S, A>,
+        Applicative2<_StateAsyncHKT, S, A>,
+        Monad2<_StateAsyncHKT, S, A> {
   final Future<Tuple2<A, S>> Function(S state) _run;
 
   /// Build a new [StateAsync] given a `Future<Tuple2<A, S>> Function(S)`.
