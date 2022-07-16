@@ -1,5 +1,5 @@
 name: fpdart
-version: 0.1.1
+version: 0.2.0
 homepage: https://www.sandromaglione.com/
 repository: https://github.com/SandroMaglione/fpdart
 description: Functional programming in Dart and Flutter. All the main functional programming types and patterns fully documented, tested, and with examples.

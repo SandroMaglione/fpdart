@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/github/license/SandroMaglione/fpdart?logo=github" />
   <img src="https://img.shields.io/github/contributors-anon/SandroMaglione/fpdart" />
   <img src="https://img.shields.io/pub/v/fpdart?include_prereleases" />
-  <img src="https://img.shields.io/badge/dart-v2.17.3-blue.svg" />
+  <img src="https://img.shields.io/badge/dart-v2.17.6-blue.svg" />
   <a href="https://github.com/SandroMaglione">
     <img alt="GitHub: SandroMaglione" src="https://img.shields.io/github/followers/SandroMaglione?label=Follow&style=social" target="_blank" />
   </a>
@@ -75,7 +75,7 @@ Would you like to know more about functional programming, fpdart, and how to use
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.1.0 # Check out the latest version
+  fpdart: ^0.2.0 # Check out the latest version
 ```
 
 ## ✨ Examples
@@ -288,6 +288,7 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
 
+- **v0.2.0** - 16 July 2022
 - **v0.1.0** - 17 June 2022
 - v0.0.14 - 31 January 2022
 - v0.0.13 - 26 January 2022

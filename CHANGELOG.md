@@ -1,4 +1,5 @@
-# v0.1.1 - Coming soon
+# v0.2.0 - 16 July 2022
+- Refactoring for [mixin breaking change](https://github.com/dart-lang/sdk/issues/48167) ([#42](https://github.com/SandroMaglione/fpdart/pull/42)) by [TimWhiting](https://github.com/TimWhiting) 🎉
 - Added `chainFirst` method for the following classes ([#39](https://github.com/SandroMaglione/fpdart/issues/39))
   - `TaskEither`
   - `Either`
