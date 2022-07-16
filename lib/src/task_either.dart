@@ -3,6 +3,8 @@ import 'function.dart';
 import 'option.dart';
 import 'task.dart';
 import 'typeclass/alt.dart';
+import 'typeclass/applicative.dart';
+import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
@@ -14,7 +16,11 @@ abstract class _TaskEitherHKT {}
 ///
 /// If you want to represent an asynchronous computation that never fails, see [Task].
 class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
-    with Monad2<_TaskEitherHKT, L, R>, Alt2<_TaskEitherHKT, L, R> {
+    with
+        Functor2<_TaskEitherHKT, L, R>,
+        Applicative2<_TaskEitherHKT, L, R>,
+        Monad2<_TaskEitherHKT, L, R>,
+        Alt2<_TaskEitherHKT, L, R> {
   final Future<Either<L, R>> Function() _run;
 
   /// Build a [TaskEither] from a function returning a `Future<Either<L, R>>`.

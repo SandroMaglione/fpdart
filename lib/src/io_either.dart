@@ -4,6 +4,8 @@ import 'io.dart';
 import 'option.dart';
 import 'task_either.dart';
 import 'typeclass/alt.dart';
+import 'typeclass/applicative.dart';
+import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
@@ -16,7 +18,11 @@ abstract class _IOEitherHKT {}
 ///
 /// If you want to represent a synchronous computation that may never fail, see [IO].
 class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
-    with Monad2<_IOEitherHKT, L, R>, Alt2<_IOEitherHKT, L, R> {
+    with
+        Functor2<_IOEitherHKT, L, R>,
+        Applicative2<_IOEitherHKT, L, R>,
+        Monad2<_IOEitherHKT, L, R>,
+        Alt2<_IOEitherHKT, L, R> {
   final Either<L, R> Function() _run;
 
   /// Build an instance of [IOEither] from `Either<L, R> Function()`.

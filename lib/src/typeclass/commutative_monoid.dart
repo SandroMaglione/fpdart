@@ -1,12 +1,12 @@
 import 'commutative_semigroup.dart';
 import 'monoid.dart';
+import 'semigroup.dart';
 
 /// `CommutativeMonoid` represents a commutative monoid.
 ///
 /// A monoid is [**commutative**](https://en.wikipedia.org/wiki/Commutative_property)
 /// if for all `x` and `y`, `combine(x, y) == combine(y, x)`.
-abstract class CommutativeMonoid<T> extends Monoid<T>
-    with CommutativeSemigroup<T> {
+mixin CommutativeMonoid<T> on Monoid<T>, CommutativeSemigroup<T> {
   /// Return a `CommutativeMonoid` that reverses the order.
   @override
   CommutativeMonoid<T> reverse() =>
@@ -18,7 +18,12 @@ abstract class CommutativeMonoid<T> extends Monoid<T>
       _CommutativeMonoid(emptyValue, f);
 }
 
-class _CommutativeMonoid<T> extends CommutativeMonoid<T> {
+class _CommutativeMonoid<T>
+    with
+        Semigroup<T>,
+        CommutativeSemigroup<T>,
+        Monoid<T>,
+        CommutativeMonoid<T> {
   final T emp;
   final T Function(T x, T y) comb;
 

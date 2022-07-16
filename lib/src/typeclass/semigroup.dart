@@ -1,7 +1,7 @@
 /// A semigroup is any set `A` with an [**associative operation**](https://en.wikipedia.org/wiki/Associative_property) (`combine`).
 ///
 /// `(xy)z = x(yz) = xyz` for all `x`, `y`, `z` in `A`
-abstract class Semigroup<T> {
+mixin Semigroup<T> {
   /// Associative operation which combines two values.
   ///
   /// ```dart
@@ -82,7 +82,7 @@ abstract class Semigroup<T> {
   static Semigroup<A> last<A>() => _Semigroup((x, y) => y);
 }
 
-class _Semigroup<T> extends Semigroup<T> {
+class _Semigroup<T> with Semigroup<T> {
   final T Function(T x, T y) comb;
 
   _Semigroup(this.comb);

@@ -175,7 +175,7 @@ packages:
       path: "../.."
       relative: true
     source: path
-    version: "0.0.14"
+    version: "0.1.1"
   frontend_server_client:
     dependency: transitive
     description:

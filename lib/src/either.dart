@@ -25,6 +25,8 @@ abstract class _EitherHKT {}
 /// an instance of [Left] containing information about the kind of error that occurred.
 abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
     with
+        Functor2<_EitherHKT, L, R>,
+        Applicative2<_EitherHKT, L, R>,
         Monad2<_EitherHKT, L, R>,
         Foldable2<_EitherHKT, L, R>,
         Alt2<_EitherHKT, L, R>,

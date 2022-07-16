@@ -19,7 +19,7 @@ import 'semigroup.dart';
 /// expect(instance.combine('abc', instance.empty), instance.combine(instance.empty, 'abc'));
 /// expect(instance.combine('abc', instance.empty), 'abc');
 /// ```
-abstract class Monoid<T> extends Semigroup<T> {
+mixin Monoid<T> on Semigroup<T> {
   /// Return the identity element for this monoid.
   T get empty;
 
@@ -80,7 +80,7 @@ abstract class Monoid<T> extends Semigroup<T> {
       _Monoid(emptyValue, f);
 }
 
-class _Monoid<T> extends Monoid<T> {
+class _Monoid<T> with Semigroup<T>, Monoid<T> {
   final T emp;
   final T Function(T x, T y) comb;
 

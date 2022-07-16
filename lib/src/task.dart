@@ -6,14 +6,15 @@ abstract class _TaskHKT {}
 /// [Task] represents an asynchronous computation that yields a value of type `A` and **never fails**.
 ///
 /// If you want to represent an asynchronous computation that may fail, see [TaskEither].
-class Task<A> extends HKT<_TaskHKT, A> with Monad<_TaskHKT, A> {
+class Task<A> extends HKT<_TaskHKT, A>
+    with Functor<_TaskHKT, A>, Applicative<_TaskHKT, A>, Monad<_TaskHKT, A> {
   final Future<A> Function() _run;
 
   /// Build a [Task] from a function returning a [Future].
   const Task(this._run);
 
   /// Build a [Task] that returns `a`.
-  factory Task.of(A a) => Task(() async => a);
+  factory Task.of(A a) => Task<A>(() async => a);
 
   /// Flat a [Task] contained inside another [Task] to be a single [Task].
   factory Task.flatten(Task<Task<A>> task) => task.flatMap(identity);
