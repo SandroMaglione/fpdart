@@ -827,13 +827,4 @@ void main() {
       expect(sideEffect, 100);
     });
   });
-
-  group('sequence', () {
-    test('all rights', () {
-      final listOfEithers = [Either.right(1), Either.right(2), Either.right(3)];
-      final result = sequenceEither(listOfEithers);
-      expect(result.isRight(), true);
-      expect(result.getRight(), Option.of([1, 2, 3]));
-    });
-  });
 }
