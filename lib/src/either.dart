@@ -91,6 +91,8 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   Either<L, C> map<C>(C Function(R a) f);
 
   /// Return a [Right] containing the value `c`.
+  /// This is a bit like Either.of or Either.right
+  /// but works on an instance type
   @override
   Either<L, C> pure<C>(C c) => Right<L, C>(c);
 
