@@ -37,7 +37,8 @@ class UnwrapEither<L, R> {
 /// ```dart
 /// final unwrappedList = sequenceEither([Either.right(1), Either.right(2)]);
 /// if (unwrappedList.isRight()) {
-///   print(unwrappedList.getRight().value());
+///   // Outputs [1, 2]
+///   print(unwrappedList.getRight().getOrElse(() => []));
 /// }
 /// ```
 /// which outputs '[1, 2]'
