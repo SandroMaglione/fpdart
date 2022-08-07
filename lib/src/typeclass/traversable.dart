@@ -17,7 +17,6 @@ abstract class Traversable<KT, A> extends HKT<KT, A>
 /// If you use getRight or getLeft you get an option type back
 /// The only way to unwrap an option is to either provide a callback to getOrElse
 /// which would require knowledge of the generic types L, R which is not known
-/// Or to provide a lot of messy nested if statements and calls to Option.value()
 class UnwrapEither<L, R> { 
   L? leftValue;
   R? rightValue;
