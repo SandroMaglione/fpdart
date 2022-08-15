@@ -169,7 +169,7 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   Either<L, R> chainFirst<C>(
     covariant Either<L, C> Function(R b) chain,
   ) =>
-      flatMap((b) => chain(b).map((c) => b));
+      flatMap((b) => chain(b).map((c) => b).orElse((l) => right(b)));
 
   /// Used to chain multiple functions that return a `Future<Either>`.
   ///

@@ -433,10 +433,13 @@ void main() {
         return TaskEither.left("abc");
       });
       final r = await chain.run();
-      r.match((l) => null, (r) {
-        expect(r, 10);
-        expect(sideEffect, 100);
-      });
+      r.match(
+        (l) => fail('should be right'),
+        (r) {
+          expect(r, 10);
+          expect(sideEffect, 100);
+        },
+      );
     });
 
     test('delay', () async {
