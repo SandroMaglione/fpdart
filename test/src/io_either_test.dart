@@ -8,7 +8,9 @@ void main() {
         final task =
             IOEither<String, int>.tryCatch(() => 10, (_, __) => 'error');
         final r = task.run();
-        r.match((l) => null, (r) => expect(r, 10));
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 10));
       });
 
       test('Failure', () {
@@ -41,7 +43,9 @@ void main() {
         final ap =
             task.flatMap((r) => IOEither<String, int>(() => Either.of(r + 10)));
         final r = ap.run();
-        r.match((l) => null, (r) => expect(r, 20));
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 20));
       });
 
       test('Left', () {
@@ -60,7 +64,9 @@ void main() {
         final task = IOEither<String, int>(() => Either.of(10));
         final ap = task.flatMapTask((r) => TaskEither.of(r + 1));
         final r = await ap.run();
-        r.match((l) => null, (r) => expect(r, 11));
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 11));
       });
 
       test('Left to Right', () async {
@@ -98,7 +104,9 @@ void main() {
         final task = IOEither<String, int>(() => Either.of(10));
         final ap = task.toTask();
         final r = await ap.run();
-        r.match((l) => null, (r) => expect(r, 10));
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 10));
       });
 
       test('Left', () async {
@@ -116,7 +124,9 @@ void main() {
         final task = IOEither<String, int>(() => Either.of(10));
         final ap = task.ap<double>(IOEither(() => Either.of((int c) => c / 2)));
         final r = ap.run();
-        r.match((l) => null, (r) => expect(r, 5.0));
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 5.0));
       });
 
       test('Left', () {
@@ -134,7 +144,9 @@ void main() {
         final task = IOEither<String, int>(() => Either.of(10));
         final ap = task.map((r) => r / 2);
         final r = ap.run();
-        r.match((l) => null, (r) => expect(r, 5.0));
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 5.0));
       });
 
       test('Left', () {
@@ -153,7 +165,9 @@ void main() {
         final ap = task.map2<int, double>(
             IOEither<String, int>(() => Either.of(2)), (b, c) => b / c);
         final r = ap.run();
-        r.match((l) => null, (r) => expect(r, 5.0));
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 5.0));
       });
 
       test('Left', () {
@@ -175,7 +189,9 @@ void main() {
             IOEither<String, int>(() => Either.of(5)),
             (b, c, d) => b * c / d);
         final r = ap.run();
-        r.match((l) => null, (r) => expect(r, 4.0));
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 4.0));
       });
 
       test('Left', () {
@@ -197,7 +213,9 @@ void main() {
         final ap =
             task.andThen(() => IOEither<String, double>(() => Either.of(12.5)));
         final r = ap.run();
-        r.match((l) => null, (r) => expect(r, 12.5));
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 12.5));
       });
 
       test('Left', () {
@@ -216,14 +234,20 @@ void main() {
         final task = IOEither<String, int>(() => Either.of(10));
         final ap = task(IOEither<String, double>(() => Either.of(12.5)));
         final r = ap.run();
-        r.match((l) => null, (r) => expect(r, 12.5));
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 12.5));
       });
 
       test('Left', () {
         final task = IOEither<String, int>(() => Either.left('abc'));
         final ap = task(IOEither<String, double>(() => Either.of(12.5)));
         final r = ap.run();
-        r.match((l) => null, (r) => expect(r, 12.5));
+        r.match((r) {
+          expect(r, 'abc');
+        }, (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -232,7 +256,9 @@ void main() {
         final task = IOEither<String, int>(() => Either.of(10));
         final ap = task.filterOrElse((r) => r > 5, (r) => 'abc');
         final r = ap.run();
-        r.match((l) => null, (r) => expect(r, 10));
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 10));
       });
 
       test('Right (false)', () {
@@ -258,7 +284,9 @@ void main() {
       final task = IOEither<String, int>(() => Either.left('abc'));
       final ap = task.pure('abc');
       final r = ap.run();
-      r.match((l) => null, (r) => expect(r, 'abc'));
+      r.match((_) {
+        fail('should be right');
+      }, (r) => expect(r, 'abc'));
     });
 
     test('run', () {
@@ -266,14 +294,18 @@ void main() {
       final func = task.run();
       expect(func, isA<Either<String, int>>());
       final r = func;
-      r.match((l) => null, (r) => expect(r, 10));
+      r.match((_) {
+        fail('should be right');
+      }, (r) => expect(r, 10));
     });
 
     group('fromEither', () {
       test('Right', () {
         final task = IOEither<String, int>.fromEither(Either.of(10));
         final r = task.run();
-        r.match((l) => null, (r) => expect(r, 10));
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 10));
       });
 
       test('Left', () {
@@ -290,7 +322,9 @@ void main() {
         final task =
             IOEither<String, int>.fromOption(Option.of(10), () => 'none');
         final r = task.run();
-        r.match((l) => null, (r) => expect(r, 10));
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 10));
       });
 
       test('None', () {
@@ -308,7 +342,9 @@ void main() {
         final task =
             IOEither<String, int>.fromPredicate(20, (n) => n > 10, (n) => '$n');
         final r = task.run();
-        r.match((l) => null, (r) => expect(r, 20));
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 20));
       });
 
       test('False', () {
@@ -324,7 +360,9 @@ void main() {
     test('fromIO', () {
       final task = IOEither<String, int>.fromIO(IO(() => 10));
       final r = task.run();
-      r.match((l) => null, (r) => expect(r, 10));
+      r.match((_) {
+        fail('should be right');
+      }, (r) => expect(r, 10));
     });
 
     test('left', () {
@@ -338,7 +376,9 @@ void main() {
     test('right', () {
       final task = IOEither<String, int>.right(10);
       final r = task.run();
-      r.match((l) => null, (r) => expect(r, 10));
+      r.match((_) {
+        fail('should be right');
+      }, (r) => expect(r, 10));
     });
 
     test('leftTask', () {
@@ -352,7 +392,9 @@ void main() {
     test('rightTask', () {
       final task = IOEither<String, int>.rightIO(IO.of(10));
       final r = task.run();
-      r.match((l) => null, (r) => expect(r, 10));
+      r.match((_) {
+        fail('should be right');
+      }, (r) => expect(r, 10));
     });
 
     group('match', () {
@@ -392,14 +434,18 @@ void main() {
         final task = IOEither<String, int>(() => Either.of(10));
         final ex = task.orElse<int>((l) => IOEither(() => Right(l.length)));
         final r = ex.run();
-        r.match((l) => null, (r) => expect(r, 10));
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 10));
       });
 
       test('Left', () {
         final task = IOEither<String, int>(() => Either.left('none'));
         final ex = task.orElse<int>((l) => IOEither(() => Right(l.length)));
         final r = ex.run();
-        r.match((l) => null, (r) => expect(r, 4));
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 4));
       });
     });
 
@@ -408,14 +454,18 @@ void main() {
         final task = IOEither<String, int>(() => Either.of(10));
         final ex = task.alt(() => IOEither(() => Either.of(20)));
         final r = ex.run();
-        r.match((l) => null, (r) => expect(r, 10));
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 10));
       });
 
       test('Left', () {
         final task = IOEither<String, int>(() => Either.left('none'));
         final ex = task.alt(() => IOEither(() => Either.of(20)));
         final r = ex.run();
-        r.match((l) => null, (r) => expect(r, 20));
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 20));
       });
     });
 
@@ -431,7 +481,9 @@ void main() {
     test('of', () {
       final task = IOEither<String, int>.of(10);
       final r = task.run();
-      r.match((l) => null, (r) => expect(r, 10));
+      r.match((_) {
+        fail('should be right');
+      }, (r) => expect(r, 10));
     });
 
     test('flatten', () {
@@ -439,7 +491,9 @@ void main() {
           IOEither<String, int>.of(10));
       final ap = IOEither.flatten(task);
       final r = ap.run();
-      r.match((l) => null, (r) => expect(r, 10));
+      r.match((_) {
+        fail('should be right');
+      }, (r) => expect(r, 10));
     });
   });
 

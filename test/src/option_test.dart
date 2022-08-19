@@ -392,7 +392,9 @@ void main() {
       final m2 = Option<int>.none();
       final e1 = m1.toEither(() => 'left');
       final e2 = m2.toEither(() => 'left');
-      e1.match((l) => null, (r) => expect(r, 10));
+      e1.match((_) {
+        fail('should be right');
+      }, (r) => expect(r, 10));
       e2.match((l) => expect(l, 'left'), (_) {
         fail('should be left');
       });
