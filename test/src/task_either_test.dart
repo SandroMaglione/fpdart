@@ -15,7 +15,9 @@ void main() {
         final task = TaskEither<String, int>.tryCatch(
             () => Future.error(10), (_, __) => 'error');
         final r = await task.run();
-        r.match((l) => expect(l, 'error'), (r) => null);
+        r.match((l) => expect(l, 'error'), (_) {
+          fail('should be left');
+        });
       });
 
       test('throws Exception', () async {
@@ -26,7 +28,9 @@ void main() {
           return 'error';
         });
         final r = await task.run();
-        r.match((l) => expect(l, 'error'), (r) => null);
+        r.match((l) => expect(l, 'error'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -48,7 +52,9 @@ void main() {
           (_, __) => 'error',
         ));
         final r = await ap.run();
-        r.match((l) => expect(l, 'error'), (r) => null);
+        r.match((l) => expect(l, 'error'), (_) {
+          fail('should be left');
+        });
       });
 
       test('throws Exception', () async {
@@ -60,7 +66,9 @@ void main() {
           return 'error';
         }));
         final r = await ap.run();
-        r.match((l) => expect(l, 'error'), (r) => null);
+        r.match((l) => expect(l, 'error'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -78,7 +86,9 @@ void main() {
         final ap = task.flatMap(
             (r) => TaskEither<String, int>(() async => Either.of(r + 10)));
         final r = await ap.run();
-        r.match((l) => expect(l, 'abc'), (r) => null);
+        r.match((l) => expect(l, 'abc'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -96,7 +106,9 @@ void main() {
         final ap = task
             .ap<double>(TaskEither(() async => Either.of((int c) => c / 2)));
         final r = await ap.run();
-        r.match((l) => expect(l, 'abc'), (r) => null);
+        r.match((l) => expect(l, 'abc'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -112,7 +124,9 @@ void main() {
         final task = TaskEither<String, int>(() async => Either.left('abc'));
         final ap = task.map((r) => r / 2);
         final r = await ap.run();
-        r.match((l) => expect(l, 'abc'), (r) => null);
+        r.match((l) => expect(l, 'abc'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -128,7 +142,9 @@ void main() {
         final task = TaskEither<String, int>(() async => Either.left('abc'));
         final ap = task.mapLeft((l) => '$l and more');
         final r = await ap.run();
-        r.match((l) => expect(l, 'abc and more'), (r) => null);
+        r.match((l) => expect(l, 'abc and more'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -144,7 +160,9 @@ void main() {
         final task = TaskEither<String, int>(() async => Either.left('abc'));
         final ap = task.bimap((l) => '$l and more', (a) => a * 2);
         final r = await ap.run();
-        r.match((l) => expect(l, 'abc and more'), (r) => null);
+        r.match((l) => expect(l, 'abc and more'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -162,7 +180,9 @@ void main() {
         final ap = task.map2<int, double>(
             TaskEither<String, int>(() async => Either.of(2)), (b, c) => b / c);
         final r = await ap.run();
-        r.match((l) => expect(l, 'abc'), (r) => null);
+        r.match((l) => expect(l, 'abc'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -184,7 +204,9 @@ void main() {
             TaskEither<String, int>(() async => Either.of(5)),
             (b, c, d) => b * c / d);
         final r = await ap.run();
-        r.match((l) => expect(l, 'abc'), (r) => null);
+        r.match((l) => expect(l, 'abc'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -202,7 +224,9 @@ void main() {
         final ap = task.andThen(
             () => TaskEither<String, double>(() async => Either.of(12.5)));
         final r = await ap.run();
-        r.match((l) => expect(l, 'abc'), (r) => null);
+        r.match((l) => expect(l, 'abc'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -236,14 +260,18 @@ void main() {
         final task = TaskEither<String, int>(() async => Either.of(10));
         final ap = task.filterOrElse((r) => r < 5, (r) => 'none');
         final r = await ap.run();
-        r.match((l) => expect(l, 'none'), (r) => null);
+        r.match((l) => expect(l, 'none'), (_) {
+          fail('should be left');
+        });
       });
 
       test('Left', () async {
         final task = TaskEither<String, int>(() async => Either.left('abc'));
         final ap = task.filterOrElse((r) => r > 5, (r) => 'none');
         final r = await ap.run();
-        r.match((l) => expect(l, 'abc'), (r) => null);
+        r.match((l) => expect(l, 'abc'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -272,7 +300,9 @@ void main() {
       test('Left', () async {
         final task = TaskEither<String, int>.fromEither(Either.left('error'));
         final r = await task.run();
-        r.match((l) => expect(l, 'error'), (r) => null);
+        r.match((l) => expect(l, 'error'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -288,7 +318,9 @@ void main() {
         final task =
             TaskEither<String, int>.fromOption(Option.none(), () => 'none');
         final r = await task.run();
-        r.match((l) => expect(l, 'none'), (r) => null);
+        r.match((l) => expect(l, 'none'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -304,7 +336,9 @@ void main() {
         final task = TaskEither<String, int>.fromPredicate(
             10, (n) => n > 10, (n) => '$n');
         final r = await task.run();
-        r.match((l) => expect(l, '10'), (r) => null);
+        r.match((l) => expect(l, '10'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -317,7 +351,9 @@ void main() {
     test('left', () async {
       final task = TaskEither<String, int>.left('none');
       final r = await task.run();
-      r.match((l) => expect(l, 'none'), (r) => null);
+      r.match((l) => expect(l, 'none'), (_) {
+        fail('should be left');
+      });
     });
 
     test('right', () async {
@@ -329,7 +365,9 @@ void main() {
     test('leftTask', () async {
       final task = TaskEither<String, int>.leftTask(Task(() async => 'none'));
       final r = await task.run();
-      r.match((l) => expect(l, 'none'), (r) => null);
+      r.match((l) => expect(l, 'none'), (_) {
+        fail('should be left');
+      });
     });
 
     test('rightTask', () async {
@@ -408,7 +446,9 @@ void main() {
       final task = TaskEither<String, int>(() async => Either.of(10));
       final ex = task.swap();
       final r = await ex.run();
-      r.match((l) => expect(l, 10), (r) => null);
+      r.match((l) => expect(l, 10), (_) {
+        fail('should be left');
+      });
     });
 
     test('of', () async {
