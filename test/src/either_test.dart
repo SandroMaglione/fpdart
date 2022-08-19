@@ -822,9 +822,12 @@ void main() {
       sideEffect = 100;
       return Either.left("abc");
     });
-    chain.match((l) => null, (r) {
-      expect(r, 10);
-      expect(sideEffect, 100);
-    });
+    chain.match(
+      (l) => fail('should be right'),
+      (r) {
+        expect(r, 10);
+        expect(sideEffect, 100);
+      },
+    );
   });
 }

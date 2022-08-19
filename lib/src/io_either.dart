@@ -144,7 +144,7 @@ class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
   IOEither<L, R> chainFirst<C>(
     covariant IOEither<L, C> Function(R b) chain,
   ) =>
-      flatMap((b) => chain(b).map((c) => b));
+      flatMap((b) => chain(b).map((c) => b).orElse((l) => IOEither.right(b)));
 
   /// Run the IO and return a `Either<L, R>`.
   Either<L, R> run() => _run();
