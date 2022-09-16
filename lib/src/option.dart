@@ -337,15 +337,15 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   /// Return `true` when value of `a` is equal to the value inside the [Option].
   bool elem(T t, Eq<T> eq);
 
-  /// {@template traverse_list}
+  /// {@template fpdart_traverse_list_option}
   /// Map each element in the list to an [Option] using the function `f`,
-  /// and collect the result in an [Option<List<B>>].
+  /// and collect the result in an `Option<List<B>>`.
   ///
   /// If any mapped element of the list is [None], then the final result
   /// will be [None].
   /// {@endtemplate}
   ///
-  /// Same as [Option.traverseList] but passing `index` in the map function.
+  /// Same as `Option.traverseList` but passing `index` in the map function.
   static Option<List<B>> Function(List<A> list) traverseListWithIndex<A, B>(
     Option<B> Function(A a, int i) f,
   ) =>
@@ -361,9 +361,9 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
         return some(resultList);
       };
 
-  /// {@macro traverse_list}
+  /// {@macro fpdart_traverse_list_option}
   ///
-  /// Same as [Option.traverseListWithIndex] but without `index` in the map function.
+  /// Same as `Option.traverseListWithIndex` but without `index` in the map function.
   static Option<List<B>> Function(List<A> list) traverseList<A, B>(
     Option<B> Function(A a) f,
   ) =>

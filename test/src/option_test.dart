@@ -610,7 +610,7 @@ void main() {
         final result = traverse(list);
         result.match((t) {
           expect(t, ["1", "2", "3", "4", "5", "6"]);
-        }, () => fail("should be right"));
+        }, () => fail("should be some"));
       });
 
       test('None', () {
@@ -631,7 +631,7 @@ void main() {
         final result = traverse(list);
         result.match((t) {
           expect(t, ["10", "21", "32", "43", "54", "65"]);
-        }, () => fail("should be right"));
+        }, () => fail("should be some"));
       });
 
       test('None', () {
