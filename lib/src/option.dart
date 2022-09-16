@@ -14,6 +14,7 @@ import 'typeclass/monad.dart';
 import 'typeclass/monoid.dart';
 import 'typeclass/order.dart';
 import 'typeclass/semigroup.dart';
+import 'typeclass/traversable.dart';
 
 /// Return a `Some(t)`.
 ///
@@ -69,6 +70,7 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
         Applicative<_OptionHKT, T>,
         Monad<_OptionHKT, T>,
         Foldable<_OptionHKT, T>,
+        Traversable<_OptionHKT, T>,
         Alt<_OptionHKT, T>,
         Extend<_OptionHKT, T>,
         Filterable<_OptionHKT, T> {
@@ -336,6 +338,22 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
 
   /// Return `true` when value of `a` is equal to the value inside the [Option].
   bool elem(T t, Eq<T> eq);
+
+  @override
+  Option<List<B>> Function(List<T> list) traverseArray<B>(
+    covariant Option<B> Function(int i, T a) f,
+  ) =>
+      (list) {
+        final resultList = <B>[];
+        for (var i = 0; i < list.length; i++) {
+          final o = f(i, list[i]);
+          final r = o.match<B?>(identity, () => null);
+          if (r == null) return none();
+          resultList.add(r);
+        }
+
+        return some(resultList);
+      };
 
   /// Build a [Option] from a [Either] by returning [Some] when `either` is [Right],
   /// [None] otherwise.
