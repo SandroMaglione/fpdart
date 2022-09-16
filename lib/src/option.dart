@@ -340,13 +340,13 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   bool elem(T t, Eq<T> eq);
 
   @override
-  Option<List<B>> Function(List<T> list) traverseArray<B>(
-    covariant Option<B> Function(int i, T a) f,
+  Option<List<B>> Function(List<T> list) traverseListWithIndex<B>(
+    covariant Option<B> Function(T a, int i) f,
   ) =>
       (list) {
         final resultList = <B>[];
         for (var i = 0; i < list.length; i++) {
-          final o = f(i, list[i]);
+          final o = f(list[i], i);
           final r = o.match<B?>(identity, () => null);
           if (r == null) return none();
           resultList.add(r);
@@ -354,6 +354,12 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
 
         return some(resultList);
       };
+
+  @override
+  Option<List<B>> Function(List<T> list) traverseList<B>(
+    covariant Option<B> Function(T a) f,
+  ) =>
+      traverseListWithIndex((a, _) => f(a));
 
   /// Build a [Option] from a [Either] by returning [Some] when `either` is [Right],
   /// [None] otherwise.
