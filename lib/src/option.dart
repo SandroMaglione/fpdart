@@ -14,7 +14,6 @@ import 'typeclass/monad.dart';
 import 'typeclass/monoid.dart';
 import 'typeclass/order.dart';
 import 'typeclass/semigroup.dart';
-import 'typeclass/traversable.dart';
 
 /// Return a `Some(t)`.
 ///
@@ -70,7 +69,6 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
         Applicative<_OptionHKT, T>,
         Monad<_OptionHKT, T>,
         Foldable<_OptionHKT, T>,
-        Traversable<_OptionHKT, T>,
         Alt<_OptionHKT, T>,
         Extend<_OptionHKT, T>,
         Filterable<_OptionHKT, T> {
@@ -339,9 +337,17 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   /// Return `true` when value of `a` is equal to the value inside the [Option].
   bool elem(T t, Eq<T> eq);
 
-  @override
-  Option<List<B>> Function(List<T> list) traverseListWithIndex<B>(
-    covariant Option<B> Function(T a, int i) f,
+  /// {@template traverse_list}
+  /// Map each element in the list to an [Option] using the function `f`,
+  /// and collect the result in an [Option<List<B>>].
+  ///
+  /// If any mapped element of the list is [None], then the final result
+  /// will be [None].
+  /// {@endtemplate}
+  ///
+  /// Same as [Option.traverseList] but passing `index` in the map function.
+  static Option<List<B>> Function(List<A> list) traverseListWithIndex<A, B>(
+    Option<B> Function(A a, int i) f,
   ) =>
       (list) {
         final resultList = <B>[];
@@ -355,9 +361,11 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
         return some(resultList);
       };
 
-  @override
-  Option<List<B>> Function(List<T> list) traverseList<B>(
-    covariant Option<B> Function(T a) f,
+  /// {@macro traverse_list}
+  ///
+  /// Same as [Option.traverseListWithIndex] but without `index` in the map function.
+  static Option<List<B>> Function(List<A> list) traverseList<A, B>(
+    Option<B> Function(A a) f,
   ) =>
       traverseListWithIndex((a, _) => f(a));
 

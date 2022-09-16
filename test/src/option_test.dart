@@ -603,6 +603,47 @@ void main() {
       });
     });
 
+    group('traverseList', () {
+      test('Some', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final traverse = Option.traverseList<int, String>((a) => some("$a"));
+        final result = traverse(list);
+        result.match((t) {
+          expect(t, ["1", "2", "3", "4", "5", "6"]);
+        }, () => fail("should be right"));
+      });
+
+      test('None', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final traverse = Option.traverseList<int, String>(
+          (a) => a % 2 == 0 ? some("$a") : none(),
+        );
+        final result = traverse(list);
+        expect(result, isA<None<List<String>>>());
+      });
+    });
+
+    group('traverseListWithIndex', () {
+      test('Some', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final traverse =
+            Option.traverseListWithIndex<int, String>((a, i) => some("$a$i"));
+        final result = traverse(list);
+        result.match((t) {
+          expect(t, ["10", "21", "32", "43", "54", "65"]);
+        }, () => fail("should be right"));
+      });
+
+      test('None', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final traverse = Option.traverseListWithIndex<int, String>(
+          (a, i) => i % 2 == 0 ? some("$a$i") : none(),
+        );
+        final result = traverse(list);
+        expect(result, isA<None<List<String>>>());
+      });
+    });
+
     group('toTaskOption', () {
       test('Some', () async {
         final m = Option.of(10);
