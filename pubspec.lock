@@ -7,14 +7,14 @@ packages:
       name: _fe_analyzer_shared
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "40.0.0"
+    version: "47.0.0"
   analyzer:
     dependency: transitive
     description:
       name: analyzer
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.1.0"
+    version: "4.7.0"
   args:
     dependency: transitive
     description:
@@ -36,6 +36,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
+  build:
+    dependency: transitive
+    description:
+      name: build
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.3.1"
+  characters:
+    dependency: transitive
+    description:
+      name: characters
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.1"
   charcode:
     dependency: transitive
     description:
@@ -71,6 +85,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
+  dart_style:
+    dependency: transitive
+    description:
+      name: dart_style
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.4"
   file:
     dependency: transitive
     description:
@@ -85,6 +106,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
+  glados:
+    dependency: "direct dev"
+    description:
+      name: glados
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.5"
   glob:
     dependency: transitive
     description:
@@ -225,6 +253,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  source_gen:
+    dependency: transitive
+    description:
+      name: source_gen
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.3"
   source_map_stack_trace:
     dependency: transitive
     description:
@@ -280,21 +315,21 @@ packages:
       name: test
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.21.2"
+    version: "1.21.4"
   test_api:
     dependency: transitive
     description:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.10"
+    version: "0.4.12"
   test_core:
     dependency: transitive
     description:
       name: test_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.14"
+    version: "0.4.16"
   typed_data:
     dependency: transitive
     description:
@@ -338,4 +373,4 @@ packages:
     source: hosted
     version: "3.1.0"
 sdks:
-  dart: ">=2.17.0-206.0.dev <3.0.0"
+  dart: ">=2.17.0 <3.0.0"
