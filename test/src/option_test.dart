@@ -1,5 +1,14 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:test/test.dart';
+import 'package:glados/glados.dart';
+
+extension AnyOption on Any {
+  Generator<Option<int>> get optionInt => simple(generate: (random, size) {
+        final rand = random.nextDouble();
+        return rand > 0.1 ? some(size) : none();
+      }, shrink: (input) sync* {
+        if (input.isSome()) yield input.map((t) => t > 0 ? t - 1 : t + 1);
+      });
+}
 
 void main() {
   group('Option', () {
@@ -35,10 +44,34 @@ void main() {
       });
     });
 
-    test('map', () {
-      final option = Option.of(10);
-      final map = option.map((a) => a + 1);
-      map.match((some) => expect(some, 11), () => null);
+    group('map', () {
+      Glados(any.optionInt).test('should keep the same type (Some or None)',
+          (option) {
+        final r = option.map(constF);
+        expect(option.isSome(), r.isSome());
+        expect(option.isNone(), r.isNone());
+      });
+
+      Glados2(any.optionInt, any.int)
+          .test('should updated the value inside Some, or stay None',
+              (option, value) {
+        final r = option.map((n) => n + value);
+        option.match(
+          (val1) {
+            r.match(
+              (val2) {
+                expect(val2, val1 + value);
+              },
+              () {
+                fail('should be Some');
+              },
+            );
+          },
+          () {
+            expect(option, r);
+          },
+        );
+      });
     });
 
     test('map2', () {
