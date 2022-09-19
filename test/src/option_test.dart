@@ -6,7 +6,13 @@ extension AnyOption on Any {
         final rand = random.nextDouble();
         return rand > 0.1 ? some(size) : none();
       }, shrink: (input) sync* {
-        if (input.isSome()) yield input.map((t) => t > 0 ? t - 1 : t + 1);
+        if (input.isSome()) {
+          final value = input.match(identity, () => null);
+          if (value != null) {
+            if (value > 0) yield some(value - 1);
+            if (value < 0) yield some(value + 1);
+          }
+        }
       });
 }
 
