@@ -1,5 +1,5 @@
-import 'package:test/test.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:test/test.dart';
 
 /// Used to test sorting with [DateTime] (`sortWithDate`)
 class SortDate {
@@ -414,6 +414,46 @@ void main() {
       final ap = list1.concat;
 
       expect(eq(ap, [1, 2, 2, 3, 3, 4]), true);
+    });
+  });
+
+  group('FpdartTraversableIterable', () {
+    group('traverseOption', () {
+      test('Some', () {
+        final list = [1, 2, 3, 4];
+        final result = list.traverseOption(some);
+        result.match((t) {
+          expect(list, t);
+        }, () {
+          fail('should be some');
+        });
+      });
+
+      test('None', () {
+        final list = [1, 2, 3, 4];
+        final result =
+            list.traverseOption<int>((t) => t == 3 ? none() : some(t));
+        expect(result, isA<None>());
+      });
+    });
+
+    group('traverseOptionWithIndex', () {
+      test('Some', () {
+        final list = [1, 2, 3, 4];
+        final result = list.traverseOptionWithIndex((a, i) => some(a + i));
+        result.match((t) {
+          expect(t, [1, 3, 5, 7]);
+        }, () {
+          fail('should be some');
+        });
+      });
+
+      test('None', () {
+        final list = [1, 2, 3, 4];
+        final result = list.traverseOptionWithIndex<int>(
+            (a, i) => i == 3 ? none() : some(a + i));
+        expect(result, isA<None>());
+      });
     });
   });
 }

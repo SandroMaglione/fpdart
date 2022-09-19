@@ -334,3 +334,23 @@ extension FpdartOnMutableIterableOfIterable<T> on Iterable<Iterable<T>> {
   /// From a container of `Iterable<Iterable<T>>` return a `Iterable<T>` of their concatenation.
   Iterable<T> get concat => foldRight([], (a, e) => [...a, ...e]);
 }
+
+extension FpdartTraversableIterable<T> on Iterable<T> {
+  /// {@template fpdart_iterable_extension_traverse_list_option}
+  /// Map a each element of the [List] to [Option]
+  /// and return an `Option<List<B>>`.
+  ///
+  /// If **any** of the [Option] is [None], then the final
+  /// `Option<List<B>>` will also be [None].
+  /// {@endtemplate}
+  Option<List<B>> traverseOptionWithIndex<B>(
+    Option<B> Function(T a, int i) f,
+  ) =>
+      Option.traverseListWithIndex(f)(toList());
+
+  /// {@macro fpdart_iterable_extension_traverse_list_option}
+  Option<List<B>> traverseOption<B>(
+    Option<B> Function(T a) f,
+  ) =>
+      Option.traverseList(f)(toList());
+}
