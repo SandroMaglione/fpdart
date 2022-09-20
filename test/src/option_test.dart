@@ -1,7 +1,6 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:glados/glados.dart';
 
-import './utils/glados_utils.dart';
+import './utils/utils.dart';
 
 void main() {
   group('Option', () {
