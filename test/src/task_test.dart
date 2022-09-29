@@ -125,5 +125,17 @@ void main() {
         expect(ap.run, throwsA(const TypeMatcher<UnimplementedError>()));
       });
     });
+
+    test('chainFirst', () async {
+      final task = Task.of(10);
+      var sideEffect = 10;
+      final chain = task.chainFirst((b) {
+        sideEffect = 100;
+        return Task.of("abc");
+      });
+      final r = await chain.run();
+      expect(r, 10);
+      expect(sideEffect, 100);
+    });
   });
 }

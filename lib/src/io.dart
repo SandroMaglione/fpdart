@@ -71,6 +71,12 @@ class IO<A> extends HKT<_IOHKT, A>
   @override
   IO<B> andThen<B>(covariant IO<B> Function() then) => flatMap((_) => then());
 
+  /// Chain a request that returns another [IO], execute it, ignore
+  /// the result, and return the same value as the current [IO].
+  @override
+  IO<A> chainFirst<B>(covariant IO<B> Function(A a) chain) =>
+      flatMap((a) => chain(a).map((b) => a));
+
   /// Execute the IO function.
   A run() => _run();
 
