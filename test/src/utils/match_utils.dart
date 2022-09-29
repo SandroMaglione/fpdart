@@ -1,6 +1,13 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:test/test.dart';
 
+extension OptionMatch<T> on Option<T> {
+  /// Run test on [Some], call `fail` if [None].
+  void matchTestSome(void Function(T t) testing) => match(testing, () {
+        fail("should be some, found none");
+      });
+}
+
 extension EitherMatch<L, R> on Either<L, R> {
   /// Run test on [Right], call `fail` if [Left].
   void matchTestRight(void Function(R r) testing) => match((l) {

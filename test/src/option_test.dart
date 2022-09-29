@@ -19,14 +19,9 @@ void main() {
           final r = option.map((n) => n + value);
           option.match(
             (val1) {
-              r.match(
-                (val2) {
-                  expect(val2, val1 + value);
-                },
-                () {
-                  fail('should be Some');
-                },
-              );
+              r.matchTestSome((val2) {
+                expect(val2, val1 + value);
+              });
             },
             () {
               expect(option, r);
