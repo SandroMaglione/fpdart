@@ -104,17 +104,5 @@ void main() {
       expect(r, isA<int>());
       expect(r, 10);
     });
-
-    test('chainFirst', () {
-      final task = IO.of(10);
-      var sideEffect = 10;
-      final chain = task.chainFirst((b) {
-        sideEffect = 100;
-        return IO.of("abc");
-      });
-      final r = chain.run();
-      expect(r, 10);
-      expect(sideEffect, 100);
-    });
   });
 }

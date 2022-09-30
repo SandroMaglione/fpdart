@@ -60,12 +60,6 @@ class Task<A> extends HKT<_TaskHKT, A>
   Task<B> andThen<B>(covariant Task<B> Function() then) =>
       flatMap((_) => then());
 
-  /// Chain a request that returns another [Task], execute it, ignore
-  /// the result, and return the same value as the current [Task].
-  @override
-  Task<A> chainFirst<B>(covariant Task<B> Function(A a) chain) =>
-      flatMap((a) => chain(a).map((b) => a));
-
   /// Chain multiple [Task] functions.
   @override
   Task<B> call<B>(covariant Task<B> chain) => flatMap((_) => chain);
