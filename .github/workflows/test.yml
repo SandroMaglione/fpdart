@@ -18,7 +18,7 @@ jobs:
         run: dart format --output=none --set-exit-if-changed ./lib ./test
 
       - name: Analyze project source
-        run: dart analyze
+        run: dart analyze ./lib ./test
 
       - name: Run tests
         run: dart test
