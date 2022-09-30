@@ -1,0 +1,28 @@
+name: Fpdart
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 2.16.0
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed ./lib ./test
+
+      - name: Analyze project source
+        run: dart analyze
+
+      - name: Run tests
+        run: dart test
