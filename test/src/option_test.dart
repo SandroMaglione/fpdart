@@ -1,8 +1,36 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:test/test.dart';
+
+import './utils/utils.dart';
 
 void main() {
   group('Option', () {
+    group('[Property-based testing]', () {
+      group('map', () {
+        Glados(any.optionInt).test('should keep the same type (Some or None)',
+            (option) {
+          final r = option.map(constF);
+          expect(option.isSome(), r.isSome());
+          expect(option.isNone(), r.isNone());
+        });
+
+        Glados2(any.optionInt, any.int)
+            .test('should updated the value inside Some, or stay None',
+                (option, value) {
+          final r = option.map((n) => n + value);
+          option.match(
+            (val1) {
+              r.matchTestSome((val2) {
+                expect(val2, val1 + value);
+              });
+            },
+            () {
+              expect(option, r);
+            },
+          );
+        });
+      });
+    });
+
     group('is a', () {
       final option = Option.of(10);
 

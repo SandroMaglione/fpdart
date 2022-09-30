@@ -1,8 +1,11 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:test/test.dart';
+
+import './utils/utils.dart';
 
 void main() {
   group('Either', () {
+    group('[Property-based testing]', () {});
+
     group('is a', () {
       final either = Either<String, int>.of(10);
 
@@ -35,17 +38,15 @@ void main() {
       test('Right', () {
         final value = Either<String, int>.of(10);
         final map = value.map((a) => a + 1);
-        map.match((_) {
-          fail('should be right');
-        }, (r) => expect(r, 11));
+        map.matchTestRight((r) {
+          expect(r, 11);
+        });
       });
 
       test('Left', () {
         final value = Either<String, int>.left('abc');
         final map = value.map((a) => a + 1);
-        map.match((l) => expect(l, 'abc'), (_) {
-          fail('should be left');
-        });
+        map.matchTestLeft((l) => expect(l, 'abc'));
       });
     });
 
