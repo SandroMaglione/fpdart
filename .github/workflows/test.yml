@@ -10,8 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: dart-lang/setup-dart@v1.3
-        with:
-          sdk: 2.16.0
 
       - name: Install dependencies
         run: dart pub get
