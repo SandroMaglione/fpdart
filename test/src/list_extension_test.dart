@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:test/test.dart';
+
+import './utils/utils.dart';
 
 /// Used to test sorting with [DateTime] (`sortWithDate`)
 class SortDate {
@@ -422,10 +423,8 @@ void main() {
       test('Some', () {
         final list = [1, 2, 3, 4];
         final result = list.traverseOption(some);
-        result.match((t) {
+        result.matchTestSome((t) {
           expect(list, t);
-        }, () {
-          fail('should be some');
         });
       });
 
@@ -441,10 +440,8 @@ void main() {
       test('Some', () {
         final list = [1, 2, 3, 4];
         final result = list.traverseOptionWithIndex((a, i) => some(a + i));
-        result.match((t) {
+        result.matchTestSome((t) {
           expect(t, [1, 3, 5, 7]);
-        }, () {
-          fail('should be some');
         });
       });
 
@@ -453,6 +450,44 @@ void main() {
         final result = list.traverseOptionWithIndex<int>(
             (a, i) => i == 3 ? none() : some(a + i));
         expect(result, isA<None>());
+      });
+    });
+
+    group('traverseEither', () {
+      test('Right', () {
+        final list = [1, 2, 3, 4];
+        final result = list.traverseEither(right);
+        result.matchTestRight((t) {
+          expect(list, t);
+        });
+      });
+
+      test('Left', () {
+        final list = [1, 2, 3, 4];
+        final result =
+            list.traverseEither((t) => t == 3 ? left("Error") : right(t));
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+      });
+    });
+
+    group('traverseEitherWithIndex', () {
+      test('Right', () {
+        final list = [1, 2, 3, 4];
+        final result = list.traverseEitherWithIndex((a, i) => right(a + i));
+        result.matchTestRight((t) {
+          expect(t, [1, 3, 5, 7]);
+        });
+      });
+
+      test('Left', () {
+        final list = [1, 2, 3, 4];
+        final result = list.traverseEitherWithIndex(
+            (a, i) => i == 3 ? left("Error") : right(a + i));
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
       });
     });
   });
