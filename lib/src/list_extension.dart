@@ -346,11 +346,11 @@ extension FpdartTraversableIterable<T> on Iterable<T> {
   Option<List<B>> traverseOptionWithIndex<B>(
     Option<B> Function(T a, int i) f,
   ) =>
-      Option.traverseListWithIndex(f)(toList());
+      Option.traverseListWithIndex(toList(), f);
 
   /// {@macro fpdart_iterable_extension_traverse_list_option}
   Option<List<B>> traverseOption<B>(
     Option<B> Function(T a) f,
   ) =>
-      Option.traverseList(f)(toList());
+      Option.traverseList(toList(), f);
 }

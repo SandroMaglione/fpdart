@@ -253,35 +253,35 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// {@endtemplate}
   ///
   /// Same as `Either.traverseList` but passing `index` in the map function.
-  static Either<E, List<B>> Function(List<A> list)
-      traverseListWithIndex<E, A, B>(
+  static Either<E, List<B>> traverseListWithIndex<E, A, B>(
+    List<A> list,
     Either<E, B> Function(A a, int i) f,
-  ) =>
-          (list) {
-            final resultList = <B>[];
-            for (var i = 0; i < list.length; i++) {
-              final e = f(list[i], i);
-              if (e is Left<E, B>) {
-                return left(e._value);
-              } else if (e is Right<E, B>) {
-                resultList.add(e._value);
-              } else {
-                throw Exception(
-                  "[fpdart]: Error when mapping Either, it should be either Left or Right.",
-                );
-              }
-            }
+  ) {
+    final resultList = <B>[];
+    for (var i = 0; i < list.length; i++) {
+      final e = f(list[i], i);
+      if (e is Left<E, B>) {
+        return left(e._value);
+      } else if (e is Right<E, B>) {
+        resultList.add(e._value);
+      } else {
+        throw Exception(
+          "[fpdart]: Error when mapping Either, it should be either Left or Right.",
+        );
+      }
+    }
 
-            return right(resultList);
-          };
+    return right(resultList);
+  }
 
   /// {@macro fpdart_traverse_list_either}
   ///
   /// Same as `Either.traverseListWithIndex` but without `index` in the map function.
-  static Either<E, List<B>> Function(List<A> list) traverseList<E, A, B>(
+  static Either<E, List<B>> traverseList<E, A, B>(
+    List<A> list,
     Either<E, B> Function(A a) f,
   ) =>
-      traverseListWithIndex((a, _) => f(a));
+      traverseListWithIndex<E, A, B>(list, (a, _) => f(a));
 
   /// Flat a [Either] contained inside another [Either] to be a single [Either].
   factory Either.flatten(Either<L, Either<L, R>> e) => e.flatMap(identity);

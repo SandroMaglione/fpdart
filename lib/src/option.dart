@@ -346,28 +346,29 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   /// {@endtemplate}
   ///
   /// Same as `Option.traverseList` but passing `index` in the map function.
-  static Option<List<B>> Function(List<A> list) traverseListWithIndex<A, B>(
+  static Option<List<B>> traverseListWithIndex<A, B>(
+    List<A> list,
     Option<B> Function(A a, int i) f,
-  ) =>
-      (list) {
-        final resultList = <B>[];
-        for (var i = 0; i < list.length; i++) {
-          final o = f(list[i], i);
-          final r = o.match<B?>(identity, () => null);
-          if (r == null) return none();
-          resultList.add(r);
-        }
+  ) {
+    final resultList = <B>[];
+    for (var i = 0; i < list.length; i++) {
+      final o = f(list[i], i);
+      final r = o.match<B?>(identity, () => null);
+      if (r == null) return none();
+      resultList.add(r);
+    }
 
-        return some(resultList);
-      };
+    return some(resultList);
+  }
 
   /// {@macro fpdart_traverse_list_option}
   ///
   /// Same as `Option.traverseListWithIndex` but without `index` in the map function.
-  static Option<List<B>> Function(List<A> list) traverseList<A, B>(
+  static Option<List<B>> traverseList<A, B>(
+    List<A> list,
     Option<B> Function(A a) f,
   ) =>
-      traverseListWithIndex((a, _) => f(a));
+      traverseListWithIndex<A, B>(list, (a, _) => f(a));
 
   /// Build a [Option] from a [Either] by returning [Some] when `either` is [Right],
   /// [None] otherwise.

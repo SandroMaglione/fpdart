@@ -821,68 +821,46 @@ void main() {
     });
 
     group('traverseList', () {
-      test('Some', () {
+      test('Right', () {
         final list = [1, 2, 3, 4, 5, 6];
-        final traverse = Option.traverseList<int, String>((a) => some("$a"));
-        final result = traverse(list);
-        result.match((t) {
-          expect(t, ["1", "2", "3", "4", "5", "6"]);
-        }, () => fail("should be right"));
-      });
-
-      test('None', () {
-        final list = [1, 2, 3, 4, 5, 6];
-        final traverse = Option.traverseList<int, String>(
-          (a) => a % 2 == 0 ? some("$a") : none(),
-        );
-        final result = traverse(list);
-        expect(result, isA<None<List<String>>>());
-      });
-    });
-
-    group('traverseList', () {
-      test('Some', () {
-        final list = [1, 2, 3, 4, 5, 6];
-        final traverse =
-            Either.traverseList<String, int, String>((a) => right("$a"));
-        final result = traverse(list);
-        result.match((_) => fail("should be right"), (r) {
+        final result =
+            Either.traverseList<String, int, String>(list, (a) => right("$a"));
+        result.matchTestRight((r) {
           expect(r, ["1", "2", "3", "4", "5", "6"]);
         });
       });
 
-      test('None', () {
+      test('Left', () {
         final list = [1, 2, 3, 4, 5, 6];
-        final traverse = Either.traverseList<String, int, String>(
+        final result = Either.traverseList<String, int, String>(
+          list,
           (a) => a % 2 == 0 ? right("$a") : left("Error"),
         );
-        final result = traverse(list);
-        result.match((r) {
-          expect(r, "Error");
-        }, (_) => fail("should be left"));
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
       });
     });
 
     group('traverseListWithIndex', () {
-      test('Some', () {
+      test('Right', () {
         final list = [1, 2, 3, 4, 5, 6];
-        final traverse = Either.traverseListWithIndex<String, int, String>(
-            (a, i) => right("$a$i"));
-        final result = traverse(list);
-        result.match((_) => fail("should be right"), (r) {
+        final result = Either.traverseListWithIndex<String, int, String>(
+            list, (a, i) => right("$a$i"));
+        result.matchTestRight((r) {
           expect(r, ["10", "21", "32", "43", "54", "65"]);
         });
       });
 
-      test('None', () {
+      test('Left', () {
         final list = [1, 2, 3, 4, 5, 6];
-        final traverse = Either.traverseListWithIndex<String, int, String>(
+        final result = Either.traverseListWithIndex<String, int, String>(
+          list,
           (a, i) => i % 2 == 0 ? right("$a$i") : left("Error"),
         );
-        final result = traverse(list);
-        result.match((r) {
-          expect(r, "Error");
-        }, (_) => fail("should be left"));
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
       });
     });
 
