@@ -516,5 +516,31 @@ void main() {
       expect(result, ['10', '21', '32', '43', '54', '65']);
       expect(sideEffect, list.length);
     });
+
+    test('traverseTask', () async {
+      final list = [1, 2, 3, 4, 5, 6];
+      var sideEffect = 0;
+      final traverse = list.traverseTask<String>((a) {
+        sideEffect += 1;
+        return Task.of("$a");
+      });
+      expect(sideEffect, 0);
+      final result = await traverse.run();
+      expect(result, ['1', '2', '3', '4', '5', '6']);
+      expect(sideEffect, list.length);
+    });
+
+    test('traverseTaskWithIndex', () async {
+      final list = [1, 2, 3, 4, 5, 6];
+      var sideEffect = 0;
+      final traverse = list.traverseTaskWithIndex<String>((a, i) {
+        sideEffect += 1;
+        return Task.of("$a$i");
+      });
+      expect(sideEffect, 0);
+      final result = await traverse.run();
+      expect(result, ['10', '21', '32', '43', '54', '65']);
+      expect(sideEffect, list.length);
+    });
   });
 }

@@ -2,6 +2,7 @@ import 'date.dart';
 import 'either.dart';
 import 'io.dart';
 import 'option.dart';
+import 'task.dart';
 import 'tuple.dart';
 import 'typeclass/order.dart';
 
@@ -370,6 +371,23 @@ extension FpdartTraversableIterable<T> on Iterable<T> {
     IO<B> Function(T a) f,
   ) =>
       IO.traverseList(toList(), f);
+
+  /// {@template fpdart_iterable_extension_traverse_list_task}
+  /// Map a each element of the [List] to [Task]
+  /// and return an `Task<List<B>>`.
+  ///
+  /// Each [Task] is executed in parallel.
+  /// {@endtemplate}
+  Task<List<B>> traverseTaskWithIndex<B>(
+    Task<B> Function(T a, int i) f,
+  ) =>
+      Task.traverseListWithIndex(toList(), f);
+
+  /// {@macro fpdart_iterable_extension_traverse_list_task}
+  Task<List<B>> traverseTask<B>(
+    Task<B> Function(T a) f,
+  ) =>
+      Task.traverseList(toList(), f);
 
   /// {@template fpdart_iterable_extension_traverse_list_either}
   /// Map a each element of the [List] to [Either]

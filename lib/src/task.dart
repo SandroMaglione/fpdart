@@ -73,4 +73,33 @@ class Task<A> extends HKT<_TaskHKT, A>
 
   /// Run the task and return a [Future].
   Future<A> run() => _run();
+
+  /// {@template fpdart_traverse_list_task}
+  /// Map each element in the list to a [Task] using the function `f`,
+  /// and collect the result in an `Task<List<B>>`.
+  ///
+  /// Each [Task] is executed in parallel.
+  /// {@endtemplate}
+  ///
+  /// Same as `Task.traverseList` but passing `index` in the map function.
+  static Task<List<B>> traverseListWithIndex<A, B>(
+    List<A> list,
+    Task<B> Function(A a, int i) f,
+  ) =>
+      Task<List<B>>(
+        () => Future.wait<B>(
+          list.mapWithIndex(
+            (a, i) => f(a, i).run(),
+          ),
+        ),
+      );
+
+  /// {@macro fpdart_traverse_list_task}
+  ///
+  /// Same as `Task.traverseListWithIndex` but without `index` in the map function.
+  static Task<List<B>> traverseList<A, B>(
+    List<A> list,
+    Task<B> Function(A a) f,
+  ) =>
+      traverseListWithIndex<A, B>(list, (a, _) => f(a));
 }
