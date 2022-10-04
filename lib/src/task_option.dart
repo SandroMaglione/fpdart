@@ -158,6 +158,35 @@ class TaskOption<R> extends HKT<_TaskOptionHKT, R>
         }
       });
 
+  /// {@template fpdart_traverse_list_task_option}
+  /// Map each element in the list to a [TaskOption] using the function `f`,
+  /// and collect the result in an `TaskOption<List<B>>`.
+  /// {@endtemplate}
+  ///
+  /// Same as `TaskOption.traverseList` but passing `index` in the map function.
+  static TaskOption<List<B>> traverseListWithIndex<A, B>(
+    List<A> list,
+    TaskOption<B> Function(A a, int i) f,
+  ) =>
+      TaskOption<List<B>>(
+        () async => Option.traverseList<Option<B>, B>(
+          await Task.traverseListWithIndex<A, Option<B>>(
+            list,
+            (a, i) => Task(() => f(a, i).run()),
+          ).run(),
+          identity,
+        ),
+      );
+
+  /// {@macro fpdart_traverse_list_task_option}
+  ///
+  /// Same as `TaskOption.traverseListWithIndex` but without `index` in the map function.
+  static TaskOption<List<B>> traverseList<A, B>(
+    List<A> list,
+    TaskOption<B> Function(A a) f,
+  ) =>
+      traverseListWithIndex<A, B>(list, (a, _) => f(a));
+
   /// Build a [TaskOption] from `either` that returns [None] when
   /// `either` is [Left], otherwise it returns [Some].
   static TaskOption<R> fromEither<L, R>(Either<L, R> either) =>
