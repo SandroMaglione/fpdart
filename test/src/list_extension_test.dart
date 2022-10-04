@@ -490,5 +490,31 @@ void main() {
         });
       });
     });
+
+    test('traverseIO', () {
+      final list = [1, 2, 3, 4, 5, 6];
+      var sideEffect = 0;
+      final traverse = list.traverseIO<String>((a) {
+        sideEffect += 1;
+        return IO.of("$a");
+      });
+      expect(sideEffect, 0);
+      final result = traverse.run();
+      expect(result, ['1', '2', '3', '4', '5', '6']);
+      expect(sideEffect, list.length);
+    });
+
+    test('traverseIOWithIndex', () {
+      final list = [1, 2, 3, 4, 5, 6];
+      var sideEffect = 0;
+      final traverse = list.traverseIOWithIndex<String>((a, i) {
+        sideEffect += 1;
+        return IO.of("$a$i");
+      });
+      expect(sideEffect, 0);
+      final result = traverse.run();
+      expect(result, ['10', '21', '32', '43', '54', '65']);
+      expect(sideEffect, list.length);
+    });
   });
 }

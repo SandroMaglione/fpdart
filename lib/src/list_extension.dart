@@ -1,5 +1,6 @@
 import 'date.dart';
 import 'either.dart';
+import 'io.dart';
 import 'option.dart';
 import 'tuple.dart';
 import 'typeclass/order.dart';
@@ -355,7 +356,22 @@ extension FpdartTraversableIterable<T> on Iterable<T> {
   ) =>
       Option.traverseList(toList(), f);
 
-  /// {@template fpdart_iterable_extension_traverse_list_option}
+  /// {@template fpdart_iterable_extension_traverse_list_io}
+  /// Map a each element of the [List] to [IO]
+  /// and return an `IO<List<B>>`.
+  /// {@endtemplate}
+  IO<List<B>> traverseIOWithIndex<B>(
+    IO<B> Function(T a, int i) f,
+  ) =>
+      IO.traverseListWithIndex(toList(), f);
+
+  /// {@macro fpdart_iterable_extension_traverse_list_io}
+  IO<List<B>> traverseIO<B>(
+    IO<B> Function(T a) f,
+  ) =>
+      IO.traverseList(toList(), f);
+
+  /// {@template fpdart_iterable_extension_traverse_list_either}
   /// Map a each element of the [List] to [Either]
   /// and return an `Either<E, List<B>>`.
   ///
@@ -367,7 +383,7 @@ extension FpdartTraversableIterable<T> on Iterable<T> {
   ) =>
       Either.traverseListWithIndex(toList(), f);
 
-  /// {@macro fpdart_iterable_extension_traverse_list_option}
+  /// {@macro fpdart_iterable_extension_traverse_list_either}
   Either<E, List<B>> traverseEither<E, B>(
     Either<E, B> Function(T a) f,
   ) =>
