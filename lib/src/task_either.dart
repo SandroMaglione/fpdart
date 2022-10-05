@@ -212,6 +212,42 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
         }
       });
 
+  /// {@template fpdart_traverse_list_task_either}
+  /// Map each element in the list to a [TaskEither] using the function `f`,
+  /// and collect the result in an `TaskEither<E, List<B>>`.
+  /// {@endtemplate}
+  ///
+  /// Same as `TaskEither.traverseList` but passing `index` in the map function.
+  static TaskEither<E, List<B>> traverseListWithIndex<E, A, B>(
+    List<A> list,
+    TaskEither<E, B> Function(A a, int i) f,
+  ) =>
+      TaskEither<E, List<B>>(
+        () async => Either.sequenceList(
+          await Task.traverseListWithIndex<A, Either<E, B>>(
+            list,
+            (a, i) => Task(() => f(a, i).run()),
+          ).run(),
+        ),
+      );
+
+  /// {@macro fpdart_traverse_list_task_either}
+  ///
+  /// Same as `TaskEither.traverseListWithIndex` but without `index` in the map function.
+  static TaskEither<E, List<B>> traverseList<E, A, B>(
+    List<A> list,
+    TaskEither<E, B> Function(A a) f,
+  ) =>
+      traverseListWithIndex<E, A, B>(list, (a, _) => f(a));
+
+  /// {@template fpdart_sequence_list_task_either}
+  /// Convert a `List<TaskEither<E, A>>` to a single `TaskEither<E, List<A>>`.
+  /// {@endtemplate}
+  static TaskEither<E, List<A>> sequenceList<E, A>(
+    List<TaskEither<E, A>> list,
+  ) =>
+      traverseList(list, identity);
+
   /// Converts a [Future] that may throw to a [Future] that never throws
   /// but returns a [Either] instead.
   ///

@@ -490,6 +490,71 @@ void main() {
         });
       });
     });
+    group('traverseTaskEither', () {
+      test('Right', () async {
+        final list = [1, 2, 3, 4, 5, 6];
+        var sideEffect = 0;
+        final traverse = list.traverseTaskEither<String, String>((a) {
+          sideEffect += 1;
+          return TaskEither.of("$a");
+        });
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestRight((t) {
+          expect(t, ['1', '2', '3', '4', '5', '6']);
+        });
+        expect(sideEffect, list.length);
+      });
+
+      test('Left', () async {
+        final list = [1, 2, 3, 4, 5, 6];
+        var sideEffect = 0;
+        final traverse = list.traverseTaskEither<String, String>((a) {
+          sideEffect += 1;
+          return a % 2 == 0 ? TaskEither.left("Error") : TaskEither.of("$a");
+        });
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+        expect(sideEffect, list.length);
+      });
+    });
+
+    group('traverseTaskEitherWithIndex', () {
+      test('Right', () async {
+        final list = [1, 2, 3, 4, 5, 6];
+        var sideEffect = 0;
+        final traverse =
+            list.traverseTaskEitherWithIndex<String, String>((a, i) {
+          sideEffect += 1;
+          return TaskEither.of("$a$i");
+        });
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestRight((t) {
+          expect(t, ['10', '21', '32', '43', '54', '65']);
+        });
+        expect(sideEffect, list.length);
+      });
+
+      test('Left', () async {
+        final list = [1, 2, 3, 4, 5, 6];
+        var sideEffect = 0;
+        final traverse =
+            list.traverseTaskEitherWithIndex<String, String>((a, i) {
+          sideEffect += 1;
+          return a % 2 == 0 ? TaskEither.left("Error") : TaskEither.of("$a$i");
+        });
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+        expect(sideEffect, list.length);
+      });
+    });
 
     test('traverseIO', () {
       final list = [1, 2, 3, 4, 5, 6];
@@ -760,6 +825,68 @@ void main() {
         expect(sideEffect, 0);
         final result = await traverse.run();
         expect(result, isA<None<List<int>>>());
+        expect(sideEffect, list.length);
+      });
+    });
+  });
+
+  group('FpdartSequenceIterableTaskEither', () {
+    group('sequenceTaskEither', () {
+      test('Right', () async {
+        var sideEffect = 0;
+        final list = [
+          TaskEither(() async {
+            sideEffect += 1;
+            return right<String, int>(1);
+          }),
+          TaskEither(() async {
+            sideEffect += 1;
+            return right<String, int>(2);
+          }),
+          TaskEither(() async {
+            sideEffect += 1;
+            return right<String, int>(3);
+          }),
+          TaskEither(() async {
+            sideEffect += 1;
+            return right<String, int>(4);
+          }),
+        ];
+        final traverse = list.sequenceTaskEither();
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestRight((t) {
+          expect(t, [1, 2, 3, 4]);
+        });
+        expect(sideEffect, list.length);
+      });
+
+      test('Left', () async {
+        var sideEffect = 0;
+        final list = [
+          TaskEither(() async {
+            sideEffect += 1;
+            return right<String, int>(1);
+          }),
+          TaskEither(() async {
+            sideEffect += 1;
+            return left<String, int>("Error");
+          }),
+          TaskEither(() async {
+            sideEffect += 1;
+            return right<String, int>(3);
+          }),
+          TaskEither(() async {
+            sideEffect += 1;
+            return right<String, int>(4);
+          }),
+        ];
+        final traverse = list.sequenceTaskEither();
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
         expect(sideEffect, list.length);
       });
     });

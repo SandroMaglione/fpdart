@@ -3,6 +3,7 @@ import 'either.dart';
 import 'io.dart';
 import 'option.dart';
 import 'task.dart';
+import 'task_either.dart';
 import 'task_option.dart';
 import 'tuple.dart';
 import 'typeclass/order.dart';
@@ -422,6 +423,24 @@ extension FpdartTraversableIterable<T> on Iterable<T> {
     Either<E, B> Function(T a) f,
   ) =>
       Either.traverseList(toList(), f);
+
+  /// {@template fpdart_iterable_extension_traverse_list_either}
+  /// Map a each element of the [List] to [TaskEither]
+  /// and return an `TaskEither<E, List<B>>`.
+  ///
+  /// If **any** of the [TaskEither] is [Left], then the final
+  /// `TaskEither<E, List<B>>` will also be [Left].
+  /// {@endtemplate}
+  TaskEither<E, List<B>> traverseTaskEitherWithIndex<E, B>(
+    TaskEither<E, B> Function(T a, int i) f,
+  ) =>
+      TaskEither.traverseListWithIndex(toList(), f);
+
+  /// {@macro fpdart_iterable_extension_traverse_list_Taskeither}
+  TaskEither<E, List<B>> traverseTaskEither<E, B>(
+    TaskEither<E, B> Function(T a) f,
+  ) =>
+      TaskEither.traverseList(toList(), f);
 }
 
 extension FpdartSequenceIterableOption<T> on Iterable<Option<T>> {
@@ -447,4 +466,10 @@ extension FpdartSequenceIterableTask<T> on Iterable<Task<T>> {
 extension FpdartSequenceIterableEither<E, T> on Iterable<Either<E, T>> {
   /// {@macro fpdart_sequence_list_either}
   Either<E, List<T>> sequenceEither() => Either.sequenceList(toList());
+}
+
+extension FpdartSequenceIterableTaskEither<E, T> on Iterable<TaskEither<E, T>> {
+  /// {@macro fpdart_sequence_list_task_either}
+  TaskEither<E, List<T>> sequenceTaskEither() =>
+      TaskEither.sequenceList(toList());
 }
