@@ -342,7 +342,7 @@ void main() {
     });
 
     group('fromOption', () {
-      test('Some', () async {
+      test('Right', () async {
         final task =
             TaskEither<String, int>.fromOption(Option.of(10), () => 'none');
         final r = await task.run();
@@ -351,7 +351,7 @@ void main() {
         }, (r) => expect(r, 10));
       });
 
-      test('None', () async {
+      test('Left', () async {
         final task =
             TaskEither<String, int>.fromOption(Option.none(), () => 'none');
         final r = await task.run();
@@ -554,18 +554,38 @@ void main() {
         var sideEffect = 0;
         final list = [
           TaskEither(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
             sideEffect += 1;
             return right<String, int>(1);
           }),
           TaskEither(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
             sideEffect += 1;
             return right<String, int>(2);
           }),
           TaskEither(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
             sideEffect += 1;
             return right<String, int>(3);
           }),
           TaskEither(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
             sideEffect += 1;
             return right<String, int>(4);
           }),
@@ -583,18 +603,38 @@ void main() {
         var sideEffect = 0;
         final list = [
           TaskEither(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
             sideEffect += 1;
             return right<String, int>(1);
           }),
           TaskEither(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
             sideEffect += 1;
             return left<String, int>("Error");
           }),
           TaskEither(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
             sideEffect += 1;
             return right<String, int>(3);
           }),
           TaskEither(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
             sideEffect += 1;
             return right<String, int>(4);
           }),
@@ -613,11 +653,20 @@ void main() {
       test('Right', () async {
         final list = [1, 2, 3, 4, 5, 6];
         var sideEffect = 0;
-        final traverse =
-            TaskEither.traverseList<String, int, String>(list, (a) {
-          sideEffect += 1;
-          return TaskEither.of("$a");
-        });
+        final traverse = TaskEither.traverseList<String, int, String>(
+          list,
+          (a) => TaskEither(
+            () async {
+              await Future.delayed(
+                Duration(
+                  milliseconds: Random().nextInt(1000),
+                ),
+              );
+              sideEffect += 1;
+              return right<String, String>("$a");
+            },
+          ),
+        );
         expect(sideEffect, 0);
         final result = await traverse.run();
         result.matchTestRight((t) {
@@ -629,11 +678,22 @@ void main() {
       test('Left', () async {
         final list = [1, 2, 3, 4, 5, 6];
         var sideEffect = 0;
-        final traverse =
-            TaskEither.traverseList<String, int, String>(list, (a) {
-          sideEffect += 1;
-          return a % 2 == 0 ? TaskEither.left("Error") : TaskEither.of("$a");
-        });
+        final traverse = TaskEither.traverseList<String, int, String>(
+          list,
+          (a) => TaskEither(
+            () async {
+              await Future.delayed(
+                Duration(
+                  milliseconds: Random().nextInt(1000),
+                ),
+              );
+              sideEffect += 1;
+              return a % 2 == 0
+                  ? right<String, String>("$a")
+                  : left<String, String>("Error");
+            },
+          ),
+        );
         expect(sideEffect, 0);
         final result = await traverse.run();
         result.matchTestLeft((l) {
@@ -647,11 +707,20 @@ void main() {
       test('Right', () async {
         final list = [1, 2, 3, 4, 5, 6];
         var sideEffect = 0;
-        final traverse =
-            TaskEither.traverseListWithIndex<String, int, String>(list, (a, i) {
-          sideEffect += 1;
-          return TaskEither.of("$a$i");
-        });
+        final traverse = TaskEither.traverseListWithIndex<String, int, String>(
+          list,
+          (a, i) => TaskEither(
+            () async {
+              await Future.delayed(
+                Duration(
+                  milliseconds: Random().nextInt(1000),
+                ),
+              );
+              sideEffect += 1;
+              return right<String, String>("$a$i");
+            },
+          ),
+        );
         expect(sideEffect, 0);
         final result = await traverse.run();
         result.matchTestRight((t) {
@@ -663,17 +732,238 @@ void main() {
       test('Left', () async {
         final list = [1, 2, 3, 4, 5, 6];
         var sideEffect = 0;
-        final traverse =
-            TaskEither.traverseListWithIndex<String, int, String>(list, (a, i) {
-          sideEffect += 1;
-          return a % 2 == 0 ? TaskEither.left("Error") : TaskEither.of("$a$i");
-        });
+        final traverse = TaskEither.traverseListWithIndex<String, int, String>(
+          list,
+          (a, i) => TaskEither(
+            () async {
+              await Future.delayed(
+                Duration(
+                  milliseconds: Random().nextInt(1000),
+                ),
+              );
+              sideEffect += 1;
+              return a % 2 == 0
+                  ? right<String, String>("$a$i")
+                  : left<String, String>("Error");
+            },
+          ),
+        );
         expect(sideEffect, 0);
         final result = await traverse.run();
         result.matchTestLeft((l) {
           expect(l, "Error");
         });
         expect(sideEffect, list.length);
+      });
+    });
+
+    group('sequenceListSeq', () {
+      test('Right', () async {
+        var sideEffect = 0;
+        final list = [
+          TaskEither(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect = 0;
+            return right<String, int>(1);
+          }),
+          TaskEither(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect = 1;
+            return right<String, int>(2);
+          }),
+          TaskEither(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect = 2;
+            return right<String, int>(3);
+          }),
+          TaskEither(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect = 3;
+            return right<String, int>(4);
+          }),
+        ];
+        final traverse = TaskEither.sequenceListSeq(list);
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestRight((t) {
+          expect(t, [1, 2, 3, 4]);
+        });
+        expect(sideEffect, 3);
+      });
+
+      test('Left', () async {
+        var sideEffect = 0;
+        final list = [
+          TaskEither(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect = 0;
+            return right<String, int>(1);
+          }),
+          TaskEither(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect = 1;
+            return left<String, int>("Error");
+          }),
+          TaskEither(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect = 2;
+            return right<String, int>(3);
+          }),
+          TaskEither(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect = 3;
+            return right<String, int>(4);
+          }),
+        ];
+        final traverse = TaskEither.sequenceListSeq(list);
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+        expect(sideEffect, 3);
+      });
+    });
+
+    group('traverseListSeq', () {
+      test('Right', () async {
+        final list = [1, 2, 3, 4, 5, 6];
+        var sideEffect = 0;
+        final traverse = TaskEither.traverseListSeq<String, int, String>(
+          list,
+          (a) => TaskEither(
+            () async {
+              await Future.delayed(
+                Duration(
+                  milliseconds: Random().nextInt(1000),
+                ),
+              );
+              sideEffect = a - 1;
+              return right<String, String>("$a");
+            },
+          ),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestRight((t) {
+          expect(t, ['1', '2', '3', '4', '5', '6']);
+        });
+        expect(sideEffect, 5);
+      });
+
+      test('Left', () async {
+        final list = [1, 2, 3, 4, 5, 6];
+        var sideEffect = 0;
+        final traverse = TaskEither.traverseListSeq<String, int, String>(
+          list,
+          (a) => TaskEither(
+            () async {
+              await Future.delayed(
+                Duration(
+                  milliseconds: Random().nextInt(1000),
+                ),
+              );
+              sideEffect = a - 1;
+              return a % 2 == 0
+                  ? right<String, String>("$a")
+                  : left<String, String>("Error");
+            },
+          ),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+        expect(sideEffect, 5);
+      });
+    });
+
+    group('traverseListWithIndexSeq', () {
+      test('Right', () async {
+        final list = [1, 2, 3, 4, 5, 6];
+        var sideEffect = 0;
+        final traverse =
+            TaskEither.traverseListWithIndexSeq<String, int, String>(
+          list,
+          (a, i) => TaskEither(
+            () async {
+              await Future.delayed(
+                Duration(
+                  milliseconds: Random().nextInt(1000),
+                ),
+              );
+              sideEffect = a + i;
+              return right<String, String>("$a$i");
+            },
+          ),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestRight((t) {
+          expect(t, ['10', '21', '32', '43', '54', '65']);
+        });
+        expect(sideEffect, 11);
+      });
+
+      test('Left', () async {
+        final list = [1, 2, 3, 4, 5, 6];
+        var sideEffect = 0;
+        final traverse =
+            TaskEither.traverseListWithIndexSeq<String, int, String>(
+          list,
+          (a, i) => TaskEither(
+            () async {
+              await Future.delayed(
+                Duration(
+                  milliseconds: Random().nextInt(1000),
+                ),
+              );
+              sideEffect = a + i;
+              return a % 2 == 0
+                  ? right<String, String>("$a$i")
+                  : left<String, String>("Error");
+            },
+          ),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+        expect(sideEffect, 11);
       });
     });
   });
