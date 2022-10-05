@@ -103,7 +103,9 @@ class Task<A> extends HKT<_TaskHKT, A>
   ) =>
       traverseListWithIndex<A, B>(list, (a, _) => f(a));
 
+  /// {@template fpdart_sequence_list_task}
   /// Convert a `List<Task<A>>` to a single `Task<List<A>>`.
+  /// {@endtemplate}
   static Task<List<A>> sequenceList<A>(
     List<Task<A>> list,
   ) =>

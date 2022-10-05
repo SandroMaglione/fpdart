@@ -370,9 +370,11 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   ) =>
       traverseListWithIndex<A, B>(list, (a, _) => f(a));
 
+  /// {@template fpdart_sequence_list_option}
   /// Convert a `List<Option<A>>` to a single `Option<List<A>>`.
   ///
   /// If any of the [Option] in the [List] is [None], then the result is [None].
+  /// {@endtemplate}
   static Option<List<A>> sequenceList<A>(
     List<Option<A>> list,
   ) =>

@@ -603,4 +603,105 @@ void main() {
       });
     });
   });
+
+  group('FpdartSequenceIterableOption', () {
+    group('sequenceOption', () {
+      test('Some', () {
+        final list = [some(1), some(2), some(3), some(4)];
+        final result = list.sequenceOption();
+        result.matchTestSome((t) {
+          expect(t, [1, 2, 3, 4]);
+        });
+      });
+
+      test('None', () {
+        final list = [some(1), none<int>(), some(3), some(4)];
+        final result = list.sequenceOption();
+        expect(result, isA<None<List<int>>>());
+      });
+    });
+  });
+
+  group('FpdartSequenceIterableIO', () {
+    test('sequenceIO', () {
+      var sideEffect = 0;
+      final list = [
+        IO(() {
+          sideEffect += 1;
+          return 1;
+        }),
+        IO(() {
+          sideEffect += 1;
+          return 2;
+        }),
+        IO(() {
+          sideEffect += 1;
+          return 3;
+        }),
+        IO(() {
+          sideEffect += 1;
+          return 4;
+        })
+      ];
+      final traverse = list.sequenceIO();
+      expect(sideEffect, 0);
+      final result = traverse.run();
+      expect(result, [1, 2, 3, 4]);
+      expect(sideEffect, list.length);
+    });
+  });
+
+  group('FpdartSequenceIterableTask', () {
+    test('sequenceTask', () async {
+      var sideEffect = 0;
+      final list = [
+        Task(() async {
+          sideEffect += 1;
+          return 1;
+        }),
+        Task(() async {
+          sideEffect += 1;
+          return 2;
+        }),
+        Task(() async {
+          sideEffect += 1;
+          return 3;
+        }),
+        Task(() async {
+          sideEffect += 1;
+          return 4;
+        }),
+      ];
+      final traverse = list.sequenceTask();
+      expect(sideEffect, 0);
+      final result = await traverse.run();
+      expect(result, [1, 2, 3, 4]);
+      expect(sideEffect, list.length);
+    });
+  });
+
+  group('FpdartSequenceIterableEither', () {
+    group('sequenceEither', () {
+      test('Right', () {
+        final list = [right(1), right(2), right(3), right(4)];
+        final result = list.sequenceEither();
+        result.matchTestRight((r) {
+          expect(r, [1, 2, 3, 4]);
+        });
+      });
+
+      test('Left', () {
+        final list = [
+          right<String, int>(1),
+          left<String, int>("Error"),
+          right<String, int>(3),
+          right<String, int>(4)
+        ];
+        final result = list.sequenceEither();
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+      });
+    });
+  });
 }

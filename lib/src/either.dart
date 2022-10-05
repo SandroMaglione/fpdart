@@ -283,9 +283,11 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   ) =>
       traverseListWithIndex<E, A, B>(list, (a, _) => f(a));
 
+  /// {@template fpdart_sequence_list_either}
   /// Convert a `List<Either<E, A>>` to a single `Either<E, List<A>>`.
   ///
   /// If any of the [Either] in the [List] is [Left], then the result is [Left].
+  /// {@endtemplate}
   static Either<E, List<A>> sequenceList<E, A>(
     List<Either<E, A>> list,
   ) =>

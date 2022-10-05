@@ -101,7 +101,9 @@ class IO<A> extends HKT<_IOHKT, A>
   ) =>
       traverseListWithIndex<A, B>(list, (a, _) => f(a));
 
+  /// {@template fpdart_sequence_list_io}
   /// Convert a `List<IO<A>>` to a single `IO<List<A>>`.
+  /// {@endtemplate}
   static IO<List<A>> sequenceList<A>(
     List<IO<A>> list,
   ) =>
