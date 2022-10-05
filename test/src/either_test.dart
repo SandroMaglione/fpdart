@@ -820,6 +820,29 @@ void main() {
       expect(l.value, 'none');
     });
 
+    group('sequenceList', () {
+      test('Right', () {
+        final list = [right(1), right(2), right(3), right(4)];
+        final result = Either.sequenceList(list);
+        result.matchTestRight((r) {
+          expect(r, [1, 2, 3, 4]);
+        });
+      });
+
+      test('Left', () {
+        final list = [
+          right<String, int>(1),
+          left<String, int>("Error"),
+          right<String, int>(3),
+          right<String, int>(4)
+        ];
+        final result = Either.sequenceList(list);
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+      });
+    });
+
     group('traverseList', () {
       test('Right', () {
         final list = [1, 2, 3, 4, 5, 6];

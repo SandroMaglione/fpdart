@@ -283,6 +283,14 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   ) =>
       traverseListWithIndex<E, A, B>(list, (a, _) => f(a));
 
+  /// Convert a `List<Either<E, A>>` to a single `Either<E, List<A>>`.
+  ///
+  /// If any of the [Either] in the [List] is [Left], then the result is [Left].
+  static Either<E, List<A>> sequenceList<E, A>(
+    List<Either<E, A>> list,
+  ) =>
+      traverseList(list, identity);
+
   /// Flat a [Either] contained inside another [Either] to be a single [Either].
   factory Either.flatten(Either<L, Either<L, R>> e) => e.flatMap(identity);
 
