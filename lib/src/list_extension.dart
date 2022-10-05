@@ -342,120 +342,85 @@ extension FpdartOnMutableIterableOfIterable<T> on Iterable<Iterable<T>> {
 }
 
 extension FpdartTraversableIterable<T> on Iterable<T> {
-  /// {@template fpdart_iterable_extension_traverse_list_option}
-  /// Map a each element of the [List] to [Option]
-  /// and return an `Option<List<B>>`.
-  ///
-  /// If **any** of the [Option] is [None], then the final
-  /// `Option<List<B>>` will also be [None].
-  /// {@endtemplate}
+  /// {@macro fpdart_traverse_list_option}
   Option<List<B>> traverseOptionWithIndex<B>(
     Option<B> Function(T a, int i) f,
   ) =>
       Option.traverseListWithIndex(toList(), f);
 
-  /// {@macro fpdart_iterable_extension_traverse_list_option}
+  /// {@macro fpdart_traverse_list_option}
   Option<List<B>> traverseOption<B>(
     Option<B> Function(T a) f,
   ) =>
       Option.traverseList(toList(), f);
 
-  /// {@template fpdart_iterable_extension_traverse_list_task_option}
-  /// Map a each element of the [List] to [TaskOption]
-  /// and return an `TaskOption<List<B>>`.
-  /// {@endtemplate}
+  /// {@macro fpdart_traverse_list_task_option}
   TaskOption<List<B>> traverseTaskOptionWithIndex<B>(
     TaskOption<B> Function(T a, int i) f,
   ) =>
       TaskOption.traverseListWithIndex(toList(), f);
 
-  /// {@macro fpdart_iterable_extension_traverse_list_task_option}
+  /// {@macro fpdart_traverse_list_task_option}
   TaskOption<List<B>> traverseTaskOption<B>(
     TaskOption<B> Function(T a) f,
   ) =>
       TaskOption.traverseList(toList(), f);
 
-  /// {@template fpdart_iterable_extension_traverse_list_io}
-  /// Map a each element of the [List] to [IO]
-  /// and return an `IO<List<B>>`.
-  /// {@endtemplate}
+  /// {@macro fpdart_traverse_list_io}
   IO<List<B>> traverseIOWithIndex<B>(
     IO<B> Function(T a, int i) f,
   ) =>
       IO.traverseListWithIndex(toList(), f);
 
-  /// {@macro fpdart_iterable_extension_traverse_list_io}
+  /// {@macro fpdart_traverse_list_io}
   IO<List<B>> traverseIO<B>(
     IO<B> Function(T a) f,
   ) =>
       IO.traverseList(toList(), f);
 
-  /// {@template fpdart_iterable_extension_traverse_list_task}
-  /// Map a each element of the [List] to [Task]
-  /// and return an `Task<List<B>>`.
-  ///
-  /// Each [Task] is executed in parallel.
-  /// {@endtemplate}
+  /// {@macro fpdart_traverse_list_task}
   Task<List<B>> traverseTaskWithIndex<B>(
     Task<B> Function(T a, int i) f,
   ) =>
       Task.traverseListWithIndex(toList(), f);
 
-  /// {@macro fpdart_iterable_extension_traverse_list_task}
+  /// {@macro fpdart_traverse_list_task}
   Task<List<B>> traverseTask<B>(
     Task<B> Function(T a) f,
   ) =>
       Task.traverseList(toList(), f);
 
-  /// {@template fpdart_iterable_extension_traverse_list_either}
-  /// Map a each element of the [List] to [Either]
-  /// and return an `Either<E, List<B>>`.
-  ///
-  /// If **any** of the [Either] is [Left], then the final
-  /// `Either<E, List<B>>` will also be [Left].
-  /// {@endtemplate}
+  /// {@macro fpdart_traverse_list_either}
   Either<E, List<B>> traverseEitherWithIndex<E, B>(
     Either<E, B> Function(T a, int i) f,
   ) =>
       Either.traverseListWithIndex(toList(), f);
 
-  /// {@macro fpdart_iterable_extension_traverse_list_either}
+  /// {@macro fpdart_traverse_list_either}
   Either<E, List<B>> traverseEither<E, B>(
     Either<E, B> Function(T a) f,
   ) =>
       Either.traverseList(toList(), f);
 
-  /// {@template fpdart_iterable_extension_traverse_list_task_either}
-  /// Map a each element of the [List] to [TaskEither]
-  /// and return an `TaskEither<E, List<B>>`.
-  ///
-  /// If **any** of the [TaskEither] is [Left], then the final
-  /// `TaskEither<E, List<B>>` will also be [Left].
-  /// {@endtemplate}
+  /// {@macro fpdart_traverse_list_task_either}
   TaskEither<E, List<B>> traverseTaskEitherWithIndex<E, B>(
     TaskEither<E, B> Function(T a, int i) f,
   ) =>
       TaskEither.traverseListWithIndex(toList(), f);
 
-  /// {@macro fpdart_iterable_extension_traverse_list_task_either}
+  /// {@macro fpdart_traverse_list_task_either}
   TaskEither<E, List<B>> traverseTaskEither<E, B>(
     TaskEither<E, B> Function(T a) f,
   ) =>
       TaskEither.traverseList(toList(), f);
 
-  /// {@template fpdart_iterable_extension_traverse_list_io_either}
-  /// Map a each element of the [List] to [IOEither]
-  /// and return an `IOEither<E, List<B>>`.
-  ///
-  /// If **any** of the [IOEither] is [Left], then the final
-  /// `IOEither<E, List<B>>` will also be [Left].
-  /// {@endtemplate}
+  /// {@macro fpdart_traverse_list_io_either}
   IOEither<E, List<B>> traverseIOEitherWithIndex<E, B>(
     IOEither<E, B> Function(T a, int i) f,
   ) =>
       IOEither.traverseListWithIndex(toList(), f);
 
-  /// {@macro fpdart_iterable_extension_traverse_list_io_either}
+  /// {@macro fpdart_traverse_list_io_either}
   IOEither<E, List<B>> traverseIOEither<E, B>(
     IOEither<E, B> Function(T a) f,
   ) =>
