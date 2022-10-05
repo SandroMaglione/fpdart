@@ -102,4 +102,10 @@ class Task<A> extends HKT<_TaskHKT, A>
     Task<B> Function(A a) f,
   ) =>
       traverseListWithIndex<A, B>(list, (a, _) => f(a));
+
+  /// Convert a `List<Task<A>>` to a single `Task<List<A>>`.
+  static Task<List<A>> sequenceList<A>(
+    List<Task<A>> list,
+  ) =>
+      traverseList(list, identity);
 }

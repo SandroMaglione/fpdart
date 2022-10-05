@@ -126,6 +126,33 @@ void main() {
       });
     });
 
+    test('sequenceList', () async {
+      var sideEffect = 0;
+      final list = [
+        Task(() async {
+          sideEffect += 1;
+          return 1;
+        }),
+        Task(() async {
+          sideEffect += 1;
+          return 2;
+        }),
+        Task(() async {
+          sideEffect += 1;
+          return 3;
+        }),
+        Task(() async {
+          sideEffect += 1;
+          return 4;
+        }),
+      ];
+      final traverse = Task.sequenceList(list);
+      expect(sideEffect, 0);
+      final result = await traverse.run();
+      expect(result, [1, 2, 3, 4]);
+      expect(sideEffect, list.length);
+    });
+
     test('traverseList', () async {
       final list = [1, 2, 3, 4, 5, 6];
       var sideEffect = 0;
