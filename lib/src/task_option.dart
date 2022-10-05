@@ -186,6 +186,14 @@ class TaskOption<R> extends HKT<_TaskOptionHKT, R>
   ) =>
       traverseListWithIndex<A, B>(list, (a, _) => f(a));
 
+  /// {@template fpdart_sequence_list_task_option}
+  /// Convert a `List<TaskOption<A>>` to a single `TaskOption<List<A>>`.
+  /// {@endtemplate}
+  static TaskOption<List<A>> sequenceList<A>(
+    List<TaskOption<A>> list,
+  ) =>
+      traverseList(list, identity);
+
   /// Build a [TaskOption] from `either` that returns [None] when
   /// `either` is [Left], otherwise it returns [Some].
   static TaskOption<R> fromEither<L, R>(Either<L, R> either) =>

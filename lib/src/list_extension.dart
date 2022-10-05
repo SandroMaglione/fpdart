@@ -429,6 +429,11 @@ extension FpdartSequenceIterableOption<T> on Iterable<Option<T>> {
   Option<List<T>> sequenceOption() => Option.sequenceList(toList());
 }
 
+extension FpdartSequenceIterableTaskOption<T> on Iterable<TaskOption<T>> {
+  /// {@macro fpdart_sequence_list_task_option}
+  TaskOption<List<T>> sequenceTaskOption() => TaskOption.sequenceList(toList());
+}
+
 extension FpdartSequenceIterableIO<T> on Iterable<IO<T>> {
   /// {@macro fpdart_sequence_list_io}
   IO<List<T>> sequenceIO() => IO.sequenceList(toList());

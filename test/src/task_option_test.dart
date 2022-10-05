@@ -331,6 +331,64 @@ void main() {
       expect(stopwatch.elapsedMilliseconds >= 2000, true);
     });
 
+    group('sequenceList', () {
+      test('Some', () async {
+        var sideEffect = 0;
+        final list = [
+          TaskOption(() async {
+            sideEffect += 1;
+            return some(1);
+          }),
+          TaskOption(() async {
+            sideEffect += 1;
+            return some(2);
+          }),
+          TaskOption(() async {
+            sideEffect += 1;
+            return some(3);
+          }),
+          TaskOption(() async {
+            sideEffect += 1;
+            return some(4);
+          }),
+        ];
+        final traverse = TaskOption.sequenceList(list);
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestSome((t) {
+          expect(t, [1, 2, 3, 4]);
+        });
+        expect(sideEffect, list.length);
+      });
+
+      test('None', () async {
+        var sideEffect = 0;
+        final list = [
+          TaskOption(() async {
+            sideEffect += 1;
+            return some(1);
+          }),
+          TaskOption(() async {
+            sideEffect += 1;
+            return none<int>();
+          }),
+          TaskOption(() async {
+            sideEffect += 1;
+            return some(3);
+          }),
+          TaskOption(() async {
+            sideEffect += 1;
+            return some(4);
+          }),
+        ];
+        final traverse = TaskOption.sequenceList(list);
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        expect(result, isA<None<List<int>>>());
+        expect(sideEffect, list.length);
+      });
+    });
+
     group('traverseList', () {
       test('Some', () async {
         final list = [1, 2, 3, 4, 5, 6];
