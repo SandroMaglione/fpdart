@@ -1,6 +1,7 @@
 import 'date.dart';
 import 'either.dart';
 import 'io.dart';
+import 'io_either.dart';
 import 'option.dart';
 import 'task.dart';
 import 'task_either.dart';
@@ -424,7 +425,7 @@ extension FpdartTraversableIterable<T> on Iterable<T> {
   ) =>
       Either.traverseList(toList(), f);
 
-  /// {@template fpdart_iterable_extension_traverse_list_either}
+  /// {@template fpdart_iterable_extension_traverse_list_task_either}
   /// Map a each element of the [List] to [TaskEither]
   /// and return an `TaskEither<E, List<B>>`.
   ///
@@ -436,11 +437,29 @@ extension FpdartTraversableIterable<T> on Iterable<T> {
   ) =>
       TaskEither.traverseListWithIndex(toList(), f);
 
-  /// {@macro fpdart_iterable_extension_traverse_list_Taskeither}
+  /// {@macro fpdart_iterable_extension_traverse_list_task_either}
   TaskEither<E, List<B>> traverseTaskEither<E, B>(
     TaskEither<E, B> Function(T a) f,
   ) =>
       TaskEither.traverseList(toList(), f);
+
+  /// {@template fpdart_iterable_extension_traverse_list_io_either}
+  /// Map a each element of the [List] to [IOEither]
+  /// and return an `IOEither<E, List<B>>`.
+  ///
+  /// If **any** of the [IOEither] is [Left], then the final
+  /// `IOEither<E, List<B>>` will also be [Left].
+  /// {@endtemplate}
+  IOEither<E, List<B>> traverseIOEitherWithIndex<E, B>(
+    IOEither<E, B> Function(T a, int i) f,
+  ) =>
+      IOEither.traverseListWithIndex(toList(), f);
+
+  /// {@macro fpdart_iterable_extension_traverse_list_io_either}
+  IOEither<E, List<B>> traverseIOEither<E, B>(
+    IOEither<E, B> Function(T a) f,
+  ) =>
+      IOEither.traverseList(toList(), f);
 }
 
 extension FpdartSequenceIterableOption<T> on Iterable<Option<T>> {
@@ -464,7 +483,7 @@ extension FpdartSequenceIterableTask<T> on Iterable<Task<T>> {
 }
 
 extension FpdartSequenceIterableEither<E, T> on Iterable<Either<E, T>> {
-  /// {@macro fpdart_sequence_list_either}
+  /// {@macro fpdart_sequence__io}
   Either<E, List<T>> sequenceEither() => Either.sequenceList(toList());
 }
 
@@ -472,4 +491,9 @@ extension FpdartSequenceIterableTaskEither<E, T> on Iterable<TaskEither<E, T>> {
   /// {@macro fpdart_sequence_list_task_either}
   TaskEither<E, List<T>> sequenceTaskEither() =>
       TaskEither.sequenceList(toList());
+}
+
+extension FpdartSequenceIterableIOEither<E, T> on Iterable<IOEither<E, T>> {
+  /// {@macro fpdart_sequence_list_io_either}
+  IOEither<E, List<T>> sequenceIOEither() => IOEither.sequenceList(toList());
 }
