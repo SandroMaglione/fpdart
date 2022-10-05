@@ -366,6 +366,18 @@ extension FpdartTraversableIterable<T> on Iterable<T> {
   ) =>
       TaskOption.traverseList(toList(), f);
 
+  /// {@macro fpdart_traverse_list_seq_task_option}
+  TaskOption<List<B>> traverseTaskOptionWithIndexSeq<B>(
+    TaskOption<B> Function(T a, int i) f,
+  ) =>
+      TaskOption.traverseListWithIndexSeq(toList(), f);
+
+  /// {@macro fpdart_traverse_list_seq_task_option}
+  TaskOption<List<B>> traverseTaskOptionSeq<B>(
+    TaskOption<B> Function(T a) f,
+  ) =>
+      TaskOption.traverseListSeq(toList(), f);
+
   /// {@macro fpdart_traverse_list_io}
   IO<List<B>> traverseIOWithIndex<B>(
     IO<B> Function(T a, int i) f,
@@ -447,6 +459,10 @@ extension FpdartSequenceIterableOption<T> on Iterable<Option<T>> {
 extension FpdartSequenceIterableTaskOption<T> on Iterable<TaskOption<T>> {
   /// {@macro fpdart_sequence_list_task_option}
   TaskOption<List<T>> sequenceTaskOption() => TaskOption.sequenceList(toList());
+
+  /// {@macro fpdart_sequence_list_seq_task_option}
+  TaskOption<List<T>> sequenceTaskOptionSeq() =>
+      TaskOption.sequenceListSeq(toList());
 }
 
 extension FpdartSequenceIterableIO<T> on Iterable<IO<T>> {

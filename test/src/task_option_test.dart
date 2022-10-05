@@ -336,18 +336,38 @@ void main() {
         var sideEffect = 0;
         final list = [
           TaskOption(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
             sideEffect += 1;
             return some(1);
           }),
           TaskOption(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
             sideEffect += 1;
             return some(2);
           }),
           TaskOption(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
             sideEffect += 1;
             return some(3);
           }),
           TaskOption(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
             sideEffect += 1;
             return some(4);
           }),
@@ -365,18 +385,38 @@ void main() {
         var sideEffect = 0;
         final list = [
           TaskOption(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
             sideEffect += 1;
             return some(1);
           }),
           TaskOption(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
             sideEffect += 1;
             return none<int>();
           }),
           TaskOption(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
             sideEffect += 1;
             return some(3);
           }),
           TaskOption(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
             sideEffect += 1;
             return some(4);
           }),
@@ -393,10 +433,20 @@ void main() {
       test('Some', () async {
         final list = [1, 2, 3, 4, 5, 6];
         var sideEffect = 0;
-        final traverse = TaskOption.traverseList<int, String>(list, (a) {
-          sideEffect += 1;
-          return TaskOption.of("$a");
-        });
+        final traverse = TaskOption.traverseList<int, String>(
+          list,
+          (a) => TaskOption(
+            () async {
+              await Future.delayed(
+                Duration(
+                  milliseconds: Random().nextInt(1000),
+                ),
+              );
+              sideEffect += 1;
+              return some("$a");
+            },
+          ),
+        );
         expect(sideEffect, 0);
         final result = await traverse.run();
         result.matchTestSome((t) {
@@ -408,10 +458,20 @@ void main() {
       test('None', () async {
         final list = [1, 2, 3, 4, 5, 6];
         var sideEffect = 0;
-        final traverse = TaskOption.traverseList<int, String>(list, (a) {
-          sideEffect += 1;
-          return a % 2 == 0 ? TaskOption.none() : TaskOption.of("$a");
-        });
+        final traverse = TaskOption.traverseList<int, String>(
+          list,
+          (a) => TaskOption(
+            () async {
+              await Future.delayed(
+                Duration(
+                  milliseconds: Random().nextInt(1000),
+                ),
+              );
+              sideEffect += 1;
+              return a % 2 == 0 ? some("$a") : none();
+            },
+          ),
+        );
         expect(sideEffect, 0);
         final result = await traverse.run();
         expect(result, isA<None<List<String>>>());
@@ -423,11 +483,20 @@ void main() {
       test('Some', () async {
         final list = [1, 2, 3, 4, 5, 6];
         var sideEffect = 0;
-        final traverse =
-            TaskOption.traverseListWithIndex<int, String>(list, (a, i) {
-          sideEffect += 1;
-          return TaskOption.of("$a$i");
-        });
+        final traverse = TaskOption.traverseListWithIndex<int, String>(
+          list,
+          (a, i) => TaskOption(
+            () async {
+              await Future.delayed(
+                Duration(
+                  milliseconds: Random().nextInt(1000),
+                ),
+              );
+              sideEffect += 1;
+              return some("$a$i");
+            },
+          ),
+        );
         expect(sideEffect, 0);
         final result = await traverse.run();
         result.matchTestSome((t) {
@@ -439,15 +508,222 @@ void main() {
       test('None', () async {
         final list = [1, 2, 3, 4, 5, 6];
         var sideEffect = 0;
-        final traverse =
-            TaskOption.traverseListWithIndex<int, String>(list, (a, i) {
-          sideEffect += 1;
-          return a % 2 == 0 ? TaskOption.none() : TaskOption.of("$a$i");
-        });
+        final traverse = TaskOption.traverseListWithIndex<int, String>(
+          list,
+          (a, i) => TaskOption(
+            () async {
+              await Future.delayed(
+                Duration(
+                  milliseconds: Random().nextInt(1000),
+                ),
+              );
+              sideEffect += 1;
+              return a % 2 == 0 ? some("$a$i") : none();
+            },
+          ),
+        );
         expect(sideEffect, 0);
         final result = await traverse.run();
         expect(result, isA<None<List<String>>>());
         expect(sideEffect, list.length);
+      });
+    });
+
+    group('sequenceListSeq', () {
+      test('Some', () async {
+        var sideEffect = 0;
+        final list = [
+          TaskOption(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect = 0;
+            return some(1);
+          }),
+          TaskOption(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect = 1;
+            return some(2);
+          }),
+          TaskOption(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect = 2;
+            return some(3);
+          }),
+          TaskOption(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect = 3;
+            return some(4);
+          }),
+        ];
+        final traverse = TaskOption.sequenceListSeq(list);
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestSome((t) {
+          expect(t, [1, 2, 3, 4]);
+        });
+        expect(sideEffect, 3);
+      });
+
+      test('None', () async {
+        var sideEffect = 0;
+        final list = [
+          TaskOption(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect = 0;
+            return some(1);
+          }),
+          TaskOption(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect = 1;
+            return none<int>();
+          }),
+          TaskOption(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect = 2;
+            return some(3);
+          }),
+          TaskOption(() async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect = 3;
+            return some(4);
+          }),
+        ];
+        final traverse = TaskOption.sequenceListSeq(list);
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        expect(result, isA<None<List<int>>>());
+        expect(sideEffect, 3);
+      });
+    });
+
+    group('traverseListSeq', () {
+      test('Some', () async {
+        final list = [1, 2, 3, 4, 5, 6];
+        var sideEffect = 0;
+        final traverse = TaskOption.traverseListSeq<int, String>(
+          list,
+          (a) => TaskOption(
+            () async {
+              await Future.delayed(
+                Duration(
+                  milliseconds: Random().nextInt(1000),
+                ),
+              );
+              sideEffect = a - 1;
+              return some("$a");
+            },
+          ),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestSome((t) {
+          expect(t, ['1', '2', '3', '4', '5', '6']);
+        });
+        expect(sideEffect, 5);
+      });
+
+      test('None', () async {
+        final list = [1, 2, 3, 4, 5, 6];
+        var sideEffect = 0;
+        final traverse = TaskOption.traverseListSeq<int, String>(
+          list,
+          (a) => TaskOption(
+            () async {
+              await Future.delayed(
+                Duration(
+                  milliseconds: Random().nextInt(1000),
+                ),
+              );
+              sideEffect = a - 1;
+              return a % 2 == 0 ? some("$a") : none();
+            },
+          ),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        expect(result, isA<None<List<String>>>());
+        expect(sideEffect, 5);
+      });
+    });
+
+    group('traverseListWithIndexSeq', () {
+      test('Some', () async {
+        final list = [1, 2, 3, 4, 5, 6];
+        var sideEffect = 0;
+        final traverse = TaskOption.traverseListWithIndexSeq<int, String>(
+          list,
+          (a, i) => TaskOption(
+            () async {
+              await Future.delayed(
+                Duration(
+                  milliseconds: Random().nextInt(1000),
+                ),
+              );
+              sideEffect = a + i;
+              return some("$a$i");
+            },
+          ),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestSome((t) {
+          expect(t, ['10', '21', '32', '43', '54', '65']);
+        });
+        expect(sideEffect, 11);
+      });
+
+      test('None', () async {
+        final list = [1, 2, 3, 4, 5, 6];
+        var sideEffect = 0;
+        final traverse = TaskOption.traverseListWithIndexSeq<int, String>(
+          list,
+          (a, i) => TaskOption(
+            () async {
+              await Future.delayed(
+                Duration(
+                  milliseconds: Random().nextInt(1000),
+                ),
+              );
+              sideEffect = a + i;
+              return a % 2 == 0 ? some("$a$i") : none();
+            },
+          ),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        expect(result, isA<None<List<String>>>());
+        expect(sideEffect, 11);
       });
     });
   });

@@ -161,6 +161,11 @@ class TaskOption<R> extends HKT<_TaskOptionHKT, R>
   /// {@template fpdart_traverse_list_task_option}
   /// Map each element in the list to a [TaskOption] using the function `f`,
   /// and collect the result in an `TaskOption<List<B>>`.
+  ///
+  /// Each [TaskOption] is executed in parallel. This strategy is faster than
+  /// sequence, but **the order of the request is not guaranteed**.
+  ///
+  /// If you need [TaskOption] to be executed in sequence, use `traverseListWithIndexSeq`.
   /// {@endtemplate}
   ///
   /// Same as `TaskOption.traverseList` but passing `index` in the map function.
@@ -188,11 +193,60 @@ class TaskOption<R> extends HKT<_TaskOptionHKT, R>
 
   /// {@template fpdart_sequence_list_task_option}
   /// Convert a `List<TaskOption<A>>` to a single `TaskOption<List<A>>`.
+  ///
+  /// Each [TaskOption] will be executed in parallel.
+  ///
+  /// If you need [TaskOption] to be executed in sequence, use `sequenceListSeq`.
   /// {@endtemplate}
   static TaskOption<List<A>> sequenceList<A>(
     List<TaskOption<A>> list,
   ) =>
       traverseList(list, identity);
+
+  /// {@template fpdart_traverse_list_seq_task_option}
+  /// Map each element in the list to a [TaskOption] using the function `f`,
+  /// and collect the result in an `TaskOption<List<B>>`.
+  ///
+  /// Each [TaskOption] is executed in sequence. This strategy **takes more time than
+  /// parallel**, but it ensures that all the request are executed in order.
+  ///
+  /// If you need [TaskOption] to be executed in parallel, use `traverseListWithIndex`.
+  /// {@endtemplate}
+  ///
+  /// Same as `TaskOption.traverseListSeq` but passing `index` in the map function.
+  static TaskOption<List<B>> traverseListWithIndexSeq<A, B>(
+    List<A> list,
+    TaskOption<B> Function(A a, int i) f,
+  ) =>
+      TaskOption<List<B>>(
+        () async => Option.sequenceList(
+          await Task.traverseListWithIndexSeq<A, Option<B>>(
+            list,
+            (a, i) => Task(() => f(a, i).run()),
+          ).run(),
+        ),
+      );
+
+  /// {@macro fpdart_traverse_list_seq_task_option}
+  ///
+  /// Same as `TaskOption.traverseListWithIndexSeq` but without `index` in the map function.
+  static TaskOption<List<B>> traverseListSeq<A, B>(
+    List<A> list,
+    TaskOption<B> Function(A a) f,
+  ) =>
+      traverseListWithIndexSeq<A, B>(list, (a, _) => f(a));
+
+  /// {@template fpdart_sequence_list_seq_task_option}
+  /// Convert a `List<TaskOption<A>>` to a single `TaskOption<List<A>>`.
+  ///
+  /// Each [TaskOption] will be executed in sequence.
+  ///
+  /// If you need [TaskOption] to be executed in parallel, use `sequenceList`.
+  /// {@endtemplate}
+  static TaskOption<List<A>> sequenceListSeq<A>(
+    List<TaskOption<A>> list,
+  ) =>
+      traverseListSeq(list, identity);
 
   /// Build a [TaskOption] from `either` that returns [None] when
   /// `either` is [Left], otherwise it returns [Some].
