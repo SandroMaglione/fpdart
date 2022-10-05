@@ -370,6 +370,14 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   ) =>
       traverseListWithIndex<A, B>(list, (a, _) => f(a));
 
+  /// Convert a `List<Option<A>>` to a single `Option<List<A>>`.
+  ///
+  /// If any of the [Option] in the [List] is [None], then the result is [None].
+  static Option<List<A>> sequenceList<A>(
+    List<Option<A>> list,
+  ) =>
+      traverseList(list, identity);
+
   /// Build a [Option] from a [Either] by returning [Some] when `either` is [Right],
   /// [None] otherwise.
   static Option<R> fromEither<L, R>(Either<L, R> either) =>

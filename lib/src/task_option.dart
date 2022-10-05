@@ -169,12 +169,11 @@ class TaskOption<R> extends HKT<_TaskOptionHKT, R>
     TaskOption<B> Function(A a, int i) f,
   ) =>
       TaskOption<List<B>>(
-        () async => Option.traverseList<Option<B>, B>(
+        () async => Option.sequenceList(
           await Task.traverseListWithIndex<A, Option<B>>(
             list,
             (a, i) => Task(() => f(a, i).run()),
           ).run(),
-          identity,
         ),
       );
 

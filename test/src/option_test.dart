@@ -614,6 +614,22 @@ void main() {
       });
     });
 
+    group('sequenceList', () {
+      test('Some', () {
+        final list = [some(1), some(2), some(3), some(4)];
+        final result = Option.sequenceList(list);
+        result.matchTestSome((t) {
+          expect(t, [1, 2, 3, 4]);
+        });
+      });
+
+      test('None', () {
+        final list = [some(1), none<int>(), some(3), some(4)];
+        final result = Option.sequenceList(list);
+        expect(result, isA<None<List<int>>>());
+      });
+    });
+
     group('traverseList', () {
       test('Some', () {
         final list = [1, 2, 3, 4, 5, 6];
