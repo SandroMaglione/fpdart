@@ -78,7 +78,10 @@ class Task<A> extends HKT<_TaskHKT, A>
   /// Map each element in the list to a [Task] using the function `f`,
   /// and collect the result in an `Task<List<B>>`.
   ///
-  /// Each [Task] is executed in parallel.
+  /// Each [Task] is executed in parallel. This strategy is faster than
+  /// sequence, but **the order of the request is not guaranteed**.
+  ///
+  /// If you need [Task] to be executed in sequence, use `traverseListWithIndexSeq`.
   /// {@endtemplate}
   ///
   /// Same as `Task.traverseList` but passing `index` in the map function.
@@ -103,11 +106,59 @@ class Task<A> extends HKT<_TaskHKT, A>
   ) =>
       traverseListWithIndex<A, B>(list, (a, _) => f(a));
 
+  /// {@template fpdart_traverse_list_seq_task}
+  /// Map each element in the list to a [Task] using the function `f`,
+  /// and collect the result in an `Task<List<B>>`.
+  ///
+  /// Each [Task] is executed in sequence. This strategy **takes more time than
+  /// parallel**, but it ensures that all the request are executed in order.
+  ///
+  /// If you need [Task] to be executed in parallel, use `traverseListWithIndex`.
+  /// {@endtemplate}
+  ///
+  /// Same as `Task.traverseListSeq` but passing `index` in the map function.
+  static Task<List<B>> traverseListWithIndexSeq<A, B>(
+    List<A> list,
+    Task<B> Function(A a, int i) f,
+  ) =>
+      Task<List<B>>(() async {
+        List<B> collect = [];
+        for (var i = 0; i < list.length; i++) {
+          collect.add(await f(list[i], i).run());
+        }
+        return collect;
+      });
+
+  /// {@macro fpdart_traverse_list_seq_task}
+  ///
+  /// Same as `Task.traverseListWithIndexSeq` but without `index` in the map function.
+  static Task<List<B>> traverseListSeq<A, B>(
+    List<A> list,
+    Task<B> Function(A a) f,
+  ) =>
+      traverseListWithIndexSeq<A, B>(list, (a, _) => f(a));
+
   /// {@template fpdart_sequence_list_task}
   /// Convert a `List<Task<A>>` to a single `Task<List<A>>`.
+  ///
+  /// Each [Task] will be executed in parallel.
+  ///
+  /// If you need [Task] to be executed in sequence, use `sequenceListSeq`.
   /// {@endtemplate}
   static Task<List<A>> sequenceList<A>(
     List<Task<A>> list,
   ) =>
       traverseList(list, identity);
+
+  /// {@template fpdart_sequence_list_seq_task}
+  /// Convert a `List<Task<A>>` to a single `Task<List<A>>`.
+  ///
+  /// Each [Task] will be executed in sequence.
+  ///
+  /// If you need [Task] to be executed in parallel, use `sequenceList`.
+  /// {@endtemplate}
+  static Task<List<A>> sequenceListSeq<A>(
+    List<Task<A>> list,
+  ) =>
+      traverseListSeq(list, identity);
 }

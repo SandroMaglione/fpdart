@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:test/test.dart';
+
+import 'utils/utils.dart';
 
 void main() {
   group('Task', () {
@@ -130,18 +131,38 @@ void main() {
       var sideEffect = 0;
       final list = [
         Task(() async {
+          await Future.delayed(
+            Duration(
+              milliseconds: Random().nextInt(1000),
+            ),
+          );
           sideEffect += 1;
           return 1;
         }),
         Task(() async {
+          await Future.delayed(
+            Duration(
+              milliseconds: Random().nextInt(1000),
+            ),
+          );
           sideEffect += 1;
           return 2;
         }),
         Task(() async {
+          await Future.delayed(
+            Duration(
+              milliseconds: Random().nextInt(1000),
+            ),
+          );
           sideEffect += 1;
           return 3;
         }),
         Task(() async {
+          await Future.delayed(
+            Duration(
+              milliseconds: Random().nextInt(1000),
+            ),
+          );
           sideEffect += 1;
           return 4;
         }),
@@ -153,13 +174,70 @@ void main() {
       expect(sideEffect, list.length);
     });
 
+    test('sequenceListSeq', () async {
+      var sideEffect = 0;
+      final list = [
+        Task(() async {
+          await Future.delayed(
+            Duration(
+              milliseconds: Random().nextInt(1000),
+            ),
+          );
+          sideEffect = 0;
+          return 1;
+        }),
+        Task(() async {
+          await Future.delayed(
+            Duration(
+              milliseconds: Random().nextInt(1000),
+            ),
+          );
+          sideEffect = 1;
+          return 2;
+        }),
+        Task(() async {
+          await Future.delayed(
+            Duration(
+              milliseconds: Random().nextInt(1000),
+            ),
+          );
+          sideEffect = 2;
+          return 3;
+        }),
+        Task(() async {
+          await Future.delayed(
+            Duration(
+              milliseconds: Random().nextInt(1000),
+            ),
+          );
+          sideEffect = 3;
+          return 4;
+        }),
+      ];
+      final traverse = Task.sequenceListSeq(list);
+      expect(sideEffect, 0);
+      final result = await traverse.run();
+      expect(result, [1, 2, 3, 4]);
+      expect(sideEffect, 3);
+    });
+
     test('traverseList', () async {
       final list = [1, 2, 3, 4, 5, 6];
       var sideEffect = 0;
-      final traverse = Task.traverseList<int, String>(list, (a) {
-        sideEffect += 1;
-        return Task.of("$a");
-      });
+      final traverse = Task.traverseList<int, String>(
+        list,
+        (a) => Task(
+          () async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect += 1;
+            return "$a";
+          },
+        ),
+      );
       expect(sideEffect, 0);
       final result = await traverse.run();
       expect(result, ['1', '2', '3', '4', '5', '6']);
@@ -169,14 +247,70 @@ void main() {
     test('traverseListWithIndex', () async {
       final list = [1, 2, 3, 4, 5, 6];
       var sideEffect = 0;
-      final traverse = Task.traverseListWithIndex<int, String>(list, (a, i) {
-        sideEffect += 1;
-        return Task.of("$a$i");
-      });
+      final traverse = Task.traverseListWithIndex<int, String>(
+        list,
+        (a, i) => Task(
+          () async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect += 1;
+            return "$a$i";
+          },
+        ),
+      );
       expect(sideEffect, 0);
       final result = await traverse.run();
       expect(result, ['10', '21', '32', '43', '54', '65']);
       expect(sideEffect, list.length);
+    });
+
+    test('traverseListSeq', () async {
+      final list = [1, 2, 3, 4, 5, 6];
+      var sideEffect = 0;
+      final traverse = Task.traverseListSeq<int, String>(
+        list,
+        (a) => Task(
+          () async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect = a;
+            return "$a";
+          },
+        ),
+      );
+      expect(sideEffect, 0);
+      final result = await traverse.run();
+      expect(result, ['1', '2', '3', '4', '5', '6']);
+      expect(sideEffect, 6);
+    });
+
+    test('traverseListWithIndexSeq', () async {
+      final list = [1, 2, 3, 4, 5, 6];
+      var sideEffect = 0;
+      final traverse = Task.traverseListWithIndexSeq<int, String>(
+        list,
+        (a, i) => Task(
+          () async {
+            await Future.delayed(
+              Duration(
+                milliseconds: Random().nextInt(1000),
+              ),
+            );
+            sideEffect = a + i;
+            return "$a$i";
+          },
+        ),
+      );
+      expect(sideEffect, 0);
+      final result = await traverse.run();
+      expect(result, ['10', '21', '32', '43', '54', '65']);
+      expect(sideEffect, 11);
     });
   });
 }

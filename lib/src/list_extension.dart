@@ -390,6 +390,18 @@ extension FpdartTraversableIterable<T> on Iterable<T> {
   ) =>
       Task.traverseList(toList(), f);
 
+  /// {@macro fpdart_traverse_list_seq_task}
+  Task<List<B>> traverseTaskWithIndexSeq<B>(
+    Task<B> Function(T a, int i) f,
+  ) =>
+      Task.traverseListWithIndexSeq(toList(), f);
+
+  /// {@macro fpdart_traverse_list_seq_task}
+  Task<List<B>> traverseTaskSeq<B>(
+    Task<B> Function(T a) f,
+  ) =>
+      Task.traverseListSeq(toList(), f);
+
   /// {@macro fpdart_traverse_list_either}
   Either<E, List<B>> traverseEitherWithIndex<E, B>(
     Either<E, B> Function(T a, int i) f,
@@ -445,6 +457,9 @@ extension FpdartSequenceIterableIO<T> on Iterable<IO<T>> {
 extension FpdartSequenceIterableTask<T> on Iterable<Task<T>> {
   /// {@macro fpdart_sequence_list_task}
   Task<List<T>> sequenceTask() => Task.sequenceList(toList());
+
+  /// {@macro fpdart_sequence_list_seq_task}
+  Task<List<T>> sequenceTaskSeq() => Task.sequenceListSeq(toList());
 }
 
 extension FpdartSequenceIterableEither<E, T> on Iterable<Either<E, T>> {
