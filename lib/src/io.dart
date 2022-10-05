@@ -101,6 +101,12 @@ class IO<A> extends HKT<_IOHKT, A>
   ) =>
       traverseListWithIndex<A, B>(list, (a, _) => f(a));
 
+  /// Convert a `List<IO<A>>` to a single `IO<List<A>>`.
+  static IO<List<A>> sequenceList<A>(
+    List<IO<A>> list,
+  ) =>
+      traverseList(list, identity);
+
   @override
   bool operator ==(Object other) => (other is IO) && other._run == _run;
 
