@@ -293,6 +293,36 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   ) =>
       traverseList(list, identity);
 
+  /// {@template fpdart_rights_either}
+  /// Extract all the [Right] values from a `List<Either<E, A>>`.
+  /// {@endtemplate}
+  static List<A> rights<E, A>(List<Either<E, A>> list) {
+    final resultList = <A>[];
+    for (var i = 0; i < list.length; i++) {
+      final e = list[i];
+      if (e is Right<E, A>) {
+        resultList.add(e._value);
+      }
+    }
+
+    return resultList;
+  }
+
+  /// {@template fpdart_lefts_either}
+  /// Extract all the [Left] values from a `List<Either<E, A>>`.
+  /// {@endtemplate}
+  static List<E> lefts<E, A>(List<Either<E, A>> list) {
+    final resultList = <E>[];
+    for (var i = 0; i < list.length; i++) {
+      final e = list[i];
+      if (e is Left<E, A>) {
+        resultList.add(e._value);
+      }
+    }
+
+    return resultList;
+  }
+
   /// Flat a [Either] contained inside another [Either] to be a single [Either].
   factory Either.flatten(Either<L, Either<L, R>> e) => e.flatMap(identity);
 

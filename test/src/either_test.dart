@@ -1007,4 +1007,28 @@ void main() {
       },
     );
   });
+
+  test('rights', () {
+    final list = [
+      right<String, int>(1),
+      right<String, int>(2),
+      left<String, int>('a'),
+      left<String, int>('b'),
+      right<String, int>(3),
+    ];
+    final result = Either.rights(list);
+    expect(result, [1, 2, 3]);
+  });
+
+  test('lefts', () {
+    final list = [
+      right<String, int>(1),
+      right<String, int>(2),
+      left<String, int>('a'),
+      left<String, int>('b'),
+      right<String, int>(3),
+    ];
+    final result = Either.lefts(list);
+    expect(result, ['a', 'b']);
+  });
 }
