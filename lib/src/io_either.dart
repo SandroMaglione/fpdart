@@ -208,4 +208,42 @@ class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
           return Left<L, R>(onError(error, stack));
         }
       });
+
+  /// {@template fpdart_traverse_list_io_either}
+  /// Map each element in the list to a [IOEither] using the function `f`,
+  /// and collect the result in an `IOEither<E, List<B>>`.
+  /// {@endtemplate}
+  ///
+  /// Same as `IOEither.traverseList` but passing `index` in the map function.
+  static IOEither<E, List<B>> traverseListWithIndex<E, A, B>(
+    List<A> list,
+    IOEither<E, B> Function(A a, int i) f,
+  ) =>
+      IOEither<E, List<B>>(
+        () => Either.sequenceList(
+          IO
+              .traverseListWithIndex<A, Either<E, B>>(
+                list,
+                (a, i) => IO(() => f(a, i).run()),
+              )
+              .run(),
+        ),
+      );
+
+  /// {@macro fpdart_traverse_list_io_either}
+  ///
+  /// Same as `IOEither.traverseListWithIndex` but without `index` in the map function.
+  static IOEither<E, List<B>> traverseList<E, A, B>(
+    List<A> list,
+    IOEither<E, B> Function(A a) f,
+  ) =>
+      traverseListWithIndex<E, A, B>(list, (a, _) => f(a));
+
+  /// {@template fpdart_sequence_list_io_either}
+  /// Convert a `List<IOEither<E, A>>` to a single `IOEither<E, List<A>>`.
+  /// {@endtemplate}
+  static IOEither<E, List<A>> sequenceList<E, A>(
+    List<IOEither<E, A>> list,
+  ) =>
+      traverseList(list, identity);
 }

@@ -244,6 +244,55 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// Otherwise return `false`.
   bool exists(bool Function(R r) predicate);
 
+  /// {@template fpdart_traverse_list_either}
+  /// Map each element in the list to an [Either] using the function `f`,
+  /// and collect the result in an `Either<E, List<B>>`.
+  ///
+  /// If any mapped element of the list is [Left], then the final result
+  /// will be [Left].
+  /// {@endtemplate}
+  ///
+  /// Same as `Either.traverseList` but passing `index` in the map function.
+  static Either<E, List<B>> traverseListWithIndex<E, A, B>(
+    List<A> list,
+    Either<E, B> Function(A a, int i) f,
+  ) {
+    final resultList = <B>[];
+    for (var i = 0; i < list.length; i++) {
+      final e = f(list[i], i);
+      if (e is Left<E, B>) {
+        return left(e._value);
+      } else if (e is Right<E, B>) {
+        resultList.add(e._value);
+      } else {
+        throw Exception(
+          "[fpdart]: Error when mapping Either, it should be either Left or Right.",
+        );
+      }
+    }
+
+    return right(resultList);
+  }
+
+  /// {@macro fpdart_traverse_list_either}
+  ///
+  /// Same as `Either.traverseListWithIndex` but without `index` in the map function.
+  static Either<E, List<B>> traverseList<E, A, B>(
+    List<A> list,
+    Either<E, B> Function(A a) f,
+  ) =>
+      traverseListWithIndex<E, A, B>(list, (a, _) => f(a));
+
+  /// {@template fpdart_sequence_list_either}
+  /// Convert a `List<Either<E, A>>` to a single `Either<E, List<A>>`.
+  ///
+  /// If any of the [Either] in the [List] is [Left], then the result is [Left].
+  /// {@endtemplate}
+  static Either<E, List<A>> sequenceList<E, A>(
+    List<Either<E, A>> list,
+  ) =>
+      traverseList(list, identity);
+
   /// Flat a [Either] contained inside another [Either] to be a single [Either].
   factory Either.flatten(Either<L, Either<L, R>> e) => e.flatMap(identity);
 

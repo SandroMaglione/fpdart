@@ -337,6 +337,49 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   /// Return `true` when value of `a` is equal to the value inside the [Option].
   bool elem(T t, Eq<T> eq);
 
+  /// {@template fpdart_traverse_list_option}
+  /// Map each element in the list to an [Option] using the function `f`,
+  /// and collect the result in an `Option<List<B>>`.
+  ///
+  /// If any mapped element of the list is [None], then the final result
+  /// will be [None].
+  /// {@endtemplate}
+  ///
+  /// Same as `Option.traverseList` but passing `index` in the map function.
+  static Option<List<B>> traverseListWithIndex<A, B>(
+    List<A> list,
+    Option<B> Function(A a, int i) f,
+  ) {
+    final resultList = <B>[];
+    for (var i = 0; i < list.length; i++) {
+      final o = f(list[i], i);
+      final r = o.match<B?>(identity, () => null);
+      if (r == null) return none();
+      resultList.add(r);
+    }
+
+    return some(resultList);
+  }
+
+  /// {@macro fpdart_traverse_list_option}
+  ///
+  /// Same as `Option.traverseListWithIndex` but without `index` in the map function.
+  static Option<List<B>> traverseList<A, B>(
+    List<A> list,
+    Option<B> Function(A a) f,
+  ) =>
+      traverseListWithIndex<A, B>(list, (a, _) => f(a));
+
+  /// {@template fpdart_sequence_list_option}
+  /// Convert a `List<Option<A>>` to a single `Option<List<A>>`.
+  ///
+  /// If any of the [Option] in the [List] is [None], then the result is [None].
+  /// {@endtemplate}
+  static Option<List<A>> sequenceList<A>(
+    List<Option<A>> list,
+  ) =>
+      traverseList(list, identity);
+
   /// Build a [Option] from a [Either] by returning [Some] when `either` is [Right],
   /// [None] otherwise.
   static Option<R> fromEither<L, R>(Either<L, R> either) =>

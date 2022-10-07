@@ -29,6 +29,17 @@ void main() {
           );
         });
       });
+
+      group('traverseList', () {
+        Glados(any.list(any.int)).test(
+            'should keep the same structure and content of the original list',
+            (input) {
+          final result = Option.traverseList(input, Option<int>.of);
+          result.matchTestSome((t) {
+            expect(t, input);
+          });
+        });
+      });
     });
 
     group('is a', () {
@@ -600,6 +611,62 @@ void main() {
       test('None', () {
         final m = Option<int>.none();
         expect(m.toString(), 'None');
+      });
+    });
+
+    group('sequenceList', () {
+      test('Some', () {
+        final list = [some(1), some(2), some(3), some(4)];
+        final result = Option.sequenceList(list);
+        result.matchTestSome((t) {
+          expect(t, [1, 2, 3, 4]);
+        });
+      });
+
+      test('None', () {
+        final list = [some(1), none<int>(), some(3), some(4)];
+        final result = Option.sequenceList(list);
+        expect(result, isA<None<List<int>>>());
+      });
+    });
+
+    group('traverseList', () {
+      test('Some', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final result =
+            Option.traverseList<int, String>(list, (a) => some("$a"));
+        result.matchTestSome((t) {
+          expect(t, ["1", "2", "3", "4", "5", "6"]);
+        });
+      });
+
+      test('None', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final result = Option.traverseList<int, String>(
+          list,
+          (a) => a % 2 == 0 ? some("$a") : none(),
+        );
+        expect(result, isA<None<List<String>>>());
+      });
+    });
+
+    group('traverseListWithIndex', () {
+      test('Some', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final result = Option.traverseListWithIndex<int, String>(
+            list, (a, i) => some("$a$i"));
+        result.matchTestSome((t) {
+          expect(t, ["10", "21", "32", "43", "54", "65"]);
+        });
+      });
+
+      test('None', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final result = Option.traverseListWithIndex<int, String>(
+          list,
+          (a, i) => i % 2 == 0 ? some("$a$i") : none(),
+        );
+        expect(result, isA<None<List<String>>>());
       });
     });
 

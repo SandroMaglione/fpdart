@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:test/test.dart';
+
+import './utils/utils.dart';
 
 void main() {
   group('IOEither', () {
@@ -512,5 +513,131 @@ void main() {
         expect(sideEffect, 100);
       },
     );
+  });
+
+  group('sequenceList', () {
+    test('Right', () {
+      var sideEffect = 0;
+      final list = [
+        IOEither(() {
+          sideEffect += 1;
+          return right<String, int>(1);
+        }),
+        IOEither(() {
+          sideEffect += 1;
+          return right<String, int>(2);
+        }),
+        IOEither(() {
+          sideEffect += 1;
+          return right<String, int>(3);
+        }),
+        IOEither(() {
+          sideEffect += 1;
+          return right<String, int>(4);
+        }),
+      ];
+      final traverse = IOEither.sequenceList(list);
+      expect(sideEffect, 0);
+      final result = traverse.run();
+      result.matchTestRight((t) {
+        expect(t, [1, 2, 3, 4]);
+      });
+      expect(sideEffect, list.length);
+    });
+
+    test('Left', () {
+      var sideEffect = 0;
+      final list = [
+        IOEither(() {
+          sideEffect += 1;
+          return right<String, int>(1);
+        }),
+        IOEither(() {
+          sideEffect += 1;
+          return left<String, int>("Error");
+        }),
+        IOEither(() {
+          sideEffect += 1;
+          return right<String, int>(3);
+        }),
+        IOEither(() {
+          sideEffect += 1;
+          return right<String, int>(4);
+        }),
+      ];
+      final traverse = IOEither.sequenceList(list);
+      expect(sideEffect, 0);
+      final result = traverse.run();
+      result.matchTestLeft((l) {
+        expect(l, "Error");
+      });
+      expect(sideEffect, list.length);
+    });
+  });
+
+  group('traverseList', () {
+    test('Right', () {
+      final list = [1, 2, 3, 4, 5, 6];
+      var sideEffect = 0;
+      final traverse = IOEither.traverseList<String, int, String>(list, (a) {
+        sideEffect += 1;
+        return IOEither.of("$a");
+      });
+      expect(sideEffect, 0);
+      final result = traverse.run();
+      result.matchTestRight((t) {
+        expect(t, ['1', '2', '3', '4', '5', '6']);
+      });
+      expect(sideEffect, list.length);
+    });
+
+    test('Left', () {
+      final list = [1, 2, 3, 4, 5, 6];
+      var sideEffect = 0;
+      final traverse = IOEither.traverseList<String, int, String>(list, (a) {
+        sideEffect += 1;
+        return a % 2 == 0 ? IOEither.left("Error") : IOEither.of("$a");
+      });
+      expect(sideEffect, 0);
+      final result = traverse.run();
+      result.matchTestLeft((l) {
+        expect(l, "Error");
+      });
+      expect(sideEffect, list.length);
+    });
+  });
+
+  group('traverseListWithIndex', () {
+    test('Right', () {
+      final list = [1, 2, 3, 4, 5, 6];
+      var sideEffect = 0;
+      final traverse =
+          IOEither.traverseListWithIndex<String, int, String>(list, (a, i) {
+        sideEffect += 1;
+        return IOEither.of("$a$i");
+      });
+      expect(sideEffect, 0);
+      final result = traverse.run();
+      result.matchTestRight((t) {
+        expect(t, ['10', '21', '32', '43', '54', '65']);
+      });
+      expect(sideEffect, list.length);
+    });
+
+    test('Left', () {
+      final list = [1, 2, 3, 4, 5, 6];
+      var sideEffect = 0;
+      final traverse =
+          IOEither.traverseListWithIndex<String, int, String>(list, (a, i) {
+        sideEffect += 1;
+        return a % 2 == 0 ? IOEither.left("Error") : IOEither.of("$a$i");
+      });
+      expect(sideEffect, 0);
+      final result = traverse.run();
+      result.matchTestLeft((l) {
+        expect(l, "Error");
+      });
+      expect(sideEffect, list.length);
+    });
   });
 }

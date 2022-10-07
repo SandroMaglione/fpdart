@@ -820,6 +820,73 @@ void main() {
       expect(l.value, 'none');
     });
 
+    group('sequenceList', () {
+      test('Right', () {
+        final list = [right(1), right(2), right(3), right(4)];
+        final result = Either.sequenceList(list);
+        result.matchTestRight((r) {
+          expect(r, [1, 2, 3, 4]);
+        });
+      });
+
+      test('Left', () {
+        final list = [
+          right<String, int>(1),
+          left<String, int>("Error"),
+          right<String, int>(3),
+          right<String, int>(4)
+        ];
+        final result = Either.sequenceList(list);
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+      });
+    });
+
+    group('traverseList', () {
+      test('Right', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final result =
+            Either.traverseList<String, int, String>(list, (a) => right("$a"));
+        result.matchTestRight((r) {
+          expect(r, ["1", "2", "3", "4", "5", "6"]);
+        });
+      });
+
+      test('Left', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final result = Either.traverseList<String, int, String>(
+          list,
+          (a) => a % 2 == 0 ? right("$a") : left("Error"),
+        );
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+      });
+    });
+
+    group('traverseListWithIndex', () {
+      test('Right', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final result = Either.traverseListWithIndex<String, int, String>(
+            list, (a, i) => right("$a$i"));
+        result.matchTestRight((r) {
+          expect(r, ["10", "21", "32", "43", "54", "65"]);
+        });
+      });
+
+      test('Left', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final result = Either.traverseListWithIndex<String, int, String>(
+          list,
+          (a, i) => i % 2 == 0 ? right("$a$i") : left("Error"),
+        );
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+      });
+    });
+
     test('Right == Right', () {
       final r1 = Either<String, int>.of(10);
       final r2 = Either<String, int>.of(9);

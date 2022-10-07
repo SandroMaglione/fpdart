@@ -74,6 +74,41 @@ class IO<A> extends HKT<_IOHKT, A>
   /// Execute the IO function.
   A run() => _run();
 
+  /// {@template fpdart_traverse_list_io}
+  /// Map each element in the list to an [IO] using the function `f`,
+  /// and collect the result in an `IO<List<B>>`.
+  /// {@endtemplate}
+  ///
+  /// Same as `IO.traverseList` but passing `index` in the map function.
+  static IO<List<B>> traverseListWithIndex<A, B>(
+    List<A> list,
+    IO<B> Function(A a, int i) f,
+  ) =>
+      IO<List<B>>(() {
+        final resultList = <B>[];
+        for (var i = 0; i < list.length; i++) {
+          resultList.add(f(list[i], i).run());
+        }
+        return resultList;
+      });
+
+  /// {@macro fpdart_traverse_list_io}
+  ///
+  /// Same as `IO.traverseListWithIndex` but without `index` in the map function.
+  static IO<List<B>> traverseList<A, B>(
+    List<A> list,
+    IO<B> Function(A a) f,
+  ) =>
+      traverseListWithIndex<A, B>(list, (a, _) => f(a));
+
+  /// {@template fpdart_sequence_list_io}
+  /// Convert a `List<IO<A>>` to a single `IO<List<A>>`.
+  /// {@endtemplate}
+  static IO<List<A>> sequenceList<A>(
+    List<IO<A>> list,
+  ) =>
+      traverseList(list, identity);
+
   @override
   bool operator ==(Object other) => (other is IO) && other._run == _run;
 

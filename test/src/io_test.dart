@@ -104,5 +104,58 @@ void main() {
       expect(r, isA<int>());
       expect(r, 10);
     });
+
+    test('sequenceList', () {
+      var sideEffect = 0;
+      final list = [
+        IO(() {
+          sideEffect += 1;
+          return 1;
+        }),
+        IO(() {
+          sideEffect += 1;
+          return 2;
+        }),
+        IO(() {
+          sideEffect += 1;
+          return 3;
+        }),
+        IO(() {
+          sideEffect += 1;
+          return 4;
+        })
+      ];
+      final traverse = IO.sequenceList(list);
+      expect(sideEffect, 0);
+      final result = traverse.run();
+      expect(result, [1, 2, 3, 4]);
+      expect(sideEffect, list.length);
+    });
+
+    test('traverseList', () {
+      final list = [1, 2, 3, 4, 5, 6];
+      var sideEffect = 0;
+      final traverse = IO.traverseList<int, String>(list, (a) {
+        sideEffect += 1;
+        return IO.of("$a");
+      });
+      expect(sideEffect, 0);
+      final result = traverse.run();
+      expect(result, ['1', '2', '3', '4', '5', '6']);
+      expect(sideEffect, list.length);
+    });
+
+    test('traverseListWithIndex', () {
+      final list = [1, 2, 3, 4, 5, 6];
+      var sideEffect = 0;
+      final traverse = IO.traverseListWithIndex<int, String>(list, (a, i) {
+        sideEffect += 1;
+        return IO.of("$a$i");
+      });
+      expect(sideEffect, 0);
+      final result = traverse.run();
+      expect(result, ['10', '21', '32', '43', '54', '65']);
+      expect(sideEffect, list.length);
+    });
   });
 }
