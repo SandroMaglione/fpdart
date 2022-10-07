@@ -231,14 +231,26 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
   /// The largest element of this [Iterable] based on `order`.
   ///
   /// If the list is empty, return [None].
-  Option<T> maximumBy(Order<T> order) => foldLeft(none(),
-      (a, c) => some(a.match((t) => order.compare(c, t) > 0 ? c : t, () => c)));
+  Option<T> maximumBy(Order<T> order) => foldLeft(
+      none(),
+      (a, c) => some(
+            a.match(
+              () => c,
+              (t) => order.compare(c, t) > 0 ? c : t,
+            ),
+          ));
 
   /// The least element of this [Iterable] based on `order`.
   ///
   /// If the list is empty, return [None].
-  Option<T> minimumBy(Order<T> order) => foldLeft(none(),
-      (a, c) => some(a.match((t) => order.compare(c, t) < 0 ? c : t, () => c)));
+  Option<T> minimumBy(Order<T> order) => foldLeft(
+      none(),
+      (a, c) => some(
+            a.match(
+              () => c,
+              (t) => order.compare(c, t) < 0 ? c : t,
+            ),
+          ));
 
   /// Checks whether every element of this [Iterable] satisfies [test].
   ///

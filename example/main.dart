@@ -73,8 +73,8 @@ void option() {
 
   /// Pattern matching
   final match = option.match(
-    (a) => print('Some($a)'),
     () => print('None'),
+    (a) => print('Some($a)'),
   );
 
   /// Convert to [Either]

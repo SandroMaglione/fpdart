@@ -38,8 +38,8 @@ class TaskOption<R> extends HKT<_TaskOptionHKT, R>
   TaskOption<C> flatMap<C>(covariant TaskOption<C> Function(R r) f) =>
       TaskOption(() => run().then(
             (option) async => option.match(
+              Option.none,
               (r) => f(r).run(),
-              () => Option.none(),
             ),
           ));
 
@@ -89,27 +89,38 @@ class TaskOption<R> extends HKT<_TaskOptionHKT, R>
   /// Used to provide an **alt**ernative [TaskOption] in case the current one returns [None].
   @override
   TaskOption<R> alt(covariant TaskOption<R> Function() orElse) =>
-      TaskOption(() async => (await run()).match(some, () => orElse().run()));
+      TaskOption(() async => (await run()).match(
+            () => orElse().run(),
+            some,
+          ));
 
   /// When this [TaskOption] returns a [None] then return the result of `orElse`.
   /// Otherwise return this [TaskOption].
   TaskOption<R> orElse<TL>(TaskOption<R> Function() orElse) =>
-      TaskOption(() async => (await run())
-          .match((r) => TaskOption<R>.some(r).run(), () => orElse().run()));
+      TaskOption(() async => (await run()).match(
+            () => orElse().run(),
+            (r) => TaskOption<R>.some(r).run(),
+          ));
 
   /// Convert this [TaskOption] to a [Task].
   ///
   /// The task returns a [Some] when [TaskOption] returns [Some].
   /// Otherwise map the type `L` of [TaskOption] to type `R` by calling `orElse`.
   Task<R> getOrElse(R Function() orElse) =>
-      Task(() async => (await run()).match(identity, orElse));
+      Task(() async => (await run()).match(
+            orElse,
+            identity,
+          ));
 
   /// Pattern matching to convert a [TaskOption] to a [Task].
   ///
   /// Execute `onNone` when running this [TaskOption] returns a [None].
   /// Otherwise execute `onSome`.
   Task<A> match<A>(A Function() onNone, A Function(R r) onSome) =>
-      Task(() async => (await run()).match(onSome, onNone));
+      Task(() async => (await run()).match(
+            onNone,
+            onSome,
+          ));
 
   /// Creates a [TaskOption] that will complete after a time delay specified by a [Duration].
   TaskOption<R> delay(Duration duration) =>

@@ -171,8 +171,10 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   /// final result = b.ap(map);
   /// ```
   @override
-  Option<B> ap<B>(covariant Option<B Function(T t)> a) =>
-      a.match((f) => map(f), () => Option.none());
+  Option<B> ap<B>(covariant Option<B Function(T t)> a) => a.match(
+        () => Option.none(),
+        (f) => map(f),
+      );
 
   /// Return a [Some] containing the value `b`.
   @override
@@ -298,7 +300,7 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   /// [🍌].match((🍌) => 🍌 * 2, () => 🍎) -> 🍌🍌
   /// [_].match((🍌) => 🍌 * 2, () => 🍎) -> 🍎
   /// ```
-  B match<B>(B Function(T t) onSome, B Function() onNone);
+  B match<B>(B Function() onNone, B Function(T t) onSome);
 
   /// Return `true` when value is [Some].
   bool isSome();
@@ -353,7 +355,7 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
     final resultList = <B>[];
     for (var i = 0; i < list.length; i++) {
       final o = f(list[i], i);
-      final r = o.match<B?>(identity, () => null);
+      final r = o.match<B?>(() => null, identity);
       if (r == null) return none();
       resultList.add(r);
     }
@@ -431,8 +433,10 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   /// The value on the left of the [Either] will be the first value of the tuple,
   /// while the right value of the [Either] will be the second of the tuple.
   static Tuple2<Option<A>, Option<B>> separate<A, B>(Option<Either<A, B>> m) =>
-      m.match((either) => Tuple2(either.getLeft(), either.getRight()),
-          () => Tuple2(Option.none(), Option.none()));
+      m.match(
+        () => Tuple2(Option.none(), Option.none()),
+        (either) => Tuple2(either.getLeft(), either.getRight()),
+      );
 
   /// Build an `Eq<Option>` by comparing the values inside two [Option].
   ///
@@ -526,7 +530,7 @@ class Some<T> extends Option<T> {
   Option<T> alt(Option<T> Function() orElse) => this;
 
   @override
-  B match<B>(B Function(T t) onSome, B Function() onNone) => onSome(_value);
+  B match<B>(B Function() onNone, B Function(T t) onSome) => onSome(_value);
 
   @override
   Option<Z> extend<Z>(Z Function(Option<T> t) f) => Some(f(this));
@@ -541,8 +545,10 @@ class Some<T> extends Option<T> {
   Option<T> filter(bool Function(T t) f) => f(_value) ? this : Option.none();
 
   @override
-  Option<Z> filterMap<Z>(Option<Z> Function(T t) f) =>
-      f(_value).match((a) => Some(a), () => Option.none());
+  Option<Z> filterMap<Z>(Option<Z> Function(T t) f) => f(_value).match(
+        () => Option.none(),
+        Some.new,
+      );
 
   @override
   T? toNullable() => _value;
@@ -603,7 +609,7 @@ class None<T> extends Option<T> {
   Option<T> alt(Option<T> Function() orElse) => orElse();
 
   @override
-  B match<B>(B Function(T t) onSome, B Function() onNone) => onNone();
+  B match<B>(B Function() onNone, B Function(T t) onSome) => onNone();
 
   @override
   Option<Z> extend<Z>(Z Function(Option<T> t) f) => Option.none();
