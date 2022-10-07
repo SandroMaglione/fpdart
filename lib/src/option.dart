@@ -59,8 +59,8 @@ abstract class _OptionHKT {}
 /// /// Using [Option] you are required to specify every possible case.
 /// /// The type system helps you to find and define edge-cases and avoid errors.
 /// mStr.match(
-///   printString,
 ///   () => print('I have no string to print 🤷‍♀️'),
+///   printString,
 /// );
 /// ```
 abstract class Option<T> extends HKT<_OptionHKT, T>
@@ -295,12 +295,26 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
           E Function(T t, C c, D d) f) =>
       flatMap((a) => mc.flatMap((c) => md.map((d) => f(a, c, d))));
 
+  /// {@template fpdart_option_match}
   /// Execute `onSome` when value is [Some], otherwise execute `onNone`.
+  /// {@endtemplate}
   /// ```dart
-  /// [🍌].match((🍌) => 🍌 * 2, () => 🍎) -> 🍌🍌
-  /// [_].match((🍌) => 🍌 * 2, () => 🍎) -> 🍎
+  /// [🍌].match(() => 🍎, (🍌) => 🍌 * 2) -> 🍌🍌
+  /// [_].match(() => 🍎, (🍌) => 🍌 * 2) -> 🍎
   /// ```
+  ///
+  /// Same as `fold`.
   B match<B>(B Function() onNone, B Function(T t) onSome);
+
+  /// {@macro fpdart_option_match}
+  /// ```dart
+  /// [🍌].fold(() => 🍎, (🍌) => 🍌 * 2) -> 🍌🍌
+  /// [_].fold(() => 🍎, (🍌) => 🍌 * 2) -> 🍎
+  /// ```
+  ///
+  /// Same as `match`.
+  B fold<B>(B Function() onNone, B Function(T t) onSome) =>
+      match(onNone, onSome);
 
   /// Return `true` when value is [Some].
   bool isSome();
@@ -316,7 +330,7 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   ///
   ///  👆 same as 👇
   ///
-  /// [🍌].match((🍌) => 🍌, () => 🍎)
+  /// [🍌].match(() => 🍎, (🍌) => 🍌)
   /// ```
   T getOrElse(T Function() orElse);
 

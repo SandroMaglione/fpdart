@@ -551,6 +551,13 @@ void main() {
       expect(m2.match(() => 'none', (some) => 'some'), 'none');
     });
 
+    test('match', () {
+      final m1 = Option.of(10);
+      final m2 = Option<int>.none();
+      expect(m1.fold(() => 'none', (some) => 'some'), 'some');
+      expect(m2.fold(() => 'none', (some) => 'some'), 'none');
+    });
+
     test('elem', () {
       final m1 = Option.of(10);
       final m2 = Option<int>.none();
