@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:test/test.dart';
+
+import './utils/utils.dart';
 
 void main() {
   group('FpdartOnMutableMap', () {
@@ -44,7 +45,9 @@ void main() {
       test('Some', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
         final ap = map.lookup('b');
-        ap.match((t) => expect(t, 2), () => null);
+        ap.matchTestSome((t) {
+          expect(t, 2);
+        });
       });
 
       test('None', () {
@@ -58,10 +61,10 @@ void main() {
       test('Some', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
         final ap = map.lookupWithKey('b');
-        ap.match((t) {
+        ap.matchTestSome((t) {
           expect(t.first, 'b');
           expect(t.second, 2);
-        }, () => null);
+        });
       });
 
       test('None', () {
@@ -92,8 +95,9 @@ void main() {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
         final ap =
             map.modifyAt(Eq.instance((a1, a2) => a1 == a2))('b', (v) => v + 2);
-        ap.match((t) => t.lookup('b').match((t) => expect(t, 4), () => null),
-            () => null);
+        ap.matchTestSome((t) => t.lookup('b').matchTestSome((t) {
+              expect(t, 4);
+            }));
       });
 
       test('None', () {
@@ -109,14 +113,18 @@ void main() {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
         final ap = map.modifyAtIfPresent(Eq.instance((a1, a2) => a1 == a2))(
             'b', (v) => v + 2);
-        ap.lookup('b').match((t) => expect(t, 4), () => null);
+        ap.lookup('b').matchTestSome((t) {
+          expect(t, 4);
+        });
       });
 
       test('not found', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
         final ap = map.modifyAtIfPresent(Eq.instance((a1, a2) => a1 == a2))(
             'e', (v) => v + 2);
-        ap.lookup('b').match((t) => expect(t, 2), () => null);
+        ap.lookup('b').matchTestSome((t) {
+          expect(t, 2);
+        });
       });
     });
 
@@ -124,8 +132,9 @@ void main() {
       test('Some', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
         final ap = map.updateAt(Eq.instance((a1, a2) => a1 == a2))('b', 10);
-        ap.match((t) => t.lookup('b').match((t) => expect(t, 10), () => null),
-            () => null);
+        ap.matchTestSome((t) => t.lookup('b').matchTestSome((t) {
+              expect(t, 10);
+            }));
       });
 
       test('None', () {
@@ -140,14 +149,18 @@ void main() {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
         final ap =
             map.updateAtIfPresent(Eq.instance((a1, a2) => a1 == a2))('b', 10);
-        ap.lookup('b').match((t) => expect(t, 10), () => null);
+        ap.lookup('b').matchTestSome((t) {
+          expect(t, 10);
+        });
       });
 
       test('not found', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
         final ap =
             map.updateAtIfPresent(Eq.instance((a1, a2) => a1 == a2))('e', 10);
-        ap.lookup('b').match((t) => expect(t, 2), () => null);
+        ap.lookup('b').matchTestSome((t) {
+          expect(t, 2);
+        });
       });
     });
 
@@ -165,15 +178,23 @@ void main() {
         expect(map.lookup('e'), isA<None>());
         final ap = map.upsertAt(Eq.instance((a1, a2) => a1 == a2))('e', 10);
         expect(map.lookup('e'), isA<None>());
-        ap.lookup('e').match((t) => expect(t, 10), () => null);
+        ap.lookup('e').matchTestSome((t) {
+          expect(t, 10);
+        });
       });
 
       test('update', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        map.lookup('b').match((t) => expect(t, 2), () => null);
+        map.lookup('b').matchTestSome((t) {
+          expect(t, 2);
+        });
         final ap = map.upsertAt(Eq.instance((a1, a2) => a1 == a2))('b', 10);
-        map.lookup('b').match((t) => expect(t, 2), () => null);
-        ap.lookup('b').match((t) => expect(t, 10), () => null);
+        map.lookup('b').matchTestSome((t) {
+          expect(t, 2);
+        });
+        ap.lookup('b').matchTestSome((t) {
+          expect(t, 10);
+        });
       });
 
       test('modify by eq date year', () {
@@ -185,7 +206,9 @@ void main() {
 
         expect(map.lookup(d1), isA<None>());
         expect(map.lookup(d2), isA<Some>());
-        map.lookup(d2).match((t) => expect(t, 2), () => null);
+        map.lookup(d2).matchTestSome((t) {
+          expect(t, 2);
+        });
       });
     });
 
@@ -194,10 +217,10 @@ void main() {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
         final ap = map.pop(Eq.instance((a1, a2) => a1 == a2))('b');
         expect(map.lookup('b'), isA<Some>());
-        ap.match((t) {
+        ap.matchTestSome((t) {
           expect(t.first, 2);
           expect(t.second.lookup('b'), isA<None>());
-        }, () => null);
+        });
       });
 
       test('None', () {

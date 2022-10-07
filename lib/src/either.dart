@@ -312,8 +312,10 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// Return an [Either] from a [Option]:
   /// - If [Option] is [Some], then return [Right] containing its value
   /// - If [Option] is [None], then return [Left] containing the result of `onNone`
-  factory Either.fromOption(Option<R> m, L Function() onNone) =>
-      m.match((r) => Either.of(r), () => Either.left(onNone()));
+  factory Either.fromOption(Option<R> m, L Function() onNone) => m.match(
+        () => Either.left(onNone()),
+        (r) => Either.of(r),
+      );
 
   /// If calling `predicate` with `r` returns `true`, then return `Right(r)`.
   /// Otherwise return [Left] containing the result of `onFalse`.

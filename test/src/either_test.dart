@@ -408,7 +408,9 @@ void main() {
       test('Right', () {
         final value = Either<String, int>.of(10);
         final ap = value.toOption();
-        ap.match((some) => expect(some, 10), () => null);
+        ap.matchTestSome((t) {
+          expect(t, 10);
+        });
       });
 
       test('Left', () {
@@ -472,7 +474,9 @@ void main() {
       test('Left', () {
         final value = Either<String, int>.left('none');
         final ap = value.getLeft();
-        ap.match((some) => expect(some, 'none'), () => null);
+        ap.matchTestSome((t) {
+          expect(t, 'none');
+        });
       });
     });
 
@@ -480,7 +484,9 @@ void main() {
       test('Right', () {
         final value = Either<String, int>.of(10);
         final ap = value.getRight();
-        ap.match((some) => expect(some, 10), () => null);
+        ap.matchTestSome((t) {
+          expect(t, 10);
+        });
       });
 
       test('Left', () {

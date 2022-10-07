@@ -8,7 +8,7 @@ void main() {
       test('Success', () async {
         final task = TaskOption<int>.tryCatch(() => Future.value(10));
         final r = await task.run();
-        r.match((r) => expect(r, 10), () => null);
+        r.matchTestSome((r) => expect(r, 10));
       });
 
       test('Failure', () async {
@@ -33,7 +33,7 @@ void main() {
           (n) => Future.value(n + 5),
         ));
         final r = await ap.run();
-        r.match((r) => expect(r, 15), () => null);
+        r.matchTestSome((r) => expect(r, 15));
       });
 
       test('Failure', () async {
@@ -61,7 +61,7 @@ void main() {
         final ap =
             task.flatMap((r) => TaskOption<int>(() async => Option.of(r + 10)));
         final r = await ap.run();
-        r.match((r) => expect(r, 20), () => null);
+        r.matchTestSome((r) => expect(r, 20));
       });
 
       test('None', () async {
@@ -79,7 +79,7 @@ void main() {
         final ap = task
             .ap<double>(TaskOption(() async => Option.of((int c) => c / 2)));
         final r = await ap.run();
-        r.match((r) => expect(r, 5.0), () => null);
+        r.matchTestSome((r) => expect(r, 5.0));
       });
 
       test('None', () async {
@@ -96,7 +96,7 @@ void main() {
         final task = TaskOption<int>(() async => Option.of(10));
         final ap = task.map((r) => r / 2);
         final r = await ap.run();
-        r.match((r) => expect(r, 5.0), () => null);
+        r.matchTestSome((r) => expect(r, 5.0));
       });
 
       test('None', () async {
@@ -113,7 +113,7 @@ void main() {
         final ap = task.map2<int, double>(
             TaskOption<int>(() async => Option.of(2)), (b, c) => b / c);
         final r = await ap.run();
-        r.match((r) => expect(r, 5.0), () => null);
+        r.matchTestSome((r) => expect(r, 5.0));
       });
 
       test('None', () async {
@@ -133,7 +133,7 @@ void main() {
             TaskOption<int>(() async => Option.of(5)),
             (b, c, d) => b * c / d);
         final r = await ap.run();
-        r.match((r) => expect(r, 4.0), () => null);
+        r.matchTestSome((r) => expect(r, 4.0));
       });
 
       test('None', () async {
@@ -153,7 +153,7 @@ void main() {
         final ap =
             task.andThen(() => TaskOption<double>(() async => Option.of(12.5)));
         final r = await ap.run();
-        r.match((r) => expect(r, 12.5), () => null);
+        r.matchTestSome((r) => expect(r, 12.5));
       });
 
       test('None', () async {
@@ -170,14 +170,14 @@ void main() {
         final task = TaskOption<int>(() async => Option.of(10));
         final ap = task(TaskOption<double>(() async => Option.of(12.5)));
         final r = await ap.run();
-        r.match((r) => expect(r, 12.5), () => null);
+        r.matchTestSome((r) => expect(r, 12.5));
       });
 
       test('None', () async {
         final task = TaskOption<int>(() async => Option.none());
         final ap = task(TaskOption<double>(() async => Option.of(12.5)));
         final r = await ap.run();
-        r.match((r) => expect(r, 12.5), () => null);
+        expect(r, isA<None>());
       });
     });
 
@@ -185,7 +185,7 @@ void main() {
       final task = TaskOption<int>(() async => Option.none());
       final ap = task.pure('abc');
       final r = await ap.run();
-      r.match((r) => expect(r, 'abc'), () => null);
+      r.matchTestSome((r) => expect(r, 'abc'));
     });
 
     test('run', () async {
@@ -193,14 +193,14 @@ void main() {
       final future = task.run();
       expect(future, isA<Future>());
       final r = await future;
-      r.match((r) => expect(r, 10), () => null);
+      r.matchTestSome((r) => expect(r, 10));
     });
 
     group('fromEither', () {
       test('Some', () async {
         final task = TaskOption.fromEither<String, int>(Either.of(10));
         final r = await task.run();
-        r.match((r) => expect(r, 10), () => null);
+        r.matchTestSome((r) => expect(r, 10));
       });
 
       test('None', () async {
@@ -214,7 +214,7 @@ void main() {
       test('True', () async {
         final task = TaskOption<int>.fromPredicate(20, (n) => n > 10);
         final r = await task.run();
-        r.match((r) => expect(r, 20), () => null);
+        r.matchTestSome((r) => expect(r, 20));
       });
 
       test('False', () async {
@@ -227,7 +227,7 @@ void main() {
     test('fromTask', () async {
       final task = TaskOption<int>.fromTask(Task(() async => 10));
       final r = await task.run();
-      r.match((r) => expect(r, 10), () => null);
+      r.matchTestSome((r) => expect(r, 10));
     });
 
     test('none()', () async {
@@ -239,7 +239,7 @@ void main() {
     test('some()', () async {
       final task = TaskOption<int>.some(10);
       final r = await task.run();
-      r.match((r) => expect(r, 10), () => null);
+      r.matchTestSome((r) => expect(r, 10));
     });
 
     group('match', () {
@@ -280,7 +280,7 @@ void main() {
         final ex =
             task.orElse<int>(() => TaskOption(() async => Option.of(-1)));
         final r = await ex.run();
-        r.match((r) => expect(r, 10), () => null);
+        r.matchTestSome((r) => expect(r, 10));
       });
 
       test('None', () async {
@@ -288,7 +288,7 @@ void main() {
         final ex =
             task.orElse<int>(() => TaskOption(() async => Option.of(-1)));
         final r = await ex.run();
-        r.match((r) => expect(r, -1), () => null);
+        r.matchTestSome((r) => expect(r, -1));
       });
     });
 
@@ -297,28 +297,28 @@ void main() {
         final task = TaskOption<int>(() async => Option.of(10));
         final ex = task.alt(() => TaskOption(() async => Option.of(20)));
         final r = await ex.run();
-        r.match((r) => expect(r, 10), () => null);
+        r.matchTestSome((r) => expect(r, 10));
       });
 
       test('None', () async {
         final task = TaskOption<int>(() async => Option.none());
         final ex = task.alt(() => TaskOption(() async => Option.of(20)));
         final r = await ex.run();
-        r.match((r) => expect(r, 20), () => null);
+        r.matchTestSome((r) => expect(r, 20));
       });
     });
 
     test('of', () async {
       final task = TaskOption<int>.of(10);
       final r = await task.run();
-      r.match((r) => expect(r, 10), () => null);
+      r.matchTestSome((r) => expect(r, 10));
     });
 
     test('flatten', () async {
       final task = TaskOption<TaskOption<int>>.of(TaskOption<int>.of(10));
       final ap = TaskOption.flatten(task);
       final r = await ap.run();
-      r.match((r) => expect(r, 10), () => null);
+      r.matchTestSome((r) => expect(r, 10));
     });
 
     test('delay', () async {

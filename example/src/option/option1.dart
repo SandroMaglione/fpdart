@@ -24,7 +24,7 @@ void main() {
   /// Using [Option] you are required to specify every possible case.
   /// The type system helps you to find and define edge-cases and avoid errors.
   mStr.match(
-    printString,
     () => print('I have no string to print 🤷‍♀️'),
+    printString,
   );
 }

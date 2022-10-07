@@ -97,8 +97,8 @@ final value = option.getOrElse(() => -1);
 
 /// Pattern matching
 final match = option.match(
-  (a) => print('Some($a)'),
   () => print('None'),
+  (a) => print('Some($a)'),
 );
 
 /// Convert to [Either]

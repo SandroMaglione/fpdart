@@ -3,9 +3,9 @@ import 'package:test/test.dart';
 
 extension OptionMatch<T> on Option<T> {
   /// Run test on [Some], call `fail` if [None].
-  void matchTestSome(void Function(T t) testing) => match(testing, () {
+  void matchTestSome(void Function(T t) testing) => match(() {
         fail("should be some, found none");
-      });
+      }, testing);
 }
 
 extension EitherMatch<L, R> on Either<L, R> {

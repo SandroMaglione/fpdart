@@ -11,11 +11,11 @@ Option<int> getPrice(String productName) {
 void main() {
   final price = getPrice('my product name');
   price.match(
-    (a) {
-      print('Total price is: $price');
-    },
     () {
       print('Sorry, no product found!');
+    },
+    (a) {
+      print('Total price is: $price');
     },
   );
 }

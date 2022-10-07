@@ -284,8 +284,8 @@ extension FpdartOnMutableMap<K, V> on Map<K, V> {
       (Map<K, V> map) => map.foldLeftWithKey<Map<K, V>>(Order.allEqual())(
             {},
             (acc, key, value) => lookup(key).match(
-              (v) => acc.upsertAt(eq)(key, combine(v, value)),
               () => acc,
+              (v) => acc.upsertAt(eq)(key, combine(v, value)),
             ),
           );
 

@@ -190,7 +190,10 @@ class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
   /// When `option` is [Some], then return [Right] when
   /// running [IOEither]. Otherwise return `onNone`.
   factory IOEither.fromOption(Option<R> option, L Function() onNone) =>
-      IOEither(() => option.match((r) => Right(r), () => Left(onNone())));
+      IOEither(() => option.match(
+            () => Left(onNone()),
+            Right.new,
+          ));
 
   /// Build a [IOEither] that returns `either`.
   factory IOEither.fromEither(Either<L, R> either) => IOEither(() => either);

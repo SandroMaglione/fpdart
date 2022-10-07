@@ -2,8 +2,8 @@
 /// from Imperative to Functional code using `fpdart`
 ///
 /// Repository: https://github.com/leisim/logger
-
 import 'package:fpdart/fpdart.dart';
+
 import 'logger.dart';
 
 class Logger {
@@ -87,11 +87,17 @@ IOEither<String, Unit> logFunctional({
 
   /// Using [Option], you must specify both `true` and `false` cases 🌎
   return shouldLogOption.match(
+    /// Simply return a [Unit] in the else case 🎁
+    () => IOEither.of(unit),
+
     /// Use another [Option] to evaluate `printer.log`
     (_) => Option<List<String>>.fromPredicate(
       printer.log(logEvent),
       (v) => v.isNotEmpty,
     ).match(
+      /// Simply return a [Unit] in the else case 🎁
+      () => IOEither.of(unit),
+
       (lines) {
         /// All variables are `final` 🧱
         final outputEvent = OutputEvent(level, lines);
@@ -110,12 +116,6 @@ IOEither<String, Unit> logFunctional({
           },
         );
       },
-
-      /// Simply return a [Unit] in the else case 🎁
-      () => IOEither.of(unit),
     ),
-
-    /// Simply return a [Unit] in the else case 🎁
-    () => IOEither.of(unit),
   );
 }

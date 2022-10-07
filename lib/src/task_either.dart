@@ -192,7 +192,10 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   /// When `option` is [Some], then return [Right] when
   /// running [TaskEither]. Otherwise return `onNone`.
   factory TaskEither.fromOption(Option<R> option, L Function() onNone) =>
-      TaskEither(() async => option.match(right, () => Left(onNone())));
+      TaskEither(() async => option.match(
+            () => Left(onNone()),
+            Right.new,
+          ));
 
   /// Build a [TaskEither] that returns `either`.
   factory TaskEither.fromEither(Either<L, R> either) =>
