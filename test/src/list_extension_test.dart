@@ -1260,6 +1260,19 @@ void main() {
       final result = list.leftsEither();
       expect(result, ['a', 'b']);
     });
+
+    test('partitionEithersEither', () {
+      final list = [
+        right<String, int>(1),
+        right<String, int>(2),
+        left<String, int>('a'),
+        left<String, int>('b'),
+        right<String, int>(3),
+      ];
+      final result = list.partitionEithersEither();
+      expect(result.first, ['a', 'b']);
+      expect(result.second, [1, 2, 3]);
+    });
   });
 
   group('FpdartSequenceIterableTaskOption', () {

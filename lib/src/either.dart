@@ -333,6 +333,30 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
     return resultList;
   }
 
+  /// {@template fpdart_partition_eithers_either}
+  /// Extract all the [Left] and [Right] values from a `List<Either<E, A>>` and
+  /// return them in two partitioned [List] inside [Tuple2].
+  /// {@endtemplate}
+  static Tuple2<List<E>, List<A>> partitionEithers<E, A>(
+      List<Either<E, A>> list) {
+    final resultListLefts = <E>[];
+    final resultListRights = <A>[];
+    for (var i = 0; i < list.length; i++) {
+      final e = list[i];
+      if (e is Left<E, A>) {
+        resultListLefts.add(e._value);
+      } else if (e is Right<E, A>) {
+        resultListRights.add(e._value);
+      } else {
+        throw Exception(
+          "[fpdart]: Error when mapping Either, it should be either Left or Right.",
+        );
+      }
+    }
+
+    return Tuple2(resultListLefts, resultListRights);
+  }
+
   /// Flat a [Either] contained inside another [Either] to be a single [Either].
   factory Either.flatten(Either<L, Either<L, R>> e) => e.flatMap(identity);
 
