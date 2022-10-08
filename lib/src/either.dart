@@ -90,6 +90,16 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   @override
   Either<L, C> map<C>(C Function(R a) f);
 
+  /// Define two functions to change both the [Left] and [Right] value of the
+  /// [Either].
+  ///
+  /// {@template fpdart_bimap_either}
+  /// Same as `map`+`mapLeft` but for both [Left] and [Right]
+  /// (`map` is only to change [Right], while `mapLeft` is only to change [Left]).
+  /// {@endtemplate}
+  Either<C, D> bimap<C, D>(C Function(L l) mLeft, D Function(R b) mRight) =>
+      mapLeft(mLeft).map(mRight);
+
   /// Return a [Right] containing the value `c`.
   @override
   Either<L, C> pure<C>(C c) => Right<L, C>(c);

@@ -50,6 +50,22 @@ void main() {
       });
     });
 
+    group('bimap', () {
+      test('Right', () {
+        final value = Either<String, int>.of(10);
+        final map = value.bimap((l) => "none", (a) => a + 1);
+        map.matchTestRight((r) {
+          expect(r, 11);
+        });
+      });
+
+      test('Left', () {
+        final value = Either<String, int>.left('abc');
+        final map = value.bimap((l) => "none", (a) => a + 1);
+        map.matchTestLeft((l) => expect(l, 'none'));
+      });
+    });
+
     group('map2', () {
       test('Right', () {
         final value = Either<String, int>.of(10);

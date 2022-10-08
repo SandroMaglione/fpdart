@@ -90,6 +90,18 @@ class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
   @override
   IOEither<L, C> map<C>(C Function(R r) f) => ap(pure(f));
 
+  /// Change the value in the [Left] of [IOEither].
+  IOEither<C, R> mapLeft<C>(C Function(L l) f) => IOEither(
+        () => (run()).match((l) => Either.left(f(l)), Either.of),
+      );
+
+  /// Define two functions to change both the [Left] and [Right] value of the
+  /// [IOEither].
+  ///
+  /// {@macro fpdart_bimap_either}
+  IOEither<C, D> bimap<C, D>(C Function(L a) mLeft, D Function(R b) mRight) =>
+      mapLeft(mLeft).map(mRight);
+
   /// Apply the function contained inside `a` to change the value on the [Right] from
   /// type `R` to a value of type `C`.
   @override

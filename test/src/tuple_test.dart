@@ -39,6 +39,13 @@ void main() {
       expect(map.second, '10');
     });
 
+    test('bimap', () {
+      const tuple = Tuple2('abc', 10);
+      final map = tuple.bimap((v1) => v1.length, (v2) => '$v2');
+      expect(map.first, 3);
+      expect(map.second, '10');
+    });
+
     test('apply', () {
       const tuple = Tuple2('abc', 10);
       final ap = tuple.apply((v1, v2) => v1.length + v2);
