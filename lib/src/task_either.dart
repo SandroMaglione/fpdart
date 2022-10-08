@@ -40,6 +40,11 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
             ),
           ));
 
+  /// Chain an [Either] to [TaskEither] by converting it from sync
+  /// to async (using `toTaskEither`).
+  TaskEither<L, C> bindEither<C>(Either<L, C> either) =>
+      flatMap((_) => either.toTaskEither());
+
   /// Returns a [TaskEither] that returns a `Right(a)`.
   @override
   TaskEither<L, C> pure<C>(C a) => TaskEither(() async => Right(a));
