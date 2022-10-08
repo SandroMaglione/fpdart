@@ -502,9 +502,19 @@ extension FpdartSequenceIterableTask<T> on Iterable<Task<T>> {
   Task<List<T>> sequenceTaskSeq() => Task.sequenceListSeq(toList());
 }
 
-extension FpdartSequenceIterableEither<E, T> on Iterable<Either<E, T>> {
-  /// {@macro fpdart_sequence__io}
-  Either<E, List<T>> sequenceEither() => Either.sequenceList(toList());
+extension FpdartSequenceIterableEither<E, A> on Iterable<Either<E, A>> {
+  /// {@macro fpdart_sequence_list_either}
+  Either<E, List<A>> sequenceEither() => Either.sequenceList(toList());
+
+  /// {@macro fpdart_rights_either}
+  List<A> rightsEither() => Either.rights(toList());
+
+  /// {@macro fpdart_lefts_either}
+  List<E> leftsEither() => Either.lefts(toList());
+
+  /// {@macro fpdart_partition_eithers_either}
+  Tuple2<List<E>, List<A>> partitionEithersEither() =>
+      Either.partitionEithers(toList());
 }
 
 extension FpdartSequenceIterableTaskEither<E, T> on Iterable<TaskEither<E, T>> {

@@ -60,6 +60,14 @@ class Tuple2<T1, T2> extends HKT2<_Tuple2HKT, T1, T2>
   @override
   Tuple2<T1, C> map<C>(C Function(T2 a) f) => mapSecond(f);
 
+  /// Change type of both values of the [Tuple].
+  ///
+  /// This is the same as `mapFirst` followed by `mapSecond`.
+  ///
+  /// Same as `mapBoth` but using two distinct functions instead of just one.
+  Tuple2<C, D> bimap<C, D>(C Function(T1 a) mFirst, D Function(T2 b) mSecond) =>
+      mapFirst(mFirst).mapSecond(mSecond);
+
   /// Convert the second value of the [Tuple2] from `T2` to `Z` using `f`.
   @override
   Tuple2<T1, Z> extend<Z>(Z Function(Tuple2<T1, T2> t) f) =>

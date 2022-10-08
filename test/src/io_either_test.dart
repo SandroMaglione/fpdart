@@ -160,6 +160,38 @@ void main() {
       });
     });
 
+    group('mapLeft', () {
+      test('Right', () {
+        final task = IOEither<String, int>(() => Either.of(10));
+        final ap = task.mapLeft((l) => l.length);
+        final r = ap.run();
+        r.matchTestRight((r) => expect(r, 10));
+      });
+
+      test('Left', () {
+        final task = IOEither<String, int>(() => Either.left('abc'));
+        final ap = task.mapLeft((l) => l.length);
+        final r = ap.run();
+        r.matchTestLeft((l) => expect(l, 3));
+      });
+    });
+
+    group('bimap', () {
+      test('Right', () {
+        final task = IOEither<String, int>(() => Either.of(10));
+        final ap = task.bimap((l) => l.length, (r) => r / 2);
+        final r = ap.run();
+        r.matchTestRight((r) => expect(r, 5.0));
+      });
+
+      test('Left', () {
+        final task = IOEither<String, int>(() => Either.left('abc'));
+        final ap = task.bimap((l) => l.length, (r) => r / 2);
+        final r = ap.run();
+        r.matchTestLeft((l) => expect(l, 3));
+      });
+    });
+
     group('map2', () {
       test('Right', () {
         final task = IOEither<String, int>(() => Either.of(10));

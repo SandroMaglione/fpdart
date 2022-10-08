@@ -50,6 +50,22 @@ void main() {
       });
     });
 
+    group('bimap', () {
+      test('Right', () {
+        final value = Either<String, int>.of(10);
+        final map = value.bimap((l) => "none", (a) => a + 1);
+        map.matchTestRight((r) {
+          expect(r, 11);
+        });
+      });
+
+      test('Left', () {
+        final value = Either<String, int>.left('abc');
+        final map = value.bimap((l) => "none", (a) => a + 1);
+        map.matchTestLeft((l) => expect(l, 'none'));
+      });
+    });
+
     group('map2', () {
       test('Right', () {
         final value = Either<String, int>.of(10);
@@ -1006,5 +1022,42 @@ void main() {
         expect(sideEffect, 100);
       },
     );
+  });
+
+  test('rights', () {
+    final list = [
+      right<String, int>(1),
+      right<String, int>(2),
+      left<String, int>('a'),
+      left<String, int>('b'),
+      right<String, int>(3),
+    ];
+    final result = Either.rights(list);
+    expect(result, [1, 2, 3]);
+  });
+
+  test('lefts', () {
+    final list = [
+      right<String, int>(1),
+      right<String, int>(2),
+      left<String, int>('a'),
+      left<String, int>('b'),
+      right<String, int>(3),
+    ];
+    final result = Either.lefts(list);
+    expect(result, ['a', 'b']);
+  });
+
+  test('partitionEithers', () {
+    final list = [
+      right<String, int>(1),
+      right<String, int>(2),
+      left<String, int>('a'),
+      left<String, int>('b'),
+      right<String, int>(3),
+    ];
+    final result = Either.partitionEithers(list);
+    expect(result.first, ['a', 'b']);
+    expect(result.second, [1, 2, 3]);
   });
 }

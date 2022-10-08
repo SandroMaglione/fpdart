@@ -90,6 +90,16 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   @override
   Either<L, C> map<C>(C Function(R a) f);
 
+  /// Define two functions to change both the [Left] and [Right] value of the
+  /// [Either].
+  ///
+  /// {@template fpdart_bimap_either}
+  /// Same as `map`+`mapLeft` but for both [Left] and [Right]
+  /// (`map` is only to change [Right], while `mapLeft` is only to change [Left]).
+  /// {@endtemplate}
+  Either<C, D> bimap<C, D>(C Function(L l) mLeft, D Function(R b) mRight) =>
+      mapLeft(mLeft).map(mRight);
+
   /// Return a [Right] containing the value `c`.
   @override
   Either<L, C> pure<C>(C c) => Right<L, C>(c);
@@ -292,6 +302,60 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
     List<Either<E, A>> list,
   ) =>
       traverseList(list, identity);
+
+  /// {@template fpdart_rights_either}
+  /// Extract all the [Right] values from a `List<Either<E, A>>`.
+  /// {@endtemplate}
+  static List<A> rights<E, A>(List<Either<E, A>> list) {
+    final resultList = <A>[];
+    for (var i = 0; i < list.length; i++) {
+      final e = list[i];
+      if (e is Right<E, A>) {
+        resultList.add(e._value);
+      }
+    }
+
+    return resultList;
+  }
+
+  /// {@template fpdart_lefts_either}
+  /// Extract all the [Left] values from a `List<Either<E, A>>`.
+  /// {@endtemplate}
+  static List<E> lefts<E, A>(List<Either<E, A>> list) {
+    final resultList = <E>[];
+    for (var i = 0; i < list.length; i++) {
+      final e = list[i];
+      if (e is Left<E, A>) {
+        resultList.add(e._value);
+      }
+    }
+
+    return resultList;
+  }
+
+  /// {@template fpdart_partition_eithers_either}
+  /// Extract all the [Left] and [Right] values from a `List<Either<E, A>>` and
+  /// return them in two partitioned [List] inside [Tuple2].
+  /// {@endtemplate}
+  static Tuple2<List<E>, List<A>> partitionEithers<E, A>(
+      List<Either<E, A>> list) {
+    final resultListLefts = <E>[];
+    final resultListRights = <A>[];
+    for (var i = 0; i < list.length; i++) {
+      final e = list[i];
+      if (e is Left<E, A>) {
+        resultListLefts.add(e._value);
+      } else if (e is Right<E, A>) {
+        resultListRights.add(e._value);
+      } else {
+        throw Exception(
+          "[fpdart]: Error when mapping Either, it should be either Left or Right.",
+        );
+      }
+    }
+
+    return Tuple2(resultListLefts, resultListRights);
+  }
 
   /// Flat a [Either] contained inside another [Either] to be a single [Either].
   factory Either.flatten(Either<L, Either<L, R>> e) => e.flatMap(identity);
