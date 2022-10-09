@@ -51,4 +51,6 @@ TaskEither<int, double> bimapExample(TaskEither<String, int> taskEither) =>
 TaskEither<String, int> toTaskEitherExample(Either<String, int> taskEither) =>
     taskEither.toTaskEither();
 
-void main() {}
+/// Chain [Either] to [TaskEither]
+TaskEither<String, int> binding =
+    TaskEither<String, String>.of("String").bindEither(Either.of(20));
