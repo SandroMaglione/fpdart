@@ -40,6 +40,10 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
             ),
           ));
 
+  /// Chain an [Either] to [TaskEither] by converting it from sync to async.
+  TaskEither<L, C> bindEither<C>(Either<L, C> either) =>
+      flatMap((_) => either.toTaskEither());
+
   /// Returns a [TaskEither] that returns a `Right(a)`.
   @override
   TaskEither<L, C> pure<C>(C a) => TaskEither(() async => Right(a));
@@ -200,10 +204,31 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   factory TaskEither.fromEither(Either<L, R> either) =>
       TaskEither(() async => either);
 
-  /// Converts a [Future] that may throw to a [Future] that never throws
-  /// but returns a [Either] instead.
+  /// {@template fpdart_try_catch_task_either}
+  /// Execute an async function ([Future]) and convert the result to [Either]:
+  /// - If the execution is successful, returns a [Right]
+  /// - If the execution fails (`throw`), then return a [Left] based on `onError`
   ///
-  /// Used to handle asynchronous computations that may throw using [Either].
+  /// Used to work with [Future] and exceptions using [Either] instead of `try`/`catch`.
+  /// {@endtemplate}
+  /// ```dart
+  /// /// From [Future] to [TaskEither]
+  /// Future<int> imperative(String str) async {
+  ///   try {
+  ///     return int.parse(str);
+  ///   } catch (e) {
+  ///     return -1; /// What does -1 means? 🤨
+  ///   }
+  /// }
+  ///
+  /// TaskEither<String, int> functional(String str) {
+  ///   return TaskEither.tryCatch(
+  ///     () async => int.parse(str),
+  ///     /// Clear error 🪄
+  ///     (error, stackTrace) => "Parsing error: $error",
+  ///   );
+  /// }
+  /// ```
   factory TaskEither.tryCatch(Future<R> Function() run,
           L Function(Object error, StackTrace stackTrace) onError) =>
       TaskEither<L, R>(() async {
@@ -304,10 +329,7 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   ) =>
       traverseListSeq(list, identity);
 
-  /// Converts a [Future] that may throw to a [Future] that never throws
-  /// but returns a [Either] instead.
-  ///
-  /// Used to handle asynchronous computations that may throw using [Either].
+  /// {@macro fpdart_try_catch_task_either}
   ///
   /// It wraps the `TaskEither.tryCatch` factory to make chaining with `flatMap`
   /// easier.
