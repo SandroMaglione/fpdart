@@ -1,5 +1,22 @@
 import 'package:fpdart/fpdart.dart';
 
+/// From [Future] to [TaskEither]
+Future<int> imperative(String str) async {
+  try {
+    return int.parse(str);
+  } catch (e) {
+    return -1; // What does -1 means? 🤨
+  }
+}
+
+TaskEither<String, int> functional(String str) {
+  return TaskEither.tryCatch(
+    () async => int.parse(str),
+    // Clear error 🪄
+    (error, stackTrace) => "Parsing error: $error",
+  );
+}
+
 /// What error is that? What is [dynamic]?
 Future<int> asyncI() {
   return Future<int>.error('Some error!')

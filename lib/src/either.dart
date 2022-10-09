@@ -110,16 +110,6 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   Either<L, C> ap<C>(covariant Either<L, C Function(R r)> a) =>
       a.flatMap((f) => map(f));
 
-  /// Used to chain multiple functions that return a [Either].
-  ///
-  /// You can extract the value of every [Right] in the chain without
-  /// handling all possible missing cases.
-  /// If any of the functions in the chain returns [Left], the result is [Left].
-  ///
-  /// Same as `bind`.
-  @override
-  Either<L, C> flatMap<C>(covariant Either<L, C> Function(R a) f);
-
   /// If this [Either] is a [Right], then return the result of calling `then`.
   /// Otherwise return [Left].
   @override
@@ -159,19 +149,27 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   @override
   Either<L, B> call<B>(covariant Either<L, B> chain) => flatMap((_) => chain);
 
-  /// If `f` applied on this [Either] as [Right] returns `true`, then return this [Either].
-  /// If it returns `false`, return the result of `onFalse` in a [Left].
-  Either<L, R> filterOrElse(bool Function(R r) f, L Function(R r) onFalse) =>
-      flatMap((r) => f(r) ? Either.of(r) : Either.left(onFalse(r)));
-
+  /// {@template fpdart_flat_map_either}
   /// Used to chain multiple functions that return a [Either].
   ///
   /// You can extract the value of every [Right] in the chain without
   /// handling all possible missing cases.
   /// If any of the functions in the chain returns [Left], the result is [Left].
+  /// {@endtemplate}
+  ///
+  /// Same as `bind`.
+  @override
+  Either<L, C> flatMap<C>(covariant Either<L, C> Function(R a) f);
+
+  /// {@macro fpdart_flat_map_either}
   ///
   /// Same as `flatMap`.
   Either<L, R2> bind<R2>(Either<L, R2> Function(R r) f) => flatMap(f);
+
+  /// If `f` applied on this [Either] as [Right] returns `true`, then return this [Either].
+  /// If it returns `false`, return the result of `onFalse` in a [Left].
+  Either<L, R> filterOrElse(bool Function(R r) f, L Function(R r) onFalse) =>
+      flatMap((r) => f(r) ? Either.of(r) : Either.left(onFalse(r)));
 
   /// Chain a request that returns another [Either], execute it, ignore
   /// the result, and return the same value as the current [Either].
