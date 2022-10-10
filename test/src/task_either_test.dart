@@ -570,38 +570,22 @@ void main() {
         var sideEffect = 0;
         final list = [
           TaskEither(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect += 1;
             return right<String, int>(1);
           }),
           TaskEither(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect += 1;
             return right<String, int>(2);
           }),
           TaskEither(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect += 1;
             return right<String, int>(3);
           }),
           TaskEither(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect += 1;
             return right<String, int>(4);
           }),
@@ -619,38 +603,22 @@ void main() {
         var sideEffect = 0;
         final list = [
           TaskEither(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect += 1;
             return right<String, int>(1);
           }),
           TaskEither(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect += 1;
             return left<String, int>("Error");
           }),
           TaskEither(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect += 1;
             return right<String, int>(3);
           }),
           TaskEither(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect += 1;
             return right<String, int>(4);
           }),
@@ -673,11 +641,7 @@ void main() {
           list,
           (a) => TaskEither(
             () async {
-              await Future.delayed(
-                Duration(
-                  milliseconds: Random().nextInt(1000),
-                ),
-              );
+              await AsyncUtils.waitFuture();
               sideEffect += 1;
               return right<String, String>("$a");
             },
@@ -698,11 +662,7 @@ void main() {
           list,
           (a) => TaskEither(
             () async {
-              await Future.delayed(
-                Duration(
-                  milliseconds: Random().nextInt(1000),
-                ),
-              );
+              await AsyncUtils.waitFuture();
               sideEffect += 1;
               return a % 2 == 0
                   ? right<String, String>("$a")
@@ -727,11 +687,7 @@ void main() {
           list,
           (a, i) => TaskEither(
             () async {
-              await Future.delayed(
-                Duration(
-                  milliseconds: Random().nextInt(1000),
-                ),
-              );
+              await AsyncUtils.waitFuture();
               sideEffect += 1;
               return right<String, String>("$a$i");
             },
@@ -752,11 +708,7 @@ void main() {
           list,
           (a, i) => TaskEither(
             () async {
-              await Future.delayed(
-                Duration(
-                  milliseconds: Random().nextInt(1000),
-                ),
-              );
+              await AsyncUtils.waitFuture();
               sideEffect += 1;
               return a % 2 == 0
                   ? right<String, String>("$a$i")
@@ -778,38 +730,22 @@ void main() {
         var sideEffect = 0;
         final list = [
           TaskEither(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect = 0;
             return right<String, int>(1);
           }),
           TaskEither(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect = 1;
             return right<String, int>(2);
           }),
           TaskEither(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect = 2;
             return right<String, int>(3);
           }),
           TaskEither(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect = 3;
             return right<String, int>(4);
           }),
@@ -827,38 +763,22 @@ void main() {
         var sideEffect = 0;
         final list = [
           TaskEither(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect = 0;
             return right<String, int>(1);
           }),
           TaskEither(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect = 1;
             return left<String, int>("Error");
           }),
           TaskEither(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect = 2;
             return right<String, int>(3);
           }),
           TaskEither(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect = 3;
             return right<String, int>(4);
           }),
@@ -881,11 +801,7 @@ void main() {
           list,
           (a) => TaskEither(
             () async {
-              await Future.delayed(
-                Duration(
-                  milliseconds: Random().nextInt(1000),
-                ),
-              );
+              await AsyncUtils.waitFuture();
               sideEffect = a - 1;
               return right<String, String>("$a");
             },
@@ -906,11 +822,7 @@ void main() {
           list,
           (a) => TaskEither(
             () async {
-              await Future.delayed(
-                Duration(
-                  milliseconds: Random().nextInt(1000),
-                ),
-              );
+              await AsyncUtils.waitFuture();
               sideEffect = a - 1;
               return a % 2 == 0
                   ? right<String, String>("$a")
@@ -936,11 +848,7 @@ void main() {
           list,
           (a, i) => TaskEither(
             () async {
-              await Future.delayed(
-                Duration(
-                  milliseconds: Random().nextInt(1000),
-                ),
-              );
+              await AsyncUtils.waitFuture();
               sideEffect = a + i;
               return right<String, String>("$a$i");
             },
@@ -962,11 +870,7 @@ void main() {
           list,
           (a, i) => TaskEither(
             () async {
-              await Future.delayed(
-                Duration(
-                  milliseconds: Random().nextInt(1000),
-                ),
-              );
+              await AsyncUtils.waitFuture();
               sideEffect = a + i;
               return a % 2 == 0
                   ? right<String, String>("$a$i")
