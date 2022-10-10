@@ -90,7 +90,7 @@ abstract class Order<T> extends PartialOrder<T> {
 class _Order<T> extends Order<T> {
   final int Function(T x, T y) comp;
 
-  _Order(this.comp);
+  const _Order(this.comp);
 
   @override
   int compare(T x, T y) => comp(x, y);

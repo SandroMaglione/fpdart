@@ -29,26 +29,6 @@ mixin Semigroup<T> {
       ? combine(acc, source)
       : _repeatedCombineNLoop(combine(acc, source), source, k - 1);
 
-  // TODO: [Semigroup] combineAllOption
-  // /**
-  //  * Given a sequence of `as`, combine them and return the total.
-  //  *
-  //  * If the sequence is empty, returns None. Otherwise, returns Some(total).
-  //  *
-  //  * Example:
-  //  * {{{
-  //  * scala> import cats.kernel.instances.string._
-  //  *
-  //  * scala> Semigroup[String].combineAllOption(List("One ", "Two ", "Three"))
-  //  * res0: Option[String] = Some(One Two Three)
-  //  *
-  //  * scala> Semigroup[String].combineAllOption(List.empty)
-  //  * res1: Option[String] = None
-  //  * }}}
-  //  */
-  // def combineAllOption(as: IterableOnce[A]): Option[A] =
-  //   as.reduceOption(combine)
-
   /// Return a `Semigroup` that reverses the order.
   ///
   /// ```dart
@@ -85,7 +65,7 @@ mixin Semigroup<T> {
 class _Semigroup<T> with Semigroup<T> {
   final T Function(T x, T y) comb;
 
-  _Semigroup(this.comb);
+  const _Semigroup(this.comb);
 
   @override
   T combine(T x, T y) => comb(x, y);

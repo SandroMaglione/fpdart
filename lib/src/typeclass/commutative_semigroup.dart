@@ -14,7 +14,7 @@ mixin CommutativeSemigroup<T> on Semigroup<T> {
 class _CommutativeSemigroup<T> with Semigroup<T>, CommutativeSemigroup<T> {
   final T Function(T x, T y) comb;
 
-  _CommutativeSemigroup(this.comb);
+  const _CommutativeSemigroup(this.comb);
 
   @override
   T combine(T x, T y) => comb(x, y);

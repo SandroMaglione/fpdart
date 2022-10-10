@@ -23,7 +23,7 @@ class _CommutativeGroup<T>
   final T emp;
   final T Function(T x, T y) comb;
 
-  _CommutativeGroup(this.emp, this.comb, this.inv);
+  const _CommutativeGroup(this.emp, this.comb, this.inv);
 
   @override
   T combine(T x, T y) => comb(x, y);

@@ -24,7 +24,7 @@ mixin Band<T> on Semigroup<T> {
 class _Band<T> with Semigroup<T>, Band<T> {
   final T Function(T x, T y) comb;
 
-  _Band(this.comb);
+  const _Band(this.comb);
 
   @override
   T combine(T x, T y) => comb(x, y);

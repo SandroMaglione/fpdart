@@ -44,7 +44,7 @@ class _Group<T> with Semigroup<T>, Monoid<T>, Group<T> {
   final T emp;
   final T Function(T x, T y) comb;
 
-  _Group(this.emp, this.comb, this.inv);
+  const _Group(this.emp, this.comb, this.inv);
 
   @override
   T combine(T x, T y) => comb(x, y);
