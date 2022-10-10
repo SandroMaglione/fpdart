@@ -28,24 +28,24 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 
 ***
 
-- [📖 Learn `functional programming` and `fpdart`](#📖-learn-functional-programming-and-fpdart)
-  - [👨‍💻 Blog posts and tutorials](#👨‍💻-blog-posts-and-tutorials)
-- [💻 Installation](#💻-installation)
-- [✨ Examples](#✨-examples)
+- [📖 Learn `functional programming` and `fpdart`](#-learn-functional-programming-and-fpdart)
+  - [👨‍💻 Blog posts and tutorials](#-blog-posts-and-tutorials)
+- [💻 Installation](#-installation)
+- [✨ Examples](#-examples)
   - [Option](#option)
   - [Either](#either)
   - [Reader](#reader)
   - [State](#state)
-  - [📦 Immutable Collections](#📦-immutable-collections)
+  - [📦 Immutable Collections](#-immutable-collections)
   - [More](#more)
-- [🎯 Types](#🎯-types)
-- [💡 Motivation](#💡-motivation)
+- [🎯 Types](#-types)
+- [💡 Motivation](#-motivation)
   - [Goal](#goal)
   - [Comparison with `dartz`](#comparison-with-dartz)
-- [🤔 Roadmap](#🤔-roadmap)
-- [📃 Versioning](#📃-versioning)
-- [😀 Support](#😀-support)
-- [👀 License](#👀-license)
+- [🤔 Roadmap](#-roadmap)
+- [📃 Versioning](#-versioning)
+- [😀 Support](#-support)
+- [👀 License](#-license)
 
 
 
