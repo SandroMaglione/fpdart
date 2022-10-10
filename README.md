@@ -76,7 +76,7 @@ Check out also this series of articles about functional programming with `fpdart
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.2.0 # Check out the latest version
+  fpdart: ^0.3.0 # Check out the latest version
 ```
 
 ## ✨ Examples
@@ -255,6 +255,7 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
 
+- **v0.3.0** - 11 October 2022
 - **v0.2.0** - 16 July 2022
 - **v0.1.0** - 17 June 2022
 - v0.0.14 - 31 January 2022

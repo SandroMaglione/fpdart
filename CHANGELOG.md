@@ -1,4 +1,4 @@
-# v0.3.0 - Soon
+# v0.3.0 - 11 October 2022
 - Inverted `onSome` and `onNone` functions parameters in `match` method of `Option` [⚠️ **BREAKING CHANGE**] (*Read more on why* 👉 [#56](https://github.com/SandroMaglione/fpdart/pull/56))
 ```dart
 /// Everywhere you are using `Option.match` you must change this:
