@@ -4,11 +4,9 @@
   <a href="https://github.com/SandroMaglione/fpdart">
     <img src="https://img.shields.io/github/stars/SandroMaglione/fpdart?logo=github" />
   </a>
-  <img src="https://img.shields.io/github/repo-size/SandroMaglione/fpdart" />
-  <img src="https://img.shields.io/github/license/SandroMaglione/fpdart?logo=github" />
   <img src="https://img.shields.io/github/contributors-anon/SandroMaglione/fpdart" />
   <img src="https://img.shields.io/pub/v/fpdart?include_prereleases" />
-  <img src="https://img.shields.io/badge/dart-v2.17.6-blue.svg" />
+  <img src="https://img.shields.io/github/license/SandroMaglione/fpdart?logo=github" />
   <a href="https://github.com/SandroMaglione">
     <img alt="GitHub: SandroMaglione" src="https://img.shields.io/github/followers/SandroMaglione?label=Follow&style=social" target="_blank" />
   </a>
@@ -17,21 +15,47 @@
   </a>
 </p>
 
-<a href="https://www.buymeacoffee.com/sandromaglione">
-    <img src="https://shields.io/badge/sandromaglione-Support--me-FFDD00?logo=buy-me-a-coffee&style=for-the-badge&link=https://www.buymeacoffee.com/sandromaglione" />
-</a>
 
-Functional programming in Dart and Flutter. All the main functional programming types and patterns fully documented, tested, and with examples.
+Functional programming in Dart and Flutter.
+
+All the main functional programming types and patterns **fully documented**, tested, and with examples.
 
 > **Fpdart is fully documented. You do not need to have any previous experience with functional programming to start using `fpdart`. Give it a try!**
 
 Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://typelevel.org/cats/typeclasses.html#type-classes-in-cats), and [dartz](https://github.com/spebbe/dartz).
 
-> **Note**: The API is still evolving and it may change. New documentation and testing is always ongoing. Follow my [**Twitter**](https://twitter.com/SandroMaglione) for updates
+> **Note**: The API is still evolving and it may change. New documentation and testing is always ongoing. Follow my [**Twitter**](https://twitter.com/SandroMaglione) for updates, or [subscribe to the newsletter](https://www.sandromaglione.com/newsletter)
+
+***
+
+- [📖 Learn `functional programming` and `fpdart`](#📖-learn-functional-programming-and-fpdart)
+  - [👨‍💻 Blog posts and tutorials](#👨‍💻-blog-posts-and-tutorials)
+- [💻 Installation](#💻-installation)
+- [✨ Examples](#✨-examples)
+  - [Option](#option)
+  - [Either](#either)
+  - [Reader](#reader)
+  - [State](#state)
+  - [📦 Immutable Collections](#📦-immutable-collections)
+  - [More](#more)
+- [🎯 Types](#🎯-types)
+- [💡 Motivation](#💡-motivation)
+  - [Goal](#goal)
+  - [Comparison with `dartz`](#comparison-with-dartz)
+- [🤔 Roadmap](#🤔-roadmap)
+- [📃 Versioning](#📃-versioning)
+- [😀 Support](#😀-support)
+- [👀 License](#👀-license)
+
+
 
 ## 📖 Learn `functional programming` and `fpdart`
 
-Would you like to know more about functional programming, fpdart, and how to use the package? Check out this series of articles about functional programming with fpdart:
+Would you like to know more about functional programming, fpdart, and how to use the package?
+
+[**Collection of tutorials on fpdart**](https://www.sandromaglione.com/course/fpdart-functional-programming-dart-and-flutter)
+
+Check out also this series of articles about functional programming with `fpdart`:
 
 1. [**Fpdart, Functional Programming in Dart and Flutter**](https://www.sandromaglione.com/fpdart-functional-programming-in-dart-and-flutter/)
 2. [**How to use fpdart Functional Programming in your Dart and Flutter app**](https://www.sandromaglione.com/how-to-use-fpdart-functional-programming-in-dart-and-flutter/)
@@ -43,32 +67,9 @@ Would you like to know more about functional programming, fpdart, and how to use
 8. [**Practical Functional Programming - Part 3**](https://www.sandromaglione.com/immutability-practical-functional-programming-part-3/)
 
 ### 👨‍💻 Blog posts and tutorials
+- [How to make API requests with validation in fpdart](https://www.sandromaglione.com/techblog/fpdart-api-request-with-validation-functional-programming)
+- [How to use TaskEither in fpdart](https://www.sandromaglione.com/techblog/how-to-use-task-either-fpdart-functional-programming)
 - [How to map an Either to a Future in fpdart](https://blog.sandromaglione.com/techblog/from-sync-to-async-functional-programming)
-
-## 🎯 Types
-
-- [x] `Option`
-- [x] `Either`
-- [x] `Unit`
-- [x] `Task`
-- [x] `TaskEither`
-- [x] `State`
-- [x] `StateAsync`
-- [x] `Reader`
-- [x] `Tuple`
-- [x] `IO`
-- [x] `IORef`
-- [x] `Iterable` (`List`) `extension`
-- [x] `Map` `extension`
-- [x] `IOEither`
-- [x] `TaskOption`
-- [x] `Predicate`
-- [ ] `ReaderEither`
-- [ ] `ReaderTask`
-- [ ] `ReaderTaskEither`
-- [ ] `StateReaderTaskEither`
-- [ ] `Lens`
-- [ ] `Writer`
 
 ## 💻 Installation
 
@@ -169,6 +170,32 @@ Many more examples are coming soon. Check out [**my website**](https://www.sandr
 
 ---
 
+
+## 🎯 Types
+
+- [x] `Option`
+- [x] `Either`
+- [x] `Unit`
+- [x] `Task`
+- [x] `TaskEither`
+- [x] `State`
+- [x] `StateAsync`
+- [x] `Reader`
+- [x] `Tuple`
+- [x] `IO`
+- [x] `IORef`
+- [x] `Iterable` (`List`) `extension`
+- [x] `Map` `extension`
+- [x] `IOEither`
+- [x] `TaskOption`
+- [x] `Predicate`
+- [ ] `ReaderEither`
+- [ ] `ReaderTask`
+- [ ] `ReaderTaskEither`
+- [ ] `StateReaderTaskEither`
+- [ ] `Lens`
+- [ ] `Writer`
+
 ## 💡 Motivation
 
 Functional programming is becoming more and more popular, and for good reasons.
@@ -211,76 +238,16 @@ Being documentation and stability important goals of the package, every type wil
 
 The roadmap for types development is highlighted below (breaking changes to _'stable'_ types are to be expected in this early stages):
 
-1. ~~`Option`~~
-   - ~~Implementation~~
-   - ~~Documentation~~
-   - ~~Testing~~
-2. ~~`Either`~~
-   - ~~Implementation~~
-   - ~~Documentation~~
-   - ~~Testing~~
-3. ~~`Unit`~~
-   - ~~Implementation~~
-   - ~~Documentation~~
-   - ~~Testing~~
-4. ~~`Task`~~
-   - ~~Implementation~~
-   - ~~Documentation~~
-   - ~~Testing~~
-5. ~~`TaskEither`~~
-   - ~~Implementation~~
-   - ~~Documentation~~
-   - ~~Testing~~
-6. ~~`Tuple`~~
-   - ~~Implementation~~
-   - ~~Documentation~~
-   - ~~Testing~~
-7. ~~`State`~~
-   - ~~Implementation~~
-   - ~~Documentation~~
-   - ~~Testing~~
-8. ~~`Reader`~~
-   - ~~Implementation~~
-   - ~~Documentation~~
-   - ~~Testing~~
-9. ~~`IO`~~
-   - ~~Implementation~~
-   - ~~Documentation~~
-   - ~~Testing~~
-10. ~~`IOEither`~~
-    - ~~Implementation~~
-    - ~~Documentation~~
-    - ~~Testing~~
-11. ~~`TaskOption`~~
-    - ~~Implementation~~
-    - ~~Documentation~~
-    - ~~Testing~~
-12. `ReaderEither`
-    - Implementation
-    - Documentation
-    - Testing
-13. `ReaderTask`
-    - Implementation
-    - Documentation
-    - Testing
-14. `ReaderTaskEither`
-    - Implementation
-    - Documentation
-    - Testing
-15. `StateReaderTaskEither`
-    - Implementation
-    - Documentation
-    - Testing
-16. `Writer`
-    - Implementation
-    - Documentation
-    - Testing
-17. `Lens`
-    - Implementation
-    - Documentation
-    - Testing
+1. `ReaderEither`
+2. `ReaderTask`
+3. `ReaderTaskEither`
+4. `StateReaderTaskEither`
+5. `Writer`
+6. `Lens`
 
-The long-term goal is to provide all the main types and typeclasses available in other functional programming languages and packages. All the types should be **completely** documented and fully tested.
+***
+
+The long-term goal is to provide **all the main types and typeclasses available in other functional programming languages and packages**. All the types should be **completely** documented and fully tested.
 
 A well explained documentation is the key for the long-term success of the project. **Any article, blog post, or contribution is welcome**.
 
@@ -309,11 +276,7 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 Currently the best way to support me would be to follow me on my [**Twitter**](https://twitter.com/SandroMaglione).
 
-Another option (or `Option`) would be to buy me a coffee.
-
-<a href="https://www.buymeacoffee.com/sandromaglione">
-<img src="https://shields.io/badge/sandromaglione-Support--me-FFDD00?logo=buy-me-a-coffee&style=for-the-badge&link=https://www.buymeacoffee.com/sandromaglione" />
-</a>
+I also have a newsletter, in which I share tutorials, guides, and code snippets about fpdart and functional programming: [**Subscribe to the Newsletter here** 📧](https://www.sandromaglione.com/newsletter)
 
 ## 👀 License
 
