@@ -75,7 +75,7 @@ class _Semilattice<T>
     with Semigroup<T>, CommutativeSemigroup<T>, Band<T>, Semilattice<T> {
   final T Function(T x, T y) comb;
 
-  _Semilattice(this.comb);
+  const _Semilattice(this.comb);
 
   @override
   T combine(T x, T y) => comb(x, y);

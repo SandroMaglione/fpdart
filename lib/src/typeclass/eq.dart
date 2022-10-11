@@ -57,7 +57,7 @@ abstract class Eq<T> {
 
 class _Eq<T> extends Eq<T> {
   final bool Function(T x, T y) eq;
-  _Eq(this.eq);
+  const _Eq(this.eq);
 
   @override
   bool eqv(T x, T y) => eq(x, y);

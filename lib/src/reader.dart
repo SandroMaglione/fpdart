@@ -16,7 +16,7 @@ class Reader<R, A> extends HKT2<ReaderHKT, R, A>
   /// Build a [Reader] given `A Function(R)`.
   const Reader(this._read);
 
-  /// Flat a [Option] contained inside another [Option] to be a single [Option].
+  /// Flat a [Reader] contained inside another [Reader] to be a single [Reader].
   factory Reader.flatten(Reader<R, Reader<R, A>> reader) =>
       reader.flatMap(identity);
 

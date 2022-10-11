@@ -336,38 +336,22 @@ void main() {
         var sideEffect = 0;
         final list = [
           TaskOption(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect += 1;
             return some(1);
           }),
           TaskOption(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect += 1;
             return some(2);
           }),
           TaskOption(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect += 1;
             return some(3);
           }),
           TaskOption(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect += 1;
             return some(4);
           }),
@@ -385,38 +369,22 @@ void main() {
         var sideEffect = 0;
         final list = [
           TaskOption(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect += 1;
             return some(1);
           }),
           TaskOption(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect += 1;
             return none<int>();
           }),
           TaskOption(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect += 1;
             return some(3);
           }),
           TaskOption(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect += 1;
             return some(4);
           }),
@@ -437,11 +405,7 @@ void main() {
           list,
           (a) => TaskOption(
             () async {
-              await Future.delayed(
-                Duration(
-                  milliseconds: Random().nextInt(1000),
-                ),
-              );
+              await AsyncUtils.waitFuture();
               sideEffect += 1;
               return some("$a");
             },
@@ -462,11 +426,7 @@ void main() {
           list,
           (a) => TaskOption(
             () async {
-              await Future.delayed(
-                Duration(
-                  milliseconds: Random().nextInt(1000),
-                ),
-              );
+              await AsyncUtils.waitFuture();
               sideEffect += 1;
               return a % 2 == 0 ? some("$a") : none();
             },
@@ -487,11 +447,7 @@ void main() {
           list,
           (a, i) => TaskOption(
             () async {
-              await Future.delayed(
-                Duration(
-                  milliseconds: Random().nextInt(1000),
-                ),
-              );
+              await AsyncUtils.waitFuture();
               sideEffect += 1;
               return some("$a$i");
             },
@@ -512,11 +468,7 @@ void main() {
           list,
           (a, i) => TaskOption(
             () async {
-              await Future.delayed(
-                Duration(
-                  milliseconds: Random().nextInt(1000),
-                ),
-              );
+              await AsyncUtils.waitFuture();
               sideEffect += 1;
               return a % 2 == 0 ? some("$a$i") : none();
             },
@@ -534,38 +486,22 @@ void main() {
         var sideEffect = 0;
         final list = [
           TaskOption(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect = 0;
             return some(1);
           }),
           TaskOption(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect = 1;
             return some(2);
           }),
           TaskOption(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect = 2;
             return some(3);
           }),
           TaskOption(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect = 3;
             return some(4);
           }),
@@ -583,38 +519,22 @@ void main() {
         var sideEffect = 0;
         final list = [
           TaskOption(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect = 0;
             return some(1);
           }),
           TaskOption(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect = 1;
             return none<int>();
           }),
           TaskOption(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect = 2;
             return some(3);
           }),
           TaskOption(() async {
-            await Future.delayed(
-              Duration(
-                milliseconds: Random().nextInt(1000),
-              ),
-            );
+            await AsyncUtils.waitFuture();
             sideEffect = 3;
             return some(4);
           }),
@@ -635,11 +555,7 @@ void main() {
           list,
           (a) => TaskOption(
             () async {
-              await Future.delayed(
-                Duration(
-                  milliseconds: Random().nextInt(1000),
-                ),
-              );
+              await AsyncUtils.waitFuture();
               sideEffect = a - 1;
               return some("$a");
             },
@@ -660,11 +576,7 @@ void main() {
           list,
           (a) => TaskOption(
             () async {
-              await Future.delayed(
-                Duration(
-                  milliseconds: Random().nextInt(1000),
-                ),
-              );
+              await AsyncUtils.waitFuture();
               sideEffect = a - 1;
               return a % 2 == 0 ? some("$a") : none();
             },
@@ -685,11 +597,7 @@ void main() {
           list,
           (a, i) => TaskOption(
             () async {
-              await Future.delayed(
-                Duration(
-                  milliseconds: Random().nextInt(1000),
-                ),
-              );
+              await AsyncUtils.waitFuture();
               sideEffect = a + i;
               return some("$a$i");
             },
@@ -710,11 +618,7 @@ void main() {
           list,
           (a, i) => TaskOption(
             () async {
-              await Future.delayed(
-                Duration(
-                  milliseconds: Random().nextInt(1000),
-                ),
-              );
+              await AsyncUtils.waitFuture();
               sideEffect = a + i;
               return a % 2 == 0 ? some("$a$i") : none();
             },

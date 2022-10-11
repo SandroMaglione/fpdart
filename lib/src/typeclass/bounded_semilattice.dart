@@ -47,7 +47,7 @@ class _BoundedSemilattice<T>
   final T emp;
   final T Function(T x, T y) comb;
 
-  _BoundedSemilattice(this.emp, this.comb);
+  const _BoundedSemilattice(this.emp, this.comb);
 
   @override
   T combine(T x, T y) => comb(x, y);

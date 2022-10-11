@@ -1,6 +1,81 @@
-# v0.2.1 - Soon
+# v0.3.0 - 11 October 2022
+- Inverted `onSome` and `onNone` functions parameters in `match` method of `Option` [⚠️ **BREAKING CHANGE**] (*Read more on why* 👉 [#56](https://github.com/SandroMaglione/fpdart/pull/56))
+```dart
+/// Everywhere you are using `Option.match` you must change this:
+final match = option.match(
+  (a) => print('Some($a)'),
+  () => print('None'), // <- `None` second 👎 
+);
+
+/// to this (invert parameters order):
+final match = option.match(
+  () => print('None'), // <- `None` first 👍
+  (a) => print('Some($a)'),
+);
+```
+- Added `traverse` and `sequence` methods ([#55](https://github.com/SandroMaglione/fpdart/pull/55))
+  - `traverseList`
+  - `traverseListWithIndex`
+  - `sequenceList`
+  - `traverseListSeq`
+  - `traverseListWithIndexSeq`
+  - `sequenceListSeq`
+```dart
+/// "a40" is invalid 💥
+final inputValues = ["10", "20", "30", "a40"];
+
+/// Verify that all the values can be converted to [int] 🔐
+///
+/// If **any** of them is invalid, then the result is [None] 🙅‍♂️
+final traverseOption = inputValues.traverseOption(
+  (a) => Option.tryCatch(
+    /// If `a` does not contain a valid integer literal a [FormatException] is thrown
+    () => int.parse(a),
+  ),
+);
+```
+- Added `bindEither` method in `TaskEither` ([#58](https://github.com/SandroMaglione/fpdart/pull/58))
+```dart
+/// Chain [Either] to [TaskEither]
+TaskEither<String, int> binding =
+    TaskEither<String, String>.of("String").bindEither(Either.of(20));
+```
+- Added `lefts`, `rights`, and `partitionEithers` methods to `Either` ([#57](https://github.com/SandroMaglione/fpdart/pull/57))
+```dart
+final list = [
+  right<String, int>(1),
+  right<String, int>(2),
+  left<String, int>('a'),
+  left<String, int>('b'),
+  right<String, int>(3),
+];
+final result = Either.partitionEithers(list);
+expect(result.first, ['a', 'b']);
+expect(result.second, [1, 2, 3]);
+```
+- Added `bimap` method to `Either`, `IOEither`, and `Tuple2` ([#57](https://github.com/SandroMaglione/fpdart/pull/57))
+- Added `mapLeft` method to `IOEither` ([#57](https://github.com/SandroMaglione/fpdart/pull/57))
+- Added `fold` method to `Option` (same as `match`) ([#56](https://github.com/SandroMaglione/fpdart/pull/56))
 - Fixed `chainFirst` for `Either`, `TaskEither`, and `IOEither` when chaining on a failure (`Left`) ([#47](https://github.com/SandroMaglione/fpdart/pull/47)) by [DevNico](https://github.com/DevNico) 🎉
-- Fixed tests for `match()` method by adding `fail` in unexpected matched branch
+- Added `const` to all constructors in which it was missing ([#59](https://github.com/SandroMaglione/fpdart/issues/59))
+- Minimum environment dart sdk to `2.17.0` ⚠️
+```yaml
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+```
+- Updated [README](README.md) and documentation
+  - **New tutorial articles**
+    - [How to make API requests with validation in fpdart](https://www.sandromaglione.com/techblog/fpdart-api-request-with-validation-functional-programming)
+    - [How to use TaskEither in fpdart](https://www.sandromaglione.com/techblog/how-to-use-task-either-fpdart-functional-programming) 
+    - [Collection of tutorials on fpdart](https://www.sandromaglione.com/course/fpdart-functional-programming-dart-and-flutter)
+
+- Testing improvements (*internal*)
+  - Added testing [utils](test/src/utils/utils.dart)
+  - Added Property-based testing using [`glados`](https://pub.dev/packages/glados)
+  - [Fixed tests](https://github.com/SandroMaglione/fpdart/pull/47#issuecomment-1215319237) for `match()` method by adding `fail` in unexpected matched branch
+
+- Contribution improvements
+  - Added [testing workflow](.github/workflows/test.yml) with Github actions ([#54](https://github.com/SandroMaglione/fpdart/pull/54))
 
 # v0.2.0 - 16 July 2022
 - Refactoring for [mixin breaking change](https://github.com/dart-lang/sdk/issues/48167) ([#42](https://github.com/SandroMaglione/fpdart/pull/42)) by [TimWhiting](https://github.com/TimWhiting) 🎉

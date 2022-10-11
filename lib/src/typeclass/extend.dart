@@ -13,6 +13,7 @@ mixin Extend<KT, A> on HKT<KT, A>, Functor<KT, A> {
 
   HKT<KT, HKT<KT, A>> duplicate() => extend(identity);
 }
+
 mixin Extend2<KT, A, B> on HKT2<KT, A, B>, Functor2<KT, A, B> {
   /// Extend the type by applying function `f` to it.
   HKT2<KT, A, Z> extend<Z>(Z Function(HKT2<KT, A, B> t) f);
