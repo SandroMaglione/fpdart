@@ -53,7 +53,7 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 
 Would you like to know more about functional programming, fpdart, and how to use the package?
 
-[**Collection of tutorials on fpdart**](https://www.sandromaglione.com/course/fpdart-functional-programming-dart-and-flutter)
+📚 [**Collection of tutorials on fpdart**](https://www.sandromaglione.com/course/fpdart-functional-programming-dart-and-flutter)
 
 Check out also this series of articles about functional programming with `fpdart`:
 
@@ -81,7 +81,10 @@ dependencies:
 
 ## ✨ Examples
 
-### [Option](https://github.com/SandroMaglione/fpdart/blob/540431746d616d30fadf36cc9d1a77c14baf35f4/lib/src/option.dart#L40)
+### [Option](./lib/src/option.dart)
+Used when a return value can be missing.
+> For example, when parsing a `String` to `int`, since not all `String`
+> can be converted to `int`
 
 ```dart
 /// Create an instance of [Some]
@@ -112,7 +115,10 @@ final flatMap = option.flatMap((a) => Option.of(a + 10));
 final tryCatch = Option.tryCatch(() => int.parse('invalid'));
 ```
 
-### [Either](https://github.com/SandroMaglione/fpdart/blob/9da7cae3b9f9dc690ff3255004393c4b979183e9/lib/src/either.dart#L16)
+### [Either](./lib/src/either.dart)
+Used to handle errors (instead of `Exception`s).
+> `Either<L, R>`: `L` is the type of the error (for example a `String` explaining
+> the problem), `R` is the return type when the computation is successful
 
 ```dart
 /// Create an instance of [Right]
@@ -148,6 +154,27 @@ final match = right.match(
 
 /// Convert to [Option]
 final option = right.toOption();
+```
+
+### [Task](./lib/src/task.dart)
+Wrapper around an async function (`Future`). Allows to compose asynchronous functions **that never fail**.
+
+```dart
+/// Create instance of [Task] from a value
+final Task<int> task = Task.of(10);
+
+/// Create instance of [Task] from an async function
+final taskRun1 = Task(() async => 10);
+final taskRun2 = Task(() => Future.value(10));
+
+/// Map [int] to [String]
+final Task<String> map = task.map((a) => '$a');
+
+/// Extract the value inside [Task] by running its async function
+final int value = await task.run();
+
+/// Chain another [Task] based on the value of the current [Task]
+final flatMap = task.flatMap((a) => Task.of(a + 10));
 ```
 
 ### [Reader](https://github.com/SandroMaglione/fpdart/blob/9da7cae3b9f9dc690ff3255004393c4b979183e9/lib/src/reader.dart#L5)
