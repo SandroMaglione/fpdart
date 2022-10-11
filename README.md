@@ -34,6 +34,9 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 - [✨ Examples](#-examples)
   - [Option](#option)
   - [Either](#either)
+  - [IO](#io)
+  - [Task](#task)
+  - [Utility types](#utility-types)
   - [Reader](#reader)
   - [State](#state)
   - [📦 Immutable Collections](#-immutable-collections)
@@ -199,13 +202,18 @@ final int value = await task.run();
 final flatMap = task.flatMap((a) => Task.of(a + 10));
 ```
 
-### [Reader](https://github.com/SandroMaglione/fpdart/blob/9da7cae3b9f9dc690ff3255004393c4b979183e9/lib/src/reader.dart#L5)
+### Utility types
+These types compose together the 4 above ([`Option`](#option), [`Either`](#either), [`IO`](#io), [`Task`](#task)) to join together their functionalities:
+- [`IOEither`](./lib/src/io_either.dart): sync function (`IO`) that may fail (`Either`)
+- [`TaskOption`](./lib/src/task_option.dart): async function (`Task`) that may miss the return value (`Option`)
+- [`TaskEither`](./lib/src/task_either.dart): async function (`Task`) that may fail (`Either`)
 
-View the [example folder for an explained usecase example](https://github.com/SandroMaglione/fpdart/tree/main/example/src/reader).
 
-### [State](https://github.com/SandroMaglione/fpdart/blob/9da7cae3b9f9dc690ff3255004393c4b979183e9/lib/src/state.dart#L10)
+### [Reader](./lib/src/reader.dart)
+Read values from a **context** without explicitly passing the dependency between multiple nested function calls. View the [example folder for an explained usecase example](./example/src/reader).
 
-View the [example folder for an explained usecase example](https://github.com/SandroMaglione/fpdart/tree/main/example/src/state).
+### [State](./lib/src/state.dart)
+Used to **store**, **update**, and **extract** state in a functional way. View the [example folder for an explained usecase example](./example/src/state).
 
 ### 📦 Immutable Collections
 
@@ -238,6 +246,7 @@ Many more examples are coming soon. Check out [**my website**](https://www.sandr
 - [x] `IOEither`
 - [x] `TaskOption`
 - [x] `Predicate`
+- [ ] `IOOption`
 - [ ] `ReaderEither`
 - [ ] `ReaderTask`
 - [ ] `ReaderTaskEither`
@@ -287,12 +296,13 @@ Being documentation and stability important goals of the package, every type wil
 
 The roadmap for types development is highlighted below (breaking changes to _'stable'_ types are to be expected in this early stages):
 
-1. `ReaderEither`
-2. `ReaderTask`
-3. `ReaderTaskEither`
-4. `StateReaderTaskEither`
-5. `Writer`
-6. `Lens`
+1. `IOOption`
+2. `ReaderEither`
+3. `ReaderTask`
+4. `ReaderTaskEither`
+5. `StateReaderTaskEither`
+6. `Writer`
+7. `Lens`
 
 ***
 
