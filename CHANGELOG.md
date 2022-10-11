@@ -41,10 +41,23 @@ TaskEither<String, int> binding =
     TaskEither<String, String>.of("String").bindEither(Either.of(20));
 ```
 - Added `lefts`, `rights`, and `partitionEithers` methods to `Either` ([#57](https://github.com/SandroMaglione/fpdart/pull/57))
+```dart
+final list = [
+  right<String, int>(1),
+  right<String, int>(2),
+  left<String, int>('a'),
+  left<String, int>('b'),
+  right<String, int>(3),
+];
+final result = Either.partitionEithers(list);
+expect(result.first, ['a', 'b']);
+expect(result.second, [1, 2, 3]);
+```
 - Added `bimap` method to `Either`, `IOEither`, and `Tuple2` ([#57](https://github.com/SandroMaglione/fpdart/pull/57))
 - Added `mapLeft` method to `IOEither` ([#57](https://github.com/SandroMaglione/fpdart/pull/57))
 - Added `fold` method to `Option` (same as `match`) ([#56](https://github.com/SandroMaglione/fpdart/pull/56))
 - Fixed `chainFirst` for `Either`, `TaskEither`, and `IOEither` when chaining on a failure (`Left`) ([#47](https://github.com/SandroMaglione/fpdart/pull/47)) by [DevNico](https://github.com/DevNico) 🎉
+- Added `const` to all constructors in which it was missing ([#59](https://github.com/SandroMaglione/fpdart/issues/59))
 - Minimum environment dart sdk to `2.17.0` ⚠️
 ```yaml
 environment:
