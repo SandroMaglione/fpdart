@@ -156,8 +156,30 @@ final match = right.match(
 final option = right.toOption();
 ```
 
+### [IO](./lib/src/io.dart)
+Wrapper around an **sync** function. Allows to compose synchronous functions **that never fail**.
+
+```dart
+/// Create instance of [IO] from a value
+final IO<int> io = IO.of(10);
+
+/// Create instance of [IO] from a sync function
+final ioRun = IO(() => 10);
+
+/// Map [int] to [String]
+final IO<String> map = io.map((a) => '$a');
+
+/// Extract the value inside [IO] by running its function
+final int value = io.run();
+
+/// Chain another [IO] based on the value of the current [IO]
+final flatMap = io.flatMap((a) => IO.of(a + 10));
+```
+
 ### [Task](./lib/src/task.dart)
-Wrapper around an async function (`Future`). Allows to compose asynchronous functions **that never fail**.
+Wrapper around an **async** function (`Future`). Allows to compose asynchronous functions **that never fail**.
+
+> If you look closely, it's the same as [`IO`](#io) but for **async functions** 💡
 
 ```dart
 /// Create instance of [Task] from a value
