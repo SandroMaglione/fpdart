@@ -1,3 +1,6 @@
 .dart_tool/
 .packages
+
+# Generated files
+**.g.dart
 .idea/
