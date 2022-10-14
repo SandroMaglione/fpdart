@@ -38,7 +38,8 @@ class OpenMeteoApiClient {
 
   final http.Client _httpClient;
 
-  TaskEither<OpenMeteoApiFailure, Location> locationSearch2(String query) =>
+  /// Finds a [Location] `/v1/search/?name=(query)`.
+  TaskEither<OpenMeteoApiFailure, Location> locationSearch(String query) =>
       TaskEither<OpenMeteoApiFailure, http.Response>.tryCatch(
         () => _httpClient.get(
           Uri.https(
@@ -47,71 +48,36 @@ class OpenMeteoApiClient {
             {'name': query, 'count': '1'},
           ),
         ),
-        (error, stackTrace) => LocationHttpRequestFailure(),
+        (_, __) => LocationHttpRequestFailure(),
       )
-          .flatMap(
-        (response) => (response.statusCode != 200
-                ? Either<OpenMeteoApiFailure, String>.left(
-                    LocationRequestFailure(),
-                  )
-                : Either<OpenMeteoApiFailure, String>.of(response.body))
-            .toTaskEither(),
-      )
-          .flatMap(
-        (r) {
-          final locationJson = jsonDecode(r) as Map;
-          return (!locationJson.containsKey('results')
-                  ? Either<OpenMeteoApiFailure, dynamic>.left(
-                      LocationNotFoundFailure(),
-                    )
-                  : Either<OpenMeteoApiFailure, dynamic>.of(
-                      locationJson['results'],
-                    ))
-              .toTaskEither();
-        },
-      ).flatMap(
-        (r) {
-          final results = r as List;
-          return (results.isEmpty
-                  ? Either<OpenMeteoApiFailure, dynamic>.left(
-                      LocationNotFoundFailure(),
-                    )
-                  : Either<OpenMeteoApiFailure, dynamic>.of(
-                      results.first,
-                    ))
-              .toTaskEither();
-        },
-      ).flatMap(
-        (r) => Either.tryCatch(
-          () => Location.fromJson(r as Map<String, dynamic>),
-          (o, s) => LocationFormattingFailure(),
-        ).toTaskEither(),
-      );
-
-  /// Finds a [Location] `/v1/search/?name=(query)`.
-  Future<Location> locationSearch(String query) async {
-    final locationRequest = Uri.https(
-      _baseUrlGeocoding,
-      '/v1/search',
-      {'name': query, 'count': '1'},
-    );
-
-    final locationResponse = await _httpClient.get(locationRequest);
-
-    if (locationResponse.statusCode != 200) {
-      throw LocationRequestFailure();
-    }
-
-    final locationJson = jsonDecode(locationResponse.body) as Map;
-
-    if (!locationJson.containsKey('results')) throw LocationNotFoundFailure();
-
-    final results = locationJson['results'] as List;
-
-    if (results.isEmpty) throw LocationNotFoundFailure();
-
-    return Location.fromJson(results.first as Map<String, dynamic>);
-  }
+          .chainEither(
+            (response) =>
+                Either<OpenMeteoApiFailure, http.Response>.fromPredicate(
+              response,
+              (r) => r.statusCode != 200,
+              (r) => LocationRequestFailure(),
+            ).map((r) => r.body),
+          )
+          .chainEither(
+            (body) => Either<OpenMeteoApiFailure,
+                Map<dynamic, dynamic>>.fromPredicate(
+              jsonDecode(body) as Map,
+              (r) => r.containsKey('results'),
+              (r) => LocationRequestFailure(),
+            ).map((r) => r['results']),
+          )
+          .chainEither(
+            (results) => Either<OpenMeteoApiFailure, dynamic>.tryCatch(
+              () => (results as List).first,
+              (_, __) => LocationNotFoundFailure(),
+            ),
+          )
+          .chainEither(
+            (r) => Either.tryCatch(
+              () => Location.fromJson(r as Map<String, dynamic>),
+              (_, __) => LocationFormattingFailure(),
+            ),
+          );
 
   /// Fetches [Weather] for a given [latitude] and [longitude].
   Future<Weather> getWeather({
