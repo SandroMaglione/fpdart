@@ -411,6 +411,19 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
     }
   }
 
+  /// Safely cast a [dynamic] value to type `R`.
+  ///
+  /// If `value` is not of type `R`, then return a [Left]
+  /// containing the result of `onError`.
+  ///
+  /// **Note**: Make sure to specify the types of [Either] (`Either<L, R>.safeCast`
+  /// instead of `Either.safeCast`), otherwise this will always return [Right]!
+  factory Either.safeCast(
+    dynamic value,
+    L Function(dynamic value) onError,
+  ) =>
+      value is R ? Either<L, R>.of(value) : Either<L, R>.left(onError(value));
+
   /// Try to execute `run`. If no error occurs, then return [Right].
   /// Otherwise return [Left] containing the result of `onError`.
   ///

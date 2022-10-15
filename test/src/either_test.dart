@@ -4,7 +4,18 @@ import './utils/utils.dart';
 
 void main() {
   group('Either', () {
-    group('[Property-based testing]', () {});
+    group('[Property-based testing]', () {
+      group("safeCast", () {
+        Glados2(any.int, any.letterOrDigits)
+            .test('always returns Right without typed parameters',
+                (intValue, stringValue) {
+          final castInt = Either.safeCast(intValue, (value) => 'Error');
+          final castString = Either.safeCast(stringValue, (value) => 'Error');
+          expect(castInt, isA<Right<String, dynamic>>());
+          expect(castString, isA<Right<String, dynamic>>());
+        });
+      });
+    });
 
     group('is a', () {
       final either = Either<String, int>.of(10);
@@ -1089,5 +1100,28 @@ void main() {
     final result = Either.partitionEithers(list);
     expect(result.first, ['a', 'b']);
     expect(result.second, [1, 2, 3]);
+  });
+
+  group('safeCast', () {
+    test('dynamic', () {
+      final castInt = Either.safeCast(10, (value) => 'Error');
+      final castString = Either.safeCast('abc', (value) => 'Error');
+      expect(castInt, isA<Right<String, dynamic>>());
+      expect(castString, isA<Right<String, dynamic>>());
+    });
+
+    test('Right', () {
+      final cast = Either<String, int>.safeCast(10, (value) => 'Error');
+      cast.matchTestRight((r) {
+        expect(r, 10);
+      });
+    });
+
+    test('Left', () {
+      final cast = Either<String, int>.safeCast('abc', (value) => 'Error');
+      cast.matchTestLeft((l) {
+        expect(l, "Error");
+      });
+    });
   });
 }
