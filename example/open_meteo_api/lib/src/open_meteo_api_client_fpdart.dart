@@ -21,16 +21,44 @@ class LocationNotFoundFailure implements OpenMeteoApiLocationFailure {}
 class LocationFormattingFailure implements OpenMeteoApiLocationFailure {}
 
 /// [OpenMeteoApiWeatherFailure] when **http request** fails
-class WeatherHttpRequestFailure implements OpenMeteoApiWeatherFailure {}
+class WeatherHttpRequestFailure implements OpenMeteoApiWeatherFailure {
+  const WeatherHttpRequestFailure(this.object, this.stackTrace);
+  final Object object;
+  final StackTrace stackTrace;
+}
 
 /// [OpenMeteoApiWeatherFailure] when getWeather fails
-class WeatherRequestFailure implements OpenMeteoApiWeatherFailure {}
+class WeatherRequestFailure implements OpenMeteoApiWeatherFailure {
+  const WeatherRequestFailure(this.response);
+  final http.Response response;
+}
 
-/// [OpenMeteoApiWeatherFailure] when weather for provided location is not found
-class WeatherNotFoundFailure implements OpenMeteoApiWeatherFailure {}
+/// [OpenMeteoApiWeatherFailure] when weather response is not a valid [Map].
+class WeatherInvalidMapFailure implements OpenMeteoApiWeatherFailure {
+  const WeatherInvalidMapFailure(this.body);
+  final String body;
+}
+
+/// [OpenMeteoApiWeatherFailure] when weather information for provided location
+/// is not found (missing expected key).
+class WeatherKeyNotFoundFailure implements OpenMeteoApiWeatherFailure {}
+
+/// [OpenMeteoApiWeatherFailure] when weather data is not a valid [List].
+class WeatherInvalidListFailure implements OpenMeteoApiWeatherFailure {
+  const WeatherInvalidListFailure(this.value);
+  final dynamic value;
+}
+
+/// [OpenMeteoApiWeatherFailure] when weather for provided location
+/// is not found (missing data).
+class WeatherDataNotFoundFailure implements OpenMeteoApiWeatherFailure {}
 
 /// [OpenMeteoApiLocationFailure] when the response is not a valid [Weather]
-class WeatherFormattingFailure implements OpenMeteoApiWeatherFailure {}
+class WeatherFormattingFailure implements OpenMeteoApiWeatherFailure {
+  const WeatherFormattingFailure(this.object, this.stackTrace);
+  final Object object;
+  final StackTrace stackTrace;
+}
 
 /// {@template open_meteo_api_client}
 /// Dart API Client which wraps the [Open Meteo API](https://open-meteo.com).
@@ -104,30 +132,39 @@ class OpenMeteoApiClient {
             },
           ),
         ),
-        (_, __) => WeatherHttpRequestFailure(),
+        WeatherHttpRequestFailure.new,
       )
+          .chainEither(_validResponseBodyCurry(WeatherRequestFailure.new))
           .chainEither(
-            _validResponseBodyCurry(
-              (response) => WeatherRequestFailure(),
+            _safeCast<OpenMeteoApiWeatherFailure, Map<dynamic, dynamic>,
+                String>(WeatherInvalidMapFailure.new),
+          )
+          .chainEither(
+            (body) => body
+                .lookup('current_weather')
+                .toEither(WeatherKeyNotFoundFailure.new),
+          )
+          .chainEither(
+            _safeCast<OpenMeteoApiWeatherFailure, List<dynamic>, dynamic>(
+              WeatherInvalidListFailure.new,
             ),
           )
           .chainEither(
-            (body) =>
-                (jsonDecode(body) as Map).lookup('current_weather').toEither(
-                      WeatherRequestFailure.new,
-                    ),
-          )
-          .chainEither(
-            (results) => (results as List).head.toEither(
-                  WeatherNotFoundFailure.new,
-                ),
+            (results) => results.head.toEither(WeatherDataNotFoundFailure.new),
           )
           .chainEither(
             (weather) => Either.tryCatch(
               () => Weather.fromJson(weather as Map<String, dynamic>),
-              (_, __) => WeatherFormattingFailure(),
+              WeatherFormattingFailure.new,
             ),
           );
+
+  Either<E, T> Function(S) _safeCast<E, T, S>(
+    E Function(S value) onError,
+  ) =>
+      (S value) => value is T
+          ? Either<E, T>.of(value)
+          : Either<E, T>.left(onError(value));
 
   /// Verify that the response status code is 200,
   /// and extract the response's body.
