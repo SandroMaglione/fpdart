@@ -1,29 +1,36 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:fpdart/fpdart.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_meteo_api/open_meteo_api.dart';
 
-abstract class OpenMeteoApiFailure implements Exception {}
+abstract class OpenMeteoApiLocationFailure implements Exception {}
 
-/// [OpenMeteoApiFailure] when **http request** fails
-class LocationHttpRequestFailure implements OpenMeteoApiFailure {}
+abstract class OpenMeteoApiWeatherFailure implements Exception {}
 
-/// [OpenMeteoApiFailure] when request is not successful (`status != 200`)
-class LocationRequestFailure implements OpenMeteoApiFailure {}
+/// [OpenMeteoApiLocationFailure] when **http request** fails
+class LocationHttpRequestFailure implements OpenMeteoApiLocationFailure {}
 
-/// [OpenMeteoApiFailure] when the provided location is not found
-class LocationNotFoundFailure implements OpenMeteoApiFailure {}
+/// [OpenMeteoApiLocationFailure] when request is not successful (`status != 200`)
+class LocationRequestFailure implements OpenMeteoApiLocationFailure {}
 
-/// [OpenMeteoApiFailure] when the response is not a valid [Location]
-class LocationFormattingFailure implements OpenMeteoApiFailure {}
+/// [OpenMeteoApiLocationFailure] when the provided location is not found
+class LocationNotFoundFailure implements OpenMeteoApiLocationFailure {}
 
-/// [OpenMeteoApiFailure] when getWeather fails
-class WeatherRequestFailure implements OpenMeteoApiFailure {}
+/// [OpenMeteoApiLocationFailure] when the response is not a valid [Location]
+class LocationFormattingFailure implements OpenMeteoApiLocationFailure {}
 
-/// [OpenMeteoApiFailure] when weather for provided location is not found
-class WeatherNotFoundFailure implements OpenMeteoApiFailure {}
+/// [OpenMeteoApiWeatherFailure] when **http request** fails
+class WeatherHttpRequestFailure implements OpenMeteoApiWeatherFailure {}
+
+/// [OpenMeteoApiWeatherFailure] when getWeather fails
+class WeatherRequestFailure implements OpenMeteoApiWeatherFailure {}
+
+/// [OpenMeteoApiWeatherFailure] when weather for provided location is not found
+class WeatherNotFoundFailure implements OpenMeteoApiWeatherFailure {}
+
+/// [OpenMeteoApiLocationFailure] when the response is not a valid [Weather]
+class WeatherFormattingFailure implements OpenMeteoApiWeatherFailure {}
 
 /// {@template open_meteo_api_client}
 /// Dart API Client which wraps the [Open Meteo API](https://open-meteo.com).
@@ -39,8 +46,9 @@ class OpenMeteoApiClient {
   final http.Client _httpClient;
 
   /// Finds a [Location] `/v1/search/?name=(query)`.
-  TaskEither<OpenMeteoApiFailure, Location> locationSearch(String query) =>
-      TaskEither<OpenMeteoApiFailure, http.Response>.tryCatch(
+  TaskEither<OpenMeteoApiLocationFailure, Location> locationSearch(
+          String query) =>
+      TaskEither<OpenMeteoApiLocationFailure, http.Response>.tryCatch(
         () => _httpClient.get(
           Uri.https(
             _baseUrlGeocoding,
@@ -51,15 +59,15 @@ class OpenMeteoApiClient {
         (_, __) => LocationHttpRequestFailure(),
       )
           .chainEither(
-            (response) =>
-                Either<OpenMeteoApiFailure, http.Response>.fromPredicate(
+            (response) => Either<OpenMeteoApiLocationFailure,
+                http.Response>.fromPredicate(
               response,
               (r) => r.statusCode != 200,
               (r) => LocationRequestFailure(),
             ).map((r) => r.body),
           )
           .chainEither(
-            (body) => Either<OpenMeteoApiFailure,
+            (body) => Either<OpenMeteoApiLocationFailure,
                 Map<dynamic, dynamic>>.fromPredicate(
               jsonDecode(body) as Map,
               (r) => r.containsKey('results'),
@@ -67,7 +75,7 @@ class OpenMeteoApiClient {
             ).map((r) => r['results']),
           )
           .chainEither(
-            (results) => Either<OpenMeteoApiFailure, dynamic>.tryCatch(
+            (results) => Either<OpenMeteoApiLocationFailure, dynamic>.tryCatch(
               () => (results as List).first,
               (_, __) => LocationNotFoundFailure(),
             ),
@@ -80,30 +88,64 @@ class OpenMeteoApiClient {
           );
 
   /// Fetches [Weather] for a given [latitude] and [longitude].
-  Future<Weather> getWeather({
+  TaskEither<OpenMeteoApiWeatherFailure, Weather> getWeather({
     required double latitude,
     required double longitude,
-  }) async {
-    final weatherRequest = Uri.https(_baseUrlWeather, 'v1/forecast', {
-      'latitude': '$latitude',
-      'longitude': '$longitude',
-      'current_weather': 'true'
-    });
+  }) =>
+      TaskEither<OpenMeteoApiWeatherFailure, http.Response>.tryCatch(
+        () async => _httpClient.get(
+          Uri.https(
+            _baseUrlWeather,
+            'v1/forecast',
+            {
+              'latitude': '$latitude',
+              'longitude': '$longitude',
+              'current_weather': 'true'
+            },
+          ),
+        ),
+        (_, __) => WeatherHttpRequestFailure(),
+      )
+          .chainEither(
+            _validResponseBodyCurry(
+              (response) => WeatherRequestFailure(),
+            ),
+          )
+          .chainEither(
+            (body) =>
+                (jsonDecode(body) as Map).lookup('current_weather').toEither(
+                      WeatherRequestFailure.new,
+                    ),
+          )
+          .chainEither(
+            (results) => (results as List).head.toEither(
+                  WeatherNotFoundFailure.new,
+                ),
+          )
+          .chainEither(
+            (weather) => Either.tryCatch(
+              () => Weather.fromJson(weather as Map<String, dynamic>),
+              (_, __) => WeatherFormattingFailure(),
+            ),
+          );
 
-    final weatherResponse = await _httpClient.get(weatherRequest);
+  /// Verify that the response status code is 200,
+  /// and extract the response's body.
+  Either<E, String> _validResponseBody<E>(
+    E Function(http.Response) onError,
+    http.Response response,
+  ) =>
+      Either<E, http.Response>.fromPredicate(
+        response,
+        (r) => r.statusCode != 200,
+        onError,
+      ).map((r) => r.body);
 
-    if (weatherResponse.statusCode != 200) {
-      throw WeatherRequestFailure();
-    }
-
-    final bodyJson = jsonDecode(weatherResponse.body) as Map<String, dynamic>;
-
-    if (!bodyJson.containsKey('current_weather')) {
-      throw WeatherNotFoundFailure();
-    }
-
-    final weatherJson = bodyJson['current_weather'] as Map<String, dynamic>;
-
-    return Weather.fromJson(weatherJson);
-  }
+  /// Use `curry2` to make the function more concise.
+  final _validResponseBodyCurry = curry2<
+      OpenMeteoApiWeatherFailure Function(http.Response),
+      http.Response,
+      Either<OpenMeteoApiWeatherFailure, String>>(
+    _validResponseBody,
+  );
 }
