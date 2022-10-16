@@ -427,7 +427,7 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
     dynamic value,
     L Function(dynamic value) onError,
   ) =>
-      value is R ? Either<L, R>.of(value) : Either<L, R>.left(onError(value));
+      Either.safeCastStrict<L, R, dynamic>(value, onError);
 
   /// {@macro fpdart_safe_cast_either}
   ///

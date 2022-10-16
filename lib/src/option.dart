@@ -401,6 +401,27 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   static Option<R> fromEither<L, R>(Either<L, R> either) =>
       either.match((_) => Option.none(), (r) => Some(r));
 
+  /// {@template fpdart_safe_cast_option}
+  /// Safely cast a value to type `T`.
+  ///
+  /// If `value` is not of type `T`, then return a [None].
+  /// {@endtemplate}
+  ///
+  /// Less strict version of `Option.safeCastStrict`, since `safeCast`
+  /// assumes the value to be `dynamic`.
+  ///
+  /// **Note**: Make sure to specify the type of [Option] (`Option<T>.safeCast`
+  /// instead of `Option.safeCast`), otherwise this will always return [Some]!
+  factory Option.safeCast(dynamic value) =>
+      Option.safeCastStrict<T, dynamic>(value);
+
+  /// {@macro fpdart_safe_cast_option}
+  ///
+  /// More strict version of `Option.safeCast`, in which also the **input value
+  /// type** must be specified (while in `Option.safeCast` the type is `dynamic`).
+  static Option<T> safeCastStrict<T, V>(V value) =>
+      value is T ? Option<T>.of(value) : Option<T>.none();
+
   /// Return [Some] of `value` when `predicate` applied to `value` returns `true`,
   /// [None] otherwise.
   factory Option.fromPredicate(T value, bool Function(T t) predicate) =>

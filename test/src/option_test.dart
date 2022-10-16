@@ -5,6 +5,17 @@ import './utils/utils.dart';
 void main() {
   group('Option', () {
     group('[Property-based testing]', () {
+      group("safeCast", () {
+        Glados2(any.int, any.letterOrDigits)
+            .test('always returns Some without typed parameter',
+                (intValue, stringValue) {
+          final castInt = Option.safeCast(intValue);
+          final castString = Option.safeCast(stringValue);
+          expect(castInt, isA<Some<dynamic>>());
+          expect(castString, isA<Some<dynamic>>());
+        });
+      });
+
       group('map', () {
         Glados(any.optionInt).test('should keep the same type (Some or None)',
             (option) {
@@ -738,6 +749,41 @@ void main() {
       expect(map1, map2);
       expect(map1, map3);
       expect(map1 == map4, false);
+    });
+  });
+
+  group('safeCast', () {
+    test('dynamic', () {
+      final castInt = Option.safeCast(10);
+      final castString = Option.safeCast('abc');
+      expect(castInt, isA<Some<dynamic>>());
+      expect(castString, isA<Some<dynamic>>());
+    });
+
+    test('Some', () {
+      final cast = Option<int>.safeCast(10);
+      cast.matchTestSome((r) {
+        expect(r, 10);
+      });
+    });
+
+    test('None', () {
+      final cast = Option<int>.safeCast('abc');
+      expect(cast, isA<None<int>>());
+    });
+  });
+
+  group('safeCastStrict', () {
+    test('Some', () {
+      final cast = Option.safeCastStrict<int, int>(10);
+      cast.matchTestSome((r) {
+        expect(r, 10);
+      });
+    });
+
+    test('None', () {
+      final cast = Option.safeCastStrict<int, String>('abc');
+      expect(cast, isA<None<int>>());
     });
   });
 }
