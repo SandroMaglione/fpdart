@@ -411,16 +411,31 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
     }
   }
 
-  /// Safely cast a [dynamic] value to type `R`.
+  /// {@template fpdart_safe_cast_either}
+  /// Safely cast a value to type `R`.
   ///
   /// If `value` is not of type `R`, then return a [Left]
   /// containing the result of `onError`.
+  /// {@endtemplate}
+  ///
+  /// Less strict version of `Either.safeCastStrict`, since `safeCast`
+  /// assumes the value to be `dynamic`.
   ///
   /// **Note**: Make sure to specify the types of [Either] (`Either<L, R>.safeCast`
   /// instead of `Either.safeCast`), otherwise this will always return [Right]!
   factory Either.safeCast(
     dynamic value,
     L Function(dynamic value) onError,
+  ) =>
+      value is R ? Either<L, R>.of(value) : Either<L, R>.left(onError(value));
+
+  /// {@macro fpdart_safe_cast_either}
+  ///
+  /// More strict version of `Either.safeCast`, in which also the **input value
+  /// type** must be specified (while in `Either.safeCast` the type is `dynamic`).
+  static Either<L, R> safeCastStrict<L, R, V>(
+    V value,
+    L Function(V value) onError,
   ) =>
       value is R ? Either<L, R>.of(value) : Either<L, R>.left(onError(value));
 

@@ -136,8 +136,10 @@ class OpenMeteoApiClient {
       )
           .chainEither(_validResponseBodyCurry(WeatherRequestFailure.new))
           .chainEither(
-            _safeCast<OpenMeteoApiWeatherFailure, Map<dynamic, dynamic>,
-                String>(WeatherInvalidMapFailure.new),
+            (body) => Either.safeCastStrict<
+                OpenMeteoApiWeatherFailure,
+                Map<dynamic, dynamic>,
+                String>(body, WeatherInvalidMapFailure.new),
           )
           .chainEither(
             (body) => body
@@ -145,7 +147,9 @@ class OpenMeteoApiClient {
                 .toEither(WeatherKeyNotFoundFailure.new),
           )
           .chainEither(
-            _safeCast<OpenMeteoApiWeatherFailure, List<dynamic>, dynamic>(
+            (currentWeather) =>
+                Either<OpenMeteoApiWeatherFailure, List<dynamic>>.safeCast(
+              currentWeather,
               WeatherInvalidListFailure.new,
             ),
           )
@@ -158,13 +162,6 @@ class OpenMeteoApiClient {
               WeatherFormattingFailure.new,
             ),
           );
-
-  Either<E, T> Function(S) _safeCast<E, T, S>(
-    E Function(S value) onError,
-  ) =>
-      (S value) => value is T
-          ? Either<E, T>.of(value)
-          : Either<E, T>.left(onError(value));
 
   /// Verify that the response status code is 200,
   /// and extract the response's body.

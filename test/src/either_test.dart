@@ -1124,4 +1124,22 @@ void main() {
       });
     });
   });
+
+  group('safeCastStrict', () {
+    test('Right', () {
+      final cast =
+          Either.safeCastStrict<String, int, int>(10, (value) => 'Error');
+      cast.matchTestRight((r) {
+        expect(r, 10);
+      });
+    });
+
+    test('Left', () {
+      final cast =
+          Either.safeCastStrict<String, int, String>('abc', (value) => 'Error');
+      cast.matchTestLeft((l) {
+        expect(l, "Error");
+      });
+    });
+  });
 }

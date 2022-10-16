@@ -1,4 +1,3 @@
-// ignore_for_file: implicit_dynamic_parameter
 import 'package:fpdart/fpdart.dart';
 
 void main() {
@@ -10,8 +9,10 @@ void main() {
   print(first);
 
   /// Safe 🎯
-  final wellYeah =
-      Either<String, List<int>>.safeCast(intValue, (value) => 'Not an List!');
+  final wellYeah = Either<String, List<int>>.safeCast(
+    intValue,
+    (dynamic value) => 'Not an List!',
+  );
   final firstEither = wellYeah.map((list) => list.first);
   print(firstEither);
 
