@@ -12,6 +12,17 @@ class MockResponse extends Mock implements http.Response {}
 
 class FakeUri extends Fake implements Uri {}
 
+void _isLeftOfType<E, R, T>(
+  Either<E, R> result, {
+  dynamic Function(TypeMatcher<T>)? typeMatch,
+}) {
+  expect(result, isA<Left<E, R>>());
+  result.match(
+    (l) => expect(l, typeMatch != null ? typeMatch(isA<T>()) : isA<T>()),
+    (_) => fail('should not be right'),
+  );
+}
+
 void main() {
   group('OpenMeteoApiClientFpdart', () {
     late http.Client httpClient;
@@ -39,9 +50,10 @@ void main() {
         when(() => response.statusCode).thenReturn(200);
         when(() => response.body).thenReturn('{}');
         when(() => httpClient.get(any())).thenAnswer((_) async => response);
-        try {
-          await apiClient.locationSearch(query).run();
-        } catch (_) {}
+
+        /// No need of try/catch
+        await apiClient.locationSearch(query).run();
+
         verify(
           () => httpClient.get(
             Uri.https(
@@ -53,33 +65,134 @@ void main() {
         ).called(1);
       });
 
-      test('throws LocationRequestFailure on non-200 response', () async {
+      test('returns LocationHttpRequestFpdartFailure when http request fails',
+          () async {
+        when(() => httpClient.get(any())).thenThrow(Exception());
+
+        final result = await apiClient.locationSearch(query).run();
+
+        _isLeftOfType<OpenMeteoApiFpdartLocationFailure, Location,
+            LocationHttpRequestFpdartFailure>(
+          result,
+          typeMatch: (m) => m.having(
+            (failure) => failure.object,
+            'Exception',
+            isA<Exception>(),
+          ),
+        );
+      });
+
+      test('returns LocationRequestFpdartFailure on non-200 response',
+          () async {
         final response = MockResponse();
         when(() => response.statusCode).thenReturn(400);
         when(() => httpClient.get(any())).thenAnswer((_) async => response);
 
         final result = await apiClient.locationSearch(query).run();
-        expect(result, isA<Left<LocationRequestFpdartFailure, Location>>());
+
+        _isLeftOfType<OpenMeteoApiFpdartLocationFailure, Location,
+            LocationRequestFpdartFailure>(
+          result,
+          typeMatch: (m) => m.having(
+            (failure) => failure.response,
+            'MockResponse',
+            response,
+          ),
+        );
       });
 
-      test('throws LocationNotFoundFailure on error response', () async {
+      test(
+          'returns LocationInvalidJsonDecodeFpdartFailure when response is invalid',
+          () async {
+        final response = MockResponse();
+        when(() => response.statusCode).thenReturn(200);
+        when(() => response.body).thenReturn('_{}_');
+        when(() => httpClient.get(any())).thenAnswer((_) async => response);
+
+        final result = await apiClient.locationSearch(query).run();
+
+        _isLeftOfType<OpenMeteoApiFpdartLocationFailure, Location,
+            LocationInvalidJsonDecodeFpdartFailure>(result);
+      });
+
+      test('returns LocationInvalidMapFpdartFailure when response is not a Map',
+          () async {
+        final response = MockResponse();
+        when(() => response.statusCode).thenReturn(200);
+        when(() => response.body).thenReturn('[]');
+        when(() => httpClient.get(any())).thenAnswer((_) async => response);
+
+        final result = await apiClient.locationSearch(query).run();
+
+        _isLeftOfType<OpenMeteoApiFpdartLocationFailure, Location,
+            LocationInvalidMapFpdartFailure>(result);
+      });
+
+      test(
+          'returns LocationKeyNotFoundFpdartFailure when the response is missing the correct key',
+          () async {
         final response = MockResponse();
         when(() => response.statusCode).thenReturn(200);
         when(() => response.body).thenReturn('{}');
         when(() => httpClient.get(any())).thenAnswer((_) async => response);
 
         final result = await apiClient.locationSearch(query).run();
-        expect(result, isA<Left<LocationNotFoundFpdartFailure, Location>>());
+
+        _isLeftOfType<OpenMeteoApiFpdartLocationFailure, Location,
+            LocationKeyNotFoundFpdartFailure>(result);
       });
 
-      test('throws LocationNotFoundFailure on empty response', () async {
+      test(
+          'returns LocationInvalidListFpdartFailure when Map key does not contain a valid List',
+          () async {
+        final response = MockResponse();
+        when(() => response.statusCode).thenReturn(200);
+        when(() => response.body).thenReturn('{"results": {}}');
+        when(() => httpClient.get(any())).thenAnswer((_) async => response);
+
+        final result = await apiClient.locationSearch(query).run();
+
+        _isLeftOfType<OpenMeteoApiFpdartLocationFailure, Location,
+            LocationInvalidListFpdartFailure>(result);
+      });
+
+      test('returns LocationDataNotFoundFpdartFailure on empty response',
+          () async {
         final response = MockResponse();
         when(() => response.statusCode).thenReturn(200);
         when(() => response.body).thenReturn('{"results": []}');
         when(() => httpClient.get(any())).thenAnswer((_) async => response);
 
         final result = await apiClient.locationSearch(query).run();
-        expect(result, isA<Left<LocationNotFoundFpdartFailure, Location>>());
+
+        _isLeftOfType<OpenMeteoApiFpdartLocationFailure, Location,
+            LocationDataNotFoundFpdartFailure>(result);
+      });
+
+      test(
+          'returns LocationFormattingFpdartFailure when response is not a correct Location object',
+          () async {
+        final response = MockResponse();
+        when(() => response.statusCode).thenReturn(200);
+        when(() => response.body).thenReturn(
+          '''
+{
+  "results": [
+    {
+      "_id": 4887398,
+      "_name": "Chicago",
+      "_latitude": 41.85003,
+      "_longitude": -87.65005
+    }
+  ]
+}''',
+        );
+        when(() => httpClient.get(any())).thenAnswer((_) async => response);
+
+        final result = await apiClient.locationSearch(query).run();
+
+        _isLeftOfType<OpenMeteoApiFpdartLocationFailure, Location,
+            LocationFormattingFpdartFailure>(result);
       });
 
       test('returns Location on valid response', () async {

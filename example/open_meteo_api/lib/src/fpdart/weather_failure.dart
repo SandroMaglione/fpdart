@@ -23,7 +23,7 @@ class WeatherInvalidMapFpdartFailure
   final String body;
 }
 
-/// [OpenMeteoApiFpdartWeatherFailure] when weather information for provided location
+/// [OpenMeteoApiFpdartWeatherFailure] when weather information
 /// is not found (missing expected key).
 class WeatherKeyNotFoundFpdartFailure
     implements OpenMeteoApiFpdartWeatherFailure {}

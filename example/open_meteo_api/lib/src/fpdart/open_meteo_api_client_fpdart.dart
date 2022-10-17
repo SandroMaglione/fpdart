@@ -30,35 +30,45 @@ class OpenMeteoApiClientFpdart {
             {'name': query, 'count': '1'},
           ),
         ),
-        (_, __) => LocationHttpRequestFpdartFailure(),
+        LocationHttpRequestFpdartFailure.new,
       )
           .chainEither(
-            (response) => Either<OpenMeteoApiFpdartLocationFailure,
-                http.Response>.fromPredicate(
-              response,
-              (r) => r.statusCode != 200,
-              (r) => LocationRequestFpdartFailure(),
-            ).map((r) => r.body),
+            (response) =>
+                _validResponseBody(response, LocationRequestFpdartFailure.new),
           )
           .chainEither(
-            (body) => Either<OpenMeteoApiFpdartLocationFailure,
-                Map<dynamic, dynamic>>.fromPredicate(
-              jsonDecode(body) as Map,
-              (r) => r.containsKey('results'),
-              (r) => LocationRequestFpdartFailure(),
-            ).map((r) => r['results']),
-          )
-          .chainEither(
-            (results) =>
-                Either<OpenMeteoApiFpdartLocationFailure, dynamic>.tryCatch(
-              () => (results as List).first,
-              (_, __) => LocationNotFoundFpdartFailure(),
+            (body) => Either.tryCatch(
+              () => jsonDecode(body),
+              (_, __) => LocationInvalidJsonDecodeFpdartFailure(body),
             ),
           )
           .chainEither(
-            (r) => Either.tryCatch(
-              () => Location.fromJson(r as Map<String, dynamic>),
-              (_, __) => LocationFormattingFpdartFailure(),
+            (json) => Either<OpenMeteoApiFpdartLocationFailure,
+                Map<dynamic, dynamic>>.safeCast(
+              json,
+              LocationInvalidMapFpdartFailure.new,
+            ),
+          )
+          .chainEither(
+            (body) => body
+                .lookup('results')
+                .toEither(LocationKeyNotFoundFpdartFailure.new),
+          )
+          .chainEither(
+            (currentWeather) => Either<OpenMeteoApiFpdartLocationFailure,
+                List<dynamic>>.safeCast(
+              currentWeather,
+              LocationInvalidListFpdartFailure.new,
+            ),
+          )
+          .chainEither(
+            (results) =>
+                results.head.toEither(LocationDataNotFoundFpdartFailure.new),
+          )
+          .chainEither(
+            (weather) => Either.tryCatch(
+              () => Location.fromJson(weather as Map<String, dynamic>),
+              LocationFormattingFpdartFailure.new,
             ),
           );
 
@@ -81,7 +91,10 @@ class OpenMeteoApiClientFpdart {
         ),
         WeatherHttpRequestFpdartFailure.new,
       )
-          .chainEither(_validResponseBodyCurry(WeatherRequestFpdartFailure.new))
+          .chainEither(
+            (response) =>
+                _validResponseBody(response, WeatherRequestFpdartFailure.new),
+          )
           .chainEither(
             (body) => Either.safeCastStrict<
                 OpenMeteoApiFpdartWeatherFailure,
@@ -114,20 +127,12 @@ class OpenMeteoApiClientFpdart {
   /// Verify that the response status code is 200,
   /// and extract the response's body.
   Either<E, String> _validResponseBody<E>(
-    E Function(http.Response) onError,
     http.Response response,
+    E Function(http.Response) onError,
   ) =>
       Either<E, http.Response>.fromPredicate(
         response,
-        (r) => r.statusCode != 200,
+        (r) => r.statusCode == 200,
         onError,
       ).map((r) => r.body);
-
-  /// Use `curry2` to make the function more concise.
-  final _validResponseBodyCurry = curry2<
-      OpenMeteoApiFpdartWeatherFailure Function(http.Response),
-      http.Response,
-      Either<OpenMeteoApiFpdartWeatherFailure, String>>(
-    _validResponseBody,
-  );
 }
