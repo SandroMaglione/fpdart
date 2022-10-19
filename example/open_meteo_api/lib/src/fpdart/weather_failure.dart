@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 
-abstract class OpenMeteoApiFpdartWeatherFailure implements Exception {}
+/// Abstract class which represents a failure in the `getWeather` request.
+abstract class OpenMeteoApiFpdartWeatherFailure {}
 
 /// [OpenMeteoApiFpdartWeatherFailure] when **http request** fails
 class WeatherHttpRequestFpdartFailure

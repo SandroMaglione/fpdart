@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 
-abstract class OpenMeteoApiFpdartLocationFailure implements Exception {}
+/// Abstract class which represents a failure in the `locationSearch` request.
+abstract class OpenMeteoApiFpdartLocationFailure {}
 
 /// [OpenMeteoApiFpdartLocationFailure] when **http request** fails
 class LocationHttpRequestFpdartFailure
