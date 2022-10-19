@@ -2,6 +2,9 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:glados/glados.dart';
 
+int doSomething(String str) => str.length + 10 * 2;
+int doSomethingElse(int number) => number + 10 * 2;
+
 void main(List<String> args) {
   int? nullableInt = 10;
   if (nullableInt == null) {
@@ -28,4 +31,15 @@ void main(List<String> args) {
 
   /// ⛔️ The getter 'toLowerCase' isn't defined for the type 'Option<String>'.
   optionStr.toLowerCase;
+
+  /// Option has methods that makes it more powerful (chain methods) ⛓
+  String? strNullable = Random().nextBool() ? "string" : null;
+  Option<String> optionNullable = some("string");
+
+  Option<int> optionIntNullable =
+      optionNullable.map(doSomething).alt(() => some(20)).map(doSomethingElse);
+
+  int? intNullable = strNullable != null
+      ? doSomethingElse(doSomething(strNullable))
+      : doSomethingElse(20);
 }
