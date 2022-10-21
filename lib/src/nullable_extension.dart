@@ -1,5 +1,13 @@
+import 'either.dart';
+import 'option.dart';
+
 /// `fpdart` extension to chain methods on nullable values `T?`
 extension FpdartOnNullable<T> on T? {
+  Option<T> toOption() => Option.fromNullable(this);
+
+  Either<L, T> toEither<L>(L Function(T?) onNull) =>
+      Either.fromNullable(this, onNull);
+
   /// Update the value using `f` if is not `null`,
   /// otherwise just return `null`.
   B? map<B>(B Function(T t) f) {

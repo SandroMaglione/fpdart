@@ -36,10 +36,29 @@ void main(List<String> args) {
   String? strNullable = Random().nextBool() ? "string" : null;
   Option<String> optionNullable = some("string");
 
-  Option<int> optionIntNullable =
-      optionNullable.map(doSomething).alt(() => some(20)).map(doSomethingElse);
+  /// Declarative API: more readable and composable 🎉
+  Option<double> optionIntNullable = optionNullable
+      .map(doSomething)
+      .alt(() => some(20))
+      .map(doSomethingElse)
+      .flatMap((t) => some(t / 2));
 
-  int? intNullable = strNullable != null
-      ? doSomethingElse(doSomething(strNullable))
-      : doSomethingElse(20);
+  /// Not really clear what is going on here 🤔
+  double? intNullable = (strNullable != null
+          ? doSomethingElse(doSomething(strNullable))
+          : doSomethingElse(20)) /
+      2;
+
+  if (optionNullable.isSome()) {
+    /// Still type `Option<int>`, not `Some<int>` 😐
+    optionIntNullable;
+  }
+
+  if (strNullable != null) {
+    /// This is now `String` 🤝
+    strNullable;
+  }
+
+  List<int>? list = Random().nextBool() ? [1, 2, 3, 4] : null;
+  list.map((e) => /** What type is `e`? 😐 */ null);
 }
