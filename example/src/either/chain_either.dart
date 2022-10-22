@@ -57,7 +57,7 @@ Future<void> placeOrder() async {
   /// Same code using fpart and Functional programming
   Either.fromNullable(
     authRepository.currentUser?.uid,
-    (r) => 'Missing uid',
+    () => 'Missing uid',
   ).toTaskEither().flatMap(
         (uid) => TaskEither.tryCatch(
           () async => cartRepository.fetchCart(uid),

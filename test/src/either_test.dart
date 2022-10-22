@@ -751,14 +751,14 @@ void main() {
 
     group('fromNullable', () {
       test('Right', () {
-        final either = Either<String, int>.fromNullable(10, (r) => 'none');
+        final either = Either<String, int>.fromNullable(10, () => 'none');
         either.match((_) {
           fail('should be right');
         }, (r) => expect(r, 10));
       });
 
       test('Left', () {
-        final either = Either<String, int>.fromNullable(null, (r) => 'none');
+        final either = Either<String, int>.fromNullable(null, () => 'none');
         either.match((l) => expect(l, 'none'), (_) {
           fail('should be left');
         });

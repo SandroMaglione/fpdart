@@ -377,6 +377,44 @@ void main() {
       });
     });
 
+    group('fromNullable', () {
+      test('Right', () async {
+        final task = TaskEither<String, int>.fromNullable(10, () => "Error");
+        final result = await task.run();
+        result.matchTestRight((r) {
+          expect(r, 10);
+        });
+      });
+
+      test('Left', () async {
+        final task = TaskEither<String, int>.fromNullable(null, () => "Error");
+        final result = await task.run();
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+      });
+    });
+
+    group('fromNullableAsync', () {
+      test('Right', () async {
+        final task = TaskEither<String, int>.fromNullableAsync(
+            10, Task(() async => "Error"));
+        final result = await task.run();
+        result.matchTestRight((r) {
+          expect(r, 10);
+        });
+      });
+
+      test('Left', () async {
+        final task = TaskEither<String, int>.fromNullableAsync(
+            null, Task(() async => "Error"));
+        final result = await task.run();
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+      });
+    });
+
     group('fromPredicate', () {
       test('True', () async {
         final task = TaskEither<String, int>.fromPredicate(

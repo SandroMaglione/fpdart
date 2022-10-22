@@ -183,6 +183,17 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   factory TaskEither.fromTask(Task<R> task) =>
       TaskEither(() async => Right(await task.run()));
 
+  /// {@template fpdart_from_nullable_task_either}
+  /// If `r` is `null`, then return the result of `onNull` in [Left].
+  /// Otherwise return `Right(r)`.
+  /// {@endtemplate}
+  factory TaskEither.fromNullable(R? r, L Function() onNull) =>
+      Either.fromNullable(r, onNull).toTaskEither();
+
+  /// {@macro fpdart_from_nullable_task_either}
+  factory TaskEither.fromNullableAsync(R? r, Task<L> onNull) => TaskEither(
+      () async => r != null ? Either.of(r) : Either.left(await onNull.run()));
+
   /// When calling `predicate` with `value` returns `true`, then running [TaskEither] returns `Right(value)`.
   /// Otherwise return `onFalse`.
   factory TaskEither.fromPredicate(

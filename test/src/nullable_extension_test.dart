@@ -23,7 +23,7 @@ void main() {
     group("toEither", () {
       test('Right', () {
         final value = 10;
-        final result = value.toEither((l) => "$l");
+        final result = value.toEither(() => "Error");
         result.matchTestRight((t) {
           expect(t, value);
         });
@@ -31,9 +31,49 @@ void main() {
 
       test('Left', () {
         int? value = null;
-        final result = value.toEither((l) => "$l");
+        final result = value.toEither(() => "Error");
         result.matchTestLeft((l) {
-          expect(l, "null");
+          expect(l, "Error");
+        });
+      });
+    });
+
+    group("toTaskEither", () {
+      test('Right', () async {
+        final value = 10;
+        final task = value.toTaskEither(() => "Error");
+        final result = await task.run();
+        result.matchTestRight((t) {
+          expect(t, value);
+        });
+      });
+
+      test('Left', () async {
+        int? value = null;
+        final task = value.toTaskEither(() => "Error");
+        final result = await task.run();
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+      });
+    });
+
+    group("toTaskEitherAsync", () {
+      test('Right', () async {
+        final value = 10;
+        final task = value.toTaskEitherAsync(Task.of("Error"));
+        final result = await task.run();
+        result.matchTestRight((t) {
+          expect(t, value);
+        });
+      });
+
+      test('Left', () async {
+        int? value = null;
+        final task = value.toTaskEitherAsync(Task.of("Error"));
+        final result = await task.run();
+        result.matchTestLeft((l) {
+          expect(l, "Error");
         });
       });
     });

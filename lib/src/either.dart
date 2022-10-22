@@ -387,8 +387,8 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
 
   /// If `r` is `null`, then return the result of `onNull` in [Left].
   /// Otherwise return `Right(r)`.
-  factory Either.fromNullable(R? r, L Function(R? r) onNull) =>
-      r != null ? Either.of(r) : Either.left(onNull(r));
+  factory Either.fromNullable(R? r, L Function() onNull) =>
+      r != null ? Either.of(r) : Either.left(onNull());
 
   /// Try to execute `run`. If no error occurs, then return [Right].
   /// Otherwise return [Left] containing the result of `onError`.
