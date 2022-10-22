@@ -5,10 +5,33 @@ import 'package:fpdart/fpdart.dart';
 int? nullable() => Random().nextBool() ? 10 : null;
 
 void main(List<String> args) {
-  final value = 10;
-  // final either = value.toEither<String>();
+  int? value1 = 10.toOption().map((t) => t + 10).toNullable();
+  bool? value2 = value1?.isEven;
+  int? value3 = value2
+      .toEither(() => "Error")
+      .flatMap((a) => a ? right<String, int>(10) : left<String, int>("None"))
+      .toNullable();
+  Option<int> value4 = (value3?.abs().round()).toOption().flatMap(Option.of);
 
-  final nullableValue = nullable();
-  nullableValue.toTaskEitherAsync(Task.of(10));
-  // nullableValue.toEither();
+  Option<int> value = (10
+          .toOption()
+          .map((t) => t + 10)
+          .toNullable()
+
+          /// Null safety 🎯
+          ?.ceil()
+
+          /// Null safety 🎯
+          .isEven
+          .toEither(() => "Error")
+          .flatMap((a) => right<String, int>(10))
+          .toNullable()
+
+          /// Null safety 🎯
+          ?.abs()
+
+          /// Null safety 🎯
+          .round())
+      .toOption()
+      .flatMap(Option.of);
 }
