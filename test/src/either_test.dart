@@ -436,6 +436,20 @@ void main() {
       });
     });
 
+    group('toNullable', () {
+      test('Right', () {
+        final value = Either<String, int>.of(10);
+        final ap = value.toNullable();
+        expect(ap, 10);
+      });
+
+      test('Left', () {
+        final value = Either<String, int>.left('none');
+        final ap = value.toNullable();
+        expect(ap, null);
+      });
+    });
+
     group('toIOEither', () {
       test('Right', () {
         final value = Either<String, int>.of(10);

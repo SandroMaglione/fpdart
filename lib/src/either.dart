@@ -206,6 +206,12 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// call an async ([Future]) function based on the value in [Either].
   TaskEither<L, R> toTaskEither();
 
+  /// Convert [Either] to nullable `R?`.
+  ///
+  /// **Note**: this loses information about a possible [Left] value,
+  /// converting it to simply `null`.
+  R? toNullable();
+
   /// Return `true` when this [Either] is [Left].
   bool isLeft();
 
@@ -524,6 +530,9 @@ class Right<L, R> extends Either<L, R> {
 
   @override
   IOEither<L, R> toIOEither() => IOEither.of(_value);
+
+  @override
+  R? toNullable() => _value;
 }
 
 class Left<L, R> extends Either<L, R> {
@@ -610,4 +619,7 @@ class Left<L, R> extends Either<L, R> {
 
   @override
   IOEither<L, R> toIOEither() => IOEither.left(_value);
+
+  @override
+  R? toNullable() => null;
 }
