@@ -2,12 +2,15 @@ import 'either.dart';
 import 'option.dart';
 import 'task.dart';
 import 'task_either.dart';
+import 'task_option.dart';
 
 /// `fpdart` extension to work on nullable values `T?`
 extension FpdartOnNullable<T> on T? {
   /// Convert a nullable type `T?` to [Option]:
+  /// {@template fpdart_on_nullable_to_option}
   /// - [Some] if the value is **not** `null`
   /// - [None] if the value is `null`
+  /// {@endtemplate}
   Option<T> toOption() => Option.fromNullable(this);
 
   /// Convert a nullable type `T?` to [Either]:
@@ -17,6 +20,10 @@ extension FpdartOnNullable<T> on T? {
   /// {@endtemplate}
   Either<L, T> toEither<L>(L Function() onNull) =>
       Either.fromNullable(this, onNull);
+
+  /// Convert a nullable type `T?` to [TaskOption]:
+  /// {@macro fpdart_on_nullable_to_option}
+  TaskOption<T> toTaskOption() => TaskOption.fromNullable(this);
 
   /// Convert a nullable type `T?` to [TaskEither] using a **sync function**:
   /// {@macro fpdart_on_nullable_to_either}

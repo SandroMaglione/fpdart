@@ -150,6 +150,11 @@ class TaskOption<R> extends HKT<_TaskOptionHKT, R>
   factory TaskOption.fromTask(Task<R> task) =>
       TaskOption(() async => Option.of(await task.run()));
 
+  /// If `r` is `null`, then return [None].
+  /// Otherwise return `Right(r)`.
+  factory TaskOption.fromNullable(R? r) =>
+      Option.fromNullable(r).toTaskOption();
+
   /// When calling `predicate` with `value` returns `true`, then running [TaskOption] returns `Some(value)`.
   /// Otherwise return [None].
   factory TaskOption.fromPredicate(R value, bool Function(R a) predicate) =>
