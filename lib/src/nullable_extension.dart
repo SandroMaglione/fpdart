@@ -1,4 +1,5 @@
 import 'either.dart';
+import 'io_either.dart';
 import 'option.dart';
 import 'task.dart';
 import 'task_either.dart';
@@ -24,6 +25,10 @@ extension FpdartOnNullable<T> on T? {
   /// Convert a nullable type `T?` to [TaskOption]:
   /// {@macro fpdart_on_nullable_to_option}
   TaskOption<T> toTaskOption() => TaskOption.fromNullable(this);
+
+  /// Convert a nullable type `T?` to [IOEither].
+  IOEither<L, T> toIOEither<L>(L Function() onNull) =>
+      IOEither.fromNullable(this, onNull);
 
   /// Convert a nullable type `T?` to [TaskEither] using a **sync function**:
   /// {@macro fpdart_on_nullable_to_either}

@@ -1,4 +1,5 @@
 import 'function.dart';
+import 'io_either.dart';
 import 'option.dart';
 import 'task_either.dart';
 import 'tuple.dart';
@@ -194,6 +195,9 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// - If the [Either] is [Left], throw away its value and just return [None]
   /// - If the [Either] is [Right], return a [Some] containing the value inside [Right]
   Option<R> toOption();
+
+  /// Convert this [Either] to a [IOEither].
+  IOEither<L, R> toIOEither();
 
   /// Convert this [Either] to a [TaskEither].
   ///
@@ -517,6 +521,9 @@ class Right<L, R> extends Either<L, R> {
 
   @override
   TaskEither<L, R> toTaskEither() => TaskEither.of(_value);
+
+  @override
+  IOEither<L, R> toIOEither() => IOEither.of(_value);
 }
 
 class Left<L, R> extends Either<L, R> {
@@ -600,4 +607,7 @@ class Left<L, R> extends Either<L, R> {
 
   @override
   TaskEither<L, R> toTaskEither() => TaskEither.left(_value);
+
+  @override
+  IOEither<L, R> toIOEither() => IOEither.left(_value);
 }

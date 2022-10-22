@@ -56,6 +56,26 @@ void main() {
       });
     });
 
+    group("toIOEither", () {
+      test('Right', () {
+        final value = 10;
+        final task = value.toIOEither(() => "Error");
+        final result = task.run();
+        result.matchTestRight((t) {
+          expect(t, value);
+        });
+      });
+
+      test('Left', () {
+        int? value = null;
+        final task = value.toIOEither(() => "Error");
+        final result = task.run();
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+      });
+    });
+
     group("toTaskEither", () {
       test('Right', () async {
         final value = 10;

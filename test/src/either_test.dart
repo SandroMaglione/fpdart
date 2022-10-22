@@ -436,6 +436,22 @@ void main() {
       });
     });
 
+    group('toIOEither', () {
+      test('Right', () {
+        final value = Either<String, int>.of(10);
+        final ap = value.toIOEither();
+        final result = ap.run();
+        expect(result, value);
+      });
+
+      test('Left', () {
+        final value = Either<String, int>.left('none');
+        final ap = value.toIOEither();
+        final result = ap.run();
+        expect(result, value);
+      });
+    });
+
     group('toTaskEither', () {
       test('Right', () async {
         final value = Either<String, int>.of(10);
