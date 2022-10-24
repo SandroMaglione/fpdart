@@ -35,6 +35,24 @@ final either = Either<String, int>.fromNullable(value, (r) => 'none');
 
 final either = Either<String, int>.fromNullable(value, () => 'none');
 ```
+- Added `chainEither` to `TaskEither`
+- Added `safeCast` (`Either` and `Option`)
+- Added `safeCastStrict` (`Either` and `Option`)
+```dart
+int intValue = 10;
+
+/// Unhandled exception: type 'int' is not a subtype of type 'List<int>' in type cast
+final waitWhat = intValue as List<int>;
+final first = waitWhat.first;
+
+/// Safe 🎯
+final wellYeah = Either<String, List<int>>.safeCast(
+  intValue,
+  (dynamic value) => 'Not an List!',
+);
+final firstEither = wellYeah.map((list) => list.first);
+```
+- Added [**Open API Meteo example**](./example/open_meteo_api/) (from imperative to functional programming)
 - Added article about [Option type and Null Safety in dart](https://www.sandromaglione.com/techblog/option_type_and_null_safety_dart)
 
 # v0.3.0 - 11 October 2022
