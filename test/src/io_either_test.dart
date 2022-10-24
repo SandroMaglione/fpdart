@@ -370,6 +370,24 @@ void main() {
       });
     });
 
+    group('fromNullable', () {
+      test('Right', () {
+        final task = IOEither<String, int>.fromNullable(10, () => "Error");
+        final result = task.run();
+        result.matchTestRight((r) {
+          expect(r, 10);
+        });
+      });
+
+      test('Left', () {
+        final task = IOEither<String, int>.fromNullable(null, () => "Error");
+        final result = task.run();
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+      });
+    });
+
     group('fromPredicate', () {
       test('True', () {
         final task =

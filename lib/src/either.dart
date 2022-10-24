@@ -1,4 +1,5 @@
 import 'function.dart';
+import 'io_either.dart';
 import 'option.dart';
 import 'task_either.dart';
 import 'tuple.dart';
@@ -195,12 +196,21 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// - If the [Either] is [Right], return a [Some] containing the value inside [Right]
   Option<R> toOption();
 
+  /// Convert this [Either] to a [IOEither].
+  IOEither<L, R> toIOEither();
+
   /// Convert this [Either] to a [TaskEither].
   ///
   /// Used to convert a sync context ([Either]) to an async context ([TaskEither]).
   /// You should convert [Either] to [TaskEither] every time you need to
   /// call an async ([Future]) function based on the value in [Either].
   TaskEither<L, R> toTaskEither();
+
+  /// Convert [Either] to nullable `R?`.
+  ///
+  /// **Note**: this loses information about a possible [Left] value,
+  /// converting it to simply `null`.
+  R? toNullable();
 
   /// Return `true` when this [Either] is [Left].
   bool isLeft();
@@ -387,8 +397,8 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
 
   /// If `r` is `null`, then return the result of `onNull` in [Left].
   /// Otherwise return `Right(r)`.
-  factory Either.fromNullable(R? r, L Function(R? r) onNull) =>
-      r != null ? Either.of(r) : Either.left(onNull(r));
+  factory Either.fromNullable(R? r, L Function() onNull) =>
+      r != null ? Either.of(r) : Either.left(onNull());
 
   /// Try to execute `run`. If no error occurs, then return [Right].
   /// Otherwise return [Left] containing the result of `onError`.
@@ -517,6 +527,12 @@ class Right<L, R> extends Either<L, R> {
 
   @override
   TaskEither<L, R> toTaskEither() => TaskEither.of(_value);
+
+  @override
+  IOEither<L, R> toIOEither() => IOEither.of(_value);
+
+  @override
+  R? toNullable() => _value;
 }
 
 class Left<L, R> extends Either<L, R> {
@@ -600,4 +616,10 @@ class Left<L, R> extends Either<L, R> {
 
   @override
   TaskEither<L, R> toTaskEither() => TaskEither.left(_value);
+
+  @override
+  IOEither<L, R> toIOEither() => IOEither.left(_value);
+
+  @override
+  R? toNullable() => null;
 }

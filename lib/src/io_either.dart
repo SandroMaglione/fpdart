@@ -210,6 +210,11 @@ class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
   /// Build a [IOEither] that returns `either`.
   factory IOEither.fromEither(Either<L, R> either) => IOEither(() => either);
 
+  /// If `r` is `null`, then return the result of `onNull` in [Left].
+  /// Otherwise return `Right(r)`.
+  factory IOEither.fromNullable(R? r, L Function() onNull) =>
+      Either.fromNullable(r, onNull).toIOEither();
+
   /// Converts a [Function] that may throw to a [Function] that never throws
   /// but returns a [Either] instead.
   ///

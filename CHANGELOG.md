@@ -1,3 +1,42 @@
+# v0.4.0 - Soon
+- Added extension methods to work with nullable types (`T?`)
+  - From `T?` to `fpdart`'s types
+    - `toOption`
+    - `toEither`
+    - `toTaskOption`
+    - `toIOEither`
+    - `toTaskEither`
+    - `toTaskEitherAsync`
+    - `fromNullable` (`Either`, `IOEither`, `TaskOption` `TaskEither`)
+    - `fromNullableAsync` (`TaskEither`)
+  - From `fpdart`'s types to `T?`
+    - `toNullable` (`Either`)
+```dart
+/// [Option] <-> `int?`
+int? value1 = 10.toOption().map((t) => t + 10).toNullable();
+
+bool? value2 = value1?.isEven;
+
+/// `bool?` -> [Either] -> `int?`
+int? value3 = value2
+    .toEither(() => "Error")
+    .flatMap((a) => a ? right<String, int>(10) : left<String, int>("None"))
+    .toNullable();
+
+/// `int?` -> [Option]
+Option<int> value4 = (value3?.abs().round()).toOption().flatMap(Option.of);
+```
+- Added `toIOEither` to `Either`
+- Removed parameter from `Either` `fromNullable` [⚠️ **BREAKING CHANGE**]
+```dart
+final either = Either<String, int>.fromNullable(value, (r) => 'none');
+
+/// 👆 Removed the value `(r)` (it was always null anyway 💁🏼‍♂️) 👇
+
+final either = Either<String, int>.fromNullable(value, () => 'none');
+```
+- Added article about [Option type and Null Safety in dart](https://www.sandromaglione.com/techblog/option_type_and_null_safety_dart)
+
 # v0.3.0 - 11 October 2022
 - Inverted `onSome` and `onNone` functions parameters in `match` method of `Option` [⚠️ **BREAKING CHANGE**] (*Read more on why* 👉 [#56](https://github.com/SandroMaglione/fpdart/pull/56))
 ```dart

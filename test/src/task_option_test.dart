@@ -210,6 +210,22 @@ void main() {
       });
     });
 
+    group('fromNullable', () {
+      test('Right', () async {
+        final task = TaskOption<int>.fromNullable(10);
+        final result = await task.run();
+        result.matchTestSome((r) {
+          expect(r, 10);
+        });
+      });
+
+      test('Left', () async {
+        final task = TaskOption<int>.fromNullable(null);
+        final result = await task.run();
+        expect(result, isA<None<int>>());
+      });
+    });
+
     group('fromPredicate', () {
       test('True', () async {
         final task = TaskOption<int>.fromPredicate(20, (n) => n > 10);

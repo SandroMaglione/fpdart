@@ -436,6 +436,36 @@ void main() {
       });
     });
 
+    group('toNullable', () {
+      test('Right', () {
+        final value = Either<String, int>.of(10);
+        final ap = value.toNullable();
+        expect(ap, 10);
+      });
+
+      test('Left', () {
+        final value = Either<String, int>.left('none');
+        final ap = value.toNullable();
+        expect(ap, null);
+      });
+    });
+
+    group('toIOEither', () {
+      test('Right', () {
+        final value = Either<String, int>.of(10);
+        final ap = value.toIOEither();
+        final result = ap.run();
+        expect(result, value);
+      });
+
+      test('Left', () {
+        final value = Either<String, int>.left('none');
+        final ap = value.toIOEither();
+        final result = ap.run();
+        expect(result, value);
+      });
+    });
+
     group('toTaskEither', () {
       test('Right', () async {
         final value = Either<String, int>.of(10);
@@ -751,14 +781,14 @@ void main() {
 
     group('fromNullable', () {
       test('Right', () {
-        final either = Either<String, int>.fromNullable(10, (r) => 'none');
+        final either = Either<String, int>.fromNullable(10, () => 'none');
         either.match((_) {
           fail('should be right');
         }, (r) => expect(r, 10));
       });
 
       test('Left', () {
-        final either = Either<String, int>.fromNullable(null, (r) => 'none');
+        final either = Either<String, int>.fromNullable(null, () => 'none');
         either.match((l) => expect(l, 'none'), (_) {
           fail('should be left');
         });
