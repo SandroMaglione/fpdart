@@ -85,6 +85,19 @@ dependencies:
 
 ## ✨ Examples
 
+### [Pokeapi](./example/pokeapi_functional/)
+Flutter app that lets you search and view your favorite Pokemon:
+- API request
+- Response validation
+- JSON conversion
+- State management ([riverpod](https://pub.dev/packages/riverpod))
+
+### [Open Meteo API](./example/open_meteo_api/)
+Re-implementation using `fpdart` and functional programming of the [Open Meteo API](https://github.com/felangel/bloc/tree/master/examples/flutter_weather/packages/open_meteo_api) from the [flutter_weather](https://bloclibrary.dev/#/flutterweathertutorial) app example in the [bloc](https://pub.dev/packages/bloc) package.
+
+### [Read/Write local file](./example/read_write_file/)
+Example of how to read and write a local file using functional programming.
+
 ### [Option](./lib/src/option.dart)
 Used when a return value can be missing.
 > For example, when parsing a `String` to `int`, since not all `String`
