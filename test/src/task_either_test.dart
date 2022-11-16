@@ -102,14 +102,14 @@ void main() {
     group('bindEither', () {
       test('Right', () async {
         final task = TaskEither<String, int>(() async => Either.of(10));
-        final ap = task.bindEither(Either.of(2.5));
+        final ap = task.bindEither((r) => Either.of(r + 2.5));
         final r = await ap.run();
-        r.matchTestRight((r) => expect(r, 2.5));
+        r.matchTestRight((r) => expect(r, 12.5));
       });
 
       test('Left', () async {
         final task = TaskEither<String, int>(() async => Either.left('abc'));
-        final ap = task.bindEither(Either.of(2.5));
+        final ap = task.bindEither((r) => Either.of(r + 2.5));
         final r = await ap.run();
         r.matchTestLeft((l) => expect(l, 'abc'));
       });
