@@ -1,9 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 
-const int _int64MaxValue = 9223372036854775807;
-
 /// A group is a monoid where each element has an [**inverse**](https://en.wikipedia.org/wiki/Inverse_element).
-abstract class Group<T> extends Monoid<T> {
+mixin Group<T> on Monoid<T> {
   /// Find the inverse of `a`.
   ///
   /// `combine(a, inverse(a))` == `combine(inverse(a), a)` == `empty`
@@ -22,9 +20,6 @@ abstract class Group<T> extends Monoid<T> {
       return _repeatedCombineN(a, n);
     } else if (n == 0) {
       return empty;
-    } else if (n == _int64MaxValue) {
-      // Stack Overflow!
-      return combineN(inverse(combine(a, a)), _int64MaxValue ~/ 2);
     }
 
     return _repeatedCombineN(inverse(a), -n);
@@ -44,12 +39,12 @@ abstract class Group<T> extends Monoid<T> {
       _Group(emptyValue, f, inv);
 }
 
-class _Group<T> extends Group<T> {
+class _Group<T> with Semigroup<T>, Monoid<T>, Group<T> {
   final T Function(T a) inv;
   final T emp;
   final T Function(T x, T y) comb;
 
-  _Group(this.emp, this.comb, this.inv);
+  const _Group(this.emp, this.comb, this.inv);
 
   @override
   T combine(T x, T y) => comb(x, y);

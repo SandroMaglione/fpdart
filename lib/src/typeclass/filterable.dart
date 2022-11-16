@@ -5,7 +5,7 @@ import '../typedef.dart';
 import 'functor.dart';
 import 'hkt.dart';
 
-abstract class Filterable<KT, A> extends HKT<KT, A> with Functor<KT, A> {
+mixin Filterable<KT, A> on HKT<KT, A>, Functor<KT, A> {
   /// Filter a data structure based on a boolean predicate.
   HKT<KT, A> filter(bool Function(A a) f);
 

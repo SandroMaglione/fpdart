@@ -23,6 +23,8 @@ import 'eq.dart';
 /// **Note**: A partial order under which every pair of elements is comparable
 /// is called a [total order](https://en.wikipedia.org/wiki/Total_order) ([Order]).
 abstract class PartialOrder<T> extends Eq<T> {
+  const PartialOrder();
+
   /// Result of comparing `x` with `y`.
   ///
   /// Returns `null` if operands are not comparable.
@@ -32,42 +34,6 @@ abstract class PartialOrder<T> extends Eq<T> {
   /// - zero     iff `x == y`
   /// - positive iff `x > y`
   double? partialCompare(T x, T y);
-
-  // TODO: [PartialOrder] tryCompare
-  // /// Result of comparing `x` with `y`.
-  // ///
-  // /// Returns `None` if operands are not comparable.
-  // /// If operands are comparable, returns `Some<Int>`
-  // /// where the `int` sign is:
-  // /// - negative iff `x < y`
-  // /// - zero     iff `x == y`
-  // /// - positive iff `x > y`
-  // Option<T> tryCompare(T x, T y) {
-  //   final c = partialCompare(x, y);
-  //   if (c == null) None else Some(c.sign);
-  // }
-
-  // TODO: [PartialOrder] pmin
-  // /**
-  //  * Returns Some(x) if x <= y, Some(y) if x > y, otherwise None.
-  //  */
-  // def pmin(x: A, y: A): Option[A] = {
-  //   val c = partialCompare(x, y)
-  //   if (c <= 0) Some(x)
-  //   else if (c > 0) Some(y)
-  //   else None
-  // }
-
-  // TODO: [PartialOrder] pmax
-  // /**
-  //  * Returns Some(x) if x >= y, Some(y) if x < y, otherwise None.
-  //  */
-  // def pmax(x: A, y: A): Option[A] = {
-  //   val c = partialCompare(x, y)
-  //   if (c >= 0) Some(x)
-  //   else if (c < 0) Some(y)
-  //   else None
-  // }
 
   /// Returns `true` if `x` == `y`, `false` otherwise.
   @override
@@ -117,7 +83,7 @@ abstract class PartialOrder<T> extends Eq<T> {
 class _PartialOrder<T> extends PartialOrder<T> {
   final double? Function(T x, T y) partialO;
 
-  _PartialOrder(this.partialO);
+  const _PartialOrder(this.partialO);
 
   @override
   double? partialCompare(T x, T y) => partialO(x, y);

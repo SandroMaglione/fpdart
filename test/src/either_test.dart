@@ -1,8 +1,11 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:test/test.dart';
+
+import './utils/utils.dart';
 
 void main() {
   group('Either', () {
+    group('[Property-based testing]', () {});
+
     group('is a', () {
       final either = Either<String, int>.of(10);
 
@@ -35,13 +38,31 @@ void main() {
       test('Right', () {
         final value = Either<String, int>.of(10);
         final map = value.map((a) => a + 1);
-        map.match((l) => null, (r) => expect(r, 11));
+        map.matchTestRight((r) {
+          expect(r, 11);
+        });
       });
 
       test('Left', () {
         final value = Either<String, int>.left('abc');
         final map = value.map((a) => a + 1);
-        map.match((l) => expect(l, 'abc'), (r) => null);
+        map.matchTestLeft((l) => expect(l, 'abc'));
+      });
+    });
+
+    group('bimap', () {
+      test('Right', () {
+        final value = Either<String, int>.of(10);
+        final map = value.bimap((l) => "none", (a) => a + 1);
+        map.matchTestRight((r) {
+          expect(r, 11);
+        });
+      });
+
+      test('Left', () {
+        final value = Either<String, int>.left('abc');
+        final map = value.bimap((l) => "none", (a) => a + 1);
+        map.matchTestLeft((l) => expect(l, 'none'));
       });
     });
 
@@ -50,14 +71,18 @@ void main() {
         final value = Either<String, int>.of(10);
         final map = value.map2<double, double>(
             Either<String, double>.of(1.5), (a, b) => a + b);
-        map.match((l) => null, (r) => expect(r, 11.5));
+        map.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 11.5));
       });
 
       test('Left', () {
         final value = Either<String, int>.left('none');
         final map = value.map2<double, double>(
             Either<String, double>.of(1.5), (a, b) => a + b);
-        map.match((l) => expect(l, 'none'), (r) => null);
+        map.match((l) => expect(l, 'none'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -68,7 +93,9 @@ void main() {
             Either<String, double>.of(1.5),
             Either<String, double>.of(1.5),
             (a, b, c) => a + b + c);
-        map.match((l) => null, (r) => expect(r, 13.0));
+        map.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 13.0));
       });
 
       test('Left', () {
@@ -77,27 +104,35 @@ void main() {
             Either<String, double>.of(1.5),
             Either<String, double>.of(1.5),
             (a, b, c) => a + b + c);
-        map.match((l) => expect(l, 'none'), (r) => null);
+        map.match((l) => expect(l, 'none'), (_) {
+          fail('should be left');
+        });
       });
     });
 
     test('pure', () {
       final value = Either<String, int>.of(10);
       final pure = value.pure('abc');
-      pure.match((l) => null, (r) => expect(r, 'abc'));
+      pure.match((_) {
+        fail('should be right');
+      }, (r) => expect(r, 'abc'));
     });
 
     group('mapLeft', () {
       test('Right', () {
         final value = Either<String, int>.of(10);
         final map = value.mapLeft((a) => 'pre-$a');
-        map.match((l) => null, (r) => expect(r, 10));
+        map.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 10));
       });
 
       test('Left', () {
         final value = Either<String, int>.left('abc');
         final map = value.mapLeft((a) => 'pre-$a');
-        map.match((l) => expect(l, 'pre-abc'), (r) => null);
+        map.match((l) => expect(l, 'pre-abc'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -177,13 +212,17 @@ void main() {
       test('Right', () {
         final value = Either<String, int>.of(10);
         final ap = value.ap(Either<String, int Function(int)>.of((n) => n + 1));
-        ap.match((l) => null, (r) => expect(r, 11));
+        ap.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 11));
       });
 
       test('Left', () {
         final value = Either<String, int>.of(10);
         final ap = value.ap(Either<String, int Function(int)>.left('none'));
-        ap.match((l) => expect(l, 'none'), (r) => null);
+        ap.match((l) => expect(l, 'none'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -191,13 +230,17 @@ void main() {
       test('Right', () {
         final value = Either<String, int>.of(10);
         final ap = value.alt(() => Either<String, int>.of(0));
-        ap.match((l) => null, (r) => expect(r, 10));
+        ap.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 10));
       });
 
       test('Left', () {
         final value = Either<String, int>.left('none');
         final ap = value.alt(() => Either<String, int>.of(0));
-        ap.match((l) => null, (r) => expect(r, 0));
+        ap.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 0));
       });
     });
 
@@ -205,13 +248,17 @@ void main() {
       test('Right', () {
         final value = Either<String, int>.of(10);
         final ap = value.extend((t) => t.getOrElse((l) => -1) * 0.5);
-        ap.match((l) => null, (r) => expect(r, 5.0));
+        ap.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 5.0));
       });
 
       test('Left', () {
         final value = Either<String, int>.left('none');
         final ap = value.extend((t) => t.getOrElse((l) => -1) * 0.5);
-        ap.match((l) => expect(l, 'none'), (r) => null);
+        ap.match((l) => expect(l, 'none'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -220,16 +267,23 @@ void main() {
         final value = Either<String, int>.of(10);
         final ap = value.duplicate();
         expect(ap, isA<Either<String, Either<String, int>>>());
-        ap.match(
-            (l) => null, (r) => r.match((l) => null, (r) => expect(r, 10)));
+        ap.match((_) {
+          fail('should be right');
+        },
+            (r) => r.match((_) {
+                  fail('should be right');
+                }, (r) => expect(r, 10)));
       });
 
       test('Left', () {
         final value = Either<String, int>.left('none');
         final ap = value.duplicate();
         expect(ap, isA<Either<String, Either<String, int>>>());
-        ap.match((l) => expect(l, 'none'),
-            (r) => r.match((l) => expect(l, 'none'), (r) => null));
+        ap.match(
+            (l) => expect(l, 'none'),
+            (r) => r.match((l) => expect(l, 'none'), (_) {
+                  fail('should be left');
+                }));
       });
     });
 
@@ -303,19 +357,25 @@ void main() {
       test('Right (true)', () {
         final value = Either<String, int>.of(10);
         final ap = value.filterOrElse((r) => r > 5, (r) => 'else');
-        ap.match((l) => null, (r) => expect(r, 10));
+        ap.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 10));
       });
 
       test('Right (false)', () {
         final value = Either<String, int>.of(10);
         final ap = value.filterOrElse((r) => r < 5, (r) => 'else');
-        ap.match((l) => expect(l, 'else'), (r) => null);
+        ap.match((l) => expect(l, 'else'), (_) {
+          fail('should be left');
+        });
       });
 
       test('Left', () {
         final value = Either<String, int>.left('none');
         final ap = value.filterOrElse((r) => r > 5, (r) => 'else');
-        ap.match((l) => expect(l, 'none'), (r) => null);
+        ap.match((l) => expect(l, 'none'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -324,14 +384,18 @@ void main() {
         test('then Right', () {
           final value = Either<String, int>.of(10);
           final ap = value.flatMap<String>((a) => Right('$a'));
-          ap.match((l) => null, (r) => expect(r, '10'));
+          ap.match((_) {
+            fail('should be right');
+          }, (r) => expect(r, '10'));
         });
 
         test('then Left', () {
           final value = Either<String, int>.of(10);
           final ap =
               value.flatMap<String>((a) => Either<String, String>.left('none'));
-          ap.match((l) => expect(l, 'none'), (r) => null);
+          ap.match((l) => expect(l, 'none'), (_) {
+            fail('should be left');
+          });
         });
       });
 
@@ -340,14 +404,18 @@ void main() {
           final value = Either<String, int>.left('0');
           final ap =
               value.flatMap<String>((a) => Either<String, String>.of('$a'));
-          ap.match((l) => expect(l, '0'), (r) => null);
+          ap.match((l) => expect(l, '0'), (_) {
+            fail('should be left');
+          });
         });
 
         test('then Left', () {
           final value = Either<String, int>.left('0');
           final ap =
               value.flatMap<String>((a) => Either<String, String>.left('none'));
-          ap.match((l) => expect(l, '0'), (r) => null);
+          ap.match((l) => expect(l, '0'), (_) {
+            fail('should be left');
+          });
         });
       });
     });
@@ -356,13 +424,61 @@ void main() {
       test('Right', () {
         final value = Either<String, int>.of(10);
         final ap = value.toOption();
-        ap.match((some) => expect(some, 10), () => null);
+        ap.matchTestSome((t) {
+          expect(t, 10);
+        });
       });
 
       test('Left', () {
         final value = Either<String, int>.left('none');
         final ap = value.toOption();
         expect(ap, isA<None<int>>());
+      });
+    });
+
+    group('toNullable', () {
+      test('Right', () {
+        final value = Either<String, int>.of(10);
+        final ap = value.toNullable();
+        expect(ap, 10);
+      });
+
+      test('Left', () {
+        final value = Either<String, int>.left('none');
+        final ap = value.toNullable();
+        expect(ap, null);
+      });
+    });
+
+    group('toIOEither', () {
+      test('Right', () {
+        final value = Either<String, int>.of(10);
+        final ap = value.toIOEither();
+        final result = ap.run();
+        expect(result, value);
+      });
+
+      test('Left', () {
+        final value = Either<String, int>.left('none');
+        final ap = value.toIOEither();
+        final result = ap.run();
+        expect(result, value);
+      });
+    });
+
+    group('toTaskEither', () {
+      test('Right', () async {
+        final value = Either<String, int>.of(10);
+        final ap = value.toTaskEither();
+        final result = await ap.run();
+        expect(result, value);
+      });
+
+      test('Left', () async {
+        final value = Either<String, int>.left('none');
+        final ap = value.toTaskEither();
+        final result = await ap.run();
+        expect(result, value);
       });
     });
 
@@ -404,7 +520,9 @@ void main() {
       test('Left', () {
         final value = Either<String, int>.left('none');
         final ap = value.getLeft();
-        ap.match((some) => expect(some, 'none'), () => null);
+        ap.matchTestSome((t) {
+          expect(t, 'none');
+        });
       });
     });
 
@@ -412,7 +530,9 @@ void main() {
       test('Right', () {
         final value = Either<String, int>.of(10);
         final ap = value.getRight();
-        ap.match((some) => expect(some, 10), () => null);
+        ap.matchTestSome((t) {
+          expect(t, 10);
+        });
       });
 
       test('Left', () {
@@ -494,13 +614,17 @@ void main() {
       test('Right', () {
         final value = Either<String, int>.of(10);
         final ap = value.swap();
-        ap.match((l) => expect(l, 10), (r) => null);
+        ap.match((l) => expect(l, 10), (_) {
+          fail('should be left');
+        });
       });
 
       test('Left', () {
         final value = Either<String, int>.left('none');
         final ap = value.swap();
-        ap.match((l) => null, (r) => expect(r, 'none'));
+        ap.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 'none'));
       });
     });
 
@@ -508,20 +632,26 @@ void main() {
       test('Right Right', () {
         final value = Either<String, Either<String, int>>.of(Either.of(10));
         final ap = Either.flatten(value);
-        ap.match((l) => null, (r) => expect(r, 10));
+        ap.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 10));
       });
 
       test('Right Left', () {
         final value =
             Either<String, Either<String, int>>.of(Either.left('none'));
         final ap = Either.flatten(value);
-        ap.match((l) => expect(l, 'none'), (r) => null);
+        ap.match((l) => expect(l, 'none'), (_) {
+          fail('should be left');
+        });
       });
 
       test('Left', () {
         final value = Either<String, Either<String, int>>.left('none');
         final ap = Either.flatten(value);
-        ap.match((l) => expect(l, 'none'), (r) => null);
+        ap.match((l) => expect(l, 'none'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -529,13 +659,19 @@ void main() {
       test('Right', () {
         final value = Either<String, int>.of(10);
         final ap = value.orElse((l) => Either<String, int>.of(0));
-        ap.match((l) => expect(l, 10), (r) => null);
+        ap.match((l) {
+          fail('should be right');
+        }, (r) {
+          expect(r, 10);
+        });
       });
 
       test('Left', () {
         final value = Either<String, int>.left('none');
         final ap = value.orElse((l) => Either<String, int>.of(0));
-        ap.match((l) => null, (r) => expect(r, 0));
+        ap.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 0));
       });
     });
 
@@ -543,39 +679,85 @@ void main() {
       test('Right', () {
         final value = Either<String, int>.of(10);
         final ap = value.andThen(() => Either<String, String>.of('10'));
-        ap.match((l) => null, (r) => expect(r, '10'));
+        ap.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, '10'));
       });
 
       test('Left', () {
         final value = Either<String, int>.left('none');
         final ap = value.andThen(() => Either<String, String>.of('10'));
-        ap.match((l) => expect(l, 'none'), (r) => null);
+        ap.match((l) => expect(l, 'none'), (_) {
+          fail('should be left');
+        });
+      });
+    });
+
+    group('call', () {
+      test('Right', () {
+        final value = Either<String, int>.of(10);
+        final ap = value(Either<String, String>.of('10'));
+        ap.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, '10'));
+      });
+
+      test('Left', () {
+        final value = Either<String, int>.left('none');
+        final ap = value(Either<String, String>.of('10'));
+        ap.match((l) {
+          expect(l, 'none');
+        }, (_) {
+          fail('should be left');
+        });
       });
     });
 
     test('of()', () {
       final value = Either<String, int>.of(10);
       expect(value, isA<Right>());
-      value.match((l) => null, (r) => expect(r, 10));
+      value.match((_) {
+        fail('should be right');
+      }, (r) => expect(r, 10));
+    });
+
+    test('right()', () {
+      final value = Either<String, int>.right(10);
+      expect(value, isA<Right>());
+      value.match((_) {
+        fail('should be right');
+      }, (r) => expect(r, 10));
+    });
+
+    test('of() == right()', () {
+      final of = Either<String, int>.of(10);
+      final right = Either<String, int>.right(10);
+      expect(of, right);
     });
 
     test('left()', () {
       final value = Either<String, int>.left('none');
       expect(value, isA<Left>());
-      value.match((l) => expect(l, 'none'), (r) => null);
+      value.match((l) => expect(l, 'none'), (_) {
+        fail('should be left');
+      });
     });
 
     group('fromOption', () {
       test('Some', () {
         final value = Option.of(10);
         final either = Either.fromOption(value, () => 'none');
-        either.match((l) => null, (r) => expect(r, 10));
+        either.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 10));
       });
 
       test('None', () {
         final value = Option<int>.none();
         final either = Either.fromOption(value, () => 'none');
-        either.match((l) => expect(l, 'none'), (r) => null);
+        either.match((l) => expect(l, 'none'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -583,25 +765,33 @@ void main() {
       test('Right', () {
         final either =
             Either<String, int>.fromPredicate(10, (v) => v > 5, (_) => 'none');
-        either.match((l) => null, (r) => expect(r, 10));
+        either.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 10));
       });
 
       test('Left', () {
         final either =
             Either<String, int>.fromPredicate(10, (v) => v < 5, (_) => 'none');
-        either.match((l) => expect(l, 'none'), (r) => null);
+        either.match((l) => expect(l, 'none'), (_) {
+          fail('should be left');
+        });
       });
     });
 
     group('fromNullable', () {
       test('Right', () {
-        final either = Either<String, int>.fromNullable(10, (r) => 'none');
-        either.match((l) => null, (r) => expect(r, 10));
+        final either = Either<String, int>.fromNullable(10, () => 'none');
+        either.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 10));
       });
 
       test('Left', () {
-        final either = Either<String, int>.fromNullable(null, (r) => 'none');
-        either.match((l) => expect(l, 'none'), (r) => null);
+        final either = Either<String, int>.fromNullable(null, () => 'none');
+        either.match((l) => expect(l, 'none'), (_) {
+          fail('should be left');
+        });
       });
     });
 
@@ -609,13 +799,41 @@ void main() {
       test('Right', () {
         final either = Either<String, int>.tryCatch(
             () => int.parse('10'), (o, s) => 'none');
-        either.match((l) => null, (r) => expect(r, 10));
+        either.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 10));
       });
 
       test('Left', () {
         final either = Either<String, int>.tryCatch(
             () => int.parse('invalid'), (o, s) => 'none');
-        either.match((l) => expect(l, 'none'), (r) => null);
+        either.match((l) => expect(l, 'none'), (_) {
+          fail('should be left');
+        });
+      });
+    });
+
+    group('tryCatchK', () {
+      test('Right', () {
+        final either = Either<String, int>.of(10);
+        final ap = either.flatMap(Either.tryCatchK(
+          (n) => n + 5,
+          (_, __) => 'none',
+        ));
+        ap.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 15));
+      });
+
+      test('Left', () {
+        final either = Either<String, int>.of(10);
+        final ap = either.flatMap(Either.tryCatchK(
+          (_) => int.parse('invalid'),
+          (_, __) => 'none',
+        ));
+        ap.match((l) => expect(l, 'none'), (r) {
+          fail('should be left');
+        });
       });
     });
 
@@ -652,6 +870,73 @@ void main() {
     test('Left value', () {
       const l = Left<String, int>('none');
       expect(l.value, 'none');
+    });
+
+    group('sequenceList', () {
+      test('Right', () {
+        final list = [right(1), right(2), right(3), right(4)];
+        final result = Either.sequenceList(list);
+        result.matchTestRight((r) {
+          expect(r, [1, 2, 3, 4]);
+        });
+      });
+
+      test('Left', () {
+        final list = [
+          right<String, int>(1),
+          left<String, int>("Error"),
+          right<String, int>(3),
+          right<String, int>(4)
+        ];
+        final result = Either.sequenceList(list);
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+      });
+    });
+
+    group('traverseList', () {
+      test('Right', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final result =
+            Either.traverseList<String, int, String>(list, (a) => right("$a"));
+        result.matchTestRight((r) {
+          expect(r, ["1", "2", "3", "4", "5", "6"]);
+        });
+      });
+
+      test('Left', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final result = Either.traverseList<String, int, String>(
+          list,
+          (a) => a % 2 == 0 ? right("$a") : left("Error"),
+        );
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+      });
+    });
+
+    group('traverseListWithIndex', () {
+      test('Right', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final result = Either.traverseListWithIndex<String, int, String>(
+            list, (a, i) => right("$a$i"));
+        result.matchTestRight((r) {
+          expect(r, ["10", "21", "32", "43", "54", "65"]);
+        });
+      });
+
+      test('Left', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final result = Either.traverseListWithIndex<String, int, String>(
+          list,
+          (a, i) => i % 2 == 0 ? right("$a$i") : left("Error"),
+        );
+        result.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+      });
     });
 
     test('Right == Right', () {
@@ -700,7 +985,6 @@ void main() {
       expect(l1, l1);
       expect(l1, l3);
       expect(l1 == l2, false);
-      expect(l1 == l4, false);
       expect(l1 == r1, false);
       expect(map1, map1);
       expect(map1, map2);
@@ -752,5 +1036,58 @@ void main() {
       expect(result.getOrElse((l) => 0), 0);
       expect(result.getLeft().getOrElse(() => ''), 'String');
     });
+  });
+
+  test('chainFirst', () {
+    final either = Either<String, int>.of(10);
+    var sideEffect = 10;
+    final chain = either.chainFirst((b) {
+      sideEffect = 100;
+      return Either.left("abc");
+    });
+    chain.match(
+      (l) => fail('should be right'),
+      (r) {
+        expect(r, 10);
+        expect(sideEffect, 100);
+      },
+    );
+  });
+
+  test('rights', () {
+    final list = [
+      right<String, int>(1),
+      right<String, int>(2),
+      left<String, int>('a'),
+      left<String, int>('b'),
+      right<String, int>(3),
+    ];
+    final result = Either.rights(list);
+    expect(result, [1, 2, 3]);
+  });
+
+  test('lefts', () {
+    final list = [
+      right<String, int>(1),
+      right<String, int>(2),
+      left<String, int>('a'),
+      left<String, int>('b'),
+      right<String, int>(3),
+    ];
+    final result = Either.lefts(list);
+    expect(result, ['a', 'b']);
+  });
+
+  test('partitionEithers', () {
+    final list = [
+      right<String, int>(1),
+      right<String, int>(2),
+      left<String, int>('a'),
+      left<String, int>('b'),
+      right<String, int>(3),
+    ];
+    final result = Either.partitionEithers(list);
+    expect(result.first, ['a', 'b']);
+    expect(result.second, [1, 2, 3]);
   });
 }

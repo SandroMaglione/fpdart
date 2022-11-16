@@ -1,4 +1,5 @@
 import 'function.dart';
+import 'io_either.dart';
 import 'option.dart';
 import 'task_either.dart';
 import 'tuple.dart';
@@ -25,6 +26,8 @@ abstract class _EitherHKT {}
 /// an instance of [Left] containing information about the kind of error that occurred.
 abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
     with
+        Functor2<_EitherHKT, L, R>,
+        Applicative2<_EitherHKT, L, R>,
         Monad2<_EitherHKT, L, R>,
         Foldable2<_EitherHKT, L, R>,
         Alt2<_EitherHKT, L, R>,
@@ -88,6 +91,16 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   @override
   Either<L, C> map<C>(C Function(R a) f);
 
+  /// Define two functions to change both the [Left] and [Right] value of the
+  /// [Either].
+  ///
+  /// {@template fpdart_bimap_either}
+  /// Same as `map`+`mapLeft` but for both [Left] and [Right]
+  /// (`map` is only to change [Right], while `mapLeft` is only to change [Left]).
+  /// {@endtemplate}
+  Either<C, D> bimap<C, D>(C Function(L l) mLeft, D Function(R b) mRight) =>
+      mapLeft(mLeft).map(mRight);
+
   /// Return a [Right] containing the value `c`.
   @override
   Either<L, C> pure<C>(C c) => Right<L, C>(c);
@@ -97,16 +110,6 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   @override
   Either<L, C> ap<C>(covariant Either<L, C Function(R r)> a) =>
       a.flatMap((f) => map(f));
-
-  /// Used to chain multiple functions that return a [Either].
-  ///
-  /// You can extract the value of every [Right] in the chain without
-  /// handling all possible missing cases.
-  /// If any of the functions in the chain returns [Left], the result is [Left].
-  ///
-  /// Same as `bind`.
-  @override
-  Either<L, C> flatMap<C>(covariant Either<L, C> Function(R a) f);
 
   /// If this [Either] is a [Right], then return the result of calling `then`.
   /// Otherwise return [Left].
@@ -143,19 +146,39 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   @override
   Either<L, Either<L, R>> duplicate() => extend(identity);
 
-  /// If `f` applied on this [Either] as [Right] returns `true`, then return this [Either].
-  /// If it returns `false`, return the result of `onFalse` in a [Left].
-  Either<L, R> filterOrElse(bool Function(R r) f, L Function(R r) onFalse) =>
-      flatMap((r) => f(r) ? Either.of(r) : Either.left(onFalse(r)));
+  /// Chain multiple functions having the same left type `L`.
+  @override
+  Either<L, B> call<B>(covariant Either<L, B> chain) => flatMap((_) => chain);
 
+  /// {@template fpdart_flat_map_either}
   /// Used to chain multiple functions that return a [Either].
   ///
   /// You can extract the value of every [Right] in the chain without
   /// handling all possible missing cases.
   /// If any of the functions in the chain returns [Left], the result is [Left].
+  /// {@endtemplate}
+  ///
+  /// Same as `bind`.
+  @override
+  Either<L, C> flatMap<C>(covariant Either<L, C> Function(R a) f);
+
+  /// {@macro fpdart_flat_map_either}
   ///
   /// Same as `flatMap`.
   Either<L, R2> bind<R2>(Either<L, R2> Function(R r) f) => flatMap(f);
+
+  /// If `f` applied on this [Either] as [Right] returns `true`, then return this [Either].
+  /// If it returns `false`, return the result of `onFalse` in a [Left].
+  Either<L, R> filterOrElse(bool Function(R r) f, L Function(R r) onFalse) =>
+      flatMap((r) => f(r) ? Either.of(r) : Either.left(onFalse(r)));
+
+  /// Chain a request that returns another [Either], execute it, ignore
+  /// the result, and return the same value as the current [Either].
+  @override
+  Either<L, R> chainFirst<C>(
+    covariant Either<L, C> Function(R b) chain,
+  ) =>
+      flatMap((b) => chain(b).map((c) => b).orElse((l) => right(b)));
 
   /// Used to chain multiple functions that return a `Future<Either>`.
   ///
@@ -172,6 +195,22 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// - If the [Either] is [Left], throw away its value and just return [None]
   /// - If the [Either] is [Right], return a [Some] containing the value inside [Right]
   Option<R> toOption();
+
+  /// Convert this [Either] to a [IOEither].
+  IOEither<L, R> toIOEither();
+
+  /// Convert this [Either] to a [TaskEither].
+  ///
+  /// Used to convert a sync context ([Either]) to an async context ([TaskEither]).
+  /// You should convert [Either] to [TaskEither] every time you need to
+  /// call an async ([Future]) function based on the value in [Either].
+  TaskEither<L, R> toTaskEither();
+
+  /// Convert [Either] to nullable `R?`.
+  ///
+  /// **Note**: this loses information about a possible [Left] value,
+  /// converting it to simply `null`.
+  R? toNullable();
 
   /// Return `true` when this [Either] is [Left].
   bool isLeft();
@@ -223,11 +262,121 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// Otherwise return `false`.
   bool exists(bool Function(R r) predicate);
 
+  /// {@template fpdart_traverse_list_either}
+  /// Map each element in the list to an [Either] using the function `f`,
+  /// and collect the result in an `Either<E, List<B>>`.
+  ///
+  /// If any mapped element of the list is [Left], then the final result
+  /// will be [Left].
+  /// {@endtemplate}
+  ///
+  /// Same as `Either.traverseList` but passing `index` in the map function.
+  static Either<E, List<B>> traverseListWithIndex<E, A, B>(
+    List<A> list,
+    Either<E, B> Function(A a, int i) f,
+  ) {
+    final resultList = <B>[];
+    for (var i = 0; i < list.length; i++) {
+      final e = f(list[i], i);
+      if (e is Left<E, B>) {
+        return left(e._value);
+      } else if (e is Right<E, B>) {
+        resultList.add(e._value);
+      } else {
+        throw Exception(
+          "[fpdart]: Error when mapping Either, it should be either Left or Right.",
+        );
+      }
+    }
+
+    return right(resultList);
+  }
+
+  /// {@macro fpdart_traverse_list_either}
+  ///
+  /// Same as `Either.traverseListWithIndex` but without `index` in the map function.
+  static Either<E, List<B>> traverseList<E, A, B>(
+    List<A> list,
+    Either<E, B> Function(A a) f,
+  ) =>
+      traverseListWithIndex<E, A, B>(list, (a, _) => f(a));
+
+  /// {@template fpdart_sequence_list_either}
+  /// Convert a `List<Either<E, A>>` to a single `Either<E, List<A>>`.
+  ///
+  /// If any of the [Either] in the [List] is [Left], then the result is [Left].
+  /// {@endtemplate}
+  static Either<E, List<A>> sequenceList<E, A>(
+    List<Either<E, A>> list,
+  ) =>
+      traverseList(list, identity);
+
+  /// {@template fpdart_rights_either}
+  /// Extract all the [Right] values from a `List<Either<E, A>>`.
+  /// {@endtemplate}
+  static List<A> rights<E, A>(List<Either<E, A>> list) {
+    final resultList = <A>[];
+    for (var i = 0; i < list.length; i++) {
+      final e = list[i];
+      if (e is Right<E, A>) {
+        resultList.add(e._value);
+      }
+    }
+
+    return resultList;
+  }
+
+  /// {@template fpdart_lefts_either}
+  /// Extract all the [Left] values from a `List<Either<E, A>>`.
+  /// {@endtemplate}
+  static List<E> lefts<E, A>(List<Either<E, A>> list) {
+    final resultList = <E>[];
+    for (var i = 0; i < list.length; i++) {
+      final e = list[i];
+      if (e is Left<E, A>) {
+        resultList.add(e._value);
+      }
+    }
+
+    return resultList;
+  }
+
+  /// {@template fpdart_partition_eithers_either}
+  /// Extract all the [Left] and [Right] values from a `List<Either<E, A>>` and
+  /// return them in two partitioned [List] inside [Tuple2].
+  /// {@endtemplate}
+  static Tuple2<List<E>, List<A>> partitionEithers<E, A>(
+      List<Either<E, A>> list) {
+    final resultListLefts = <E>[];
+    final resultListRights = <A>[];
+    for (var i = 0; i < list.length; i++) {
+      final e = list[i];
+      if (e is Left<E, A>) {
+        resultListLefts.add(e._value);
+      } else if (e is Right<E, A>) {
+        resultListRights.add(e._value);
+      } else {
+        throw Exception(
+          "[fpdart]: Error when mapping Either, it should be either Left or Right.",
+        );
+      }
+    }
+
+    return Tuple2(resultListLefts, resultListRights);
+  }
+
   /// Flat a [Either] contained inside another [Either] to be a single [Either].
   factory Either.flatten(Either<L, Either<L, R>> e) => e.flatMap(identity);
 
   /// Return a `Right(r)`.
+  ///
+  /// Same as `Either.right(r)`.
   factory Either.of(R r) => Right(r);
+
+  /// Return a `Right(r)`.
+  ///
+  /// Same as `Either.of(r)`.
+  factory Either.right(R r) => Right(r);
 
   /// Return a `Left(l)`.
   factory Either.left(L l) => Left(l);
@@ -235,8 +384,10 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// Return an [Either] from a [Option]:
   /// - If [Option] is [Some], then return [Right] containing its value
   /// - If [Option] is [None], then return [Left] containing the result of `onNone`
-  factory Either.fromOption(Option<R> m, L Function() onNone) =>
-      m.match((r) => Either.of(r), () => Either.left(onNone()));
+  factory Either.fromOption(Option<R> m, L Function() onNone) => m.match(
+        () => Either.left(onNone()),
+        (r) => Either.of(r),
+      );
 
   /// If calling `predicate` with `r` returns `true`, then return `Right(r)`.
   /// Otherwise return [Left] containing the result of `onFalse`.
@@ -246,8 +397,8 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
 
   /// If `r` is `null`, then return the result of `onNull` in [Left].
   /// Otherwise return `Right(r)`.
-  factory Either.fromNullable(R? r, L Function(R? r) onNull) =>
-      r != null ? Either.of(r) : Either.left(onNull(r));
+  factory Either.fromNullable(R? r, L Function() onNull) =>
+      r != null ? Either.of(r) : Either.left(onNull());
 
   /// Try to execute `run`. If no error occurs, then return [Right].
   /// Otherwise return [Left] containing the result of `onError`.
@@ -259,6 +410,18 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
       return Either.left(onError(e, s));
     }
   }
+
+  /// Try to execute `run`. If no error occurs, then return [Right].
+  /// Otherwise return [Left] containing the result of `onError`.
+  ///
+  /// `run` has one argument, which allows for easier chaining with
+  /// `Either.flatMap`.
+  static Either<L, R> Function(T) tryCatchK<L, R, T>(
+          R Function(T) run, L Function(Object o, StackTrace s) onError) =>
+      (a) => Either.tryCatch(
+            () => run(a),
+            onError,
+          );
 
   /// Build an `Eq<Either>` by comparing the values inside two [Either].
   ///
@@ -361,6 +524,15 @@ class Right<L, R> extends Either<L, R> {
   @override
   TaskEither<L, R2> bindFuture<R2>(Future<Either<L, R2>> Function(R r) f) =>
       TaskEither(() async => f(_value));
+
+  @override
+  TaskEither<L, R> toTaskEither() => TaskEither.of(_value);
+
+  @override
+  IOEither<L, R> toIOEither() => IOEither.of(_value);
+
+  @override
+  R? toNullable() => _value;
 }
 
 class Left<L, R> extends Either<L, R> {
@@ -441,4 +613,13 @@ class Left<L, R> extends Either<L, R> {
   @override
   TaskEither<L, R2> bindFuture<R2>(Future<Either<L, R2>> Function(R r) f) =>
       TaskEither.left(_value);
+
+  @override
+  TaskEither<L, R> toTaskEither() => TaskEither.left(_value);
+
+  @override
+  IOEither<L, R> toIOEither() => IOEither.left(_value);
+
+  @override
+  R? toNullable() => null;
 }

@@ -19,7 +19,7 @@ import 'semigroup.dart';
 /// expect(instance.combine('abc', instance.empty), instance.combine(instance.empty, 'abc'));
 /// expect(instance.combine('abc', instance.empty), 'abc');
 /// ```
-abstract class Monoid<T> extends Semigroup<T> {
+mixin Monoid<T> on Semigroup<T> {
   /// Return the identity element for this monoid.
   T get empty;
 
@@ -49,28 +49,6 @@ abstract class Monoid<T> extends Semigroup<T> {
       ? combine(acc, source)
       : _repeatedCombineNLoop(combine(acc, source), source, k - 1);
 
-  // TODO: [Monoid] combineAll
-  // /**
-  //  * Given a sequence of `as`, sum them using the monoid and return the total.
-  //  *
-  //  * Example:
-  //  * {{{
-  //  * scala> import cats.kernel.instances.string._
-  //  *
-  //  * scala> Monoid[String].combineAll(List("One ", "Two ", "Three"))
-  //  * res0: String = One Two Three
-  //  *
-  //  * scala> Monoid[String].combineAll(List.empty)
-  //  * res1: String = ""
-  //  * }}}
-  //  */
-  // def combineAll(as: IterableOnce[A]): A =
-  //   as.iterator.foldLeft(empty)(combine)
-
-  // TODO: [Monoid] combineAllOption
-  // override def combineAllOption(as: IterableOnce[A]): Option[A] =
-  //   if (as.iterator.isEmpty) None else Some(combineAll(as))
-
   /// Return a `Monoid` that reverses the order.
   @override
   Monoid<T> reverse() => _Monoid(empty, (x, y) => combine(y, x));
@@ -80,11 +58,11 @@ abstract class Monoid<T> extends Semigroup<T> {
       _Monoid(emptyValue, f);
 }
 
-class _Monoid<T> extends Monoid<T> {
+class _Monoid<T> with Semigroup<T>, Monoid<T> {
   final T emp;
   final T Function(T x, T y) comb;
 
-  _Monoid(this.emp, this.comb);
+  const _Monoid(this.emp, this.comb);
 
   @override
   T combine(T x, T y) => comb(x, y);

@@ -1,7 +1,7 @@
 /// A semigroup is any set `A` with an [**associative operation**](https://en.wikipedia.org/wiki/Associative_property) (`combine`).
 ///
 /// `(xy)z = x(yz) = xyz` for all `x`, `y`, `z` in `A`
-abstract class Semigroup<T> {
+mixin Semigroup<T> {
   /// Associative operation which combines two values.
   ///
   /// ```dart
@@ -28,26 +28,6 @@ abstract class Semigroup<T> {
   T _repeatedCombineNLoop(T acc, T source, int k) => k == 1
       ? combine(acc, source)
       : _repeatedCombineNLoop(combine(acc, source), source, k - 1);
-
-  // TODO: [Semigroup] combineAllOption
-  // /**
-  //  * Given a sequence of `as`, combine them and return the total.
-  //  *
-  //  * If the sequence is empty, returns None. Otherwise, returns Some(total).
-  //  *
-  //  * Example:
-  //  * {{{
-  //  * scala> import cats.kernel.instances.string._
-  //  *
-  //  * scala> Semigroup[String].combineAllOption(List("One ", "Two ", "Three"))
-  //  * res0: Option[String] = Some(One Two Three)
-  //  *
-  //  * scala> Semigroup[String].combineAllOption(List.empty)
-  //  * res1: Option[String] = None
-  //  * }}}
-  //  */
-  // def combineAllOption(as: IterableOnce[A]): Option[A] =
-  //   as.reduceOption(combine)
 
   /// Return a `Semigroup` that reverses the order.
   ///
@@ -82,10 +62,10 @@ abstract class Semigroup<T> {
   static Semigroup<A> last<A>() => _Semigroup((x, y) => y);
 }
 
-class _Semigroup<T> extends Semigroup<T> {
+class _Semigroup<T> with Semigroup<T> {
   final T Function(T x, T y) comb;
 
-  _Semigroup(this.comb);
+  const _Semigroup(this.comb);
 
   @override
   T combine(T x, T y) => comb(x, y);

@@ -1,28 +1,54 @@
-import 'package:fpdart/fpdart.dart';
-
 import 'either.dart';
 import 'function.dart';
+import 'task_option.dart';
 import 'tuple.dart';
 import 'typeclass/alt.dart';
+import 'typeclass/applicative.dart';
 import 'typeclass/eq.dart';
 import 'typeclass/extend.dart';
 import 'typeclass/filterable.dart';
 import 'typeclass/foldable.dart';
+import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
+import 'typeclass/monoid.dart';
+import 'typeclass/order.dart';
+import 'typeclass/semigroup.dart';
+
+/// Return a `Some(t)`.
+///
+/// Shortcut for `Option.of(r)`.
+Option<T> some<T>(T t) => Some(t);
+
+/// Return a [None].
+///
+/// Shortcut for `Option.none()`.
+Option<T> none<T>() => None<T>();
+
+/// Return [None] if `t` is `null`, [Some] otherwise.
+///
+/// Same as initializing `Option.fromNullable(t)`.
+Option<T> optionOf<T>(T? t) => Option.fromNullable(t);
+
+/// Return [Some] of `value` when `predicate` applied to `value` returns `true`,
+/// [None] otherwise.
+///
+/// Same as initializing `Option.fromPredicate(value, predicate)`.
+Option<T> option<T>(T value, bool Function(T) predicate) =>
+    Option.fromPredicate(value, predicate);
 
 /// Tag the [HKT] interface for the actual [Option].
 abstract class _OptionHKT {}
 
-// `Option<A> implements Functor<OptionHKT, A>` expresses correctly the
+// `Option<T> implements Functor<OptionHKT, T>` expresses correctly the
 // return type of the `map` function as `HKT<OptionHKT, B>`.
-// This tells us that the actual type parameter changed from `A` to `B`,
-// according to the types `A` and `B` of the callable we actually passed as a parameter of `map`.
+// This tells us that the actual type parameter changed from `T` to `B`,
+// according to the types `T` and `B` of the callable we actually passed as a parameter of `map`.
 //
 // Moreover, it informs us that we are still considering an higher kinded type
 // with respect to the `OptionHKT` tag
 
-/// A type that can contain a value of type `A` in a [Some] or no value with [None].
+/// A type that can contain a value of type `T` in a [Some] or no value with [None].
 ///
 /// Used to represent type-safe missing values. Instead of using `null`, you define the type
 /// to be [Option]. In this way, you are required by the type system to handle the case in which
@@ -33,39 +59,41 @@ abstract class _OptionHKT {}
 /// /// Using [Option] you are required to specify every possible case.
 /// /// The type system helps you to find and define edge-cases and avoid errors.
 /// mStr.match(
-///   printString,
 ///   () => print('I have no string to print 🤷‍♀️'),
+///   printString,
 /// );
 /// ```
-abstract class Option<A> extends HKT<_OptionHKT, A>
+abstract class Option<T> extends HKT<_OptionHKT, T>
     with
-        Monad<_OptionHKT, A>,
-        Foldable<_OptionHKT, A>,
-        Alt<_OptionHKT, A>,
-        Extend<_OptionHKT, A>,
-        Filterable<_OptionHKT, A> {
+        Functor<_OptionHKT, T>,
+        Applicative<_OptionHKT, T>,
+        Monad<_OptionHKT, T>,
+        Foldable<_OptionHKT, T>,
+        Alt<_OptionHKT, T>,
+        Extend<_OptionHKT, T>,
+        Filterable<_OptionHKT, T> {
   const Option();
 
   /// Return the result of `f` called with `b` and the value of [Some].
   /// If this [Option] is [None], return `b`.
   @override
-  B foldRight<B>(B b, B Function(B acc, A a) f);
+  B foldRight<B>(B b, B Function(B acc, T t) f);
 
   /// Return the result of `f` called with `b` and the value of [Some].
   /// If this [Option] is [None], return `b`.
   @override
-  B foldLeft<B>(B b, B Function(B acc, A a) f) =>
+  B foldLeft<B>(B b, B Function(B acc, T t) f) =>
       foldMap<Endo<B>>(dualEndoMonoid(), (a) => (B b) => f(b, a))(b);
 
   /// Use `monoid` to combine the value of [Some] applied to `f`.
   @override
-  B foldMap<B>(Monoid<B> monoid, B Function(A a) f) =>
+  B foldMap<B>(Monoid<B> monoid, B Function(T t) f) =>
       foldRight(monoid.empty, (b, a) => monoid.combine(f(a), b));
 
   /// Return the result of `f` called with `b` and the value of [Some].
   /// If this [Option] is [None], return `b`.
   @override
-  B foldRightWithIndex<B>(B b, B Function(int i, B acc, A a) f) =>
+  B foldRightWithIndex<B>(B b, B Function(int i, B acc, T t) f) =>
       foldRight<Tuple2<B, int>>(
         Tuple2(b, length() - 1),
         (t, a) => Tuple2(f(t.second, t.first, a), t.second - 1),
@@ -74,7 +102,7 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
   /// Return the result of `f` called with `b` and the value of [Some].
   /// If this [Option] is [None], return `b`.
   @override
-  B foldLeftWithIndex<B>(B b, B Function(int i, B acc, A a) f) =>
+  B foldLeftWithIndex<B>(B b, B Function(int i, B acc, T t) f) =>
       foldLeft<Tuple2<B, int>>(
         Tuple2(b, 0),
         (t, a) => Tuple2(f(t.second, t.first, a), t.second + 1),
@@ -87,39 +115,44 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
   /// Return the result of `predicate` applied to the value of [Some].
   /// If the [Option] is [None], returns `false`.
   @override
-  bool any(bool Function(A a) predicate) => foldMap(boolOrMonoid(), predicate);
+  bool any(bool Function(T t) predicate) => foldMap(boolOrMonoid(), predicate);
 
   /// Return the result of `predicate` applied to the value of [Some].
   /// If the [Option] is [None], returns `true`.
   @override
-  bool all(bool Function(A a) predicate) => foldMap(boolAndMonoid(), predicate);
+  bool all(bool Function(T t) predicate) => foldMap(boolAndMonoid(), predicate);
 
   /// Use `monoid` to combine the value of [Some].
   @override
-  A concatenate(Monoid<A> monoid) => foldMap(monoid, identity);
+  T concatenate(Monoid<T> monoid) => foldMap(monoid, identity);
 
   /// Return the value of this [Option] if it is [Some], otherwise return `a`.
   @override
-  Option<A> plus(covariant Option<A> a);
+  Option<T> plus(covariant Option<T> a);
 
   /// Return `Some(a)`.
   @override
-  Option<A> prepend(A a) => Some(a);
+  Option<T> prepend(T t) => Some(t);
 
   /// If this [Option] is [None], return `Some(a)`. Otherwise return this [Some].
   @override
-  Option<A> append(A a);
+  Option<T> append(T t);
 
-  /// Change the value of type `A` to a value of type `B` using function `f`.
+  /// Change the value of type `T` to a value of type `B` using function `f`.
   /// ```dart
-  /// /// Change type `String` (`A`) to type `int` (`B`)
+  /// /// Change type `String` (`T`) to type `int` (`B`)
   /// final Option<String> mStr = Option.of('name');
   /// final Option<int> mInt = mStr.map((a) => a.length);
   /// ```
+  /// 👇
+  /// ```dart
+  /// [🥚].map((🥚) => 👨‍🍳(🥚)) -> [🍳]
+  /// [_].map((🥚) => 👨‍🍳(🥚)) -> [_]
+  /// ```
   @override
-  Option<B> map<B>(B Function(A a) f);
+  Option<B> map<B>(B Function(T t) f);
 
-  /// Apply the function contained inside `a` to change the value of type `A` to
+  /// Apply the function contained inside `a` to change the value of type `T` to
   /// a value of type `B`.
   ///
   /// If `a` is [None], return [None].
@@ -138,8 +171,10 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
   /// final result = b.ap(map);
   /// ```
   @override
-  Option<B> ap<B>(covariant Option<B Function(A a)> a) =>
-      a.match((f) => map(f), () => Option.none());
+  Option<B> ap<B>(covariant Option<B Function(T t)> a) => a.match(
+        () => Option.none(),
+        (f) => map(f),
+      );
 
   /// Return a [Some] containing the value `b`.
   @override
@@ -163,71 +198,123 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
   ///   ),
   /// );
   /// ```
+  /// 👇
+  /// ```dart
+  /// [😀].flatMap(
+  ///     (😀) => [👻(😀)]
+  ///     ) -> [😱]
+  ///
+  /// [😀].flatMap(
+  ///     (😀) => [👻(😀)]
+  ///     ).flatMap(
+  ///         (😱) => [👨‍⚕️(😱)]
+  ///         ) -> [🤕]
+  ///
+  /// [😀].flatMap(
+  ///     (😀) => [_]
+  ///     ).flatMap(
+  ///         (_) => [👨‍⚕️(_)]
+  ///         ) -> [_]
+  ///
+  /// [_].flatMap(
+  ///     (😀) => [👻(😀)]
+  ///     ) -> [_]
+  /// ```
   @override
-  Option<B> flatMap<B>(covariant Option<B> Function(A a) f);
+  Option<B> flatMap<B>(covariant Option<B> Function(T t) f);
 
   /// Return the current [Option] if it is a [Some], otherwise return the result of `orElse`.
   ///
   /// Used to provide an **alt**ernative [Option] in case the current one is [None].
+  /// ```dart
+  /// [🍌].alt(() => [🍎]) -> [🍌]
+  /// [_].alt(() => [🍎]) -> [🍎]
+  /// ```
   @override
-  Option<A> alt(covariant Option<A> Function() orElse);
+  Option<T> alt(covariant Option<T> Function() orElse);
 
-  /// Change the value of [Option] from type `A` to type `Z` based on the
-  /// value of `Option<A>` using function `f`.
+  /// Change the value of [Option] from type `T` to type `Z` based on the
+  /// value of `Option<T>` using function `f`.
   @override
-  Option<Z> extend<Z>(Z Function(Option<A> t) f);
+  Option<Z> extend<Z>(Z Function(Option<T> t) f);
 
   /// Wrap this [Option] inside another [Option].
   @override
-  Option<Option<A>> duplicate() => extend(identity);
+  Option<Option<T>> duplicate() => extend(identity);
 
   /// If this [Option] is a [Some] and calling `f` returns `true`, then return this [Some].
   /// Otherwise return [None].
   @override
-  Option<A> filter(bool Function(A a) f);
+  Option<T> filter(bool Function(T t) f);
 
   /// If this [Option] is a [Some] and calling `f` returns [Some], then return this [Some].
   /// Otherwise return [None].
   @override
-  Option<Z> filterMap<Z>(Option<Z> Function(A a) f);
+  Option<Z> filterMap<Z>(Option<Z> Function(T t) f);
 
   /// Return a [Tuple2]. If this [Option] is a [Some]:
   /// - if `f` applied to its value returns `true`, then the tuple contains this [Option] as second value
   /// - if `f` applied to its value returns `false`, then the tuple contains this [Option] as first value
   /// Otherwise the tuple contains both [None].
   @override
-  Tuple2<Option<A>, Option<A>> partition(bool Function(A a) f) =>
+  Tuple2<Option<T>, Option<T>> partition(bool Function(T t) f) =>
       Tuple2(filter((a) => !f(a)), filter(f));
 
   /// Return a [Tuple2] that contains as first value a [Some] when `f` returns [Left],
   /// otherwise the [Some] will be the second value of the tuple.
   @override
   Tuple2<Option<Z>, Option<Y>> partitionMap<Z, Y>(
-          Either<Z, Y> Function(A a) f) =>
+          Either<Z, Y> Function(T t) f) =>
       Option.separate(map(f));
 
   /// If this [Option] is a [Some], then return the result of calling `then`.
   /// Otherwise return [None].
+  /// ```dart
+  /// [🍌].andThen(() => [🍎]) -> [🍎]
+  /// [_].andThen(() => [🍎]) -> [_]
+  /// ```
   @override
   Option<B> andThen<B>(covariant Option<B> Function() then) =>
       flatMap((_) => then());
 
-  /// Change type of this [Option] based on its value of type `A` and the
+  /// Chain multiple [Option]s.
+  @override
+  Option<B> call<B>(covariant Option<B> chain) => flatMap((_) => chain);
+
+  /// Change type of this [Option] based on its value of type `T` and the
   /// value of type `C` of another [Option].
   @override
-  Option<D> map2<C, D>(covariant Option<C> mc, D Function(A a, C c) f) =>
+  Option<D> map2<C, D>(covariant Option<C> mc, D Function(T t, C c) f) =>
       flatMap((a) => mc.map((c) => f(a, c)));
 
-  /// Change type of this [Option] based on its value of type `A`, the
+  /// Change type of this [Option] based on its value of type `T`, the
   /// value of type `C` of a second [Option], and the value of type `D`
   /// of a third [Option].
   @override
   Option<E> map3<C, D, E>(covariant Option<C> mc, covariant Option<D> md,
-          E Function(A a, C c, D d) f) =>
+          E Function(T t, C c, D d) f) =>
       flatMap((a) => mc.flatMap((c) => md.map((d) => f(a, c, d))));
 
+  /// {@template fpdart_option_match}
   /// Execute `onSome` when value is [Some], otherwise execute `onNone`.
-  B match<B>(B Function(A a) onSome, B Function() onNone);
+  /// {@endtemplate}
+  /// ```dart
+  /// [🍌].match(() => 🍎, (🍌) => 🍌 * 2) -> 🍌🍌
+  /// [_].match(() => 🍎, (🍌) => 🍌 * 2) -> 🍎
+  /// ```
+  ///
+  /// Same as `fold`.
+  B match<B>(B Function() onNone, B Function(T t) onSome);
+
+  /// {@macro fpdart_option_match}
+  /// ```dart
+  /// [🍌].fold(() => 🍎, (🍌) => 🍌 * 2) -> 🍌🍌
+  /// [_].fold(() => 🍎, (🍌) => 🍌 * 2) -> 🍎
+  /// ```
+  ///
+  /// Same as `match`.
+  B fold<B>(B Function() onNone, B Function(T t) onSome) =>
+      match(onNone, onSome);
 
   /// Return `true` when value is [Some].
   bool isSome();
@@ -237,19 +324,77 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
 
   /// If this [Option] is a [Some] then return the value inside the [Option].
   /// Otherwise return the result of `orElse`.
-  A getOrElse(A Function() orElse);
+  /// ```dart
+  /// [🍌].getOrElse(() => 🍎) -> 🍌
+  /// [_].getOrElse(() => 🍎) -> 🍎
+  ///
+  ///  👆 same as 👇
+  ///
+  /// [🍌].match(() => 🍎, (🍌) => 🍌)
+  /// ```
+  T getOrElse(T Function() orElse);
 
-  /// Return value of type `A` when this [Option] is a [Some], `null` otherwise.
-  A? toNullable();
+  /// Return value of type `T` when this [Option] is a [Some], `null` otherwise.
+  T? toNullable();
 
   /// Build an [Either] from [Option].
   ///
   /// Return [Right] when [Option] is [Some], otherwise [Left] containing
   /// the result of calling `onLeft`.
-  Either<L, A> toEither<L>(L Function() onLeft);
+  Either<L, T> toEither<L>(L Function() onLeft);
+
+  /// Convert this [Option] to a [TaskOption].
+  ///
+  /// Used to convert a sync context ([Option]) to an async context ([TaskOption]).
+  /// You should convert [Option] to [TaskOption] every time you need to
+  /// call an async ([Future]) function based on the value in [Option].
+  TaskOption<T> toTaskOption();
 
   /// Return `true` when value of `a` is equal to the value inside the [Option].
-  bool elem(A a, Eq<A> eq);
+  bool elem(T t, Eq<T> eq);
+
+  /// {@template fpdart_traverse_list_option}
+  /// Map each element in the list to an [Option] using the function `f`,
+  /// and collect the result in an `Option<List<B>>`.
+  ///
+  /// If any mapped element of the list is [None], then the final result
+  /// will be [None].
+  /// {@endtemplate}
+  ///
+  /// Same as `Option.traverseList` but passing `index` in the map function.
+  static Option<List<B>> traverseListWithIndex<A, B>(
+    List<A> list,
+    Option<B> Function(A a, int i) f,
+  ) {
+    final resultList = <B>[];
+    for (var i = 0; i < list.length; i++) {
+      final o = f(list[i], i);
+      final r = o.match<B?>(() => null, identity);
+      if (r == null) return none();
+      resultList.add(r);
+    }
+
+    return some(resultList);
+  }
+
+  /// {@macro fpdart_traverse_list_option}
+  ///
+  /// Same as `Option.traverseListWithIndex` but without `index` in the map function.
+  static Option<List<B>> traverseList<A, B>(
+    List<A> list,
+    Option<B> Function(A a) f,
+  ) =>
+      traverseListWithIndex<A, B>(list, (a, _) => f(a));
+
+  /// {@template fpdart_sequence_list_option}
+  /// Convert a `List<Option<A>>` to a single `Option<List<A>>`.
+  ///
+  /// If any of the [Option] in the [List] is [None], then the result is [None].
+  /// {@endtemplate}
+  static Option<List<A>> sequenceList<A>(
+    List<Option<A>> list,
+  ) =>
+      traverseList(list, identity);
 
   /// Build a [Option] from a [Either] by returning [Some] when `either` is [Right],
   /// [None] otherwise.
@@ -258,7 +403,7 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
 
   /// Return [Some] of `value` when `predicate` applied to `value` returns `true`,
   /// [None] otherwise.
-  factory Option.fromPredicate(A value, bool Function(A a) predicate) =>
+  factory Option.fromPredicate(T value, bool Function(T t) predicate) =>
       predicate(value) ? Some(value) : Option.none();
 
   /// Return [Some] of type `B` by calling `f` with `value` when `predicate` applied to `value` is `true`,
@@ -277,19 +422,19 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
       predicate(value) ? Some(f(value)) : Option.none();
 
   /// Return a [None].
-  factory Option.none() => None<A>();
+  factory Option.none() => None<T>();
 
   /// Return a `Some(a)`.
-  factory Option.of(A a) => Some(a);
+  factory Option.of(T t) => Some(t);
 
   /// Flat a [Option] contained inside another [Option] to be a single [Option].
-  factory Option.flatten(Option<Option<A>> m) => m.flatMap(identity);
+  factory Option.flatten(Option<Option<T>> m) => m.flatMap(identity);
 
   /// Return [None] if `a` is `null`, [Some] otherwise.
-  factory Option.fromNullable(A? a) => a == null ? Option.none() : Some(a);
+  factory Option.fromNullable(T? t) => t == null ? Option.none() : Some(t);
 
   /// Try to run `f` and return `Some(a)` when no error are thrown, otherwise return `None`.
-  factory Option.tryCatch(A Function() f) {
+  factory Option.tryCatch(T Function() f) {
     try {
       return Some(f());
     } catch (_) {
@@ -302,15 +447,17 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
   /// The value on the left of the [Either] will be the first value of the tuple,
   /// while the right value of the [Either] will be the second of the tuple.
   static Tuple2<Option<A>, Option<B>> separate<A, B>(Option<Either<A, B>> m) =>
-      m.match((either) => Tuple2(either.getLeft(), either.getRight()),
-          () => Tuple2(Option.none(), Option.none()));
+      m.match(
+        () => Tuple2(Option.none(), Option.none()),
+        (either) => Tuple2(either.getLeft(), either.getRight()),
+      );
 
   /// Build an `Eq<Option>` by comparing the values inside two [Option].
   ///
   /// If both [Option] are [None], then calling `eqv` returns `true`. Otherwise, if both are [Some]
   /// and their contained value is the same, then calling `eqv` returns `true`.
   /// It returns `false` in all other cases.
-  static Eq<Option<A>> getEq<A>(Eq<A> eq) => Eq.instance((a1, a2) =>
+  static Eq<Option<T>> getEq<T>(Eq<T> eq) => Eq.instance((a1, a2) =>
       a1 == a2 ||
       a1
           .flatMap((j1) => a2.flatMap((j2) => Some(eq.eqv(j1, j2))))
@@ -318,12 +465,12 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
 
   /// Build an instance of [Monoid] in which the `empty` value is [None] and the
   /// `combine` function is based on the **first** [Option] if it is [Some], otherwise the second.
-  static Monoid<Option<A>> getFirstMonoid<A>() =>
+  static Monoid<Option<T>> getFirstMonoid<T>() =>
       Monoid.instance(Option.none(), (a1, a2) => a1.isNone() ? a2 : a1);
 
   /// Build an instance of [Monoid] in which the `empty` value is [None] and the
   /// `combine` function is based on the **second** [Option] if it is [Some], otherwise the first.
-  static Monoid<Option<A>> getLastMonoid<A>() =>
+  static Monoid<Option<T>> getLastMonoid<T>() =>
       Monoid.instance(Option.none(), (a1, a2) => a2.isNone() ? a1 : a2);
 
   /// Build an instance of [Monoid] in which the `empty` value is [None] and the
@@ -331,7 +478,7 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
   /// if they are both [Some].
   ///
   /// If one of the [Option] is [None], then calling `combine` returns [None].
-  static Monoid<Option<A>> getMonoid<A>(Semigroup<A> semigroup) =>
+  static Monoid<Option<T>> getMonoid<T>(Semigroup<T> semigroup) =>
       Monoid.instance(
           Option.none(),
           (a1, a2) => a1.flatMap((v1) => a2.flatMap(
@@ -344,7 +491,7 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
   /// to compare their values when they are both [Some].
   ///
   /// Otherwise instances of [Some] comes before [None] in the ordering.
-  static Order<Option<A>> getOrder<A>(Order<A> order) => Order.from(
+  static Order<Option<T>> getOrder<T>(Order<T> order) => Order.from(
         (a1, a2) => a1 == a2
             ? 0
             : a1
@@ -353,44 +500,54 @@ abstract class Option<A> extends HKT<_OptionHKT, A>
                     ))
                 .getOrElse(() => a1.isSome() ? 1 : -1),
       );
+
+  /// Converts from Json.
+  ///
+  /// Json serialization support for `json_serializable` with `@JsonSerializable`.
+  factory Option.fromJson(dynamic json) => Option<T>.fromNullable(json as T?);
+
+  /// Converts to Json.
+  ///
+  /// Json serialization support for `json_serializable` with `@JsonSerializable`.
+  Object? toJson(Object? Function(T) toJsonT);
 }
 
-class Some<A> extends Option<A> {
-  final A _value;
+class Some<T> extends Option<T> {
+  final T _value;
   const Some(this._value);
 
-  /// Extract value of type `A` inside the [Some].
-  A get value => _value;
+  /// Extract value of type `T` inside the [Some].
+  T get value => _value;
 
   @override
-  Option<D> map2<C, D>(covariant Option<C> mc, D Function(A a, C c) f) =>
+  Option<D> map2<C, D>(covariant Option<C> mc, D Function(T t, C c) f) =>
       flatMap((a) => mc.map((c) => f(a, c)));
 
   @override
   Option<E> map3<C, D, E>(covariant Option<C> mc, covariant Option<D> md,
-          E Function(A a, C c, D d) f) =>
+          E Function(T t, C c, D d) f) =>
       flatMap((a) => mc.flatMap((c) => md.map((d) => f(a, c, d))));
 
   @override
-  Option<B> map<B>(B Function(A a) f) => Some(f(_value));
+  Option<B> map<B>(B Function(T t) f) => Some(f(_value));
 
   @override
-  B foldRight<B>(B b, B Function(B acc, A a) f) => f(b, _value);
+  B foldRight<B>(B b, B Function(B acc, T t) f) => f(b, _value);
 
   @override
-  Option<B> flatMap<B>(covariant Option<B> Function(A a) f) => f(_value);
+  Option<B> flatMap<B>(covariant Option<B> Function(T t) f) => f(_value);
 
   @override
-  A getOrElse(A Function() orElse) => _value;
+  T getOrElse(T Function() orElse) => _value;
 
   @override
-  Option<A> alt(Option<A> Function() orElse) => this;
+  Option<T> alt(Option<T> Function() orElse) => this;
 
   @override
-  B match<B>(B Function(A a) onSome, B Function() onNone) => onSome(_value);
+  B match<B>(B Function() onNone, B Function(T t) onSome) => onSome(_value);
 
   @override
-  Option<Z> extend<Z>(Z Function(Option<A> t) f) => Some(f(this));
+  Option<Z> extend<Z>(Z Function(Option<T> t) f) => Some(f(this));
 
   @override
   bool isSome() => true;
@@ -399,26 +556,28 @@ class Some<A> extends Option<A> {
   bool isNone() => false;
 
   @override
-  Option<A> filter(bool Function(A a) f) => f(_value) ? this : Option.none();
+  Option<T> filter(bool Function(T t) f) => f(_value) ? this : Option.none();
 
   @override
-  Option<Z> filterMap<Z>(Option<Z> Function(A a) f) =>
-      f(_value).match((a) => Some(a), () => Option.none());
+  Option<Z> filterMap<Z>(Option<Z> Function(T t) f) => f(_value).match(
+        () => Option.none(),
+        Some.new,
+      );
 
   @override
-  A? toNullable() => _value;
+  T? toNullable() => _value;
 
   @override
-  bool elem(A a, Eq<A> eq) => eq.eqv(_value, a);
+  bool elem(T t, Eq<T> eq) => eq.eqv(_value, t);
 
   @override
-  Either<L, A> toEither<L>(L Function() onLeft) => Right(_value);
+  Either<L, T> toEither<L>(L Function() onLeft) => Right(_value);
 
   @override
-  Option<A> plus(covariant Option<A> v) => this;
+  Option<T> plus(covariant Option<T> a) => this;
 
   @override
-  Option<A> append(A a) => this;
+  Option<T> append(T t) => this;
 
   @override
   bool operator ==(Object other) => (other is Some) && other._value == _value;
@@ -428,40 +587,46 @@ class Some<A> extends Option<A> {
 
   @override
   String toString() => 'Some($_value)';
+
+  @override
+  Object? toJson(Object? Function(T p1) toJsonT) => toJsonT(_value);
+
+  @override
+  TaskOption<T> toTaskOption() => TaskOption.of(_value);
 }
 
-class None<A> extends Option<A> {
+class None<T> extends Option<T> {
   const None();
 
   @override
-  Option<D> map2<C, D>(covariant Option<C> a, D Function(A a, C c) f) =>
-      flatMap((b) => a.map((c) => f(b, c)));
+  Option<D> map2<C, D>(covariant Option<C> mc, D Function(T t, C c) f) =>
+      flatMap((b) => mc.map((c) => f(b, c)));
 
   @override
   Option<E> map3<C, D, E>(covariant Option<C> mc, covariant Option<D> md,
-          E Function(A a, C c, D d) f) =>
+          E Function(T t, C c, D d) f) =>
       flatMap((a) => mc.flatMap((c) => md.map((d) => f(a, c, d))));
 
   @override
-  Option<B> map<B>(B Function(A a) f) => Option.none();
+  Option<B> map<B>(B Function(T t) f) => Option.none();
 
   @override
-  B foldRight<B>(B b, B Function(B acc, A a) f) => b;
+  B foldRight<B>(B b, B Function(B acc, T t) f) => b;
 
   @override
-  Option<B> flatMap<B>(covariant Option<B> Function(A a) f) => Option.none();
+  Option<B> flatMap<B>(covariant Option<B> Function(T t) f) => Option.none();
 
   @override
-  A getOrElse(A Function() orElse) => orElse();
+  T getOrElse(T Function() orElse) => orElse();
 
   @override
-  Option<A> alt(Option<A> Function() orElse) => orElse();
+  Option<T> alt(Option<T> Function() orElse) => orElse();
 
   @override
-  B match<B>(B Function(A a) onSome, B Function() onNone) => onNone();
+  B match<B>(B Function() onNone, B Function(T t) onSome) => onNone();
 
   @override
-  Option<Z> extend<Z>(Z Function(Option<A> t) f) => Option.none();
+  Option<Z> extend<Z>(Z Function(Option<T> t) f) => Option.none();
 
   @override
   bool isSome() => false;
@@ -470,25 +635,25 @@ class None<A> extends Option<A> {
   bool isNone() => true;
 
   @override
-  Option<A> filter(bool Function(A a) f) => Option.none();
+  Option<T> filter(bool Function(T t) f) => Option.none();
 
   @override
-  Option<Z> filterMap<Z>(Option<Z> Function(A a) f) => Option.none();
+  Option<Z> filterMap<Z>(Option<Z> Function(T t) f) => Option.none();
 
   @override
-  A? toNullable() => null;
+  T? toNullable() => null;
 
   @override
-  bool elem(A a, Eq<A> eq) => false;
+  bool elem(T t, Eq<T> eq) => false;
 
   @override
-  Either<L, A> toEither<L>(L Function() onLeft) => Left(onLeft());
+  Either<L, T> toEither<L>(L Function() onLeft) => Left(onLeft());
 
   @override
-  Option<A> plus(covariant Option<A> v) => v;
+  Option<T> plus(covariant Option<T> a) => a;
 
   @override
-  Option<A> append(A a) => Some(a);
+  Option<T> append(T t) => Some(t);
 
   @override
   bool operator ==(Object other) => other is None;
@@ -498,4 +663,10 @@ class None<A> extends Option<A> {
 
   @override
   String toString() => 'None';
+
+  @override
+  Object? toJson(Object? Function(T p1) toJsonT) => null;
+
+  @override
+  TaskOption<T> toTaskOption() => TaskOption.none();
 }

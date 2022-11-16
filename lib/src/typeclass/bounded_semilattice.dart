@@ -8,8 +8,7 @@ import 'package:fpdart/fpdart.dart';
 /// > of the set `{x, y}` exist.
 ///
 /// See also [Semilattice]
-abstract class BoundedSemilattice<T> extends CommutativeMonoid<T>
-    with Semilattice<T> {
+mixin BoundedSemilattice<T> on CommutativeMonoid<T>, Semilattice<T> {
   /// Return a `BoundedSemilattice` that reverses the order.
   @override
   BoundedSemilattice<T> reverse() =>
@@ -36,11 +35,19 @@ abstract class BoundedSemilattice<T> extends CommutativeMonoid<T>
       _BoundedSemilattice(emptyValue, f);
 }
 
-class _BoundedSemilattice<T> extends BoundedSemilattice<T> {
+class _BoundedSemilattice<T>
+    with
+        Semigroup<T>,
+        Monoid<T>,
+        CommutativeSemigroup<T>,
+        Band<T>,
+        Semilattice<T>,
+        CommutativeMonoid<T>,
+        BoundedSemilattice<T> {
   final T emp;
   final T Function(T x, T y) comb;
 
-  _BoundedSemilattice(this.emp, this.comb);
+  const _BoundedSemilattice(this.emp, this.comb);
 
   @override
   T combine(T x, T y) => comb(x, y);

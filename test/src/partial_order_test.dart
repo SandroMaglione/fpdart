@@ -3,7 +3,6 @@ import 'package:fpdart/fpdart.dart';
 import 'package:test/test.dart';
 
 void main() {
-  // TODO: Testing [PartialOrder]
   group('PartialOrder', () {
     group('is a', () {
       final instance = PartialOrder.from((a1, a2) => 1);

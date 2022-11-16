@@ -6,13 +6,17 @@ abstract class ReaderHKT {}
 /// `Reader<R, A>` allows to read values `A` from a dependency/context `R`
 /// without explicitly passing the dependency between multiple nested
 /// function calls.
-class Reader<R, A> extends HKT2<ReaderHKT, R, A> with Monad2<ReaderHKT, R, A> {
+class Reader<R, A> extends HKT2<ReaderHKT, R, A>
+    with
+        Functor2<ReaderHKT, R, A>,
+        Applicative2<ReaderHKT, R, A>,
+        Monad2<ReaderHKT, R, A> {
   final A Function(R r) _read;
 
   /// Build a [Reader] given `A Function(R)`.
   const Reader(this._read);
 
-  /// Flat a [Option] contained inside another [Option] to be a single [Option].
+  /// Flat a [Reader] contained inside another [Reader] to be a single [Reader].
   factory Reader.flatten(Reader<R, Reader<R, A>> reader) =>
       reader.flatMap(identity);
 
@@ -54,6 +58,10 @@ class Reader<R, A> extends HKT2<ReaderHKT, R, A> with Monad2<ReaderHKT, R, A> {
   Reader<R, C> andThen<C>(covariant Reader<R, C> Function() then) =>
       flatMap((_) => then());
 
+  /// Chain multiple functions having the reader `R`.
+  @override
+  Reader<R, C> call<C>(covariant Reader<R, C> chain) => flatMap((_) => chain);
+
   /// Compose the dependency `R` of this [Reader] to `reader`.
   Reader<R, C> compose<C>(Reader<R, C> reader) => Reader((r) => reader.run(r));
 
@@ -65,6 +73,14 @@ class Reader<R, A> extends HKT2<ReaderHKT, R, A> with Monad2<ReaderHKT, R, A> {
 
   /// Change reading function to `f` given context/dependency `R`.
   Reader<R, A> asks(A Function(R r) f) => Reader((r) => f(r));
+
+  /// Chain a request that returns another [Reader], execute it, ignore
+  /// the result, and return the same value as the current [Reader].
+  @override
+  Reader<R, A> chainFirst<C>(
+    covariant Reader<R, C> Function(A a) chain,
+  ) =>
+      flatMap((a) => chain(a).map((c) => a));
 
   /// Provide the value `R` (dependency) and extract result `A`.
   A run(R r) => _read(r);

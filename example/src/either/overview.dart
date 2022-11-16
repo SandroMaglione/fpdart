@@ -1,5 +1,23 @@
 import 'package:fpdart/fpdart.dart';
 
+/// Don't do that! ⚠
+double divideI(int x, int y) {
+  if (y == 0) {
+    throw Exception('Cannot divide by 0!');
+  }
+
+  return x / y;
+}
+
+/// Error handling using [Either] 🎉
+Either<String, double> divideF(int x, int y) {
+  if (y == 0) {
+    return left('Cannot divide by 0');
+  }
+
+  return right(x / y);
+}
+
 void main() {
   /// Create an instance of [Right]
   final right = Either<String, int>.of(10);

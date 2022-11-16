@@ -1,0 +1,27 @@
+name: Dart CI
+
+on:
+  # Run on PRs and pushes to the default branch.
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dart-lang/setup-dart@v1.3
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed ./lib ./test
+
+      - name: Analyze project source
+        run: dart analyze ./lib ./test
+
+      - name: Run tests
+        run: dart test

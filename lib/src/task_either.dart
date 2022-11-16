@@ -1,7 +1,14 @@
-import 'package:fpdart/fpdart.dart';
-import 'package:fpdart/src/task.dart';
+import 'either.dart';
+import 'function.dart';
+import 'option.dart';
+import 'task.dart';
+import 'typeclass/alt.dart';
+import 'typeclass/applicative.dart';
+import 'typeclass/functor.dart';
+import 'typeclass/hkt.dart';
+import 'typeclass/monad.dart';
 
-/// Tag the [HKT2] interface for the actual [Task].
+/// Tag the [HKT2] interface for the actual [TaskEither].
 abstract class _TaskEitherHKT {}
 
 /// `TaskEither<L, R>` represents an asynchronous computation that
@@ -9,7 +16,11 @@ abstract class _TaskEitherHKT {}
 ///
 /// If you want to represent an asynchronous computation that never fails, see [Task].
 class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
-    with Monad2<_TaskEitherHKT, L, R>, Alt2<_TaskEitherHKT, L, R> {
+    with
+        Functor2<_TaskEitherHKT, L, R>,
+        Applicative2<_TaskEitherHKT, L, R>,
+        Monad2<_TaskEitherHKT, L, R>,
+        Alt2<_TaskEitherHKT, L, R> {
   final Future<Either<L, R>> Function() _run;
 
   /// Build a [TaskEither] from a function returning a `Future<Either<L, R>>`.
@@ -24,10 +35,14 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   TaskEither<L, C> flatMap<C>(covariant TaskEither<L, C> Function(R r) f) =>
       TaskEither(() => run().then(
             (either) async => either.match(
-              (l) => Either.left(l),
+              left,
               (r) => f(r).run(),
             ),
           ));
+
+  /// Chain an [Either] to [TaskEither] by converting it from sync to async.
+  TaskEither<L, C> bindEither<C>(Either<L, C> either) =>
+      flatMap((_) => either.toTaskEither());
 
   /// Returns a [TaskEither] that returns a `Right(a)`.
   @override
@@ -59,15 +74,32 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   @override
   TaskEither<L, C> map<C>(C Function(R r) f) => ap(pure(f));
 
+  /// Change the value in the [Left] of [TaskEither].
+  TaskEither<C, R> mapLeft<C>(C Function(L l) f) => TaskEither(
+        () async => (await run()).match((l) => Either.left(f(l)), Either.of),
+      );
+
+  /// Define two functions to change both the [Left] and [Right] value of the
+  /// [TaskEither].
+  ///
+  /// {@macro fpdart_bimap_either}
+  TaskEither<C, D> bimap<C, D>(C Function(L l) mLeft, D Function(R r) mRight) =>
+      mapLeft(mLeft).map(mRight);
+
   /// Apply the function contained inside `a` to change the value on the [Right] from
   /// type `R` to a value of type `C`.
   @override
   TaskEither<L, C> ap<C>(covariant TaskEither<L, C Function(R r)> a) =>
       a.flatMap((f) => flatMap((v) => pure(f(v))));
 
+  /// Chain multiple functions having the same left type `L`.
+  @override
+  TaskEither<L, C> call<C>(covariant TaskEither<L, C> chain) =>
+      flatMap((_) => chain);
+
   /// Change this [TaskEither] from `TaskEither<L, R>` to `TaskEither<R, L>`.
-  TaskEither<R, L> swap() => TaskEither(
-      () async => (await run()).match((l) => Right(l), (r) => Left(r)));
+  TaskEither<R, L> swap() =>
+      TaskEither(() async => (await run()).match(right, left));
 
   /// When this [TaskEither] returns [Right], then return the current [TaskEither].
   /// Otherwise return the result of `orElse`.
@@ -75,8 +107,7 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   /// Used to provide an **alt**ernative [TaskEither] in case the current one returns [Left].
   @override
   TaskEither<L, R> alt(covariant TaskEither<L, R> Function() orElse) =>
-      TaskEither(
-          () async => (await run()).match((_) => orElse().run(), (_) => run()));
+      TaskEither(() async => (await run()).match((_) => orElse().run(), right));
 
   /// If `f` applied on this [TaskEither] as [Right] returns `true`, then return this [TaskEither].
   /// If it returns `false`, return the result of `onFalse` in a [Left].
@@ -108,6 +139,14 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   TaskEither<L, R> delay(Duration duration) =>
       TaskEither(() => Future.delayed(duration, run));
 
+  /// Chain a request that returns another [TaskEither], execute it, ignore
+  /// the result, and return the same value as the current [TaskEither].
+  @override
+  TaskEither<L, R> chainFirst<C>(
+    covariant TaskEither<L, C> Function(R b) chain,
+  ) =>
+      flatMap((b) => chain(b).map((c) => b).orElse((l) => TaskEither.right(b)));
+
   /// Run the task and return a `Future<Either<L, R>>`.
   Future<Either<L, R>> run() => _run();
 
@@ -130,7 +169,7 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
 
   /// Build a [TaskEither] that returns a [Left] containing the result of running `task`.
   factory TaskEither.leftTask(Task<L> task) =>
-      TaskEither(() => task.run().then((l) => Either.left(l)));
+      TaskEither(() => task.run().then(left));
 
   /// Build a [TaskEither] that returns a [Right] containing the result of running `task`.
   ///
@@ -144,6 +183,17 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   factory TaskEither.fromTask(Task<R> task) =>
       TaskEither(() async => Right(await task.run()));
 
+  /// {@template fpdart_from_nullable_task_either}
+  /// If `r` is `null`, then return the result of `onNull` in [Left].
+  /// Otherwise return `Right(r)`.
+  /// {@endtemplate}
+  factory TaskEither.fromNullable(R? r, L Function() onNull) =>
+      Either.fromNullable(r, onNull).toTaskEither();
+
+  /// {@macro fpdart_from_nullable_task_either}
+  factory TaskEither.fromNullableAsync(R? r, Task<L> onNull) => TaskEither(
+      () async => r != null ? Either.of(r) : Either.left(await onNull.run()));
+
   /// When calling `predicate` with `value` returns `true`, then running [TaskEither] returns `Right(value)`.
   /// Otherwise return `onFalse`.
   factory TaskEither.fromPredicate(
@@ -156,17 +206,40 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   /// When `option` is [Some], then return [Right] when
   /// running [TaskEither]. Otherwise return `onNone`.
   factory TaskEither.fromOption(Option<R> option, L Function() onNone) =>
-      TaskEither(
-          () async => option.match((r) => Right(r), () => Left(onNone())));
+      TaskEither(() async => option.match(
+            () => Left(onNone()),
+            Right.new,
+          ));
 
   /// Build a [TaskEither] that returns `either`.
   factory TaskEither.fromEither(Either<L, R> either) =>
       TaskEither(() async => either);
 
-  /// Converts a [Future] that may throw to a [Future] that never throws
-  /// but returns a [Either] instead.
+  /// {@template fpdart_try_catch_task_either}
+  /// Execute an async function ([Future]) and convert the result to [Either]:
+  /// - If the execution is successful, returns a [Right]
+  /// - If the execution fails (`throw`), then return a [Left] based on `onError`
   ///
-  /// Used to handle asynchronous computations that may throw using [Either].
+  /// Used to work with [Future] and exceptions using [Either] instead of `try`/`catch`.
+  /// {@endtemplate}
+  /// ```dart
+  /// /// From [Future] to [TaskEither]
+  /// Future<int> imperative(String str) async {
+  ///   try {
+  ///     return int.parse(str);
+  ///   } catch (e) {
+  ///     return -1; /// What does -1 means? 🤨
+  ///   }
+  /// }
+  ///
+  /// TaskEither<String, int> functional(String str) {
+  ///   return TaskEither.tryCatch(
+  ///     () async => int.parse(str),
+  ///     /// Clear error 🪄
+  ///     (error, stackTrace) => "Parsing error: $error",
+  ///   );
+  /// }
+  /// ```
   factory TaskEither.tryCatch(Future<R> Function() run,
           L Function(Object error, StackTrace stackTrace) onError) =>
       TaskEither<L, R>(() async {
@@ -176,4 +249,106 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
           return Left<L, R>(onError(error, stack));
         }
       });
+
+  /// {@template fpdart_traverse_list_task_either}
+  /// Map each element in the list to a [TaskEither] using the function `f`,
+  /// and collect the result in an `TaskEither<E, List<B>>`.
+  ///
+  /// Each [TaskEither] is executed in parallel. This strategy is faster than
+  /// sequence, but **the order of the request is not guaranteed**.
+  ///
+  /// If you need [TaskEither] to be executed in sequence, use `traverseListWithIndexSeq`.
+  /// {@endtemplate}
+  ///
+  /// Same as `TaskEither.traverseList` but passing `index` in the map function.
+  static TaskEither<E, List<B>> traverseListWithIndex<E, A, B>(
+    List<A> list,
+    TaskEither<E, B> Function(A a, int i) f,
+  ) =>
+      TaskEither<E, List<B>>(
+        () async => Either.sequenceList(
+          await Task.traverseListWithIndex<A, Either<E, B>>(
+            list,
+            (a, i) => Task(() => f(a, i).run()),
+          ).run(),
+        ),
+      );
+
+  /// {@macro fpdart_traverse_list_task_either}
+  ///
+  /// Same as `TaskEither.traverseListWithIndex` but without `index` in the map function.
+  static TaskEither<E, List<B>> traverseList<E, A, B>(
+    List<A> list,
+    TaskEither<E, B> Function(A a) f,
+  ) =>
+      traverseListWithIndex<E, A, B>(list, (a, _) => f(a));
+
+  /// {@template fpdart_sequence_list_task_either}
+  /// Convert a `List<TaskEither<E, A>>` to a single `TaskEither<E, List<A>>`.
+  ///
+  /// Each [TaskEither] will be executed in parallel.
+  ///
+  /// If you need [TaskEither] to be executed in sequence, use `sequenceListSeq`.
+  /// {@endtemplate}
+  static TaskEither<E, List<A>> sequenceList<E, A>(
+    List<TaskEither<E, A>> list,
+  ) =>
+      traverseList(list, identity);
+
+  /// {@template fpdart_traverse_list_seq_task_either}
+  /// Map each element in the list to a [TaskEither] using the function `f`,
+  /// and collect the result in an `TaskEither<E, List<B>>`.
+  ///
+  /// Each [TaskEither] is executed in sequence. This strategy **takes more time than
+  /// parallel**, but it ensures that all the request are executed in order.
+  ///
+  /// If you need [TaskEither] to be executed in parallel, use `traverseListWithIndex`.
+  /// {@endtemplate}
+  ///
+  /// Same as `TaskEither.traverseList` but passing `index` in the map function.
+  static TaskEither<E, List<B>> traverseListWithIndexSeq<E, A, B>(
+    List<A> list,
+    TaskEither<E, B> Function(A a, int i) f,
+  ) =>
+      TaskEither<E, List<B>>(
+        () async => Either.sequenceList(
+          await Task.traverseListWithIndexSeq<A, Either<E, B>>(
+            list,
+            (a, i) => Task(() => f(a, i).run()),
+          ).run(),
+        ),
+      );
+
+  /// {@macro fpdart_traverse_list_seq_task_either}
+  ///
+  /// Same as `TaskEither.traverseListWithIndex` but without `index` in the map function.
+  static TaskEither<E, List<B>> traverseListSeq<E, A, B>(
+    List<A> list,
+    TaskEither<E, B> Function(A a) f,
+  ) =>
+      traverseListWithIndexSeq<E, A, B>(list, (a, _) => f(a));
+
+  /// {@template fpdart_sequence_list_seq_task_either}
+  /// Convert a `List<TaskEither<E, A>>` to a single `TaskEither<E, List<A>>`.
+  ///
+  /// Each [TaskEither] will be executed in sequence.
+  ///
+  /// If you need [TaskEither] to be executed in parallel, use `sequenceList`.
+  /// {@endtemplate}
+  static TaskEither<E, List<A>> sequenceListSeq<E, A>(
+    List<TaskEither<E, A>> list,
+  ) =>
+      traverseListSeq(list, identity);
+
+  /// {@macro fpdart_try_catch_task_either}
+  ///
+  /// It wraps the `TaskEither.tryCatch` factory to make chaining with `flatMap`
+  /// easier.
+  static TaskEither<L, R> Function(T a) tryCatchK<L, R, T>(
+          Future<R> Function(T a) run,
+          L Function(Object error, StackTrace stackTrace) onError) =>
+      (a) => TaskEither.tryCatch(
+            () => run(a),
+            onError,
+          );
 }

@@ -1,5 +1,5 @@
-import 'package:fpdart/fpdart.dart';
 import 'package:fpdart/src/tuple.dart';
+import 'package:fpdart/src/typeclass/monoid.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -26,9 +26,23 @@ void main() {
       expect(map.second, '10');
     });
 
+    test('mapBoth', () {
+      const tuple = Tuple2('abc', 10);
+      final map = tuple.mapBoth((v1, v2) => Tuple2('$v2', v1.length));
+      expect(map.first, '10');
+      expect(map.second, 3);
+    });
+
     test('map', () {
       const tuple = Tuple2('abc', 10);
       final map = tuple.map((v2) => '$v2');
+      expect(map.second, '10');
+    });
+
+    test('bimap', () {
+      const tuple = Tuple2('abc', 10);
+      final map = tuple.bimap((v1) => v1.length, (v2) => '$v2');
+      expect(map.first, 3);
       expect(map.second, '10');
     });
 
@@ -186,7 +200,6 @@ void main() {
       expect(t1, t1);
       expect(t1, t2);
       expect(t1 == t3, false);
-      expect(t1 == t4, false);
       expect(map1, map1);
       expect(map1, map2);
       expect(map1 == map3, false);

@@ -1,8 +1,47 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:test/test.dart';
+
+import './utils/utils.dart';
 
 void main() {
   group('Option', () {
+    group('[Property-based testing]', () {
+      group('map', () {
+        Glados(any.optionInt).test('should keep the same type (Some or None)',
+            (option) {
+          final r = option.map(constF);
+          expect(option.isSome(), r.isSome());
+          expect(option.isNone(), r.isNone());
+        });
+
+        Glados2(any.optionInt, any.int)
+            .test('should updated the value inside Some, or stay None',
+                (option, value) {
+          final r = option.map((n) => n + value);
+          option.match(
+            () {
+              expect(option, r);
+            },
+            (val1) {
+              r.matchTestSome((val2) {
+                expect(val2, val1 + value);
+              });
+            },
+          );
+        });
+      });
+
+      group('traverseList', () {
+        Glados(any.list(any.int)).test(
+            'should keep the same structure and content of the original list',
+            (input) {
+          final result = Option.traverseList(input, Option<int>.of);
+          result.matchTestSome((t) {
+            expect(t, input);
+          });
+        });
+      });
+    });
+
     group('is a', () {
       final option = Option.of(10);
 
@@ -38,21 +77,21 @@ void main() {
     test('map', () {
       final option = Option.of(10);
       final map = option.map((a) => a + 1);
-      map.match((some) => expect(some, 11), () => null);
+      map.matchTestSome((some) => expect(some, 11));
     });
 
     test('map2', () {
       final option = Option.of(10);
       final map =
           option.map2<String, int>(Option.of('abc'), (a, b) => a + b.length);
-      map.match((some) => expect(some, 13), () => null);
+      map.matchTestSome((some) => expect(some, 13));
     });
 
     test('map3', () {
       final option = Option.of(10);
       final map = option.map3<String, double, double>(
           Option.of('abc'), Option.of(2.0), (a, b, c) => (a + b.length) / c);
-      map.match((some) => expect(some, 6.5), () => null);
+      map.matchTestSome((some) => expect(some, 6.5));
     });
 
     test('foldRight', () {
@@ -90,7 +129,7 @@ void main() {
       test('Some', () {
         final option = Option.of(10);
         final pure = option.ap(Option.of((int i) => i + 1));
-        pure.match((some) => expect(some, 11), () => null);
+        pure.matchTestSome((some) => expect(some, 11));
       });
 
       test('Some (curried)', () {
@@ -101,7 +140,7 @@ void main() {
             .ap(
               Option.of((f) => f(5)),
             );
-        ap.match((some) => expect(some, 8), () => null);
+        ap.matchTestSome((some) => expect(some, 8));
       });
 
       test('None', () {
@@ -115,7 +154,7 @@ void main() {
       test('Some', () {
         final option = Option.of(10);
         final flatMap = option.flatMap<int>((a) => Option.of(a + 1));
-        flatMap.match((some) => expect(some, 11), () => null);
+        flatMap.matchTestSome((some) => expect(some, 11));
       });
 
       test('None', () {
@@ -143,13 +182,13 @@ void main() {
       test('Some', () {
         final option = Option.of(10);
         final value = option.alt(() => Option.of(0));
-        value.match((some) => expect(some, 10), () => null);
+        value.matchTestSome((some) => expect(some, 10));
       });
 
       test('None', () {
         final option = Option<int>.none();
         final value = option.alt(() => Option.of(0));
-        value.match((some) => expect(some, 0), () => null);
+        value.matchTestSome((some) => expect(some, 0));
       });
     });
 
@@ -157,13 +196,13 @@ void main() {
       test('Some', () {
         final option = Option.of(10);
         final value = option.extend((t) => t.isSome() ? 'valid' : 'invalid');
-        value.match((some) => expect(some, 'valid'), () => null);
+        value.matchTestSome((some) => expect(some, 'valid'));
       });
 
       test('None', () {
         final option = Option<int>.none();
         final value = option.extend((t) => t.isSome() ? 'valid' : 'invalid');
-        value.match((some) => expect(some, 'invalid'), () => null);
+        expect(value, isA<None>());
       });
     });
 
@@ -171,7 +210,7 @@ void main() {
       test('Some', () {
         final option = Option.of(10);
         final value = option.duplicate();
-        value.match((some) => expect(some, isA<Some>()), () => null);
+        value.matchTestSome((some) => expect(some, isA<Some>()));
       });
 
       test('None', () {
@@ -185,7 +224,7 @@ void main() {
       test('Some (true)', () {
         final option = Option.of(10);
         final value = option.filter((a) => a > 5);
-        value.match((some) => expect(some, 10), () => null);
+        value.matchTestSome((some) => expect(some, 10));
       });
 
       test('Some (false)', () {
@@ -205,7 +244,7 @@ void main() {
       test('Some', () {
         final option = Option.of(10);
         final value = option.filterMap<String>((a) => Option.of('$a'));
-        value.match((some) => expect(some, '10'), () => null);
+        value.matchTestSome((some) => expect(some, '10'));
       });
 
       test('None', () {
@@ -220,13 +259,13 @@ void main() {
         final option = Option.of(10);
         final value = option.partition((a) => a > 5);
         expect(value.first, isA<None>());
-        value.second.match((some) => expect(some, 10), () => null);
+        value.second.matchTestSome((some) => expect(some, 10));
       });
 
       test('Some (false)', () {
         final option = Option.of(10);
         final value = option.partition((a) => a < 5);
-        value.first.match((some) => expect(some, 10), () => null);
+        value.first.matchTestSome((some) => expect(some, 10));
         expect(value.second, isA<None>());
       });
 
@@ -244,14 +283,14 @@ void main() {
         final value =
             option.partitionMap<String, double>((a) => Either.of(a / 2));
         expect(value.first, isA<None>());
-        value.second.match((some) => expect(some, 5.0), () => null);
+        value.second.matchTestSome((some) => expect(some, 5.0));
       });
 
       test('Some (left)', () {
         final option = Option.of(10);
         final value =
             option.partitionMap<String, double>((a) => Either.left('$a'));
-        value.first.match((some) => expect(some, '10'), () => null);
+        value.first.matchTestSome((some) => expect(some, '10'));
         expect(value.second, isA<None>());
       });
 
@@ -267,7 +306,7 @@ void main() {
     group('fromEither', () {
       test('Right', () {
         final option = Option.fromEither<String, int>(Either.of(10));
-        option.match((some) => expect(some, 10), () => null);
+        option.matchTestSome((some) => expect(some, 10));
       });
 
       test('Left', () {
@@ -279,7 +318,7 @@ void main() {
     group('fromPredicate', () {
       test('Some', () {
         final option = Option<int>.fromPredicate(10, (a) => a > 5);
-        option.match((some) => expect(some, 10), () => null);
+        option.matchTestSome((some) => expect(some, 10));
       });
 
       test('None', () {
@@ -292,7 +331,7 @@ void main() {
       test('Some', () {
         final option =
             Option.fromPredicateMap<int, String>(10, (a) => a > 5, (a) => '$a');
-        option.match((some) => expect(some, '10'), () => null);
+        option.matchTestSome((some) => expect(some, '10'));
       });
 
       test('None', () {
@@ -305,7 +344,7 @@ void main() {
     group('flatten', () {
       test('Right', () {
         final option = Option.flatten(Option.of(Option.of(10)));
-        option.match((some) => expect(some, 10), () => null);
+        option.matchTestSome((some) => expect(some, 10));
       });
 
       test('Left', () {
@@ -318,13 +357,13 @@ void main() {
       test('Right', () {
         final option = Option.separate<String, int>(Option.of(Either.of(10)));
         expect(option.first, isA<None>());
-        option.second.match((some) => expect(some, 10), () => null);
+        option.second.matchTestSome((some) => expect(some, 10));
       });
 
       test('Left', () {
         final option =
             Option.separate<String, int>(Option.of(Either.left('none')));
-        option.first.match((some) => expect(some, 'none'), () => null);
+        option.first.matchTestSome((some) => expect(some, 'none'));
         expect(option.second, isA<None>());
       });
     });
@@ -336,7 +375,7 @@ void main() {
 
     test('of', () {
       final option = Option.of(10);
-      option.match((some) => expect(some, 10), () => null);
+      option.matchTestSome((some) => expect(some, 10));
     });
 
     test('isSome', () {
@@ -392,8 +431,12 @@ void main() {
       final m2 = Option<int>.none();
       final e1 = m1.toEither(() => 'left');
       final e2 = m2.toEither(() => 'left');
-      e1.match((l) => null, (r) => expect(r, 10));
-      e2.match((l) => expect(l, 'left'), (r) => null);
+      e1.match((_) {
+        fail('should be right');
+      }, (r) => expect(r, 10));
+      e2.match((l) => expect(l, 'left'), (_) {
+        fail('should be left');
+      });
     });
 
     test('toNullable', () {
@@ -407,8 +450,8 @@ void main() {
     test('pure', () {
       final m1 = Option.of(10);
       final m2 = Option<int>.none();
-      m1.pure('abc').match((some) => expect(some, 'abc'), () => null);
-      m2.pure('abc').match((some) => expect(some, 'abc'), () => null);
+      m1.pure('abc').matchTestSome((some) => expect(some, 'abc'));
+      m2.pure('abc').matchTestSome((some) => expect(some, 'abc'));
     });
 
     test('length', () {
@@ -469,36 +512,50 @@ void main() {
       final m2 = Option<int>.none();
       m1
           .andThen(() => Option.of('abc'))
-          .match((some) => expect(some, 'abc'), () => null);
+          .matchTestSome((some) => expect(some, 'abc'));
       expect(m2.andThen(() => Option.of('abc')), isA<None>());
+    });
+
+    test('call', () {
+      final m1 = Option.of(10);
+      final m2 = Option<int>.none();
+      m1(Option.of('abc')).matchTestSome((some) => expect(some, 'abc'));
+      expect(m2(Option.of('abc')), isA<None>());
     });
 
     test('plus', () {
       final m1 = Option.of(10);
       final m2 = Option<int>.none();
-      m1.plus(Option.of(0)).match((some) => expect(some, 10), () => null);
-      m2.plus(Option.of(0)).match((some) => expect(some, 0), () => null);
+      m1.plus(Option.of(0)).matchTestSome((some) => expect(some, 10));
+      m2.plus(Option.of(0)).matchTestSome((some) => expect(some, 0));
     });
 
     test('prepend', () {
       final m1 = Option.of(10);
       final m2 = Option<int>.none();
-      m1.prepend(0).match((some) => expect(some, 0), () => null);
-      m2.prepend(0).match((some) => expect(some, 0), () => null);
+      m1.prepend(0).matchTestSome((some) => expect(some, 0));
+      m2.prepend(0).matchTestSome((some) => expect(some, 0));
     });
 
     test('append', () {
       final m1 = Option.of(10);
       final m2 = Option<int>.none();
-      m1.append(0).match((some) => expect(some, 10), () => null);
-      m2.append(0).match((some) => expect(some, 0), () => null);
+      m1.append(0).matchTestSome((some) => expect(some, 10));
+      m2.append(0).matchTestSome((some) => expect(some, 0));
     });
 
     test('match', () {
       final m1 = Option.of(10);
       final m2 = Option<int>.none();
-      expect(m1.match((some) => 'some', () => 'none'), 'some');
-      expect(m2.match((some) => 'some', () => 'none'), 'none');
+      expect(m1.match(() => 'none', (some) => 'some'), 'some');
+      expect(m2.match(() => 'none', (some) => 'some'), 'none');
+    });
+
+    test('match', () {
+      final m1 = Option.of(10);
+      final m2 = Option<int>.none();
+      expect(m1.fold(() => 'none', (some) => 'some'), 'some');
+      expect(m2.fold(() => 'none', (some) => 'some'), 'none');
     });
 
     test('elem', () {
@@ -525,10 +582,10 @@ void main() {
       expect(m.empty, isA<None<int>>());
       m
           .combine(Option.of(10), Option.of(0))
-          .match((some) => expect(some, 10), () => null);
+          .matchTestSome((some) => expect(some, 10));
       m
           .combine(Option.none(), Option.of(0))
-          .match((some) => expect(some, 0), () => null);
+          .matchTestSome((some) => expect(some, 0));
     });
 
     test('getLastMonoid', () {
@@ -536,10 +593,10 @@ void main() {
       expect(m.empty, isA<None<int>>());
       m
           .combine(Option.of(10), Option.of(0))
-          .match((some) => expect(some, 0), () => null);
+          .matchTestSome((some) => expect(some, 0));
       m
           .combine(Option.of(10), Option.none())
-          .match((some) => expect(some, 10), () => null);
+          .matchTestSome((some) => expect(some, 10));
     });
 
     test('getMonoid', () {
@@ -547,7 +604,7 @@ void main() {
       expect(m.empty, isA<None<int>>());
       m
           .combine(Option.of(10), Option.of(20))
-          .match((some) => expect(some, 30), () => null);
+          .matchTestSome((some) => expect(some, 30));
       expect(m.combine(Option.of(10), Option.none()), isA<None<int>>());
       expect(m.combine(Option.none(), Option.of(10)), isA<None<int>>());
     });
@@ -561,6 +618,78 @@ void main() {
       test('None', () {
         final m = Option<int>.none();
         expect(m.toString(), 'None');
+      });
+    });
+
+    group('sequenceList', () {
+      test('Some', () {
+        final list = [some(1), some(2), some(3), some(4)];
+        final result = Option.sequenceList(list);
+        result.matchTestSome((t) {
+          expect(t, [1, 2, 3, 4]);
+        });
+      });
+
+      test('None', () {
+        final list = [some(1), none<int>(), some(3), some(4)];
+        final result = Option.sequenceList(list);
+        expect(result, isA<None<List<int>>>());
+      });
+    });
+
+    group('traverseList', () {
+      test('Some', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final result =
+            Option.traverseList<int, String>(list, (a) => some("$a"));
+        result.matchTestSome((t) {
+          expect(t, ["1", "2", "3", "4", "5", "6"]);
+        });
+      });
+
+      test('None', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final result = Option.traverseList<int, String>(
+          list,
+          (a) => a % 2 == 0 ? some("$a") : none(),
+        );
+        expect(result, isA<None<List<String>>>());
+      });
+    });
+
+    group('traverseListWithIndex', () {
+      test('Some', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final result = Option.traverseListWithIndex<int, String>(
+            list, (a, i) => some("$a$i"));
+        result.matchTestSome((t) {
+          expect(t, ["10", "21", "32", "43", "54", "65"]);
+        });
+      });
+
+      test('None', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        final result = Option.traverseListWithIndex<int, String>(
+          list,
+          (a, i) => i % 2 == 0 ? some("$a$i") : none(),
+        );
+        expect(result, isA<None<List<String>>>());
+      });
+    });
+
+    group('toTaskOption', () {
+      test('Some', () async {
+        final m = Option.of(10);
+        final taskOption = m.toTaskOption();
+        final result = await taskOption.run();
+        expect(result, m);
+      });
+
+      test('None', () async {
+        final m = Option<int>.none();
+        final taskOption = m.toTaskOption();
+        final result = await taskOption.run();
+        expect(result, m);
       });
     });
 

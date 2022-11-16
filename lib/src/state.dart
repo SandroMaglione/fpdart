@@ -1,4 +1,5 @@
 import 'function.dart';
+import 'state_async.dart';
 import 'tuple.dart';
 import 'typeclass/typeclass.export.dart';
 import 'unit.dart';
@@ -11,7 +12,11 @@ abstract class _StateHKT {}
 /// `S` is a State (e.g. the current _State_ of your Bank Account).
 /// `A` is value that you _extract out of the [State]_
 /// (Account Balance fetched from the current state of your Bank Account `S`).
-class State<S, A> extends HKT2<_StateHKT, S, A> with Monad2<_StateHKT, S, A> {
+class State<S, A> extends HKT2<_StateHKT, S, A>
+    with
+        Functor2<_StateHKT, S, A>,
+        Applicative2<_StateHKT, S, A>,
+        Monad2<_StateHKT, S, A> {
   final Tuple2<A, S> Function(S state) _run;
 
   /// Build a new [State] given a `Tuple2<A, S> Function(S)`.
@@ -20,10 +25,16 @@ class State<S, A> extends HKT2<_StateHKT, S, A> with Monad2<_StateHKT, S, A> {
   /// Flat a [State] contained inside another [State] to be a single [State].
   factory State.flatten(State<S, State<S, A>> state) => state.flatMap(identity);
 
+  /// Lift a sync [State] to an async [StateAsync].
+  StateAsync<S, A> toStateAsync() => StateAsync.fromState(this);
+
   /// Used to chain multiple functions that return a [State].
   @override
   State<S, C> flatMap<C>(covariant State<S, C> Function(A a) f) =>
-      State((state) => f(run(state).first).run(state));
+      State((state) {
+        final tuple = run(state);
+        return f(tuple.first).run(tuple.second);
+      });
 
   /// Apply the function contained inside `a` to change the value of type `A` to
   /// a value of type `C`.
@@ -58,6 +69,10 @@ class State<S, A> extends HKT2<_StateHKT, S, A> with Monad2<_StateHKT, S, A> {
   State<S, C> andThen<C>(covariant State<S, C> Function() then) =>
       flatMap((_) => then());
 
+  /// Chain multiple functions having the same state `S`.
+  @override
+  State<S, C> call<C>(covariant State<S, C> state) => flatMap((_) => state);
+
   /// Extract the current state `S`.
   State<S, S> get() => State((state) => Tuple2(state, state));
 
@@ -71,6 +86,17 @@ class State<S, A> extends HKT2<_StateHKT, S, A> with Monad2<_StateHKT, S, A> {
 
   /// Set a new state and return nothing ([Unit]).
   State<S, Unit> put(S state) => State((_) => Tuple2(unit, state));
+
+  /// Chain a request that returns another [State], execute it, ignore
+  /// the result, and return the same value as the current [State].
+  ///
+  /// **Note**: `chainFirst` will not change the value of `first` for the state,
+  /// but **it will change the value of `second`** when calling `run()`.
+  @override
+  State<S, A> chainFirst<C>(
+    covariant State<S, C> Function(A a) chain,
+  ) =>
+      flatMap((a) => chain(a).map((_) => a));
 
   /// Execute `run` and extract the value `A`.
   ///

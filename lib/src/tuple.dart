@@ -1,5 +1,18 @@
 import 'package:fpdart/fpdart.dart';
 
+/// Return a `Tuple2(a, b)`.
+Tuple2<A, B> tuple2<A, B>(A a, B b) => Tuple2(a, b);
+
+/// Build a `Tuple2(a, b)` using a curried function in which the first function
+/// accepts `a` and the second function accepts `b`.
+Tuple2<A, B> Function(B b) tuple2CurriedFirst<A, B>(A a) =>
+    (B b) => Tuple2(a, b);
+
+/// Build a `Tuple2(a, b)` using a curried function in which the first function
+/// accepts `b` and the second function accepts `a`.
+Tuple2<A, B> Function(A a) tuple2CurriedSecond<A, B>(B b) =>
+    (A a) => Tuple2(a, b);
+
 /// Tag the [HKT2] interface for the actual [Tuple2].
 abstract class _Tuple2HKT {}
 
@@ -35,11 +48,25 @@ class Tuple2<T1, T2> extends HKT2<_Tuple2HKT, T1, T2>
   Tuple2<T1, TN> mapSecond<TN>(TN Function(T2 second) f) =>
       Tuple2(_value1, f(_value2));
 
+  /// Change type of both values of the [Tuple] using `f`.
+  ///
+  /// This is the same as `mapFirst` and `mapSecond` combined.
+  Tuple2<C, D> mapBoth<C, D>(Tuple2<C, D> Function(T1 first, T2 second) f) =>
+      f(_value1, _value2);
+
   /// Change type of second value of the [Tuple] from `T2` to `C` using `f`.
   ///
   /// Same as `mapSecond`.
   @override
   Tuple2<T1, C> map<C>(C Function(T2 a) f) => mapSecond(f);
+
+  /// Change type of both values of the [Tuple].
+  ///
+  /// This is the same as `mapFirst` followed by `mapSecond`.
+  ///
+  /// Same as `mapBoth` but using two distinct functions instead of just one.
+  Tuple2<C, D> bimap<C, D>(C Function(T1 a) mFirst, D Function(T2 b) mSecond) =>
+      mapFirst(mFirst).mapSecond(mSecond);
 
   /// Convert the second value of the [Tuple2] from `T2` to `Z` using `f`.
   @override

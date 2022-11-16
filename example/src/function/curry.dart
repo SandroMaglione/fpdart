@@ -22,4 +22,13 @@ void main() {
   final divideBy3 = multiplyBy2(3);
   print(divideBy3(10));
   print(sumMultiplyDivideCurry(5)(2)(3)(10));
+
+  /// Using the extension
+  final sumBy2Extension = sum.curry(2);
+  final sumBy10Extension = sum.curry(10);
+  print(sumBy2Extension(10));
+  print(sumBy10Extension(2));
+
+  final fourParamsCurry = sumMultiplyDivide.curry;
+  final fourParamsUncurry = fourParamsCurry.uncurry;
 }

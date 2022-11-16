@@ -24,45 +24,87 @@ void main() {
       final ap = state.map((a) => a + 1);
       final result = ap.run('aaa');
       expect(result.first, 4);
-      expect(result.second, 'aaa');
+      expect(result.second, 'aaaa');
     });
 
     test('map2', () {
       final state = State<String, int>((s) => Tuple2(s.length, '${s}a'));
-      final state1 =
-          State<String, double>((s) => Tuple2(s.length / 2, '${s}b'));
+      final state1 = State<String, double>(
+        (s) => Tuple2(s.length / 2, '${s}b'),
+      );
       final ap = state.map2<double, double>(state1, (a, c) => c * a);
       final result = ap.run('aaa');
-      expect(result.first, 4.5);
-      expect(result.second, 'aaa');
+      expect(result.first, 6);
+      expect(result.second, 'aaaab');
     });
 
     test('map3', () {
-      final state = State<String, int>((s) => Tuple2(s.length, '${s}a'));
-      final state1 =
-          State<String, double>((s) => Tuple2(s.length / 2, '${s}b'));
-      final state2 = State<String, String>((s) => Tuple2('${s}aaa', '${s}b'));
+      final state = State<String, int>(
+        (s) => Tuple2(s.length, '${s}a'),
+      );
+      final state1 = State<String, double>(
+        (s) => Tuple2(s.length / 2, '${s}b'),
+      );
+      final state2 = State<String, String>(
+        (s) => Tuple2('${s}aaa', '${s}b'),
+      );
       final ap = state.map3<double, String, double>(
-          state1, state2, (a, c, d) => d.length + (c * a));
+        state1,
+        state2,
+        (a, c, d) => d.length + (c * a),
+      );
       final result = ap.run('aaa');
-      expect(result.first, 10.5);
-      expect(result.second, 'aaa');
+      expect(result.first, 14);
+      expect(result.second, 'aaaabb');
     });
 
     test('ap', () {
-      final state = State<String, int>((s) => Tuple2(s.length, '${s}a'));
-      final ap = state.ap<String>(State((s) => Tuple2((int n) => '$n$s', s)));
+      final state = State<String, int>(
+        (s) => Tuple2(s.length, '${s}a'),
+      );
+      final ap = state.ap<String>(
+        State(
+          (s) => Tuple2((int n) => '$n$s', s),
+        ),
+      );
       final result = ap.run('aaa');
       expect(result.first, '3aaa');
-      expect(result.second, 'aaa');
+      expect(result.second, 'aaaa');
     });
 
     test('andThen', () {
-      final state = State<String, int>((s) => Tuple2(s.length, '${s}a'));
+      final state = State<String, int>(
+        (s) => Tuple2(s.length, '${s}a'),
+      );
       final ap = state.andThen(
-          () => State<String, double>((s) => Tuple2(s.length / 2, '${s}a')));
+        () => State<String, double>(
+          (s) => Tuple2(s.length / 2, '${s}a'),
+        ),
+      );
       final result = ap.run('aaa');
-      expect(result.first, 1.5);
+      expect(result.first, 2);
+      expect(result.second, 'aaaaa');
+    });
+
+    test('call', () {
+      final state = State<String, int>(
+        (s) => Tuple2(s.length, '${s}a'),
+      );
+      final ap = state(
+        State<String, double>(
+          (s) => Tuple2(s.length / 2, '${s}a'),
+        ),
+      );
+      final result = ap.run('aaa');
+      expect(result.first, 2);
+      expect(result.second, 'aaaaa');
+    });
+
+    test('toStateAsync', () async {
+      final state = State<String, int>((s) => Tuple2(s.length, '${s}a'));
+      final ap = state.toStateAsync();
+      final result = await ap.run('aaa');
+      expect(result.first, 3);
       expect(result.second, 'aaaa');
     });
 
@@ -75,12 +117,15 @@ void main() {
     });
 
     test('flatMap', () {
-      final state = State<String, int>((s) => Tuple2(s.length, '${s}a'));
-      final ap =
-          state.flatMap<double>((a) => State((s) => Tuple2(a / 2, '$a$s')));
-      final result = ap.run('aaa');
-      expect(result.first, 1.5);
-      expect(result.second, '3aaa');
+      final state = State<List<int>, int>((s) => Tuple2(s.first, s.sublist(1)));
+      final ap = state.flatMap<double>(
+        (a) => State(
+          (s) => Tuple2(a / 2, s.sublist(1)),
+        ),
+      );
+      final result = ap.run([1, 2, 3, 4, 5]);
+      expect(result.first, 0.5);
+      expect(result.second, [3, 4, 5]);
     });
 
     test('get', () {
@@ -135,13 +180,34 @@ void main() {
     });
 
     test('flatten', () {
-      final state = State<String, State<String, int>>((s) => Tuple2(
-          State<String, int>((s) => Tuple2(s.length, '${s}a')), '${s}a'));
+      final state = State<String, State<String, int>>(
+        (s) => Tuple2(
+          State<String, int>(
+            (s) => Tuple2(s.length, '${s}a'),
+          ),
+          '${s}a',
+        ),
+      );
       final ap = State.flatten(state);
       expect(ap, isA<State<String, int>>());
       final result = ap.run('aaa');
-      expect(result.first, 3);
-      expect(result.second, 'aaaa');
+      expect(result.first, 4);
+      expect(result.second, 'aaaaa');
     });
+  });
+
+  test('chainFirst', () {
+    final state = State<String, int>((s) => Tuple2(s.length, '${s}a'));
+    var sideEffect = 10;
+    final chain = state.chainFirst((b) {
+      sideEffect = 100;
+      return State<String, double>((s) => Tuple2(s.length / 2, 'z${s}'));
+    });
+    final result = chain.run('abc');
+    expect(result.first, 3);
+
+    // It changes the value of `second`!
+    expect(result.second, 'zabca');
+    expect(sideEffect, 100);
   });
 }

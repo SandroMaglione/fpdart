@@ -1,7 +1,7 @@
 import 'applicative.dart';
 import 'hkt.dart';
 
-abstract class Monad<KT, A> extends HKT<KT, A> with Applicative<KT, A> {
+mixin Monad<KT, A> on HKT<KT, A>, Applicative<KT, A> {
   HKT<KT, B> flatMap<B>(HKT<KT, B> Function(A a) f);
 
   @override
@@ -16,10 +16,14 @@ abstract class Monad<KT, A> extends HKT<KT, A> with Applicative<KT, A> {
       flatMap((a) => mc.flatMap((c) => md.map((d) => f(a, c, d))));
 
   HKT<KT, B> andThen<B>(HKT<KT, B> Function() then) => flatMap((_) => then());
+
+  HKT<KT, A> chainFirst<B>(covariant Monad<KT, B> Function(A a) chain) =>
+      flatMap((a) => chain(a).map((b) => a));
+
+  HKT<KT, B> call<B>(HKT<KT, B> chain) => flatMap((_) => chain);
 }
 
-abstract class Monad2<KT, A, B> extends HKT2<KT, A, B>
-    with Applicative2<KT, A, B> {
+mixin Monad2<KT, A, B> on HKT2<KT, A, B>, Applicative2<KT, A, B> {
   HKT2<KT, A, C> flatMap<C>(HKT2<KT, A, C> Function(B a) f);
 
   /// Derive `ap` from `flatMap`.
@@ -40,4 +44,10 @@ abstract class Monad2<KT, A, B> extends HKT2<KT, A, B>
 
   HKT2<KT, A, C> andThen<C>(HKT2<KT, A, C> Function() then) =>
       flatMap((_) => then());
+
+  HKT2<KT, A, B> chainFirst<C>(
+          covariant Monad2<KT, A, C> Function(B b) chain) =>
+      flatMap((b) => chain(b).map((c) => b));
+
+  HKT2<KT, A, C> call<C>(HKT2<KT, A, C> chain) => flatMap((_) => chain);
 }

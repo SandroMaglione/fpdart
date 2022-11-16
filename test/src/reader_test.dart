@@ -75,6 +75,13 @@ void main() {
       expect(result, 1.5);
     });
 
+    test('call', () {
+      final reader = Reader<String, int>((r) => r.length);
+      final ap = reader(Reader<String, double>((r) => r.length / 2));
+      final result = ap.run('abc');
+      expect(result, 1.5);
+    });
+
     test('compose', () {
       final reader = Reader<String, int>((r) => r.length);
       final ap = reader.compose(Reader<String, double>((r) => r.length / 2));
@@ -111,5 +118,17 @@ void main() {
       final result = ap.run('abc');
       expect(result, 3);
     });
+  });
+
+  test('chainFirst', () async {
+    final task = Reader<String, int>(((r) => r.length));
+    var sideEffect = 10;
+    final chain = task.chainFirst((b) {
+      sideEffect = 100;
+      return Reader<String, double>((r) => r.length / 2);
+    });
+    final r = await chain.run("abc");
+    expect(r, 3);
+    expect(sideEffect, 100);
   });
 }
