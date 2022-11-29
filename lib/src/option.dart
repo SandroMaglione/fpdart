@@ -13,6 +13,7 @@ import 'typeclass/monad.dart';
 import 'typeclass/monoid.dart';
 import 'typeclass/order.dart';
 import 'typeclass/semigroup.dart';
+import 'unit.dart';
 
 /// Return a `Some(t)`.
 ///
@@ -35,6 +36,10 @@ Option<T> optionOf<T>(T? t) => Option.fromNullable(t);
 /// Same as initializing `Option.fromPredicate(value, predicate)`.
 Option<T> option<T>(T value, bool Function(T) predicate) =>
     Option.fromPredicate(value, predicate);
+
+typedef DoAdapterOption = A Function<A>(Option<A>);
+typedef DoFunctionOption<A> = A Function(DoAdapterOption $);
+A _doAdapter<A>(Option<A> option) => option.getOrElse(() => throw None<A>());
 
 /// Tag the [HKT] interface for the actual [Option].
 abstract class _OptionHKT {}
@@ -70,6 +75,77 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
         Extend<_OptionHKT, T>,
         Filterable<_OptionHKT, T> {
   const Option();
+
+  // ignore: non_constant_identifier_names
+  static Option<A> DoInit<A>(DoFunctionOption<A> f) => Option.of(unit).Do(f);
+
+  // ignore: non_constant_identifier_names
+  Option<A> Do<A>(DoFunctionOption<A> f) =>
+      Option.tryCatch(() => f(_doAdapter));
+
+  /// Return the result of `f` called with `b` and the value of [Some].
+  /// If this [Option] is [None], return `b`.
+  @override
+  B foldRight<B>(B b, B Function(B acc, T t) f);
+
+  /// Return the result of `f` called with `b` and the value of [Some].
+  /// If this [Option] is [None], return `b`.
+  @override
+  B foldLeft<B>(B b, B Function(B acc, T t) f) =>
+      foldMap<Endo<B>>(dualEndoMonoid(), (a) => (B b) => f(b, a))(b);
+
+  /// Use `monoid` to combine the value of [Some] applied to `f`.
+  @override
+  B foldMap<B>(Monoid<B> monoid, B Function(T t) f) =>
+      foldRight(monoid.empty, (b, a) => monoid.combine(f(a), b));
+
+  /// Return the result of `f` called with `b` and the value of [Some].
+  /// If this [Option] is [None], return `b`.
+  @override
+  B foldRightWithIndex<B>(B b, B Function(int i, B acc, T t) f) =>
+      foldRight<Tuple2<B, int>>(
+        Tuple2(b, length() - 1),
+        (t, a) => Tuple2(f(t.second, t.first, a), t.second - 1),
+      ).first;
+
+  /// Return the result of `f` called with `b` and the value of [Some].
+  /// If this [Option] is [None], return `b`.
+  @override
+  B foldLeftWithIndex<B>(B b, B Function(int i, B acc, T t) f) =>
+      foldLeft<Tuple2<B, int>>(
+        Tuple2(b, 0),
+        (t, a) => Tuple2(f(t.second, t.first, a), t.second + 1),
+      ).first;
+
+  /// Returns `1` when [Option] is [Some], `0` otherwise.
+  @override
+  int length() => foldLeft(0, (b, _) => b + 1);
+
+  /// Return the result of `predicate` applied to the value of [Some].
+  /// If the [Option] is [None], returns `false`.
+  @override
+  bool any(bool Function(T t) predicate) => foldMap(boolOrMonoid(), predicate);
+
+  /// Return the result of `predicate` applied to the value of [Some].
+  /// If the [Option] is [None], returns `true`.
+  @override
+  bool all(bool Function(T t) predicate) => foldMap(boolAndMonoid(), predicate);
+
+  /// Use `monoid` to combine the value of [Some].
+  @override
+  T concatenate(Monoid<T> monoid) => foldMap(monoid, identity);
+
+  /// Return the value of this [Option] if it is [Some], otherwise return `a`.
+  @override
+  Option<T> plus(covariant Option<T> a);
+
+  /// Return `Some(a)`.
+  @override
+  Option<T> prepend(T t) => Some(t);
+
+  /// If this [Option] is [None], return `Some(a)`. Otherwise return this [Some].
+  @override
+  Option<T> append(T t);
 
   /// Change the value of type `T` to a value of type `B` using function `f`.
   /// ```dart
