@@ -38,7 +38,8 @@ Option<T> option<T>(T value, bool Function(T) predicate) =>
     Option.fromPredicate(value, predicate);
 
 typedef DoAdapterOption = A Function<A>(Option<A>);
-typedef DoFunctionOption<A> = A Function(DoAdapterOption $);
+typedef DoThenFunctionOption<A> = A Function(DoAdapterOption $);
+typedef DoFunctionOption<T, A> = A Function(T t, DoAdapterOption $);
 A _doAdapter<A>(Option<A> option) => option.getOrElse(() => throw None<A>());
 
 /// Tag the [HKT] interface for the actual [Option].
@@ -76,12 +77,20 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
         Filterable<_OptionHKT, T> {
   const Option();
 
+  /// Initialize a **Do Notation** chain without previous values.
   // ignore: non_constant_identifier_names
-  static Option<A> DoInit<A>(DoFunctionOption<A> f) => Option.of(unit).Do(f);
+  static Option<A> DoInit<A>(DoThenFunctionOption<A> f) =>
+      Option.of(unit).DoThen(f);
 
+  /// Initialize a **Do Notation** chain, ignoring the current value inside [Option].
   // ignore: non_constant_identifier_names
-  Option<A> Do<A>(DoFunctionOption<A> f) =>
+  Option<A> DoThen<A>(DoThenFunctionOption<A> f) =>
       Option.tryCatch(() => f(_doAdapter));
+
+  /// Initialize a **Do Notation** from the current value inside [Option].
+  // ignore: non_constant_identifier_names
+  Option<A> Do<A>(DoFunctionOption<T, A> f) =>
+      flatMap((t) => Option.tryCatch(() => f(t, _doAdapter)));
 
   /// Return the result of `f` called with `b` and the value of [Some].
   /// If this [Option] is [None], return `b`.

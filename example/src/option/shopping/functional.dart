@@ -50,6 +50,19 @@ String goShoppingDo() => Option.DoInit<String>(
       () => 'I did not find 🍌 or 🍎 or 🍐, so I did not buy anything 🤷‍♂️',
     );
 
+// Combine all the instructions and go shopping! 🛒
+String goShoppingDoContinue() =>
+    goToShoppingCenter().alt(goToLocalMarket).Do<String>(
+      (market, $) {
+        final banana = $(market.buyBanana());
+        final apple = $(market.buyApple());
+        final pear = $(market.buyPear());
+        return 'Shopping: $banana, $apple, $pear';
+      },
+    ).getOrElse(
+      () => 'I did not find 🍌 or 🍎 or 🍐, so I did not buy anything 🤷‍♂️',
+    );
+
 void main() {
   for (int i = 0; i < 100; i++) {
     final shopping = goShopping();
