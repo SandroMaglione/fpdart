@@ -8,6 +8,8 @@ class Market {
   Option<String> buyBanana() => getRandomOption('🍌');
   Option<String> buyApple() => getRandomOption('🍎');
   Option<String> buyPear() => getRandomOption('🍐');
+
+  Option<int> buyAmount() => getRandomOption(randomInt(1, 10).run());
 }
 
 Option<T> getRandomOption<T>(T value) => randomBool()
@@ -38,12 +40,15 @@ String goShopping() => goToShoppingCenter()
     );
 
 // Combine all the instructions and go shopping! 🛒
-String goShoppingDo() => Option.DoInit<String>(
+String goShoppingDo() => Option.Do(
       ($) {
         final market = $(goToShoppingCenter().alt(goToLocalMarket));
+        final amount = $(market.buyAmount());
+
         final banana = $(market.buyBanana());
         final apple = $(market.buyApple());
         final pear = $(market.buyPear());
+
         return 'Shopping: $banana, $apple, $pear';
       },
     ).getOrElse(
@@ -51,17 +56,21 @@ String goShoppingDo() => Option.DoInit<String>(
     );
 
 // Combine all the instructions and go shopping! 🛒
-String goShoppingDoContinue() =>
-    goToShoppingCenter().alt(goToLocalMarket).Do<String>(
-      (market, $) {
+String goShoppingDoFlatMap() => goToShoppingCenter()
+    .alt(goToLocalMarket)
+    .flatMap(
+      (market) => Option.Do(($) {
         final banana = $(market.buyBanana());
         final apple = $(market.buyApple());
         final pear = $(market.buyPear());
         return 'Shopping: $banana, $apple, $pear';
-      },
-    ).getOrElse(
+      }),
+    )
+    .getOrElse(
       () => 'I did not find 🍌 or 🍎 or 🍐, so I did not buy anything 🤷‍♂️',
     );
+
+final doThen = Option.of(10)(Option.Do(($) => $(Option.of("Some"))));
 
 void main() {
   for (int i = 0; i < 100; i++) {

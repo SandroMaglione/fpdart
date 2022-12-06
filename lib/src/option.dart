@@ -13,7 +13,6 @@ import 'typeclass/monad.dart';
 import 'typeclass/monoid.dart';
 import 'typeclass/order.dart';
 import 'typeclass/semigroup.dart';
-import 'unit.dart';
 
 /// Return a `Some(t)`.
 ///
@@ -77,20 +76,10 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
         Filterable<_OptionHKT, T> {
   const Option();
 
-  /// Initialize a **Do Notation** chain without previous values.
+  /// Initialize a **Do Notation** chain.
   // ignore: non_constant_identifier_names
-  static Option<A> DoInit<A>(DoThenFunctionOption<A> f) =>
-      Option.of(unit).DoThen(f);
-
-  /// Initialize a **Do Notation** chain, ignoring the current value inside [Option].
-  // ignore: non_constant_identifier_names
-  Option<A> DoThen<A>(DoThenFunctionOption<A> f) =>
+  factory Option.Do(DoThenFunctionOption<T> f) =>
       Option.tryCatch(() => f(_doAdapter));
-
-  /// Initialize a **Do Notation** from the current value inside [Option].
-  // ignore: non_constant_identifier_names
-  Option<A> Do<A>(DoFunctionOption<T, A> f) =>
-      flatMap((t) => Option.tryCatch(() => f(t, _doAdapter)));
 
   /// Return the result of `f` called with `b` and the value of [Some].
   /// If this [Option] is [None], return `b`.
