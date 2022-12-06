@@ -13,7 +13,7 @@ Either<String, int> divideF(int x, int y) {
 
 /// Error handling with exceptions using [Either] 🎉
 Either<String, int> divide2F(int x, int y) {
-  // Easy way with caveat: first param  type 'object' due to dart limitation
+  /// Easy way with caveat: first param  type 'object' due to dart limitation
   return Either.tryCatch(() => x ~/ y, (o, s) => o.toString());
 }
 
