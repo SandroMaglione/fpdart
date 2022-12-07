@@ -1,21 +1,20 @@
 import 'package:fpdart/fpdart.dart';
 
 /// Don't do that! ⚠
-double divideI(int x, int y) {
-  if (y == 0) {
-    throw Exception('Cannot divide by 0!');
-  }
+int divideI(int x, int y) => x ~/ y; // this will throw if y == 0
 
-  return x / y;
-}
-
-/// Error handling using [Either] 🎉
-Either<String, double> divideF(int x, int y) {
+/// Error handling without exceptions using [Either] 🎉
+Either<String, int> divideF(int x, int y) {
   if (y == 0) {
     return left('Cannot divide by 0');
   }
+  return right(x ~/ y);
+}
 
-  return right(x / y);
+/// Error handling with exceptions using [Either] 🎉
+Either<String, int> divide2F(int x, int y) {
+  /// Easy way with caveat: first param  type 'object' due to dart limitation
+  return Either.tryCatch(() => x ~/ y, (o, s) => o.toString());
 }
 
 void main() {
