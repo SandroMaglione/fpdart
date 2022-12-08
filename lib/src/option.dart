@@ -37,9 +37,9 @@ Option<T> option<T>(T value, bool Function(T) predicate) =>
     Option.fromPredicate(value, predicate);
 
 typedef DoAdapterOption = A Function<A>(Option<A>);
-typedef DoThenFunctionOption<A> = A Function(DoAdapterOption $);
-typedef DoFunctionOption<T, A> = A Function(T t, DoAdapterOption $);
 A _doAdapter<A>(Option<A> option) => option.getOrElse(() => throw None<A>());
+
+typedef DoFunctionOption<A> = A Function(DoAdapterOption $);
 
 /// Tag the [HKT] interface for the actual [Option].
 abstract class _OptionHKT {}
@@ -78,7 +78,7 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
 
   /// Initialize a **Do Notation** chain.
   // ignore: non_constant_identifier_names
-  factory Option.Do(DoThenFunctionOption<T> f) =>
+  factory Option.Do(DoFunctionOption<T> f) =>
       Option.tryCatch(() => f(_doAdapter));
 
   /// Return the result of `f` called with `b` and the value of [Some].

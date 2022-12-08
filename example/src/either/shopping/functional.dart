@@ -5,23 +5,25 @@ class Market {
 
   // I want to buy a Banana, an Apple, and a Pear. If either one
   // of these is missing, I will not but anything 😒
-  Option<String> buyBanana() => getRandomOption('🍌');
-  Option<String> buyApple() => getRandomOption('🍎');
-  Option<String> buyPear() => getRandomOption('🍐');
+  Either<String, String> buyBanana() => getRandomEither('🍌', "We got no 🍌");
+  Either<String, String> buyApple() => getRandomEither('🍎', "We got no 🍎");
+  Either<String, String> buyPear() => getRandomEither('🍐', "We got no 🍐");
 
-  Option<int> buyAmount() => getRandomOption(randomInt(1, 10).run());
+  Either<String, int> buyAmount() =>
+      getRandomEither(randomInt(1, 10).run(), "Empty 💁🏼‍♂️");
 }
 
-Option<T> getRandomOption<T>(T value) => randomBool()
-    .map(
-      (isValid) => isValid ? some(value) : none<T>(),
+Either<L, R> getRandomEither<L, R>(R right, L left) => randomBool()
+    .map<Either<L, R>>(
+      (isValid) => isValid ? Either.of(right) : Either.left(left),
     )
     .run();
 
 // I go shopping in the Shopping Center. If it is closed, then
 // I will go to the Local Market (which is always open 🥇).
-Option<Market> goToShoppingCenter() => getRandomOption(const Market());
-Option<Market> goToLocalMarket() => some(const Market());
+Either<String, Market> goToShoppingCenter() =>
+    getRandomEither(const Market(), "Shopping center closed ☝️");
+Either<String, Market> goToLocalMarket() => Either.of(const Market());
 
 // Combine all the instructions and go shopping! 🛒
 String goShopping() => goToShoppingCenter()
@@ -30,17 +32,15 @@ String goShopping() => goToShoppingCenter()
       (market) => market.buyBanana().flatMap(
             (banana) => market.buyApple().flatMap(
                   (apple) => market.buyPear().flatMap(
-                        (pear) => Option.of('Shopping: $banana, $apple, $pear'),
+                        (pear) => Either.of('Shopping: $banana, $apple, $pear'),
                       ),
                 ),
           ),
     )
-    .getOrElse(
-      () => 'I did not find 🍌 or 🍎 or 🍐, so I did not buy anything 🤷‍♂️',
-    );
+    .getOrElse(identity);
 
 // Combine all the instructions and go shopping! 🛒
-String goShoppingDo() => Option.Do(
+String goShoppingDo() => Either<String, String>.Do(
       ($) {
         final market = $(goToShoppingCenter().alt(goToLocalMarket));
         final amount = $(market.buyAmount());
@@ -51,24 +51,22 @@ String goShoppingDo() => Option.Do(
 
         return 'Shopping: $banana, $apple, $pear';
       },
-    ).getOrElse(
-      () => 'I did not find 🍌 or 🍎 or 🍐, so I did not buy anything 🤷‍♂️',
-    );
+    ).getOrElse(identity);
 
 // Combine all the instructions and go shopping! 🛒
 String goShoppingDoFlatMap() => goToShoppingCenter()
     .alt(goToLocalMarket)
     .flatMap(
-      (market) => Option.Do(($) {
+      /// Not required types here, since [Left] inferred from chain,
+      /// and [Right] from the return type of `Do`
+      (market) => Either.Do(($) {
         final banana = $(market.buyBanana());
         final apple = $(market.buyApple());
         final pear = $(market.buyPear());
         return 'Shopping: $banana, $apple, $pear';
       }),
     )
-    .getOrElse(
-      () => 'I did not find 🍌 or 🍎 or 🍐, so I did not buy anything 🤷‍♂️',
-    );
+    .getOrElse(identity);
 
 void main() {
   for (int i = 0; i < 100; i++) {
