@@ -74,16 +74,37 @@ Check out also this series of articles about functional programming with `fpdart
 - [How to use TaskEither in fpdart](https://www.sandromaglione.com/techblog/how-to-use-task-either-fpdart-functional-programming)
 - [How to map an Either to a Future in fpdart](https://blog.sandromaglione.com/techblog/from-sync-to-async-functional-programming)
 - [Option type and Null Safety in dart](https://www.sandromaglione.com/techblog/option_type_and_null_safety_dart)
+- [Either - Error Handling in Functional Programming](https://www.sandromaglione.com/techblog/either-error-handling-functional-programming)
+- [Future & Task: asynchronous Functional Programming](https://www.sandromaglione.com/techblog/async-requests-future-and-task-dart)
+- [Flutter Supabase Functional Programming with fpdart](https://www.sandromaglione.com/techblog/flutter-dart-functional-programming-fpdart-supabase-app)
+
 
 ## 💻 Installation
 
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.3.0 # Check out the latest version
+  fpdart: ^0.4.0 # Check out the latest version
 ```
 
 ## ✨ Examples
+
+### [Pokeapi](./example/pokeapi_functional/)
+Flutter app that lets you search and view your favorite Pokemon:
+- API request
+- Response validation
+- JSON conversion
+- State management ([riverpod](https://pub.dev/packages/riverpod))
+
+### [Open Meteo API](./example/open_meteo_api/)
+Re-implementation using `fpdart` and functional programming of the [Open Meteo API](https://github.com/felangel/bloc/tree/master/examples/flutter_weather/packages/open_meteo_api) from the [flutter_weather](https://bloclibrary.dev/#/flutterweathertutorial) app example in the [bloc](https://pub.dev/packages/bloc) package.
+
+A 2 parts series explains step by step the Open Meteo API code:
+- [Open Meteo API - Functional programming with fpdart (Part 1)](https://www.sandromaglione.com/techblog/real_example_fpdart_open_meteo_api_part_1)
+- [Open Meteo API - Functional programming with fpdart (Part 2)](https://www.sandromaglione.com/techblog/real_example_fpdart_open_meteo_api_part_2)
+
+### [Read/Write local file](./example/read_write_file/)
+Example of how to read and write a local file using functional programming.
 
 ### [Option](./lib/src/option.dart)
 Used when a return value can be missing.
@@ -315,6 +336,7 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
 
+- **v0.4.0** - 16 December 2022
 - **v0.3.0** - 11 October 2022
 - **v0.2.0** - 16 July 2022
 - **v0.1.0** - 17 June 2022

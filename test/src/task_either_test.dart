@@ -99,6 +99,22 @@ void main() {
       });
     });
 
+    group('chainEither', () {
+      test('Right', () async {
+        final task = TaskEither<String, int>(() async => Either.of(10));
+        final ap = task.chainEither((r) => Either.of(r + 10));
+        final r = await ap.run();
+        r.matchTestRight((r) => expect(r, 20));
+      });
+
+      test('Left', () async {
+        final task = TaskEither<String, int>(() async => Either.left('abc'));
+        final ap = task.chainEither((r) => Either.of(r + 10));
+        final r = await ap.run();
+        r.matchTestLeft((l) => expect(l, 'abc'));
+      });
+    });
+
     group('bindEither', () {
       test('Right', () async {
         final task = TaskEither<String, int>(() async => Either.of(10));

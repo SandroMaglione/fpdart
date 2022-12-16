@@ -1,4 +1,4 @@
-# v0.4.0 - Soon
+# v0.4.0 - 16 December 2022
 - Added extension methods to work with nullable types (`T?`)
   - From `T?` to `fpdart`'s types
     - `toOption`
@@ -35,7 +35,31 @@ final either = Either<String, int>.fromNullable(value, (r) => 'none');
 
 final either = Either<String, int>.fromNullable(value, () => 'none');
 ```
-- Added article about [Option type and Null Safety in dart](https://www.sandromaglione.com/techblog/option_type_and_null_safety_dart)
+- Added `chainEither` to `TaskEither`
+- Added `safeCast` (`Either` and `Option`)
+- Added `safeCastStrict` (`Either` and `Option`)
+```dart
+int intValue = 10;
+
+/// Unhandled exception: type 'int' is not a subtype of type 'List<int>' in type cast
+final waitWhat = intValue as List<int>;
+final first = waitWhat.first;
+
+/// Safe 🎯
+final wellYeah = Either<String, List<int>>.safeCast(
+  intValue,
+  (dynamic value) => 'Not a List!',
+);
+final firstEither = wellYeah.map((list) => list.first);
+```
+- Added [**Open API Meteo example**](./example/open_meteo_api/) (from imperative to functional programming)
+- Added new articles
+  - [Option type and Null Safety in dart](https://www.sandromaglione.com/techblog/option_type_and_null_safety_dart)
+  - [Either - Error Handling in Functional Programming](https://www.sandromaglione.com/techblog/either-error-handling-functional-programming)
+  - [Future & Task: asynchronous Functional Programming](https://www.sandromaglione.com/techblog/async-requests-future-and-task-dart)
+  - [Flutter Supabase Functional Programming with fpdart](https://www.sandromaglione.com/techblog/flutter-dart-functional-programming-fpdart-supabase-app)
+  - [Open Meteo API - Functional programming with fpdart (Part 1)](https://www.sandromaglione.com/techblog/real_example_fpdart_open_meteo_api_part_1)
+  - [Open Meteo API - Functional programming with fpdart (Part 2)](https://www.sandromaglione.com/techblog/real_example_fpdart_open_meteo_api_part_2)
 
 # v0.3.0 - 11 October 2022
 - Inverted `onSome` and `onNone` functions parameters in `match` method of `Option` [⚠️ **BREAKING CHANGE**] (*Read more on why* 👉 [#56](https://github.com/SandroMaglione/fpdart/pull/56))

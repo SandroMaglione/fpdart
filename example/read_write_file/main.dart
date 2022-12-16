@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:fpdart/fpdart.dart';
 
 /**
@@ -35,41 +36,35 @@ void main() async {
   ///
   /// Since we are using [TaskEither], until we call the `run` method,
   /// no actual reading is performed.
-  final task = readFileAsync('./assets/source_ita.txt').flatMap(
-    (linesIta) => readFileAsync('./assets/source_eng.txt').map(
-      (linesEng) => linesIta.zip(linesEng),
-    ),
-  );
-
-  /// Run the reading process
-  final result = await task.run();
-
-  /// Check for possible error in the reading process
-  result.fold(
-    /// Print error in the reading process
+  final task = readFileAsync('./assets/source_ita.txt')
+      .flatMap(
+        (linesIta) => readFileAsync('./assets/source_eng.txt').map(
+          (linesEng) => linesIta.zip(linesEng),
+        ),
+      )
+      .map(
+        (iterable) => iterable.flatMapWithIndex(
+          (tuple, index) => searchWords.foldLeftWithIndex<List<FoundWord>>(
+            [],
+            (acc, word, wordIndex) =>
+                tuple.second.toLowerCase().split(' ').contains(word)
+                    ? [
+                        ...acc,
+                        FoundWord(
+                          index,
+                          word,
+                          wordIndex,
+                          tuple.second.replaceAll(word, '<\$>'),
+                          tuple.first,
+                        ),
+                      ]
+                    : acc,
+          ),
+        ),
+      )
+      .match(
     (l) => print(l),
-    (r) {
-      /// If no error occurs, search the words inside each sentence
-      /// and compute list of sentence in which you found a word.
-      final list = r.flatMapWithIndex((tuple, index) {
-        return searchWords.foldLeftWithIndex<List<FoundWord>>(
-          [],
-          (acc, word, wordIndex) =>
-              tuple.second.toLowerCase().split(' ').contains(word)
-                  ? [
-                      ...acc,
-                      FoundWord(
-                        index,
-                        word,
-                        wordIndex,
-                        tuple.second.replaceAll(word, '<\$>'),
-                        tuple.first,
-                      ),
-                    ]
-                  : acc,
-        );
-      });
-
+    (list) {
       /// Print all the found [FoundWord]
       list.forEach(
         (e) => print(
@@ -77,6 +72,9 @@ void main() async {
       );
     },
   );
+
+  /// Run the reading process
+  await task.run();
 }
 
 /// Read file content in `source` directory using [TaskEither]

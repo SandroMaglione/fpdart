@@ -91,15 +91,23 @@ A Function(dynamic b) constF<A>(A a) => (dynamic b) => a;
 ///
 /// Enables the use of partial application of functions.
 /// This often leads to more concise function declarations.
+///
+/// The generic types are in this order:
+/// 1. Type of the first function parameter
+/// 2. Type of the second function parameter
+/// 3. Return type of the function
 /// ```dart
 /// final addFunction = (int a, int b) => a + b;
-/// final add = curry(addFunction);
+/// final add = curry2(addFunction);
 ///
 /// [1, 2, 3].map(add(1))  // returns [2, 3, 4]
 /// ```
-C Function(B b) Function(A a) curry2<A, B, C>(C Function(A a, B b) function) {
-  return (A a) => (B b) => function(a, b);
-}
+ReturnType Function(SecondParameter second) Function(FirstParameter first)
+    curry2<FirstParameter, SecondParameter, ReturnType>(
+  ReturnType Function(FirstParameter first, SecondParameter second) function,
+) =>
+        (FirstParameter first) =>
+            (SecondParameter second) => function(first, second);
 
 /// Converts a ternary function into unary functions.
 D Function(C c) Function(B b) Function(A a) curry3<A, B, C, D>(

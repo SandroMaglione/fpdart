@@ -44,6 +44,14 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   TaskEither<L, C> bindEither<C>(Either<L, C> either) =>
       flatMap((_) => either.toTaskEither());
 
+  /// Chain a function that takes the current value `R` inside this [TaskEither]
+  /// and returns [Either].
+  ///
+  /// Similar to `flatMap`, but `f` returns [Either] instead of [TaskEither].
+  TaskEither<L, C> chainEither<C>(Either<L, C> Function(R r) f) => flatMap(
+        (r) => f(r).toTaskEither(),
+      );
+
   /// Returns a [TaskEither] that returns a `Right(a)`.
   @override
   TaskEither<L, C> pure<C>(C a) => TaskEither(() async => Right(a));
