@@ -1,0 +1,17 @@
+name: managing_imports
+description: Demonstration of managing imports
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ">=2.18.6 <3.0.0"
+
+dependencies:
+  fpdart:
+    path: ../..
+  test:
+  tuple:
+  very_good_analysis:
+
+dev_dependencies:
+  lints:
