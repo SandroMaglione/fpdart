@@ -1,14 +1,14 @@
 # Managing Imports
 
-Naming things is hard.  Sometimes, the same name gets used for different things. In Dart, naming conflicts can be mitigated through the use of import prefixes, as well as show and hide operations.
+Naming things is hard.  Sometimes, the same name gets used for different things. In Dart, naming conflicts can be mitigated through the use of import prefixes, as well as show and hide operations.  This is particularly important when using a package like `fpdart` that provides a lot of classes with common names.
 
 Suppose you decide to use `fpdart` with your Flutter program. You'll quickly discover that `fpdart` uses `State` as a class name, which conflicts with the `State` class in Flutter.
 
 That's problem 1.
 
-Now also suppose you also choose to use `fpdart`'s `Tuple2` class. That's a lot less likely to conflict with anything, but it's still possible. However, you also decide you need a `Tuple3`. `fpdart` doesn't have one. (Yet.)
+Now also suppose you also choose to use `fpdart`'s `Tuple2` class. That's a lot less likely to conflict with anything, but it's still possible. However, you also decide you need a `Tuple3`. `fpdart` doesn't have one. (And likely never will, thanks to the upcoming records feature.)
 
-However, you found one in the `tuple` package, along with `Tuple4` and `Tuple5`, even though it doesn't have much more than element accessors. Close enough for your application.
+However, you found one in the [tuple](https://pub.dev/packages/tuple) package, along with `Tuple4` and `Tuple5`, even though it doesn't have much more than element accessors. Close enough for your application.
 
 But now, you decide to import `tuple` as well, and you get a naming conflict for `Tuple2`.
 
