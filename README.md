@@ -15,6 +15,7 @@
   </a>
 </p>
 
+
 Functional programming in Dart and Flutter.
 
 All the main functional programming types and patterns **fully documented**, tested, and with examples.
@@ -27,32 +28,29 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 
 ***
 
-- [`Fpdart`](#fpdart)
-  - [📖 Learn `functional programming` and `fpdart`](#-learn-functional-programming-and-fpdart)
-    - [👨‍💻 Blog posts and tutorials](#-blog-posts-and-tutorials)
-  - [💻 Installation](#-installation)
-  - [✨ Examples](#-examples)
-    - [Pokeapi](#pokeapi)
-    - [Open Meteo API](#open-meteo-api)
-    - [Read/Write local file](#readwrite-local-file)
-    - [Managing imports](#managing-imports)
-    - [Option](#option)
-    - [Either](#either)
-    - [IO](#io)
-    - [Task](#task)
-    - [Utility types](#utility-types)
-    - [Reader](#reader)
-    - [State](#state)
-    - [📦 Immutable Collections](#-immutable-collections)
-    - [More](#more)
-  - [🎯 Types](#-types)
-  - [💡 Motivation](#-motivation)
-    - [Goal](#goal)
-    - [Comparison with `dartz`](#comparison-with-dartz)
-  - [🤔 Roadmap](#-roadmap)
-  - [📃 Versioning](#-versioning)
-  - [😀 Support](#-support)
-  - [👀 License](#-license)
+- [📖 Learn `functional programming` and `fpdart`](#-learn-functional-programming-and-fpdart)
+  - [👨‍💻 Blog posts and tutorials](#-blog-posts-and-tutorials)
+- [💻 Installation](#-installation)
+- [✨ Examples](#-examples)
+  - [Option](#option)
+  - [Either](#either)
+  - [IO](#io)
+  - [Task](#task)
+  - [Utility types](#utility-types)
+  - [Reader](#reader)
+  - [State](#state)
+  - [📦 Immutable Collections](#-immutable-collections)
+  - [More](#more)
+- [🎯 Types](#-types)
+- [💡 Motivation](#-motivation)
+  - [Goal](#goal)
+  - [Comparison with `dartz`](#comparison-with-dartz)
+- [🤔 Roadmap](#-roadmap)
+- [📃 Versioning](#-versioning)
+- [😀 Support](#-support)
+- [👀 License](#-license)
+
+
 
 ## 📖 Learn `functional programming` and `fpdart`
 
@@ -72,7 +70,6 @@ Check out also this series of articles about functional programming with `fpdart
 8. [**Practical Functional Programming - Part 3**](https://www.sandromaglione.com/immutability-practical-functional-programming-part-3/)
 
 ### 👨‍💻 Blog posts and tutorials
-
 - [How to make API requests with validation in fpdart](https://www.sandromaglione.com/techblog/fpdart-api-request-with-validation-functional-programming)
 - [How to use TaskEither in fpdart](https://www.sandromaglione.com/techblog/how-to-use-task-either-fpdart-functional-programming)
 - [How to map an Either to a Future in fpdart](https://blog.sandromaglione.com/techblog/from-sync-to-async-functional-programming)
@@ -80,6 +77,7 @@ Check out also this series of articles about functional programming with `fpdart
 - [Either - Error Handling in Functional Programming](https://www.sandromaglione.com/techblog/either-error-handling-functional-programming)
 - [Future & Task: asynchronous Functional Programming](https://www.sandromaglione.com/techblog/async-requests-future-and-task-dart)
 - [Flutter Supabase Functional Programming with fpdart](https://www.sandromaglione.com/techblog/flutter-dart-functional-programming-fpdart-supabase-app)
+
 
 ## 💻 Installation
 
@@ -92,33 +90,23 @@ dependencies:
 ## ✨ Examples
 
 ### [Pokeapi](./example/pokeapi_functional/)
-
 Flutter app that lets you search and view your favorite Pokemon:
-
 - API request
 - Response validation
 - JSON conversion
 - State management ([riverpod](https://pub.dev/packages/riverpod))
 
 ### [Open Meteo API](./example/open_meteo_api/)
-
 Re-implementation using `fpdart` and functional programming of the [Open Meteo API](https://github.com/felangel/bloc/tree/master/examples/flutter_weather/packages/open_meteo_api) from the [flutter_weather](https://bloclibrary.dev/#/flutterweathertutorial) app example in the [bloc](https://pub.dev/packages/bloc) package.
 
 A 2 parts series explains step by step the Open Meteo API code:
-
 - [Open Meteo API - Functional programming with fpdart (Part 1)](https://www.sandromaglione.com/techblog/real_example_fpdart_open_meteo_api_part_1)
 - [Open Meteo API - Functional programming with fpdart (Part 2)](https://www.sandromaglione.com/techblog/real_example_fpdart_open_meteo_api_part_2)
 
 ### [Read/Write local file](./example/read_write_file/)
-
 Example of how to read and write a local file using functional programming.
 
-### [Managing imports](./example/managing_imports/)
-
-Example of how to manage conflicting imports in a project using import prefixes and `show` and `hide` keywords.
-
 ### [Option](./lib/src/option.dart)
-
 Used when a return value can be missing.
 > For example, when parsing a `String` to `int`, since not all `String`
 > can be converted to `int`
@@ -153,7 +141,6 @@ final tryCatch = Option.tryCatch(() => int.parse('invalid'));
 ```
 
 ### [Either](./lib/src/either.dart)
-
 Used to handle errors (instead of `Exception`s).
 > `Either<L, R>`: `L` is the type of the error (for example a `String` explaining
 > the problem), `R` is the return type when the computation is successful
@@ -195,7 +182,6 @@ final option = right.toOption();
 ```
 
 ### [IO](./lib/src/io.dart)
-
 Wrapper around an **sync** function. Allows to compose synchronous functions **that never fail**.
 
 ```dart
@@ -216,7 +202,6 @@ final flatMap = io.flatMap((a) => IO.of(a + 10));
 ```
 
 ### [Task](./lib/src/task.dart)
-
 Wrapper around an **async** function (`Future`). Allows to compose asynchronous functions **that never fail**.
 
 > If you look closely, it's the same as [`IO`](#io) but for **async functions** 💡
@@ -240,19 +225,16 @@ final flatMap = task.flatMap((a) => Task.of(a + 10));
 ```
 
 ### Utility types
-
 These types compose together the 4 above ([`Option`](#option), [`Either`](#either), [`IO`](#io), [`Task`](#task)) to join together their functionalities:
-
 - [`IOEither`](./lib/src/io_either.dart): sync function (`IO`) that may fail (`Either`)
 - [`TaskOption`](./lib/src/task_option.dart): async function (`Task`) that may miss the return value (`Option`)
 - [`TaskEither`](./lib/src/task_either.dart): async function (`Task`) that may fail (`Either`)
 
-### [Reader](./lib/src/reader.dart)
 
+### [Reader](./lib/src/reader.dart)
 Read values from a **context** without explicitly passing the dependency between multiple nested function calls. View the [example folder for an explained usecase example](./example/src/reader).
 
 ### [State](./lib/src/state.dart)
-
 Used to **store**, **update**, and **extract** state in a functional way. View the [example folder for an explained usecase example](./example/src/state).
 
 ### 📦 Immutable Collections
@@ -266,6 +248,7 @@ Integrations for immutable collections (`IList`, `ISet`, `IMap`, etc.) are still
 Many more examples are coming soon. Check out [**my website**](https://www.sandromaglione.com/) and my [**Twitter**](https://twitter.com/SandroMaglione) for daily updates.
 
 ---
+
 
 ## 🎯 Types
 
