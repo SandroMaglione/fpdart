@@ -144,7 +144,7 @@ class TaskOption<R> extends HKT<_TaskOptionHKT, R>
   factory TaskOption.some(R r) => TaskOption(() async => Option.of(r));
 
   /// Build a [TaskOption] that returns a [None].
-  factory TaskOption.none() => TaskOption(() async => Option.none());
+  factory TaskOption.none() => TaskOption(() async => const Option.none());
 
   /// Build a [TaskOption] from the result of running `task`.
   factory TaskOption.fromTask(Task<R> task) =>
@@ -159,7 +159,8 @@ class TaskOption<R> extends HKT<_TaskOptionHKT, R>
   /// Otherwise return [None].
   factory TaskOption.fromPredicate(R value, bool Function(R a) predicate) =>
       TaskOption(
-          () async => predicate(value) ? Option.of(value) : Option.none());
+        () async => predicate(value) ? Option.of(value) : const Option.none(),
+      );
 
   /// Converts a [Future] that may throw to a [Future] that never throws
   /// but returns a [Option] instead.
@@ -170,7 +171,7 @@ class TaskOption<R> extends HKT<_TaskOptionHKT, R>
         try {
           return Option.of(await run());
         } catch (_) {
-          return Option.none();
+          return const Option.none();
         }
       });
 
@@ -267,7 +268,7 @@ class TaskOption<R> extends HKT<_TaskOptionHKT, R>
   /// Build a [TaskOption] from `either` that returns [None] when
   /// `either` is [Left], otherwise it returns [Some].
   static TaskOption<R> fromEither<L, R>(Either<L, R> either) =>
-      TaskOption(() async => either.match((_) => Option.none(), some));
+      TaskOption(() async => either.match((_) => const Option.none(), some));
 
   /// Converts a [Future] that may throw to a [Future] that never throws
   /// but returns a [Option] instead.
