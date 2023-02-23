@@ -172,7 +172,7 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   /// ```
   @override
   Option<B> ap<B>(covariant Option<B Function(T t)> a) => a.match(
-        () => const Option.none(),
+        () => Option<B>.none(),
         (f) => map(f),
       );
 
@@ -651,8 +651,7 @@ class None<T> extends Option<T> {
   B foldRight<B>(B b, B Function(B acc, T t) f) => b;
 
   @override
-  Option<B> flatMap<B>(covariant Option<B> Function(T t) f) =>
-      const Option.none();
+  Option<B> flatMap<B>(covariant Option<B> Function(T t) f) => Option<B>.none();
 
   @override
   T getOrElse(T Function() orElse) => orElse();
