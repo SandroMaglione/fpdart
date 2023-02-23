@@ -7,13 +7,14 @@ packages:
       path: "../.."
       relative: true
     source: path
-    version: "0.3.1"
+    version: "0.4.0"
   lint:
     dependency: "direct dev"
     description:
       name: lint
-      url: "https://pub.dartlang.org"
+      sha256: "4a539aa34ec5721a2c7574ae2ca0336738ea4adc2a34887d54b7596310b33c85"
+      url: "https://pub.dev"
     source: hosted
-    version: "1.5.3"
+    version: "1.10.0"
 sdks:
-  dart: ">=2.17.0 <3.0.0"
+  dart: ">=2.17.0 <4.0.0"
