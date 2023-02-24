@@ -541,7 +541,11 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   /// Converts from Json.
   ///
   /// Json serialization support for `json_serializable` with `@JsonSerializable`.
-  factory Option.fromJson(dynamic json) => Option<T>.fromNullable(json as T?);
+  factory Option.fromJson(
+    dynamic json,
+    T Function(dynamic json) fromJsonT,
+  ) =>
+      json != null ? Option.of(fromJsonT(json)) : Option.none();
 
   /// Converts to Json.
   ///
