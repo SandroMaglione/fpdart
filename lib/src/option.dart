@@ -172,7 +172,7 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   /// ```
   @override
   Option<B> ap<B>(covariant Option<B Function(T t)> a) => a.match(
-        () => Option.none(),
+        () => Option<B>.none(),
         (f) => map(f),
       );
 
@@ -415,7 +415,7 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   /// Build a [Option] from a [Either] by returning [Some] when `either` is [Right],
   /// [None] otherwise.
   static Option<R> fromEither<L, R>(Either<L, R> either) =>
-      either.match((_) => Option.none(), (r) => Some(r));
+      either.match((_) => const Option.none(), (r) => Some(r));
 
   /// {@template fpdart_safe_cast_option}
   /// Safely cast a value to type `T`.
@@ -459,10 +459,10 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
       predicate(value) ? Some(f(value)) : Option.none();
 
   /// Return a [None].
-  factory Option.none() => None<T>();
+  const factory Option.none() = None<T>;
 
   /// Return a `Some(a)`.
-  factory Option.of(T t) => Some(t);
+  const factory Option.of(T t) = Some<T>;
 
   /// Flat a [Option] contained inside another [Option] to be a single [Option].
   factory Option.flatten(Option<Option<T>> m) => m.flatMap(identity);
@@ -475,7 +475,7 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
     try {
       return Some(f());
     } catch (_) {
-      return Option.none();
+      return const Option.none();
     }
   }
 
@@ -485,7 +485,7 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   /// while the right value of the [Either] will be the second of the tuple.
   static Tuple2<Option<A>, Option<B>> separate<A, B>(Option<Either<A, B>> m) =>
       m.match(
-        () => Tuple2(Option.none(), Option.none()),
+        () => Tuple2(const Option.none(), const Option.none()),
         (either) => Tuple2(either.getLeft(), either.getRight()),
       );
 
@@ -503,12 +503,12 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   /// Build an instance of [Monoid] in which the `empty` value is [None] and the
   /// `combine` function is based on the **first** [Option] if it is [Some], otherwise the second.
   static Monoid<Option<T>> getFirstMonoid<T>() =>
-      Monoid.instance(Option.none(), (a1, a2) => a1.isNone() ? a2 : a1);
+      Monoid.instance(const Option.none(), (a1, a2) => a1.isNone() ? a2 : a1);
 
   /// Build an instance of [Monoid] in which the `empty` value is [None] and the
   /// `combine` function is based on the **second** [Option] if it is [Some], otherwise the first.
   static Monoid<Option<T>> getLastMonoid<T>() =>
-      Monoid.instance(Option.none(), (a1, a2) => a2.isNone() ? a1 : a2);
+      Monoid.instance(const Option.none(), (a1, a2) => a2.isNone() ? a1 : a2);
 
   /// Build an instance of [Monoid] in which the `empty` value is [None] and the
   /// `combine` function uses the given `semigroup` to combine the values of both [Option]
@@ -517,7 +517,7 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   /// If one of the [Option] is [None], then calling `combine` returns [None].
   static Monoid<Option<T>> getMonoid<T>(Semigroup<T> semigroup) =>
       Monoid.instance(
-          Option.none(),
+          const Option.none(),
           (a1, a2) => a1.flatMap((v1) => a2.flatMap(
                 (v2) => Some(semigroup.combine(v1, v2)),
               )));
@@ -597,7 +597,7 @@ class Some<T> extends Option<T> {
 
   @override
   Option<Z> filterMap<Z>(Option<Z> Function(T t) f) => f(_value).match(
-        () => Option.none(),
+        () => const Option.none(),
         Some.new,
       );
 
@@ -645,13 +645,13 @@ class None<T> extends Option<T> {
       flatMap((a) => mc.flatMap((c) => md.map((d) => f(a, c, d))));
 
   @override
-  Option<B> map<B>(B Function(T t) f) => Option.none();
+  Option<B> map<B>(B Function(T t) f) => const Option.none();
 
   @override
   B foldRight<B>(B b, B Function(B acc, T t) f) => b;
 
   @override
-  Option<B> flatMap<B>(covariant Option<B> Function(T t) f) => Option.none();
+  Option<B> flatMap<B>(covariant Option<B> Function(T t) f) => Option<B>.none();
 
   @override
   T getOrElse(T Function() orElse) => orElse();
@@ -663,7 +663,7 @@ class None<T> extends Option<T> {
   B match<B>(B Function() onNone, B Function(T t) onSome) => onNone();
 
   @override
-  Option<Z> extend<Z>(Z Function(Option<T> t) f) => Option.none();
+  Option<Z> extend<Z>(Z Function(Option<T> t) f) => const Option.none();
 
   @override
   bool isSome() => false;
@@ -672,10 +672,10 @@ class None<T> extends Option<T> {
   bool isNone() => true;
 
   @override
-  Option<T> filter(bool Function(T t) f) => Option.none();
+  Option<T> filter(bool Function(T t) f) => const Option.none();
 
   @override
-  Option<Z> filterMap<Z>(Option<Z> Function(T t) f) => Option.none();
+  Option<Z> filterMap<Z>(Option<Z> Function(T t) f) => const Option.none();
 
   @override
   T? toNullable() => null;
