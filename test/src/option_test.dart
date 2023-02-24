@@ -175,6 +175,20 @@ void main() {
       });
     });
 
+    group('flatMapNullable', () {
+      test('not null', () {
+        final option = Option.of(10);
+        final flatMap = option.flatMapNullable((a) => a + 1);
+        flatMap.matchTestSome((some) => expect(some, 11));
+      });
+
+      test('null', () {
+        final option = Option.of(10);
+        final flatMap = option.flatMapNullable<int>((a) => null);
+        expect(flatMap, isA<None>());
+      });
+    });
+
     group('getOrElse', () {
       test('Some', () {
         final option = Option.of(10);
