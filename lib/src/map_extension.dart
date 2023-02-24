@@ -80,6 +80,42 @@ extension FpdartOnMutableMap<K, V> on Map<K, V> {
     return value != null ? some(tuple2(key, value)) : none();
   }
 
+  /// Return an [Option] that conditionally accesses map keys, only if they match the
+  /// given type.
+  /// Useful for accessing nested JSON.
+  ///
+  /// ```
+  /// expect(
+  ///   { 'test': 123 }.extract<int>('test'),
+  ///   Option.of(123),
+  /// );
+  /// expect(
+  ///   { 'test': 'string' }.extract<int>('test'),
+  ///   Option.none(),
+  /// );
+  /// ```
+  Option<T> extract<T>(K key) {
+    final value = this[key];
+    if (value is T) return Option.of(value);
+    return Option.none();
+  }
+
+  /// Return an [Option] that conditionally accesses map keys, if they contain a map
+  /// with the same key type.
+  /// Useful for accessing nested JSON.
+  ///
+  /// ```
+  /// expect(
+  ///   { 'test': { 'foo': 'bar' } }.extractMap('test'),
+  ///   Option.of({ 'foo': 'bar' }),
+  /// );
+  /// expect(
+  ///   { 'test': 'string' }.extractMap('test'),
+  ///   Option.none(),
+  /// );
+  /// ```
+  Option<Map<K, dynamic>> extractMap(K key) => extract<Map<K, dynamic>>(key);
+
   /// Test whether or not `key` exists in this [Map]
   ///
   /// Same as dart's `containsKey`.
@@ -310,4 +346,38 @@ extension FpdartOnMutableMap<K, V> on Map<K, V> {
       (Map<K, V> map) => filterWithKey(
             (key, value) => !map.keys.any((element) => eq.eqv(element, key)),
           );
+}
+
+extension FpdartOnOptionMutableMap<K> on Option<Map<K, dynamic>> {
+  /// Return an [Option] that conditionally accesses map keys, only if they match the
+  /// given type.
+  /// Useful for accessing nested JSON.
+  ///
+  /// ```
+  /// expect(
+  ///   { 'test': 123 }.extract<int>('test'),
+  ///   Option.of(123),
+  /// );
+  /// expect(
+  ///   { 'test': 'string' }.extract<int>('test'),
+  ///   Option.none(),
+  /// );
+  /// ```
+  Option<T> extract<T>(K key) => flatMap((map) => map.extract(key));
+
+  /// Return an [Option] that conditionally accesses map keys, if they contain a map
+  /// with the same key type.
+  /// Useful for accessing nested JSON.
+  ///
+  /// ```
+  /// expect(
+  ///   { 'test': { 'foo': 'bar' } }.extractMap('test'),
+  ///   Option.of({ 'foo': 'bar' }),
+  /// );
+  /// expect(
+  ///   { 'test': 'string' }.extractMap('test'),
+  ///   Option.none(),
+  /// );
+  /// ```
+  Option<Map<K, dynamic>> extractMap(K key) => extract<Map<K, dynamic>>(key);
 }
