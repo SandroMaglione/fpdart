@@ -223,6 +223,22 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   @override
   Option<B> flatMap<B>(covariant Option<B> Function(T t) f);
 
+  /// Return a new [Option] that calls [Option.fromNullable] on the result of of the given function [f].
+  ///
+  /// ```dart
+  /// expect(
+  ///   Option.of(123).flatMapNullable((_) => null),
+  ///   Option.none(),
+  /// );
+  ///
+  /// expect(
+  ///   Option.of(123).flatMapNullable((_) => 456),
+  ///   Option.of(456),
+  /// );
+  /// ```
+  Option<B> flatMapNullable<B>(B? Function(T t) f) =>
+      flatMap((t) => Option.fromNullable(f(t)));
+
   /// Return the current [Option] if it is a [Some], otherwise return the result of `orElse`.
   ///
   /// Used to provide an **alt**ernative [Option] in case the current one is [None].
