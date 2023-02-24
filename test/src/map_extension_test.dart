@@ -74,6 +74,56 @@ void main() {
       });
     });
 
+    group('extract', () {
+      test('valid', () {
+        final map = <String, dynamic>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
+        final ap = map.extract<int>('b');
+        expect(ap, Option.of(2));
+      });
+
+      test('wrong type', () {
+        final map = <String, dynamic>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
+        final ap = map.extract<String>('b');
+        expect(ap, isA<None>());
+      });
+    });
+
+    group('extractMap', () {
+      test('no map', () {
+        final map = <String, dynamic>{'a': 1};
+        final ap = map.extractMap('a');
+        expect(ap, isA<None>());
+      });
+
+      test('one level', () {
+        final map = <String, dynamic>{
+          'a': {'b': 2}
+        };
+        final ap = map.extractMap('a');
+        expect(ap.toNullable(), equals({'b': 2}));
+      });
+
+      test('two levels', () {
+        final map = <String, dynamic>{
+          'a': {
+            'b': {'c': 3}
+          }
+        };
+        final ap = map.extractMap('a').extractMap('b');
+        expect(ap.toNullable(), equals({'c': 3}));
+      });
+
+      test('two levels with extract', () {
+        final map = <String, dynamic>{
+          'a': {
+            'b': {'c': 3}
+          }
+        };
+        final ap = map.extractMap('a').extractMap('b').extract<int>('c');
+        expect(ap, Option.of(3));
+      });
+    });
+
     test('member', () {
       final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
       final ap = map.member('b');
