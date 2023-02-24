@@ -340,6 +340,31 @@ void main() {
       });
     });
 
+    group('fromJson', () {
+      test('int', () {
+        final option = Option<int>.fromJson(10, (a) => a as int);
+        option.matchTestSome((some) => expect(some, 10));
+      });
+
+      test('DateTime', () {
+        final now = DateTime.now();
+        final option = Option<DateTime>.fromJson(
+            now.toIso8601String(), (a) => DateTime.parse(a as String));
+        option.matchTestSome((some) => expect(some, now));
+      });
+
+      test('DateTime failure', () {
+        final option = Option<DateTime>.fromJson(
+            "fail", (a) => DateTime.parse(a as String));
+        expect(option, isA<None>());
+      });
+
+      test('null', () {
+        final option = Option<int>.fromJson(null, (a) => a as int);
+        expect(option, isA<None>());
+      });
+    });
+
     group('fromPredicate', () {
       test('Some', () {
         final option = Option<int>.fromPredicate(10, (a) => a > 5);

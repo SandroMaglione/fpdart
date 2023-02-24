@@ -545,7 +545,7 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
     dynamic json,
     T Function(dynamic json) fromJsonT,
   ) =>
-      json != null ? Option.of(fromJsonT(json)) : Option.none();
+      json != null ? Option.tryCatch(() => fromJsonT(json)) : Option.none();
 
   /// Converts to Json.
   ///
