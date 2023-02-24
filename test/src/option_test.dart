@@ -189,6 +189,20 @@ void main() {
       });
     });
 
+    group('flatMapThrowable', () {
+      test('happy path', () {
+        final option = Option.of(10);
+        final flatMap = option.flatMapThrowable((a) => a + 1);
+        flatMap.matchTestSome((some) => expect(some, 11));
+      });
+
+      test('throws', () {
+        final option = Option.of(10);
+        final flatMap = option.flatMapThrowable<int>((a) => throw "fail");
+        expect(flatMap, isA<None>());
+      });
+    });
+
     group('getOrElse', () {
       test('Some', () {
         final option = Option.of(10);
