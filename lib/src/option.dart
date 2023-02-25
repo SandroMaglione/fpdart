@@ -239,6 +239,18 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   Option<B> flatMapNullable<B>(B? Function(T t) f) =>
       flatMap((t) => Option.fromNullable(f(t)));
 
+  /// Return a new [Option] that calls [Option.tryCatch] with the given function [f].
+  ///
+  /// ```dart
+  /// expect(
+  ///   Option.of(123).flatMapThrowable((_) => throw Exception()),
+  ///   Option.of(123).flatMapThrowable((_) => 456),
+  ///   Option.of(456),
+  /// );
+  /// ```
+  Option<B> flatMapThrowable<B>(B Function(T t) f) =>
+      flatMap((t) => Option.tryCatch(() => f(t)));
+
   /// Return the current [Option] if it is a [Some], otherwise return the result of `orElse`.
   ///
   /// Used to provide an **alt**ernative [Option] in case the current one is [None].
