@@ -42,6 +42,7 @@ map.extractMap('a'); /// 👈 `Some({'b': 2})`
 > **Note**: People who have the [prefer_const_constructors](https://dart.dev/tools/linter-rules#prefer_const_constructors) lint enabled will notice a warning to use `const` 🤝
 
 - New [`managing_imports`](./example/managing_imports) example (thanks to [RandalSchwartz](https://github.com/RandalSchwartz) 🎉)
+- Updated [README](./README.md) introduction
 
 # v0.4.0 - 16 December 2022
 - Added extension methods to work with nullable types (`T?`)

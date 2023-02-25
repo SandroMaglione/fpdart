@@ -1,6 +1,20 @@
-# `Fpdart`
+<h3 align="center">
+  <a href="https://github.com/SandroMaglione/fpdart">
+    <img src="./example/screenshots/screenshot_fpdart.png" width="500" />
+  </a>
+</h3>
 
-<p>
+
+<p align="center">
+<strong>Functional programming in Dart and Flutter</strong>
+</p>
+
+<p align="center">
+All the main functional programming types and patterns <strong>fully documented</strong>, tested, and with examples
+</p>
+
+
+<p align="center">
   <a href="https://github.com/SandroMaglione/fpdart">
     <img src="https://img.shields.io/github/stars/SandroMaglione/fpdart?logo=github" />
   </a>
@@ -15,10 +29,7 @@
   </a>
 </p>
 
-
-Functional programming in Dart and Flutter.
-
-All the main functional programming types and patterns **fully documented**, tested, and with examples.
+## Introduction
 
 > **Fpdart is fully documented. You do not need to have any previous experience with functional programming to start using `fpdart`. Give it a try!**
 
@@ -28,6 +39,7 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 
 ***
 
+- [Introduction](#introduction)
 - [📖 Learn `functional programming` and `fpdart`](#-learn-functional-programming-and-fpdart)
   - [👨‍💻 Blog posts and tutorials](#-blog-posts-and-tutorials)
 - [💻 Installation](#-installation)
