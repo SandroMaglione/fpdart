@@ -1,6 +1,20 @@
-# `Fpdart`
+<h3 align="center">
+  <a href="https://github.com/SandroMaglione/fpdart">
+    <img src="./example/screenshots/screenshot_fpdart.png" width="500" />
+  </a>
+</h3>
 
-<p>
+
+<p align="center">
+<strong>Functional programming in Dart and Flutter</strong>
+</p>
+
+<p align="center">
+All the main functional programming types and patterns <strong>fully documented</strong>, tested, and with examples
+</p>
+
+
+<p align="center">
   <a href="https://github.com/SandroMaglione/fpdart">
     <img src="https://img.shields.io/github/stars/SandroMaglione/fpdart?logo=github" />
   </a>
@@ -15,10 +29,7 @@
   </a>
 </p>
 
-
-Functional programming in Dart and Flutter.
-
-All the main functional programming types and patterns **fully documented**, tested, and with examples.
+## Introduction
 
 > **Fpdart is fully documented. You do not need to have any previous experience with functional programming to start using `fpdart`. Give it a try!**
 
@@ -28,10 +39,15 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 
 ***
 
+- [Introduction](#introduction)
 - [📖 Learn `functional programming` and `fpdart`](#-learn-functional-programming-and-fpdart)
   - [👨‍💻 Blog posts and tutorials](#-blog-posts-and-tutorials)
 - [💻 Installation](#-installation)
 - [✨ Examples](#-examples)
+  - [Pokeapi](#pokeapi)
+  - [Open Meteo API](#open-meteo-api)
+  - [Read/Write local file](#readwrite-local-file)
+  - [Manage imports](#manage-imports)
   - [Option](#option)
   - [Either](#either)
   - [IO](#io)
@@ -84,7 +100,7 @@ Check out also this series of articles about functional programming with `fpdart
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.4.0 # Check out the latest version
+  fpdart: ^0.4.1 # Check out the latest version
 ```
 
 ## ✨ Examples
@@ -105,6 +121,9 @@ A 2 parts series explains step by step the Open Meteo API code:
 
 ### [Read/Write local file](./example/read_write_file/)
 Example of how to read and write a local file using functional programming.
+
+### [Manage imports](./example/managing_imports)
+Using `fpdart` with other libraries and noticing naming conflicts? Learn how to rename the classes that conflict with other SDK or third-party packages.
 
 ### [Option](./lib/src/option.dart)
 Used when a return value can be missing.
@@ -336,6 +355,7 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
 
+- v0.4.1 - 25 February 2023
 - **v0.4.0** - 16 December 2022
 - **v0.3.0** - 11 October 2022
 - **v0.2.0** - 16 July 2022

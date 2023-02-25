@@ -1,3 +1,49 @@
+# v0.4.1 - 25 February 2023
+- New methods for `Option` type (thanks to [tim-smart](https://github.com/tim-smart) 🎉)
+  - `flatMapNullable`
+  - `flatMapThrowable`
+```dart
+final option = Option.of(10);
+
+option.flatMapNullable((a) => a + 1); /// 👈 `Some(11)`
+option.flatMapThrowable((a) => a + 1); /// 👈 `Some(11)`
+
+option.flatMapNullable<int>((a) => null); /// 👈 `None()`
+option.flatMapThrowable<int>((a) => throw "fail"); /// 👈 `None()`
+```
+
+- Improved support `fromJson` for `Option` type (thanks [again] to [tim-smart](https://github.com/tim-smart) 🎉)
+  - Allow for decoding of **non-primitive types** (with custom `fromJson` constructors)
+```dart
+/// `fromJson` on `DateTime` with `Option` type
+final now = DateTime.now();
+Option<DateTime>.fromJson(now.toIso8601String(), (a) => DateTime.parse(a as String)); /// 👈 `Some(now)`
+
+Option<DateTime>.fromJson("fail", (a) => DateTime.parse(a as String)); /// 👈 `None()`
+```
+
+- New extension methods for `Map` (thanks [once again] to [tim-smart](https://github.com/tim-smart) 🎉)
+  - `extract`
+  - `extractMap`
+```dart
+final map = <String, dynamic>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
+map.extract<int>('b'); /// 👈 `Some(2)`
+map.extract<String>('b'); /// 👈 `None()`, not of type `String` ⚠️
+
+final map = <String, dynamic>{'a': 1};
+map.extractMap('a'); /// 👈 `None()`, not a `Map`
+
+final map = <String, dynamic>{'a': {'b': 2} };
+map.extractMap('a'); /// 👈 `Some({'b': 2})`
+```
+
+- `Option.of` and `Option.none` factories `const` (thanks to [f-person](https://github.com/f-person) 🎉)
+
+> **Note**: People who have the [prefer_const_constructors](https://dart.dev/tools/linter-rules#prefer_const_constructors) lint enabled will notice a warning to use `const` 🤝
+
+- New [`managing_imports`](./example/managing_imports) example (thanks to [RandalSchwartz](https://github.com/RandalSchwartz) 🎉)
+- Updated [README](./README.md) introduction
+
 # v0.4.0 - 16 December 2022
 - Added extension methods to work with nullable types (`T?`)
   - From `T?` to `fpdart`'s types
