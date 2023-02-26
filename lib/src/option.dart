@@ -280,7 +280,10 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   ///
   /// Return [Right] when [Option] is [Some], otherwise [Left] containing
   /// the result of calling `onLeft`.
-  Either<L, T> toEither<L>(L Function() onLeft);
+  Either<L, T> toEither<L>(L Function() onLeft) => match(
+        () => Left(onLeft()),
+        Right.new,
+      );
 
   /// Convert this [Option] to a [TaskOption].
   ///
@@ -573,9 +576,6 @@ class None extends Option<Never> {
 
   @override
   Option<Z> filterMap<Z>(Option<Z> Function(Never t) f) => const Option.none();
-
-  @override
-  Either<L, Never> toEither<L>(L Function() onLeft) => Left(onLeft());
 
   @override
   bool operator ==(Object other) => other is None;
