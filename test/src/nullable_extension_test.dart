@@ -16,7 +16,7 @@ void main() {
       test('None', () {
         int? value = null;
         final result = value.toOption();
-        expect(result, isA<None<int>>());
+        expect(result, isA<None>());
       });
     });
 
@@ -52,7 +52,7 @@ void main() {
         int? value = null;
         final task = value.toTaskOption();
         final result = await task.run();
-        expect(result, isA<None<int>>());
+        expect(result, isA<None>());
       });
     });
 

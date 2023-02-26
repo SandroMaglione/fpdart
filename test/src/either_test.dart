@@ -443,7 +443,7 @@ void main() {
       test('Left', () {
         final value = Either<String, int>.left('none');
         final ap = value.toOption();
-        expect(ap, isA<None<int>>());
+        expect(ap, isA<None>());
       });
     });
 
@@ -525,7 +525,7 @@ void main() {
       test('Right', () {
         final value = Either<String, int>.of(10);
         final ap = value.getLeft();
-        expect(ap, isA<None<String>>());
+        expect(ap, isA<None>());
       });
 
       test('Left', () {
@@ -549,7 +549,7 @@ void main() {
       test('Left', () {
         final value = Either<String, int>.left('none');
         final ap = value.getRight();
-        expect(ap, isA<None<int>>());
+        expect(ap, isA<None>());
       });
     });
 

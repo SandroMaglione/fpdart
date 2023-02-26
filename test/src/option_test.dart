@@ -68,14 +68,6 @@ void main() {
         expect(option, isA<Functor>());
       });
 
-      test('Foldable', () {
-        expect(option, isA<Foldable>());
-      });
-
-      test('Alt', () {
-        expect(option, isA<Alt>());
-      });
-
       test('Extend', () {
         expect(option, isA<Extend>());
       });
@@ -103,37 +95,6 @@ void main() {
       final map = option.map3<String, double, double>(
           Option.of('abc'), Option.of(2.0), (a, b, c) => (a + b.length) / c);
       map.matchTestSome((some) => expect(some, 6.5));
-    });
-
-    test('foldRight', () {
-      final option = Option.of(10);
-      final foldRight = option.foldRight<int>(1, (a, b) => a + b);
-      expect(foldRight, 11);
-    });
-
-    test('foldLeft', () {
-      final option = Option.of(10);
-      final fold = option.foldLeft<int>(1, (a, b) => a + b);
-      expect(fold, 11);
-    });
-
-    test('foldRightWithIndex', () {
-      final option = Option.of(10);
-      final foldRight = option.foldRightWithIndex<int>(1, (i, a, b) => a + b);
-      expect(foldRight, 11);
-    });
-
-    test('foldLeftWithIndex', () {
-      final option = Option.of(10);
-      final fold = option.foldLeftWithIndex<int>(1, (i, a, b) => a + b);
-      expect(fold, 11);
-    });
-
-    test('foldMap', () {
-      final option = Option.of(10);
-      final foldMap = option.foldMap<int>(
-          Monoid.instance(0, (a1, a2) => a1 + a2), (a) => a);
-      expect(foldMap, 10);
     });
 
     group('ap', () {
@@ -518,59 +479,6 @@ void main() {
       m2.pure('abc').matchTestSome((some) => expect(some, 'abc'));
     });
 
-    test('length', () {
-      final m1 = Option.of(10);
-      final m2 = Option<int>.none();
-      expect(m1.length(), 1);
-      expect(m2.length(), 0);
-    });
-
-    group('any', () {
-      test('Some (true)', () {
-        final m1 = Option.of(10);
-        final ap = m1.any((a) => a > 5);
-        expect(ap, true);
-      });
-
-      test('Some (false)', () {
-        final m1 = Option.of(10);
-        final ap = m1.any((a) => a < 5);
-        expect(ap, false);
-      });
-
-      test('None', () {
-        final m1 = Option<int>.none();
-        final ap = m1.any((a) => a > 5);
-        expect(ap, false);
-      });
-    });
-
-    group('all', () {
-      test('Some (true)', () {
-        final m1 = Option.of(10);
-        final ap = m1.all((a) => a > 5);
-        expect(ap, true);
-      });
-
-      test('Some (false)', () {
-        final m1 = Option.of(10);
-        final ap = m1.all((a) => a < 5);
-        expect(ap, false);
-      });
-
-      test('None', () {
-        final m1 = Option<int>.none();
-        final ap = m1.all((a) => a > 5);
-        expect(ap, true);
-      });
-    });
-
-    test('concatenate', () {
-      final m1 = Option.of(10);
-      final ap = m1.concatenate(Monoid.instance(0, (a1, a2) => a1 + a2));
-      expect(ap, 10);
-    });
-
     test('andThen', () {
       final m1 = Option.of(10);
       final m2 = Option<int>.none();
@@ -585,27 +493,6 @@ void main() {
       final m2 = Option<int>.none();
       m1(Option.of('abc')).matchTestSome((some) => expect(some, 'abc'));
       expect(m2(Option.of('abc')), isA<None>());
-    });
-
-    test('plus', () {
-      final m1 = Option.of(10);
-      final m2 = Option<int>.none();
-      m1.plus(Option.of(0)).matchTestSome((some) => expect(some, 10));
-      m2.plus(Option.of(0)).matchTestSome((some) => expect(some, 0));
-    });
-
-    test('prepend', () {
-      final m1 = Option.of(10);
-      final m2 = Option<int>.none();
-      m1.prepend(0).matchTestSome((some) => expect(some, 0));
-      m2.prepend(0).matchTestSome((some) => expect(some, 0));
-    });
-
-    test('append', () {
-      final m1 = Option.of(10);
-      final m2 = Option<int>.none();
-      m1.append(0).matchTestSome((some) => expect(some, 10));
-      m2.append(0).matchTestSome((some) => expect(some, 0));
     });
 
     test('match', () {
@@ -633,7 +520,7 @@ void main() {
 
     test('none()', () {
       final m = Option<int>.none();
-      expect(m, isA<None<int>>());
+      expect(m, isA<None>());
     });
 
     test('of()', () {
@@ -643,7 +530,7 @@ void main() {
 
     test('getFirstMonoid', () {
       final m = Option.getFirstMonoid<int>();
-      expect(m.empty, isA<None<int>>());
+      expect(m.empty, isA<None>());
       m
           .combine(Option.of(10), Option.of(0))
           .matchTestSome((some) => expect(some, 10));
@@ -654,7 +541,7 @@ void main() {
 
     test('getLastMonoid', () {
       final m = Option.getLastMonoid<int>();
-      expect(m.empty, isA<None<int>>());
+      expect(m.empty, isA<None>());
       m
           .combine(Option.of(10), Option.of(0))
           .matchTestSome((some) => expect(some, 0));
@@ -665,12 +552,12 @@ void main() {
 
     test('getMonoid', () {
       final m = Option.getMonoid<int>(Semigroup.instance((a1, a2) => a1 + a2));
-      expect(m.empty, isA<None<int>>());
+      expect(m.empty, isA<None>());
       m
           .combine(Option.of(10), Option.of(20))
           .matchTestSome((some) => expect(some, 30));
-      expect(m.combine(Option.of(10), Option.none()), isA<None<int>>());
-      expect(m.combine(Option.none(), Option.of(10)), isA<None<int>>());
+      expect(m.combine(Option.of(10), Option.none()), isA<None>());
+      expect(m.combine(Option.none(), Option.of(10)), isA<None>());
     });
 
     group('toString', () {
@@ -697,7 +584,7 @@ void main() {
       test('None', () {
         final list = [some(1), none<int>(), some(3), some(4)];
         final result = Option.sequenceList(list);
-        expect(result, isA<None<List<int>>>());
+        expect(result, isA<None>());
       });
     });
 
@@ -717,7 +604,7 @@ void main() {
           list,
           (a) => a % 2 == 0 ? some("$a") : none(),
         );
-        expect(result, isA<None<List<String>>>());
+        expect(result, isA<None>());
       });
     });
 
@@ -737,7 +624,7 @@ void main() {
           list,
           (a, i) => i % 2 == 0 ? some("$a$i") : none(),
         );
-        expect(result, isA<None<List<String>>>());
+        expect(result, isA<None>());
       });
     });
 
@@ -822,7 +709,7 @@ void main() {
 
     test('None', () {
       final cast = Option<int>.safeCast('abc');
-      expect(cast, isA<None<int>>());
+      expect(cast, isA<None>());
     });
   });
 
@@ -836,7 +723,7 @@ void main() {
 
     test('None', () {
       final cast = Option.safeCastStrict<int, String>('abc');
-      expect(cast, isA<None<int>>());
+      expect(cast, isA<None>());
     });
   });
 }

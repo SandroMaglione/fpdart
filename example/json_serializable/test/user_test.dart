@@ -41,9 +41,9 @@ void main() {
         "phone": null,
       });
 
-      expect(user.id, isA<None<dynamic>>());
-      expect(user.birthDate, isA<None<dynamic>>());
-      expect(user.phone, isA<None<dynamic>>());
+      expect(user.id, isA<None>());
+      expect(user.birthDate, isA<None>());
+      expect(user.phone, isA<None>());
     });
 
     test('fromJson (Some)', () {
