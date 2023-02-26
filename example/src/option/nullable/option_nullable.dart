@@ -1,4 +1,4 @@
-// ignore_for_file: unchecked_use_of_nullable_value, undefined_getter
+// ignore_for_file: unchecked_use_of_nullable_value, undefined_getter, unnecessary_null_comparison
 import 'package:fpdart/fpdart.dart';
 import 'package:glados/glados.dart';
 

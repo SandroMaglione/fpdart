@@ -1,4 +1,6 @@
 analyzer:
+  exclude:
+    - '**/*.g.dart'
   language:
     strict-casts: true
     strict-inference: true

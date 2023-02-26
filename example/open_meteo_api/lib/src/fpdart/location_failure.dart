@@ -1,3 +1,5 @@
+// ignore_for_file: comment_references
+
 import 'package:http/http.dart' as http;
 
 /// Abstract class which represents a failure in the `locationSearch` request.
@@ -27,7 +29,8 @@ class LocationInvalidJsonDecodeFpdartFailure
   final String body;
 }
 
-/// [OpenMeteoApiFpdartLocationFailure] when location response is not a valid [Map].
+/// [OpenMeteoApiFpdartLocationFailure] when location response is not a valid
+/// [Map].
 class LocationInvalidMapFpdartFailure
     implements OpenMeteoApiFpdartLocationFailure {
   const LocationInvalidMapFpdartFailure(this.json);
@@ -39,7 +42,8 @@ class LocationInvalidMapFpdartFailure
 class LocationKeyNotFoundFpdartFailure
     implements OpenMeteoApiFpdartLocationFailure {}
 
-/// [OpenMeteoApiFpdartLocationFailure] when location data is not a valid [List].
+/// [OpenMeteoApiFpdartLocationFailure] when location data is not a valid
+/// [List].
 class LocationInvalidListFpdartFailure
     implements OpenMeteoApiFpdartLocationFailure {
   const LocationInvalidListFpdartFailure(this.value);

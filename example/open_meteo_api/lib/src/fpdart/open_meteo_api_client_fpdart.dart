@@ -17,7 +17,8 @@ class OpenMeteoApiClientFpdart {
 
   /// Finds a [Location] `/v1/search/?name=(query)`.
   TaskEither<OpenMeteoApiFpdartLocationFailure, Location> locationSearch(
-          String query) =>
+    String query,
+  ) =>
       TaskEither<OpenMeteoApiFpdartLocationFailure, http.Response>.tryCatch(
         () => _httpClient.get(
           Uri.https(

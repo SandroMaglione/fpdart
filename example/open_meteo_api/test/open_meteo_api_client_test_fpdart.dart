@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, lines_longer_than_80_chars
 import 'package:fpdart/fpdart.dart';
 import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
