@@ -274,7 +274,7 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   bool isNone();
 
   /// Return value of type `T` when this [Option] is a [Some], `null` otherwise.
-  T? toNullable() => match(() => null, identity);
+  T? toNullable();
 
   /// Build an [Either] from [Option].
   ///
@@ -520,7 +520,7 @@ class Some<T> extends Option<T> {
       );
 
   @override
-  T? toNullable() => _value;
+  T toNullable() => _value;
 
   @override
   Either<L, T> toEither<L>(L Function() onLeft) => Right(_value);
@@ -579,6 +579,9 @@ class None extends Option<Never> {
 
   @override
   bool operator ==(Object other) => other is None;
+
+  @override
+  Null toNullable() => null;
 
   @override
   int get hashCode => 0;
