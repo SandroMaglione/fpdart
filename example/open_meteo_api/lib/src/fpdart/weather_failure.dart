@@ -1,3 +1,5 @@
+// ignore_for_file: comment_references
+
 import 'package:http/http.dart' as http;
 
 /// Abstract class which represents a failure in the `getWeather` request.
@@ -17,7 +19,8 @@ class WeatherRequestFpdartFailure implements OpenMeteoApiFpdartWeatherFailure {
   final http.Response response;
 }
 
-/// [OpenMeteoApiFpdartWeatherFailure] when weather response is not a valid [Map].
+/// [OpenMeteoApiFpdartWeatherFailure] when weather response is not a valid
+/// [Map].
 class WeatherInvalidMapFpdartFailure
     implements OpenMeteoApiFpdartWeatherFailure {
   const WeatherInvalidMapFpdartFailure(this.body);
@@ -41,7 +44,8 @@ class WeatherInvalidListFpdartFailure
 class WeatherDataNotFoundFpdartFailure
     implements OpenMeteoApiFpdartWeatherFailure {}
 
-/// [OpenMeteoApiFpdartWeatherFailure] when the response is not a valid [Weather]
+/// [OpenMeteoApiFpdartWeatherFailure] when the response is not a valid
+/// [Weather].
 class WeatherFormattingFpdartFailure
     implements OpenMeteoApiFpdartWeatherFailure {
   const WeatherFormattingFpdartFailure(this.object, this.stackTrace);
