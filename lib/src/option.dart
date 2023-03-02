@@ -2,12 +2,10 @@ import 'either.dart';
 import 'function.dart';
 import 'task_option.dart';
 import 'tuple.dart';
-import 'typeclass/alt.dart';
 import 'typeclass/applicative.dart';
 import 'typeclass/eq.dart';
 import 'typeclass/extend.dart';
 import 'typeclass/filterable.dart';
-import 'typeclass/foldable.dart';
 import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
@@ -23,7 +21,7 @@ Option<T> some<T>(T t) => Some(t);
 /// Return a [None].
 ///
 /// Shortcut for `Option.none()`.
-Option<T> none<T>() => None<T>();
+Option<T> none<T>() => const Option.none();
 
 /// Return [None] if `t` is `null`, [Some] otherwise.
 ///
@@ -68,75 +66,9 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
         Functor<_OptionHKT, T>,
         Applicative<_OptionHKT, T>,
         Monad<_OptionHKT, T>,
-        Foldable<_OptionHKT, T>,
-        Alt<_OptionHKT, T>,
         Extend<_OptionHKT, T>,
         Filterable<_OptionHKT, T> {
   const Option();
-
-  /// Return the result of `f` called with `b` and the value of [Some].
-  /// If this [Option] is [None], return `b`.
-  @override
-  B foldRight<B>(B b, B Function(B acc, T t) f);
-
-  /// Return the result of `f` called with `b` and the value of [Some].
-  /// If this [Option] is [None], return `b`.
-  @override
-  B foldLeft<B>(B b, B Function(B acc, T t) f) =>
-      foldMap<Endo<B>>(dualEndoMonoid(), (a) => (B b) => f(b, a))(b);
-
-  /// Use `monoid` to combine the value of [Some] applied to `f`.
-  @override
-  B foldMap<B>(Monoid<B> monoid, B Function(T t) f) =>
-      foldRight(monoid.empty, (b, a) => monoid.combine(f(a), b));
-
-  /// Return the result of `f` called with `b` and the value of [Some].
-  /// If this [Option] is [None], return `b`.
-  @override
-  B foldRightWithIndex<B>(B b, B Function(int i, B acc, T t) f) =>
-      foldRight<Tuple2<B, int>>(
-        Tuple2(b, length() - 1),
-        (t, a) => Tuple2(f(t.second, t.first, a), t.second - 1),
-      ).first;
-
-  /// Return the result of `f` called with `b` and the value of [Some].
-  /// If this [Option] is [None], return `b`.
-  @override
-  B foldLeftWithIndex<B>(B b, B Function(int i, B acc, T t) f) =>
-      foldLeft<Tuple2<B, int>>(
-        Tuple2(b, 0),
-        (t, a) => Tuple2(f(t.second, t.first, a), t.second + 1),
-      ).first;
-
-  /// Returns `1` when [Option] is [Some], `0` otherwise.
-  @override
-  int length() => foldLeft(0, (b, _) => b + 1);
-
-  /// Return the result of `predicate` applied to the value of [Some].
-  /// If the [Option] is [None], returns `false`.
-  @override
-  bool any(bool Function(T t) predicate) => foldMap(boolOrMonoid(), predicate);
-
-  /// Return the result of `predicate` applied to the value of [Some].
-  /// If the [Option] is [None], returns `true`.
-  @override
-  bool all(bool Function(T t) predicate) => foldMap(boolAndMonoid(), predicate);
-
-  /// Use `monoid` to combine the value of [Some].
-  @override
-  T concatenate(Monoid<T> monoid) => foldMap(monoid, identity);
-
-  /// Return the value of this [Option] if it is [Some], otherwise return `a`.
-  @override
-  Option<T> plus(covariant Option<T> a);
-
-  /// Return `Some(a)`.
-  @override
-  Option<T> prepend(T t) => Some(t);
-
-  /// If this [Option] is [None], return `Some(a)`. Otherwise return this [Some].
-  @override
-  Option<T> append(T t);
 
   /// Change the value of type `T` to a value of type `B` using function `f`.
   /// ```dart
@@ -251,16 +183,6 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   Option<B> flatMapThrowable<B>(B Function(T t) f) =>
       flatMap((t) => Option.tryCatch(() => f(t)));
 
-  /// Return the current [Option] if it is a [Some], otherwise return the result of `orElse`.
-  ///
-  /// Used to provide an **alt**ernative [Option] in case the current one is [None].
-  /// ```dart
-  /// [🍌].alt(() => [🍎]) -> [🍌]
-  /// [_].alt(() => [🍎]) -> [🍎]
-  /// ```
-  @override
-  Option<T> alt(covariant Option<T> Function() orElse);
-
   /// Change the value of [Option] from type `T` to type `Z` based on the
   /// value of `Option<T>` using function `f`.
   @override
@@ -273,7 +195,8 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   /// If this [Option] is a [Some] and calling `f` returns `true`, then return this [Some].
   /// Otherwise return [None].
   @override
-  Option<T> filter(bool Function(T t) f);
+  Option<T> filter(bool Function(T t) f) =>
+      flatMap((t) => f(t) ? this : const Option.none());
 
   /// If this [Option] is a [Some] and calling `f` returns [Some], then return this [Some].
   /// Otherwise return [None].
@@ -350,18 +273,6 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   /// Return `true` when value is [None].
   bool isNone();
 
-  /// If this [Option] is a [Some] then return the value inside the [Option].
-  /// Otherwise return the result of `orElse`.
-  /// ```dart
-  /// [🍌].getOrElse(() => 🍎) -> 🍌
-  /// [_].getOrElse(() => 🍎) -> 🍎
-  ///
-  ///  👆 same as 👇
-  ///
-  /// [🍌].match(() => 🍎, (🍌) => 🍌)
-  /// ```
-  T getOrElse(T Function() orElse);
-
   /// Return value of type `T` when this [Option] is a [Some], `null` otherwise.
   T? toNullable();
 
@@ -369,17 +280,17 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   ///
   /// Return [Right] when [Option] is [Some], otherwise [Left] containing
   /// the result of calling `onLeft`.
-  Either<L, T> toEither<L>(L Function() onLeft);
+  Either<L, T> toEither<L>(L Function() onLeft) => match(
+        () => Left(onLeft()),
+        Right.new,
+      );
 
   /// Convert this [Option] to a [TaskOption].
   ///
   /// Used to convert a sync context ([Option]) to an async context ([TaskOption]).
   /// You should convert [Option] to [TaskOption] every time you need to
   /// call an async ([Future]) function based on the value in [Option].
-  TaskOption<T> toTaskOption();
-
-  /// Return `true` when value of `a` is equal to the value inside the [Option].
-  bool elem(T t, Eq<T> eq);
+  TaskOption<T> toTaskOption() => TaskOption(() => Future.value(this));
 
   /// {@template fpdart_traverse_list_option}
   /// Map each element in the list to an [Option] using the function `f`,
@@ -471,7 +382,7 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
       predicate(value) ? Some(f(value)) : Option.none();
 
   /// Return a [None].
-  const factory Option.none() = None<T>;
+  const factory Option.none() = None;
 
   /// Return a `Some(a)`.
   const factory Option.of(T t) = Some<T>;
@@ -585,16 +496,7 @@ class Some<T> extends Option<T> {
   Option<B> map<B>(B Function(T t) f) => Some(f(_value));
 
   @override
-  B foldRight<B>(B b, B Function(B acc, T t) f) => f(b, _value);
-
-  @override
   Option<B> flatMap<B>(covariant Option<B> Function(T t) f) => f(_value);
-
-  @override
-  T getOrElse(T Function() orElse) => _value;
-
-  @override
-  Option<T> alt(Option<T> Function() orElse) => this;
 
   @override
   B match<B>(B Function() onNone, B Function(T t) onSome) => onSome(_value);
@@ -618,19 +520,10 @@ class Some<T> extends Option<T> {
       );
 
   @override
-  T? toNullable() => _value;
-
-  @override
-  bool elem(T t, Eq<T> eq) => eq.eqv(_value, t);
+  T toNullable() => _value;
 
   @override
   Either<L, T> toEither<L>(L Function() onLeft) => Right(_value);
-
-  @override
-  Option<T> plus(covariant Option<T> a) => this;
-
-  @override
-  Option<T> append(T t) => this;
 
   @override
   bool operator ==(Object other) => (other is Some) && other._value == _value;
@@ -648,38 +541,32 @@ class Some<T> extends Option<T> {
   TaskOption<T> toTaskOption() => TaskOption.of(_value);
 }
 
-class None<T> extends Option<T> {
+class None extends Option<Never> {
   const None();
 
   @override
-  Option<D> map2<C, D>(covariant Option<C> mc, D Function(T t, C c) f) =>
-      flatMap((b) => mc.map((c) => f(b, c)));
+  Option<D> map2<C, D>(covariant Option<C> mc, D Function(Never t, C c) f) =>
+      this;
 
   @override
-  Option<E> map3<C, D, E>(covariant Option<C> mc, covariant Option<D> md,
-          E Function(T t, C c, D d) f) =>
-      flatMap((a) => mc.flatMap((c) => md.map((d) => f(a, c, d))));
+  Option<E> map3<C, D, E>(
+    covariant Option<C> mc,
+    covariant Option<D> md,
+    E Function(Never t, C c, D d) f,
+  ) =>
+      this;
 
   @override
-  Option<B> map<B>(B Function(T t) f) => const Option.none();
+  Option<B> map<B>(B Function(Never t) f) => this;
 
   @override
-  B foldRight<B>(B b, B Function(B acc, T t) f) => b;
+  Option<B> flatMap<B>(covariant Option<B> Function(Never t) f) => this;
 
   @override
-  Option<B> flatMap<B>(covariant Option<B> Function(T t) f) => Option<B>.none();
+  B match<B>(B Function() onNone, B Function(Never t) onSome) => onNone();
 
   @override
-  T getOrElse(T Function() orElse) => orElse();
-
-  @override
-  Option<T> alt(Option<T> Function() orElse) => orElse();
-
-  @override
-  B match<B>(B Function() onNone, B Function(T t) onSome) => onNone();
-
-  @override
-  Option<Z> extend<Z>(Z Function(Option<T> t) f) => const Option.none();
+  Option<Z> extend<Z>(Z Function(Option<Never> t) f) => const Option.none();
 
   @override
   bool isSome() => false;
@@ -688,28 +575,13 @@ class None<T> extends Option<T> {
   bool isNone() => true;
 
   @override
-  Option<T> filter(bool Function(T t) f) => const Option.none();
-
-  @override
-  Option<Z> filterMap<Z>(Option<Z> Function(T t) f) => const Option.none();
-
-  @override
-  T? toNullable() => null;
-
-  @override
-  bool elem(T t, Eq<T> eq) => false;
-
-  @override
-  Either<L, T> toEither<L>(L Function() onLeft) => Left(onLeft());
-
-  @override
-  Option<T> plus(covariant Option<T> a) => a;
-
-  @override
-  Option<T> append(T t) => Some(t);
+  Option<Z> filterMap<Z>(Option<Z> Function(Never t) f) => const Option.none();
 
   @override
   bool operator ==(Object other) => other is None;
+
+  @override
+  Null toNullable() => null;
 
   @override
   int get hashCode => 0;
@@ -718,8 +590,32 @@ class None<T> extends Option<T> {
   String toString() => 'None';
 
   @override
-  Object? toJson(Object? Function(T p1) toJsonT) => null;
+  Object? toJson(Object? Function(Never p1) toJsonT) => null;
+}
 
-  @override
-  TaskOption<T> toTaskOption() => TaskOption.none();
+extension OptionExtension<T> on Option<T> {
+  /// Return the current [Option] if it is a [Some], otherwise return the result of `orElse`.
+  ///
+  /// Used to provide an **alt**ernative [Option] in case the current one is [None].
+  /// ```dart
+  /// [🍌].alt(() => [🍎]) -> [🍌]
+  /// [_].alt(() => [🍎]) -> [🍎]
+  /// ```
+  Option<T> alt(Option<T> Function() orElse) =>
+      this is Some<T> ? this : orElse();
+
+  /// Return `true` when value of `a` is equal to the value inside the [Option].
+  bool elem(T t, Eq<T> eq) => match(() => false, (value) => eq.eqv(value, t));
+
+  /// If this [Option] is a [Some] then return the value inside the [Option].
+  /// Otherwise return the result of `orElse`.
+  /// ```dart
+  /// [🍌].getOrElse(() => 🍎) -> 🍌
+  /// [_].getOrElse(() => 🍎) -> 🍎
+  ///
+  ///  👆 same as 👇
+  ///
+  /// [🍌].match(() => 🍎, (🍌) => 🍌)
+  /// ```
+  T getOrElse(T Function() orElse) => match(orElse, identity);
 }

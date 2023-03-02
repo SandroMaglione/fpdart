@@ -688,7 +688,7 @@ void main() {
         );
         expect(sideEffect, 0);
         final result = await traverse.run();
-        expect(result, isA<None<List<String>>>());
+        expect(result, isA<None>());
         expect(sideEffect, list.length);
       });
     });
@@ -728,7 +728,7 @@ void main() {
         );
         expect(sideEffect, 0);
         final result = await traverse.run();
-        expect(result, isA<None<List<String>>>());
+        expect(result, isA<None>());
         expect(sideEffect, list.length);
       });
     });
@@ -768,7 +768,7 @@ void main() {
         );
         expect(sideEffect, 0);
         final result = await traverse.run();
-        expect(result, isA<None<List<String>>>());
+        expect(result, isA<None>());
         expect(sideEffect, 5);
       });
     });
@@ -808,7 +808,7 @@ void main() {
         );
         expect(sideEffect, 0);
         final result = await traverse.run();
-        expect(result, isA<None<List<String>>>());
+        expect(result, isA<None>());
         expect(sideEffect, 11);
       });
     });
@@ -1003,7 +1003,7 @@ void main() {
       test('None', () {
         final list = [some(1), none<int>(), some(3), some(4)];
         final result = list.sequenceOption();
-        expect(result, isA<None<List<int>>>());
+        expect(result, isA<None>());
       });
     });
   });
@@ -1217,7 +1217,7 @@ void main() {
         final traverse = list.sequenceTaskOption();
         expect(sideEffect, 0);
         final result = await traverse.run();
-        expect(result, isA<None<List<int>>>());
+        expect(result, isA<None>());
         expect(sideEffect, list.length);
       });
     });
@@ -1283,7 +1283,7 @@ void main() {
         final traverse = list.sequenceTaskOptionSeq();
         expect(sideEffect, 0);
         final result = await traverse.run();
-        expect(result, isA<None<List<int>>>());
+        expect(result, isA<None>());
         expect(sideEffect, 3);
       });
     });

@@ -222,7 +222,7 @@ void main() {
       test('Left', () async {
         final task = TaskOption<int>.fromNullable(null);
         final result = await task.run();
-        expect(result, isA<None<int>>());
+        expect(result, isA<None>());
       });
     });
 
@@ -408,7 +408,7 @@ void main() {
         final traverse = TaskOption.sequenceList(list);
         expect(sideEffect, 0);
         final result = await traverse.run();
-        expect(result, isA<None<List<int>>>());
+        expect(result, isA<None>());
         expect(sideEffect, list.length);
       });
     });
@@ -450,7 +450,7 @@ void main() {
         );
         expect(sideEffect, 0);
         final result = await traverse.run();
-        expect(result, isA<None<List<String>>>());
+        expect(result, isA<None>());
         expect(sideEffect, list.length);
       });
     });
@@ -492,7 +492,7 @@ void main() {
         );
         expect(sideEffect, 0);
         final result = await traverse.run();
-        expect(result, isA<None<List<String>>>());
+        expect(result, isA<None>());
         expect(sideEffect, list.length);
       });
     });
@@ -558,7 +558,7 @@ void main() {
         final traverse = TaskOption.sequenceListSeq(list);
         expect(sideEffect, 0);
         final result = await traverse.run();
-        expect(result, isA<None<List<int>>>());
+        expect(result, isA<None>());
         expect(sideEffect, 3);
       });
     });
@@ -600,7 +600,7 @@ void main() {
         );
         expect(sideEffect, 0);
         final result = await traverse.run();
-        expect(result, isA<None<List<String>>>());
+        expect(result, isA<None>());
         expect(sideEffect, 5);
       });
     });
@@ -642,7 +642,7 @@ void main() {
         );
         expect(sideEffect, 0);
         final result = await traverse.run();
-        expect(result, isA<None<List<String>>>());
+        expect(result, isA<None>());
         expect(sideEffect, 11);
       });
     });

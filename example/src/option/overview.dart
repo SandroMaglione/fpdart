@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 
 /// Don't do that! ⚠
-int divideI(int x, int y) => x ~/ y; /// this will throw if y == 0
+int divideI(int x, int y) => x ~/ y; // this will throw if y == 0
 
 /// Error handling without exceptions using [Option] 🎉
 Option<int> divideF(int x, int y) {
@@ -17,7 +17,7 @@ Option<int> divide2F(int x, int y) => Option.tryCatch(() => x ~/ y);
 void main() {
   // --- Initialize an Option 👇 --- //
   const someInit = Some(10);
-  const noneInit = None<int>();
+  const noneInit = None();
 
   final someInit2 = some(10);
   final noneInit2 = none<int>();
