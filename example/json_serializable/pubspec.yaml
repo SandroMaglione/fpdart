@@ -10,12 +10,12 @@ environment:
   sdk: '>=2.13.0 <3.0.0'
 
 dependencies:
-  json_serializable: ^5.0.0
+  json_serializable: ^6.6.1
   fpdart:
     path: ../../.
   
 dev_dependencies:
   test: ^1.17.5
-  lint: ^1.5.3
+  lint: ^2.0.1
   json_annotation: ^4.1.0
   build_runner: ^2.0.6

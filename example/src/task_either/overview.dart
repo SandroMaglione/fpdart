@@ -24,6 +24,7 @@ Future<int> asyncI() {
       .catchError(
     (dynamic error) {
       print(error);
+      return 0;
     },
   );
 }
