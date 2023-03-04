@@ -1,3 +1,21 @@
+# v0.5.0 - 4 March 2023
+- Updates to `Option` type [#92](https://github.com/SandroMaglione/fpdart/pull/92)  [⚠️ **BREAKING CHANGE**]
+  - Added `const factory` constructor for `None` (fixes [#95](https://github.com/SandroMaglione/fpdart/issues/95))
+  - Removed `Alt` and `Foldable` type classes, the following methods are not available anymore
+    - `foldLeft`
+    - `foldRight`
+    - `foldMap`
+    - `foldRightWithIndex`
+    - `foldLeftWithIndex`
+    - `length`
+    - `any`
+    - `all`
+    - `concatenate`
+    - `plus`
+    - `prepend`
+    - `append`
+- Updated examples and fixed lint warnings [#93](https://github.com/SandroMaglione/fpdart/pull/93) (thanks to [tim-smart](https://github.com/tim-smart) 🎉)
+
 # v0.4.1 - 25 February 2023
 - New methods for `Option` type (thanks to [tim-smart](https://github.com/tim-smart) 🎉)
   - `flatMapNullable`
