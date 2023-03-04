@@ -1,6 +1,6 @@
 <h3 align="center">
   <a href="https://github.com/SandroMaglione/fpdart">
-    <img src="./example/screenshots/screenshot_fpdart.png" width="500" />
+    <img src="https://raw.githubusercontent.com/SandroMaglione/fpdart/main/example/screenshots/screenshot_fpdart.png" width="500" />
   </a>
 </h3>
 
@@ -100,7 +100,7 @@ Check out also this series of articles about functional programming with `fpdart
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.4.1 # Check out the latest version
+  fpdart: ^0.5.0 # Check out the latest version
 ```
 
 ## ✨ Examples
@@ -355,6 +355,7 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
 
+- **v0.5.0** - 4 March 2023
 - v0.4.1 - 25 February 2023
 - **v0.4.0** - 16 December 2022
 - **v0.3.0** - 11 October 2022
