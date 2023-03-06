@@ -1142,4 +1142,36 @@ void main() {
       });
     });
   });
+
+  group('Do Notation', () {
+    test('should return the correct value', () {
+      final doEither = Either.Do(($) => $(Either.of(10)));
+      doEither.matchTestRight((t) {
+        expect(t, 10);
+      });
+    });
+
+    test('should extract the correct values', () {
+      final doEither = Either.Do(($) {
+        final a = $(Either.of(10));
+        final b = $(Either.of(5));
+        return a + b;
+      });
+      doEither.matchTestRight((t) {
+        expect(t, 15);
+      });
+    });
+
+    test('should return Left if any Either is Left', () {
+      final doEither = Either<String, int>.Do(($) {
+        final a = $(Either.of(10));
+        final b = $(Either.of(5));
+        final c = $(Either<String, int>.left('Error'));
+        return a + b + c;
+      });
+      doEither.matchTestLeft((t) {
+        expect(t, 'Error');
+      });
+    });
+  });
 }
