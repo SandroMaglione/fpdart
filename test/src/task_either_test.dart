@@ -940,5 +940,41 @@ void main() {
         expect(sideEffect, 11);
       });
     });
+
+    group('Do Notation', () {
+      test('should return the correct value', () async {
+        final doTaskEither =
+            TaskEither<String, int>.Do(($) => $(TaskEither.of(10)));
+        final run = await doTaskEither.run();
+        run.matchTestRight((t) {
+          expect(t, 10);
+        });
+      });
+
+      test('should extract the correct values', () async {
+        final doTaskEither = TaskEither<String, int>.Do(($) async {
+          final a = await $(TaskEither.of(10));
+          final b = await $(TaskEither.of(5));
+          return a + b;
+        });
+        final run = await doTaskEither.run();
+        run.matchTestRight((t) {
+          expect(t, 15);
+        });
+      });
+
+      test('should return Left if any Either is Left', () async {
+        final doTaskEither = TaskEither<String, int>.Do(($) async {
+          final a = await $(TaskEither.of(10));
+          final b = await $(TaskEither.of(5));
+          final c = await $(TaskEither<String, int>.left('Error'));
+          return a + b + c;
+        });
+        final run = await doTaskEither.run();
+        run.matchTestLeft((t) {
+          expect(t, 'Error');
+        });
+      });
+    });
   });
 }
