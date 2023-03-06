@@ -742,4 +742,35 @@ void main() {
       expect(cast, isA<None>());
     });
   });
+
+  group('Do Notation', () {
+    test('should return the correct value', () {
+      final doOption = Option.Do(($) => $(Option.of(10)));
+      doOption.matchTestSome((t) {
+        expect(t, 10);
+      });
+    });
+
+    test('should extract the correct values', () {
+      final doOption = Option.Do(($) {
+        final a = $(Option.of(10));
+        final b = $(Option.of(5));
+        return a + b;
+      });
+      doOption.matchTestSome((t) {
+        expect(t, 15);
+      });
+    });
+
+    test('should return None if any Option is None', () {
+      final doOption = Option.Do(($) {
+        final a = $(Option.of(10));
+        final b = $(Option.of(5));
+        final c = $(Option<int>.none());
+        return a + b + c;
+      });
+
+      expect(doOption, isA<None>());
+    });
+  });
 }
