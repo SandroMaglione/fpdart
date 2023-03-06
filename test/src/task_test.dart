@@ -282,5 +282,37 @@ void main() {
       expect(result, ['10', '21', '32', '43', '54', '65']);
       expect(sideEffect, 11);
     });
+
+    group('Do Notation', () {
+      test('should return the correct value', () async {
+        final doTask = Task.Do(($) => $(Task.of(10)));
+        final run = await doTask.run();
+        expect(run, 10);
+      });
+
+      test('should extract the correct values', () async {
+        final doTask = Task.Do(($) async {
+          final a = await $(Task.of(10));
+          final b = await $(Task.of(5));
+          return a + b;
+        });
+        final run = await doTask.run();
+        expect(run, 15);
+      });
+
+      test('should not execute until run is called', () async {
+        var mutable = 10;
+        final doTask = Task.Do(($) async {
+          final a = await $(Task.of(10));
+          final b = await $(Task.of(5));
+          mutable += 10;
+          return a + b;
+        });
+        expect(mutable, 10);
+        final run = await doTask.run();
+        expect(mutable, 20);
+        expect(run, 15);
+      });
+    });
   });
 }

@@ -9,6 +9,11 @@ import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
+typedef DoAdapterTask = Future<A> Function<A>(Task<A>);
+Future<A> _doAdapter<A>(Task<A> task) => task.run();
+
+typedef DoFunctionTask<A> = Future<A> Function(DoAdapterTask $);
+
 /// Tag the [HKT] interface for the actual [Task].
 abstract class _TaskHKT {}
 
@@ -21,6 +26,10 @@ class Task<A> extends HKT<_TaskHKT, A>
 
   /// Build a [Task] from a function returning a [Future].
   const Task(this._run);
+
+  /// Initialize a **Do Notation** chain.
+  // ignore: non_constant_identifier_names
+  factory Task.Do(DoFunctionTask<A> f) => Task(() => f(_doAdapter));
 
   /// Build a [Task] that returns `a`.
   factory Task.of(A a) => Task<A>(() async => a);
