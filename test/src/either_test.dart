@@ -1173,5 +1173,31 @@ void main() {
         expect(t, 'Error');
       });
     });
+
+    test('should no execute past the first Left', () {
+      var mutable = 10;
+      final doEitherLeft = Either<String, int>.Do(($) {
+        final a = $(Either.of(10));
+        final b = $(Either<String, int>.left("Error"));
+        mutable += 10;
+        return a + b;
+      });
+
+      expect(mutable, 10);
+      doEitherLeft.matchTestLeft((l) {
+        expect(l, "Error");
+      });
+
+      final doEitherRight = Either<String, int>.Do(($) {
+        final a = $(Either.of(10));
+        mutable += 10;
+        return a;
+      });
+
+      expect(mutable, 20);
+      doEitherRight.matchTestRight((t) {
+        expect(t, 10);
+      });
+    });
   });
 }

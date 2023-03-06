@@ -975,6 +975,34 @@ void main() {
           expect(t, 'Error');
         });
       });
+
+      test('should no execute past the first Left', () async {
+        var mutable = 10;
+        final doTaskEitherLeft = TaskEither<String, int>.Do(($) async {
+          final a = await $(TaskEither.of(10));
+          final b = await $(TaskEither<String, int>.left("Error"));
+          mutable += 10;
+          return a + b;
+        });
+
+        final runLeft = await doTaskEitherLeft.run();
+        expect(mutable, 10);
+        runLeft.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+
+        final doTaskEitherRight = TaskEither<String, int>.Do(($) async {
+          final a = await $(TaskEither.of(10));
+          mutable += 10;
+          return a;
+        });
+
+        final runRight = await doTaskEitherRight.run();
+        expect(mutable, 20);
+        runRight.matchTestRight((t) {
+          expect(t, 10);
+        });
+      });
     });
   });
 }
