@@ -773,6 +773,33 @@ void main() {
       expect(doOption, isA<None>());
     });
 
+    test('should rethrow if throw is used inside Option.Do', () {
+      final doOption = () => Option.Do(($) {
+            $(Option.of(10));
+            throw UnimplementedError();
+          });
+
+      expect(doOption, throwsA(const TypeMatcher<UnimplementedError>()));
+    });
+
+    test('should rethrow if None is thrown inside Option.Do', () {
+      final doOption = () => Option.Do(($) {
+            $(Option.of(10));
+            throw None();
+          });
+
+      expect(doOption, throwsA(const TypeMatcher<None>()));
+    });
+
+    test('should throw if the error is not None', () {
+      final doOption = () => Option.Do(($) {
+            $(Option.of(10));
+            throw UnimplementedError();
+          });
+
+      expect(doOption, throwsA(const TypeMatcher<UnimplementedError>()));
+    });
+
     test('should no execute past the first None', () {
       var mutable = 10;
       final doOptionNone = Option.Do(($) {
