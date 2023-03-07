@@ -666,5 +666,83 @@ void main() {
         expect(sideEffect, 11);
       });
     });
+
+    group('Do Notation', () {
+      test('should return the correct value', () async {
+        final doTaskOption = TaskOption<int>.Do(($) => $(TaskOption.of(10)));
+        final run = await doTaskOption.run();
+        run.matchTestSome((t) {
+          expect(t, 10);
+        });
+      });
+
+      test('should extract the correct values', () async {
+        final doTaskOption = TaskOption<int>.Do(($) async {
+          final a = await $(TaskOption.of(10));
+          final b = await $(TaskOption.of(5));
+          return a + b;
+        });
+        final run = await doTaskOption.run();
+        run.matchTestSome((t) {
+          expect(t, 15);
+        });
+      });
+
+      test('should return Left if any Either is Left', () async {
+        final doTaskOption = TaskOption<int>.Do(($) async {
+          final a = await $(TaskOption.of(10));
+          final b = await $(TaskOption.of(5));
+          final c = await $(TaskOption<int>.none());
+          return a + b + c;
+        });
+        final run = await doTaskOption.run();
+        expect(run, isA<None>());
+      });
+
+      test('should rethrow if throw is used inside Do', () {
+        final doTaskOption = TaskOption<int>.Do(($) {
+          $(TaskOption.of(10));
+          throw UnimplementedError();
+        });
+
+        expect(
+            doTaskOption.run, throwsA(const TypeMatcher<UnimplementedError>()));
+      });
+
+      test('should rethrow if None is thrown inside Do', () {
+        final doTaskOption = TaskOption<int>.Do(($) {
+          $(TaskOption.of(10));
+          throw const None();
+        });
+
+        expect(doTaskOption.run, throwsA(const TypeMatcher<None>()));
+      });
+
+      test('should no execute past the first Left', () async {
+        var mutable = 10;
+        final doTaskOptionNone = TaskOption<int>.Do(($) async {
+          final a = await $(TaskOption.of(10));
+          final b = await $(TaskOption<int>.none());
+          mutable += 10;
+          return a + b;
+        });
+
+        final runNone = await doTaskOptionNone.run();
+        expect(mutable, 10);
+        expect(runNone, isA<None>());
+
+        final doTaskOptionSome = TaskOption<int>.Do(($) async {
+          final a = await $(TaskOption.of(10));
+          mutable += 10;
+          return a;
+        });
+
+        final runSome = await doTaskOptionSome.run();
+        expect(mutable, 20);
+        runSome.matchTestSome((t) {
+          expect(t, 10);
+        });
+      });
+    });
   });
 }

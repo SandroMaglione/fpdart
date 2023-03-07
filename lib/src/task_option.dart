@@ -1,5 +1,16 @@
 import 'package:fpdart/fpdart.dart';
 
+class _TaskOptionThrow {
+  const _TaskOptionThrow();
+}
+
+typedef DoAdapterTaskOption = Future<A> Function<A>(TaskOption<A>);
+Future<A> _doAdapter<A>(TaskOption<A> taskOption) => taskOption.run().then(
+      (option) => option.getOrElse(() => throw const _TaskOptionThrow()),
+    );
+
+typedef DoFunctionTaskOption<A> = Future<A> Function(DoAdapterTaskOption $);
+
 /// Tag the [HKT] interface for the actual [TaskOption].
 abstract class _TaskOptionHKT {}
 
@@ -20,6 +31,16 @@ class TaskOption<R> extends HKT<_TaskOptionHKT, R>
 
   /// Build a [TaskOption] from a function returning a `Future<Option<R>>`.
   const TaskOption(this._run);
+
+  /// Initialize a **Do Notation** chain.
+  // ignore: non_constant_identifier_names
+  factory TaskOption.Do(DoFunctionTaskOption<R> f) => TaskOption(() async {
+        try {
+          return Option.of(await f(_doAdapter));
+        } on _TaskOptionThrow catch (_) {
+          return const Option.none();
+        }
+      });
 
   /// Used to chain multiple functions that return a [TaskOption].
   ///
