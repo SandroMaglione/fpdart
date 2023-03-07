@@ -1174,6 +1174,24 @@ void main() {
       });
     });
 
+    test('should rethrow if throw is used inside Do', () {
+      final doEither = () => Either<String, int>.Do(($) {
+            $(Either.of(10));
+            throw UnimplementedError();
+          });
+
+      expect(doEither, throwsA(const TypeMatcher<UnimplementedError>()));
+    });
+
+    test('should rethrow if Left is thrown inside Do', () {
+      final doEither = () => Either<String, int>.Do(($) {
+            $(Either.of(10));
+            throw Left('Error');
+          });
+
+      expect(doEither, throwsA(const TypeMatcher<Left>()));
+    });
+
     test('should no execute past the first Left', () {
       var mutable = 10;
       final doEitherLeft = Either<String, int>.Do(($) {

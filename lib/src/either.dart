@@ -49,10 +49,13 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
 
   /// Initialize a **Do Notation** chain.
   // ignore: non_constant_identifier_names
-  factory Either.Do(DoFunctionEither<L, R> f) => Either.tryCatch(
-        () => f(_doAdapter<L>()),
-        (error, _) => (error as _EitherThrow<L>).value,
-      );
+  factory Either.Do(DoFunctionEither<L, R> f) {
+    try {
+      return Either.of(f(_doAdapter<L>()));
+    } on _EitherThrow<L> catch (e) {
+      return Either.left(e.value);
+    }
+  }
 
   /// Return the result of `f` called with `b` and the value of [Right].
   /// If this [Either] is [Left], return `b`.
