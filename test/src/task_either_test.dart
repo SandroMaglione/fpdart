@@ -976,6 +976,25 @@ void main() {
         });
       });
 
+      test('should rethrow if throw is used inside Do', () {
+        final doTaskEither = TaskEither<String, int>.Do(($) {
+          $(TaskEither.of(10));
+          throw UnimplementedError();
+        });
+
+        expect(
+            doTaskEither.run, throwsA(const TypeMatcher<UnimplementedError>()));
+      });
+
+      test('should rethrow if Left is thrown inside Do', () {
+        final doTaskEither = TaskEither<String, int>.Do(($) {
+          $(TaskEither.of(10));
+          throw Left('Error');
+        });
+
+        expect(doTaskEither.run, throwsA(const TypeMatcher<Left>()));
+      });
+
       test('should no execute past the first Left', () async {
         var mutable = 10;
         final doTaskEitherLeft = TaskEither<String, int>.Do(($) async {

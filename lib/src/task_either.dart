@@ -42,10 +42,13 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
 
   /// Initialize a **Do Notation** chain.
   // ignore: non_constant_identifier_names
-  factory TaskEither.Do(DoFunctionTaskEither<L, R> f) => TaskEither.tryCatch(
-        () => f(_doAdapter<L>()),
-        (error, _) => (error as _TaskEitherThrow<L>).value,
-      );
+  factory TaskEither.Do(DoFunctionTaskEither<L, R> f) => TaskEither(() async {
+        try {
+          return Either.of(await f(_doAdapter<L>()));
+        } on _TaskEitherThrow<L> catch (e) {
+          return Either.left(e.value);
+        }
+      });
 
   /// Used to chain multiple functions that return a [TaskEither].
   ///
