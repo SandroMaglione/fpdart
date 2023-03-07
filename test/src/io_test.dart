@@ -186,5 +186,37 @@ void main() {
       expect(result, ['10', '21', '32', '43', '54', '65']);
       expect(sideEffect, list.length);
     });
+
+    group('Do Notation', () {
+      test('should return the correct value', () {
+        final doIO = IO.Do(($) => $(IO.of(10)));
+        final run = doIO.run();
+        expect(run, 10);
+      });
+
+      test('should extract the correct values', () {
+        final doIO = IO.Do(($) {
+          final a = $(IO.of(10));
+          final b = $(IO.of(5));
+          return a + b;
+        });
+        final run = doIO.run();
+        expect(run, 15);
+      });
+
+      test('should not execute until run is called', () {
+        var mutable = 10;
+        final doIO = IO.Do(($) {
+          final a = $(IO.of(10));
+          final b = $(IO.of(5));
+          mutable += 10;
+          return a + b;
+        });
+        expect(mutable, 10);
+        final run = doIO.run();
+        expect(mutable, 20);
+        expect(run, 15);
+      });
+    });
   });
 }
