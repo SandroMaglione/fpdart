@@ -690,4 +690,85 @@ void main() {
       expect(sideEffect, list.length);
     });
   });
+
+  group('Do Notation', () {
+    test('should return the correct value', () async {
+      final doIOEither = IOEither<String, int>.Do(($) => $(IOEither.of(10)));
+      final run = await doIOEither.run();
+      run.matchTestRight((t) {
+        expect(t, 10);
+      });
+    });
+
+    test('should extract the correct values', () async {
+      final doIOEither = IOEither<String, int>.Do(($) {
+        final a = $(IOEither.of(10));
+        final b = $(IOEither.of(5));
+        return a + b;
+      });
+      final run = await doIOEither.run();
+      run.matchTestRight((t) {
+        expect(t, 15);
+      });
+    });
+
+    test('should return Left if any Either is Left', () async {
+      final doIOEither = IOEither<String, int>.Do(($) {
+        final a = $(IOEither.of(10));
+        final b = $(IOEither.of(5));
+        final c = $(IOEither<String, int>.left('Error'));
+        return a + b + c;
+      });
+      final run = await doIOEither.run();
+      run.matchTestLeft((t) {
+        expect(t, 'Error');
+      });
+    });
+
+    test('should rethrow if throw is used inside Do', () {
+      final doIOEither = IOEither<String, int>.Do(($) {
+        $(IOEither.of(10));
+        throw UnimplementedError();
+      });
+
+      expect(doIOEither.run, throwsA(const TypeMatcher<UnimplementedError>()));
+    });
+
+    test('should rethrow if Left is thrown inside Do', () {
+      final doIOEither = IOEither<String, int>.Do(($) {
+        $(IOEither.of(10));
+        throw Left('Error');
+      });
+
+      expect(doIOEither.run, throwsA(const TypeMatcher<Left>()));
+    });
+
+    test('should no execute past the first Left', () async {
+      var mutable = 10;
+      final doIOEitherLeft = IOEither<String, int>.Do(($) {
+        final a = $(IOEither.of(10));
+        final b = $(IOEither<String, int>.left("Error"));
+        mutable += 10;
+        return a + b;
+      });
+
+      final runLeft = await doIOEitherLeft.run();
+      expect(mutable, 10);
+      runLeft.matchTestLeft((l) {
+        expect(l, "Error");
+      });
+
+      final doIOEitherRight = IOEither<String, int>.Do(($) {
+        final a = $(IOEither.of(10));
+        mutable += 10;
+        return a;
+      });
+
+      final runRight = await doIOEitherRight.run();
+      expect(mutable, 20);
+      runRight.matchTestRight((t) {
+        expect(t, 10);
+      });
+    });
+  });
 }
