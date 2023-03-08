@@ -1,3 +1,6 @@
+# v0.6.0-dev.1 - 8 March 2023
+- Do notation [#97](https://github.com/SandroMaglione/fpdart/pull/97) 🎉
+
 # v0.5.0 - 4 March 2023
 - Updates to `Option` type [#92](https://github.com/SandroMaglione/fpdart/pull/92)  [⚠️ **BREAKING CHANGE**]
   - Added `const factory` constructor for `None` (fixes [#95](https://github.com/SandroMaglione/fpdart/issues/95))

@@ -100,7 +100,7 @@ Check out also this series of articles about functional programming with `fpdart
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.5.0 # Check out the latest version
+  fpdart: ^0.6.0-dev.1 # Check out the latest version
 ```
 
 ## ✨ Examples
