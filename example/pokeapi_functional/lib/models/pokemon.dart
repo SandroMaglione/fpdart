@@ -1,28 +1,20 @@
 import 'package:pokeapi_functional/models/sprite.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'pokemon.freezed.dart';
+part 'pokemon.g.dart';
 
 /// Pokemon information, with method to deserialize json
-class Pokemon {
-  final int id;
-  final String name;
-  final int height;
-  final int weight;
-  final Sprite sprites;
+@freezed
+class Pokemon with _$Pokemon {
+  const factory Pokemon({
+    required int id,
+    required String name,
+    required int height,
+    required int weight,
+    required Sprite sprites,
+  }) = _Pokemon;
 
-  const Pokemon({
-    required this.id,
-    required this.name,
-    required this.height,
-    required this.weight,
-    required this.sprites,
-  });
-
-  static Pokemon fromJson(Map<String, dynamic> json) {
-    return Pokemon(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      weight: json['weight'] as int,
-      height: json['height'] as int,
-      sprites: Sprite.fromJson(json['sprites'] as Map<String, dynamic>),
-    );
-  }
+  factory Pokemon.fromJson(Map<String, Object?> json) =>
+      _$PokemonFromJson(json);
 }
