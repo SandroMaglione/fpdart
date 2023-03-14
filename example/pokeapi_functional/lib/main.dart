@@ -23,6 +23,8 @@ class MyApp extends HookConsumerWidget {
           children: [
             /// [TextField] and [ElevatedButton] to input pokemon id to fetch
             TextField(
+              textInputAction: TextInputAction.next,
+              textAlign: TextAlign.center,
               controller: controller,
               decoration: InputDecoration(
                 hintText: 'Insert pokemon id number',
