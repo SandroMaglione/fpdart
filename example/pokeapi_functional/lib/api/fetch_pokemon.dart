@@ -52,3 +52,8 @@ TaskEither<String, Pokemon> fetchPokemon(int pokemonId) => TaskEither.tryCatch(
 /// All the functions are simply chained together following the principle of composability.
 TaskEither<String, Pokemon> fetchPokemonFromUserInput(String pokemonId) =>
     _validateUserPokemonId(pokemonId).flatMapTask(fetchPokemon);
+
+TaskEither<String, Pokemon> fetchRandomPokemon() => fetchPokemon(randomInt(
+      Constants.minimumPokemonId,
+      Constants.maximumPokemonId + 1,
+    ).run());
