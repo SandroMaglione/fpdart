@@ -206,7 +206,7 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
 
   /// Sort this [Iterable] based on `order`.
   Iterable<T> sortBy(Order<T> order) =>
-      foldRight([], (e, a) => a.insertBy(order, e));
+      [...this]..sort((x, y) => order.compare(x, y));
 
   /// Sort this [Iterable] based on `order` of an object of type `A` extracted from `T` using `sort`.
   Iterable<T> sortWith<A>(A Function(T instance) sort, Order<A> order) =>
