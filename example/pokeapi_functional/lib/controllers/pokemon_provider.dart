@@ -9,8 +9,8 @@ part 'pokemon_provider.g.dart';
 @riverpod
 class PokemonState extends _$PokemonState {
   @override
-  FutureOr<Pokemon> build() async => (await fetchRandomPokemon().run())
-      .match((error) => throw error, (pokemon) => pokemon);
+  FutureOr<Pokemon> build() async =>
+      fetchRandomPokemon().getOrElse((l) => throw Exception(l)).run();
 
   /// User request, try to convert user input to [int] and then
   /// request the pokemon if successful.
