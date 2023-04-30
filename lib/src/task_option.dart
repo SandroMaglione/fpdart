@@ -11,7 +11,7 @@ import 'typeclass/monad.dart';
 /// Tag the [HKT] interface for the actual [TaskOption].
 abstract class _TaskOptionHKT {}
 
-/// `TaskOption<R>` represents an asynchronous computation that
+/// `TaskOption<R>` represents an **asynchronous** computation that
 /// may fails yielding a [None] or returns a `Some(R)` when successful.
 ///
 /// If you want to represent an asynchronous computation that never fails, see [Task].

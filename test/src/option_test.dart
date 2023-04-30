@@ -628,6 +628,27 @@ void main() {
       });
     });
 
+    group('safeCast', () {
+      test('dynamic', () {
+        final castInt = Option.safeCast(10);
+        final castString = Option.safeCast('abc');
+        expect(castInt, isA<Some<dynamic>>());
+        expect(castString, isA<Some<dynamic>>());
+      });
+
+      test('Some', () {
+        final cast = Option<int>.safeCast(10);
+        cast.matchTestSome((r) {
+          expect(r, 10);
+        });
+      });
+
+      test('None', () {
+        final cast = Option<int>.safeCast('abc');
+        expect(cast, isA<None>());
+      });
+    });
+
     group('toTaskOption', () {
       test('Some', () async {
         final m = Option.of(10);
@@ -640,6 +661,22 @@ void main() {
         final m = Option<int>.none();
         final taskOption = m.toTaskOption();
         final result = await taskOption.run();
+        expect(result, m);
+      });
+    });
+
+    group('toIOOption', () {
+      test('Some', () async {
+        final m = Option.of(10);
+        final ioOption = m.toIOOption();
+        final result = ioOption.run();
+        expect(result, m);
+      });
+
+      test('None', () {
+        final m = Option<int>.none();
+        final ioOption = m.toIOOption();
+        final result = ioOption.run();
         expect(result, m);
       });
     });
@@ -689,27 +726,6 @@ void main() {
       expect(map1, map2);
       expect(map1, map3);
       expect(map1 == map4, false);
-    });
-  });
-
-  group('safeCast', () {
-    test('dynamic', () {
-      final castInt = Option.safeCast(10);
-      final castString = Option.safeCast('abc');
-      expect(castInt, isA<Some<dynamic>>());
-      expect(castString, isA<Some<dynamic>>());
-    });
-
-    test('Some', () {
-      final cast = Option<int>.safeCast(10);
-      cast.matchTestSome((r) {
-        expect(r, 10);
-      });
-    });
-
-    test('None', () {
-      final cast = Option<int>.safeCast('abc');
-      expect(cast, isA<None>());
     });
   });
 

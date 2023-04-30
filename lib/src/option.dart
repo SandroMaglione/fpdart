@@ -1,5 +1,6 @@
 import 'either.dart';
 import 'function.dart';
+import 'io_option.dart';
 import 'task_option.dart';
 import 'tuple.dart';
 import 'typeclass/applicative.dart';
@@ -284,6 +285,9 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
         () => Left(onLeft()),
         Right.new,
       );
+
+  /// Convert this [Option] to a [IOOption].
+  IOOption<T> toIOOption() => IOOption(() => this);
 
   /// Convert this [Option] to a [TaskOption].
   ///
