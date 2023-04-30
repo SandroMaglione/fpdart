@@ -347,6 +347,26 @@ void main() {
       expect(stopwatch.elapsedMilliseconds >= 2000, true);
     });
 
+    group('toTaskEither', () {
+      test('Some', () async {
+        final task = TaskOption(() async => Option.of(10));
+        final convert = task.toTaskEither(() => 'None');
+        final r = await convert.run();
+        r.matchTestRight((r) {
+          expect(r, 10);
+        });
+      });
+
+      test('None', () async {
+        final task = TaskOption(() async => const Option.none());
+        final convert = task.toTaskEither(() => 'None');
+        final r = await convert.run();
+        r.matchTestLeft((l) {
+          expect(l, 'None');
+        });
+      });
+    });
+
     group('sequenceList', () {
       test('Some', () async {
         var sideEffect = 0;
