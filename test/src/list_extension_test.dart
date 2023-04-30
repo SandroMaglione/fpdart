@@ -653,6 +653,84 @@ void main() {
       expect(sideEffect, 11);
     });
 
+    group('traverseIOOption', () {
+      test('Some', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        var sideEffect = 0;
+        final traverse = list.traverseIOOption<String>(
+          (a) => IOOption(
+            () {
+              sideEffect += 1;
+              return some("$a");
+            },
+          ),
+        );
+        expect(sideEffect, 0);
+        final result = traverse.run();
+        result.matchTestSome((t) {
+          expect(t, ['1', '2', '3', '4', '5', '6']);
+        });
+        expect(sideEffect, list.length);
+      });
+
+      test('None', () {
+        final list = [1, 2, 3, 4, 5, 6];
+        var sideEffect = 0;
+        final traverse = list.traverseIOOption<String>(
+          (a) => IOOption(
+            () {
+              sideEffect += 1;
+              return a % 2 == 0 ? some("$a") : none();
+            },
+          ),
+        );
+        expect(sideEffect, 0);
+        final result = traverse.run();
+        expect(result, isA<None>());
+        expect(sideEffect, list.length);
+      });
+    });
+
+    group('traverseTaskOptionWithIndex', () {
+      test('Some', () async {
+        final list = [1, 2, 3, 4, 5, 6];
+        var sideEffect = 0;
+        final traverse = list.traverseTaskOptionWithIndex<String>(
+          (a, i) => TaskOption(
+            () async {
+              await AsyncUtils.waitFuture();
+              sideEffect += 1;
+              return some("$a$i");
+            },
+          ),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestSome((t) {
+          expect(t, ['10', '21', '32', '43', '54', '65']);
+        });
+        expect(sideEffect, list.length);
+      });
+
+      test('None', () async {
+        final list = [1, 2, 3, 4, 5, 6];
+        var sideEffect = 0;
+        final traverse = list.traverseTaskOptionWithIndex<String>(
+          (a, i) => TaskOption(
+            () async {
+              await AsyncUtils.waitFuture();
+              sideEffect += 1;
+              return a % 2 == 0 ? some("$a$i") : none();
+            },
+          ),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        expect(result, isA<None>());
+        expect(sideEffect, list.length);
+      });
+    });
+
     group('traverseTaskOption', () {
       test('Some', () async {
         final list = [1, 2, 3, 4, 5, 6];
@@ -1160,6 +1238,66 @@ void main() {
       final result = list.partitionEithersEither();
       expect(result.first, ['a', 'b']);
       expect(result.second, [1, 2, 3]);
+    });
+  });
+
+  group('FpdartSequenceIterableIOOption', () {
+    group('sequenceIOOption', () {
+      test('Some', () {
+        var sideEffect = 0;
+        final list = [
+          IOOption(() {
+            sideEffect += 1;
+            return some(1);
+          }),
+          IOOption(() {
+            sideEffect += 1;
+            return some(2);
+          }),
+          IOOption(() {
+            sideEffect += 1;
+            return some(3);
+          }),
+          IOOption(() {
+            sideEffect += 1;
+            return some(4);
+          }),
+        ];
+        final traverse = list.sequenceIOOption();
+        expect(sideEffect, 0);
+        final result = traverse.run();
+        result.matchTestSome((t) {
+          expect(t, [1, 2, 3, 4]);
+        });
+        expect(sideEffect, list.length);
+      });
+
+      test('None', () {
+        var sideEffect = 0;
+        final list = [
+          IOOption(() {
+            sideEffect += 1;
+            return some(1);
+          }),
+          IOOption(() {
+            sideEffect += 1;
+            return none<int>();
+          }),
+          IOOption(() {
+            sideEffect += 1;
+            return some(3);
+          }),
+          IOOption(() {
+            sideEffect += 1;
+            return some(4);
+          }),
+        ];
+        final traverse = list.sequenceIOOption();
+        expect(sideEffect, 0);
+        final result = traverse.run();
+        expect(result, isA<None>());
+        expect(sideEffect, list.length);
+      });
     });
   });
 

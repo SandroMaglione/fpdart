@@ -2,6 +2,7 @@ import 'date.dart';
 import 'either.dart';
 import 'io.dart';
 import 'io_either.dart';
+import 'io_option.dart';
 import 'option.dart';
 import 'task.dart';
 import 'task_either.dart';
@@ -366,6 +367,18 @@ extension FpdartTraversableIterable<T> on Iterable<T> {
   ) =>
       Option.traverseList(toList(), f);
 
+  /// {@macro fpdart_traverse_list_io_option}
+  IOOption<List<B>> traverseIOOptionWithIndex<B>(
+    IOOption<B> Function(T a, int i) f,
+  ) =>
+      IOOption.traverseListWithIndex(toList(), f);
+
+  /// {@macro fpdart_traverse_list_io_option}
+  IOOption<List<B>> traverseIOOption<B>(
+    IOOption<B> Function(T a) f,
+  ) =>
+      IOOption.traverseList(toList(), f);
+
   /// {@macro fpdart_traverse_list_task_option}
   TaskOption<List<B>> traverseTaskOptionWithIndex<B>(
     TaskOption<B> Function(T a, int i) f,
@@ -478,6 +491,11 @@ extension FpdartTraversableIterable<T> on Iterable<T> {
 extension FpdartSequenceIterableOption<T> on Iterable<Option<T>> {
   /// {@macro fpdart_sequence_list_option}
   Option<List<T>> sequenceOption() => Option.sequenceList(toList());
+}
+
+extension FpdartSequenceIterableIOOption<T> on Iterable<IOOption<T>> {
+  /// {@macro fpdart_sequence_list_io_option}
+  IOOption<List<T>> sequenceIOOption() => IOOption.sequenceList(toList());
 }
 
 extension FpdartSequenceIterableTaskOption<T> on Iterable<TaskOption<T>> {
