@@ -100,26 +100,6 @@ void main() {
       });
     });
 
-    group('toTask', () {
-      test('Right', () async {
-        final task = IOEither<String, int>(() => Either.of(10));
-        final ap = task.toTask();
-        final r = await ap.run();
-        r.match((_) {
-          fail('should be right');
-        }, (r) => expect(r, 10));
-      });
-
-      test('Left', () async {
-        final task = IOEither<String, int>(() => Either.left('abc'));
-        final ap = task.toTask();
-        final r = await ap.run();
-        r.match((l) => expect(l, 'abc'), (_) {
-          fail('should be left');
-        });
-      });
-    });
-
     group('toTaskEither', () {
       test('Some', () async {
         final task = IOEither(() => Either.of(10));
