@@ -53,8 +53,7 @@ TaskEither<String, Pokemon> fetchPokemon(int pokemonId) => TaskEither.tryCatch(
 TaskEither<String, Pokemon> fetchPokemonFromUserInput(String pokemonId) =>
     _validateUserPokemonId(pokemonId).flatMapTask(fetchPokemon);
 
-TaskEither<String, Pokemon> fetchRandomPokemon() =>
-    TaskEither<String, IO<int>>.right(randomInt(
+TaskEither<String, Pokemon> fetchRandomPokemon() => randomInt(
       Constants.minimumPokemonId,
       Constants.maximumPokemonId + 1,
-    )).flatMap((r) => fetchPokemon(r.run()));
+    ).toTaskEither<String>().flatMap((r) => fetchPokemon(r));
