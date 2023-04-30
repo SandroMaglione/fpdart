@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:test/test.dart';
+
+import 'utils/utils.dart';
 
 void main() {
   group('IO', () {
@@ -33,11 +34,32 @@ void main() {
       expect(r, 20);
     });
 
+    test('toIOEither', () {
+      final io = IO(() => 10);
+      final ap = io.toIOEither<String>();
+      final r = ap.run();
+      r.matchTestRight((r) => expect(r, 10));
+    });
+
     test('toTask', () async {
       final io = IO(() => 10);
       final ap = io.toTask();
       final r = await ap.run();
       expect(r, 10);
+    });
+
+    test('toTaskEither', () async {
+      final io = IO(() => 10);
+      final ap = io.toTaskEither<String>();
+      final r = await ap.run();
+      r.matchTestRight((r) => expect(r, 10));
+    });
+
+    test('toTaskOption', () async {
+      final io = IO(() => 10);
+      final ap = io.toTaskOption();
+      final r = await ap.run();
+      r.matchTestSome((r) => expect(r, 10));
     });
 
     test('ap', () {

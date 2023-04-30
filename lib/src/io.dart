@@ -30,10 +30,20 @@ class IO<A> extends HKT<_IOHKT, A>
   /// a function that returns a `Future<B>` ([Task]).
   Task<B> flatMapTask<B>(Task<B> Function(A a) f) => f(run());
 
+  /// Convert this [IO] to a [IOEither].
+  IOEither<L, A> toIOEither<L>() => IOEither<L, A>(() => Either.of(run()));
+
   /// Lift this [IO] to a [Task].
   ///
   /// Return a `Future<A>` ([Task]) instead of a `R` ([IO]).
-  Task<A> toTask() => Task(() async => run());
+  Task<A> toTask() => Task<A>(() async => run());
+
+  /// Convert this [IO] to a [TaskEither].
+  TaskEither<L, A> toTaskEither<L>() =>
+      TaskEither<L, A>(() async => Either.of(run()));
+
+  /// Convert this [IO] to a [TaskOption].
+  TaskOption<A> toTaskOption() => TaskOption<A>(() async => Option.of(run()));
 
   /// Return an [IO] that returns the value `b`.
   @override
