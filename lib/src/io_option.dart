@@ -1,7 +1,10 @@
 import 'either.dart';
 import 'function.dart';
 import 'io.dart';
+import 'io_either.dart';
 import 'option.dart';
+import 'task_either.dart';
+import 'task_option.dart';
 import 'typeclass/alt.dart';
 import 'typeclass/applicative.dart';
 import 'typeclass/functor.dart';
@@ -120,6 +123,23 @@ class IOOption<R> extends HKT<_IOOptionHKT, R>
 
   /// Run the IO and return a `Option<R>`.
   Option<R> run() => _run();
+
+  /// Convert this [IOOption] to [IOEither].
+  ///
+  /// If the value inside [IOOption] is [None], then use `onNone` to convert it
+  /// to a value of type `L`.
+  IOEither<L, R> toIOEither<L>(L Function() onNone) =>
+      IOEither(() => Either.fromOption(run(), onNone));
+
+  /// Convert this [IOOption] to [TaskOption].
+  TaskOption<R> toTaskOption<L>() => TaskOption(() async => run());
+
+  /// Convert this [IOOption] to [TaskEither].
+  ///
+  /// If the value inside [IOOption] is [None], then use `onNone` to convert it
+  /// to a value of type `L`.
+  TaskEither<L, R> toTaskEither<L>(L Function() onNone) =>
+      TaskEither(() async => Either.fromOption(run(), onNone));
 
   /// Build a [IOOption] that returns a `Some(r)`.
   ///

@@ -45,6 +45,9 @@ class IO<A> extends HKT<_IOHKT, A>
   /// Convert this [IO] to a [TaskOption].
   TaskOption<A> toTaskOption() => TaskOption<A>(() async => Option.of(run()));
 
+  /// Convert this [IO] to a [IOOption].
+  IOOption<A> toIOOption() => IOOption<A>(() => Option.of(run()));
+
   /// Return an [IO] that returns the value `b`.
   @override
   IO<B> pure<B>(B b) => IO(() => b);

@@ -302,6 +302,64 @@ void main() {
       r.matchTestSome((r) => expect(r, 10));
     });
 
+    group('toTaskOption', () {
+      test('Some', () async {
+        final io = IOOption(() => Option.of(10));
+        final convert = io.toTaskOption();
+        final r = await convert.run();
+        r.matchTestSome((r) {
+          expect(r, 10);
+        });
+      });
+
+      test('None', () async {
+        final io = IOOption(() => const Option.none());
+        final convert = io.toTaskOption();
+        final r = await convert.run();
+        expect(r, isA<None>());
+      });
+    });
+
+    group('toOptionEither', () {
+      test('Some', () {
+        final io = IOOption(() => Option.of(10));
+        final convert = io.toIOEither(() => 'None');
+        final r = convert.run();
+        r.matchTestRight((r) {
+          expect(r, 10);
+        });
+      });
+
+      test('None', () {
+        final io = IOOption(() => const Option.none());
+        final convert = io.toIOEither(() => 'None');
+        final r = convert.run();
+        r.matchTestLeft((l) {
+          expect(l, 'None');
+        });
+      });
+    });
+
+    group('toTaskEither', () {
+      test('Some', () async {
+        final io = IOOption(() => Option.of(10));
+        final convert = io.toTaskEither(() => 'None');
+        final r = await convert.run();
+        r.matchTestRight((r) {
+          expect(r, 10);
+        });
+      });
+
+      test('None', () async {
+        final io = IOOption(() => const Option.none());
+        final convert = io.toTaskEither(() => 'None');
+        final r = await convert.run();
+        r.matchTestLeft((l) {
+          expect(l, 'None');
+        });
+      });
+    });
+
     group('sequenceList', () {
       test('Some', () {
         var sideEffect = 0;
