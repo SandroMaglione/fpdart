@@ -48,6 +48,13 @@ void main() {
       r.matchTestRight((r) => expect(r, 10));
     });
 
+    test('toTaskOption', () async {
+      final io = IO(() => 10);
+      final ap = io.toTaskOption();
+      final r = await ap.run();
+      r.matchTestSome((r) => expect(r, 10));
+    });
+
     test('ap', () {
       final io = IO(() => 10);
       final ap = io.ap(IO(() => (int a) => a * 3));

@@ -39,6 +39,9 @@ class IO<A> extends HKT<_IOHKT, A>
   TaskEither<L, A> toTaskEither<L>() =>
       TaskEither<L, A>(() async => Either.of(run()));
 
+  /// Convert this [IO] to a [TaskOption].
+  TaskOption<A> toTaskOption() => TaskOption<A>(() async => Option.of(run()));
+
   /// Return an [IO] that returns the value `b`.
   @override
   IO<B> pure<B>(B b) => IO(() => b);
