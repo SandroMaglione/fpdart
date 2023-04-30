@@ -34,6 +34,13 @@ void main() {
       expect(r, 20);
     });
 
+    test('toIOEither', () {
+      final io = IO(() => 10);
+      final ap = io.toIOEither<String>();
+      final r = ap.run();
+      r.matchTestRight((r) => expect(r, 10));
+    });
+
     test('toTask', () async {
       final io = IO(() => 10);
       final ap = io.toTask();
