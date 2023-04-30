@@ -33,7 +33,11 @@ class IO<A> extends HKT<_IOHKT, A>
   /// Lift this [IO] to a [Task].
   ///
   /// Return a `Future<A>` ([Task]) instead of a `R` ([IO]).
-  Task<A> toTask() => Task(() async => run());
+  Task<A> toTask() => Task<A>(() async => run());
+
+  /// Convert this [IO] to a [TaskEither].
+  TaskEither<L, A> toTaskEither<L>() =>
+      TaskEither<L, A>(() async => Either.of(run()));
 
   /// Return an [IO] that returns the value `b`.
   @override
