@@ -120,6 +120,26 @@ void main() {
       });
     });
 
+    group('toTaskEither', () {
+      test('Some', () async {
+        final task = IOEither(() => Either.of(10));
+        final convert = task.toTaskEither();
+        final r = await convert.run();
+        r.matchTestRight((r) {
+          expect(r, 10);
+        });
+      });
+
+      test('None', () async {
+        final task = IOEither(() => Either.left('None'));
+        final convert = task.toTaskEither();
+        final r = await convert.run();
+        r.matchTestLeft((l) {
+          expect(l, 'None');
+        });
+      });
+    });
+
     group('ap', () {
       test('Right', () {
         final task = IOEither<String, int>(() => Either.of(10));

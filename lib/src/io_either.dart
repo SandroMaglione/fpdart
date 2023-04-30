@@ -60,6 +60,9 @@ class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
   /// a `Either<L, R>` ([IOEither]).
   TaskEither<L, R> toTask() => TaskEither(() async => run());
 
+  /// Convert this [IOEither] to [TaskEither].
+  TaskEither<L, R> toTaskEither() => TaskEither(() async => run());
+
   /// Returns a [IOEither] that returns a `Right(a)`.
   @override
   IOEither<L, C> pure<C>(C a) => IOEither(() => Right(a));
