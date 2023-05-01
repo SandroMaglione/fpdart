@@ -56,4 +56,4 @@ TaskEither<String, Pokemon> fetchPokemonFromUserInput(String pokemonId) =>
 TaskEither<String, Pokemon> fetchRandomPokemon() => randomInt(
       Constants.minimumPokemonId,
       Constants.maximumPokemonId + 1,
-    ).toTaskEither<String>().flatMap((r) => fetchPokemon(r));
+    ).toIOEither<String>().flatMapTask(fetchPokemon);
