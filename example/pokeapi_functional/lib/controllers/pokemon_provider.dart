@@ -10,7 +10,7 @@ part 'pokemon_provider.g.dart';
 class PokemonState extends _$PokemonState {
   @override
   FutureOr<Pokemon> build() async =>
-      fetchRandomPokemon().getOrElse((l) => throw Exception(l)).run();
+      fetchRandomPokemon.getOrElse((l) => throw Exception(l)).run();
 
   /// User request, try to convert user input to [int] and then
   /// request the pokemon if successful.
