@@ -62,6 +62,13 @@ void main() {
       r.matchTestSome((r) => expect(r, 10));
     });
 
+    test('toIOOption', () {
+      final io = IO(() => 10);
+      final ap = io.toIOOption();
+      final r = ap.run();
+      r.matchTestSome((r) => expect(r, 10));
+    });
+
     test('ap', () {
       final io = IO(() => 10);
       final ap = io.ap(IO(() => (int a) => a * 3));

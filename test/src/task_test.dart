@@ -127,6 +127,24 @@ void main() {
       });
     });
 
+    test('toTaskOption', () async {
+      final io = Task.of(10);
+      final convert = io.toTaskOption();
+      final r = await convert.run();
+      r.matchTestSome((r) {
+        expect(r, 10);
+      });
+    });
+
+    test('toTaskEither', () async {
+      final io = Task.of(10);
+      final convert = io.toTaskEither();
+      final r = await convert.run();
+      r.matchTestRight((r) {
+        expect(r, 10);
+      });
+    });
+
     test('sequenceList', () async {
       var sideEffect = 0;
       final list = [

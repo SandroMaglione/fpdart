@@ -245,6 +245,7 @@ final flatMap = task.flatMap((a) => Task.of(a + 10));
 
 ### Utility types
 These types compose together the 4 above ([`Option`](#option), [`Either`](#either), [`IO`](#io), [`Task`](#task)) to join together their functionalities:
+- [`IOOption`](./lib/src/io_option.dart): sync function (`IO`) that may may miss the return value (`Option`)
 - [`IOEither`](./lib/src/io_either.dart): sync function (`IO`) that may fail (`Either`)
 - [`TaskOption`](./lib/src/task_option.dart): async function (`Task`) that may miss the return value (`Option`)
 - [`TaskEither`](./lib/src/task_either.dart): async function (`Task`) that may fail (`Either`)
@@ -287,7 +288,7 @@ Many more examples are coming soon. Check out [**my website**](https://www.sandr
 - [x] `IOEither`
 - [x] `TaskOption`
 - [x] `Predicate`
-- [ ] `IOOption`
+- [x] `IOOption`
 - [ ] `ReaderEither`
 - [ ] `ReaderTask`
 - [ ] `ReaderTaskEither`
@@ -299,7 +300,9 @@ Many more examples are coming soon. Check out [**my website**](https://www.sandr
 
 Functional programming is becoming more and more popular, and for good reasons.
 
-Many non-functional languages are slowly adopting patterns from functional languages, dart included. Dart already supports higher-order functions, generic types, type inference. Other functional programming features are coming to the language, like [pattern matching](https://github.com/dart-lang/language/issues/546), [destructuring](https://github.com/dart-lang/language/issues/207), [multiple return values](https://github.com/dart-lang/language/issues/68), [higher-order types](https://github.com/dart-lang/language/issues/1655).
+Many non-functional languages are slowly adopting patterns from functional languages, dart included. Dart already supports higher-order functions, generic types, type inference. Since Dart 3, the language supports also [pattern matching](https://github.com/dart-lang/language/issues/546), [destructuring](https://github.com/dart-lang/language/issues/207), [multiple return values](https://github.com/dart-lang/language/issues/68) ([**Read more about these new features here**](https://www.sandromaglione.com/techblog/records-and-patterns-dart-language)).
+
+Other functional programming features are coming to the language, like [higher-order types](https://github.com/dart-lang/language/issues/1655).
 
 Many packages are bringing functional patterns to dart, like the amazing [freezed](https://pub.dev/packages/freezed) for unions/pattern matching.
 
@@ -337,13 +340,12 @@ Being documentation and stability important goals of the package, every type wil
 
 The roadmap for types development is highlighted below (breaking changes to _'stable'_ types are to be expected in this early stages):
 
-1. `IOOption`
-2. `ReaderEither`
-3. `ReaderTask`
-4. `ReaderTaskEither`
-5. `StateReaderTaskEither`
-6. `Writer`
-7. `Lens`
+1. `ReaderEither`
+2. `ReaderTask`
+3. `ReaderTaskEither`
+4. `StateReaderTaskEither`
+5. `Writer`
+6. `Lens`
 
 ***
 

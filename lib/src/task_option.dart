@@ -1,17 +1,9 @@
-import 'either.dart';
-import 'function.dart';
-import 'option.dart';
-import 'task.dart';
-import 'typeclass/alt.dart';
-import 'typeclass/applicative.dart';
-import 'typeclass/functor.dart';
-import 'typeclass/hkt.dart';
-import 'typeclass/monad.dart';
+import 'package:fpdart/fpdart.dart';
 
 /// Tag the [HKT] interface for the actual [TaskOption].
 abstract class _TaskOptionHKT {}
 
-/// `TaskOption<R>` represents an asynchronous computation that
+/// `TaskOption<R>` represents an **asynchronous** computation that
 /// may fails yielding a [None] or returns a `Some(R)` when successful.
 ///
 /// If you want to represent an asynchronous computation that never fails, see [Task].
@@ -128,6 +120,13 @@ class TaskOption<R> extends HKT<_TaskOptionHKT, R>
 
   /// Run the task and return a `Future<Option<R>>`.
   Future<Option<R>> run() => _run();
+
+  /// Convert this [TaskOption] to [TaskEither].
+  ///
+  /// If the value inside [TaskOption] is [None], then use `onNone` to convert it
+  /// to a value of type `L`.
+  TaskEither<L, R> toTaskEither<L>(L Function() onNone) =>
+      TaskEither(() async => Either.fromOption(await run(), onNone));
 
   /// Build a [TaskOption] that returns a `Some(r)`.
   ///

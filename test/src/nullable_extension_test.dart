@@ -38,6 +38,24 @@ void main() {
       });
     });
 
+    group("toIOOption", () {
+      test('Right', () {
+        final value = 10;
+        final io = value.toIOOption();
+        final result = io.run();
+        result.matchTestSome((t) {
+          expect(t, value);
+        });
+      });
+
+      test('Left', () {
+        int? value = null;
+        final io = value.toIOOption();
+        final result = io.run();
+        expect(result, isA<None>());
+      });
+    });
+
     group("toTaskOption", () {
       test('Right', () async {
         final value = 10;

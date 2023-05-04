@@ -5,6 +5,7 @@ export 'src/either.dart';
 export 'src/function.dart';
 export 'src/io.dart';
 export 'src/io_either.dart';
+export 'src/io_option.dart';
 export 'src/io_ref.dart';
 export 'src/list_extension.dart';
 export 'src/map_extension.dart';

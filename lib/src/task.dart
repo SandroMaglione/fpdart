@@ -1,4 +1,13 @@
-import 'package:fpdart/fpdart.dart';
+import 'either.dart';
+import 'function.dart';
+import 'list_extension.dart';
+import 'option.dart';
+import 'task_either.dart';
+import 'task_option.dart';
+import 'typeclass/applicative.dart';
+import 'typeclass/functor.dart';
+import 'typeclass/hkt.dart';
+import 'typeclass/monad.dart';
 
 /// Tag the [HKT] interface for the actual [Task].
 abstract class _TaskHKT {}
@@ -73,6 +82,14 @@ class Task<A> extends HKT<_TaskHKT, A>
 
   /// Run the task and return a [Future].
   Future<A> run() => _run();
+
+  /// Convert this [Task] to [TaskOption].
+  TaskOption<A> toTaskOption() =>
+      TaskOption(() async => Option.of(await run()));
+
+  /// Convert this [Task] to [TaskEither].
+  TaskEither<L, A> toTaskEither<L>() =>
+      TaskEither<L, A>(() async => Either.of(await run()));
 
   /// {@template fpdart_traverse_list_task}
   /// Map each element in the list to a [Task] using the function `f`,
