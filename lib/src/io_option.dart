@@ -11,6 +11,17 @@ import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
+class _IOOptionThrow {
+  const _IOOptionThrow();
+}
+
+typedef DoAdapterIOOption = A Function<A>(IOOption<A>);
+A _doAdapter<A>(IOOption<A> iOOption) => iOOption.run().getOrElse(
+      () => throw const _IOOptionThrow(),
+    );
+
+typedef DoFunctionIOOption<A> = A Function(DoAdapterIOOption $);
+
 /// Tag the [HKT] interface for the actual [IOOption].
 abstract class _IOOptionHKT {}
 
@@ -31,6 +42,16 @@ class IOOption<R> extends HKT<_IOOptionHKT, R>
 
   /// Build a [IOOption] from a function returning a `Option<R>`.
   const IOOption(this._run);
+
+  /// Initialize a **Do Notation** chain.
+  // ignore: non_constant_identifier_names
+  factory IOOption.Do(DoFunctionIOOption<R> f) => IOOption(() {
+        try {
+          return Option.of(f(_doAdapter));
+        } on _IOOptionThrow catch (_) {
+          return const Option.none();
+        }
+      });
 
   /// Used to chain multiple functions that return a [IOOption].
   ///

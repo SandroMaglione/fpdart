@@ -497,5 +497,83 @@ void main() {
         expect(sideEffect, list.length);
       });
     });
+
+    group('Do Notation', () {
+      test('should return the correct value', () {
+        final doIOOption = IOOption<int>.Do(($) => $(IOOption.of(10)));
+        final run = doIOOption.run();
+        run.matchTestSome((t) {
+          expect(t, 10);
+        });
+      });
+
+      test('should extract the correct values', () {
+        final doIOOption = IOOption<int>.Do(($) {
+          final a = $(IOOption.of(10));
+          final b = $(IOOption.of(5));
+          return a + b;
+        });
+        final run = doIOOption.run();
+        run.matchTestSome((t) {
+          expect(t, 15);
+        });
+      });
+
+      test('should return Left if any Either is Left', () {
+        final doIOOption = IOOption<int>.Do(($) {
+          final a = $(IOOption.of(10));
+          final b = $(IOOption.of(5));
+          final c = $(IOOption<int>.none());
+          return a + b + c;
+        });
+        final run = doIOOption.run();
+        expect(run, isA<None>());
+      });
+
+      test('should rethrow if throw is used inside Do', () {
+        final doIOOption = IOOption<int>.Do(($) {
+          $(IOOption.of(10));
+          throw UnimplementedError();
+        });
+
+        expect(
+            doIOOption.run, throwsA(const TypeMatcher<UnimplementedError>()));
+      });
+
+      test('should rethrow if None is thrown inside Do', () {
+        final doIOOption = IOOption<int>.Do(($) {
+          $(IOOption.of(10));
+          throw const None();
+        });
+
+        expect(doIOOption.run, throwsA(const TypeMatcher<None>()));
+      });
+
+      test('should no execute past the first Left', () {
+        var mutable = 10;
+        final doIOOptionNone = IOOption<int>.Do(($) {
+          final a = $(IOOption.of(10));
+          final b = $(IOOption<int>.none());
+          mutable += 10;
+          return a + b;
+        });
+
+        final runNone = doIOOptionNone.run();
+        expect(mutable, 10);
+        expect(runNone, isA<None>());
+
+        final doIOOptionSome = IOOption<int>.Do(($) {
+          final a = $(IOOption.of(10));
+          mutable += 10;
+          return a;
+        });
+
+        final runSome = doIOOptionSome.run();
+        expect(mutable, 20);
+        runSome.matchTestSome((t) {
+          expect(t, 10);
+        });
+      });
+    });
   });
 }
