@@ -1,14 +1,14 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'sprite.freezed.dart';
+part 'sprite.g.dart';
+
 /// Pokemon sprite image, with method to deserialize json
-class Sprite {
-  final String front_default;
+@freezed
+class Sprite with _$Sprite {
+  const factory Sprite({
+    @JsonKey(name: 'front_default') required String frontDefault,
+  }) = _Sprite;
 
-  const Sprite({
-    required this.front_default,
-  });
-
-  static Sprite fromJson(Map<String, dynamic> json) {
-    return Sprite(
-      front_default: json['front_default'] as String,
-    );
-  }
+  factory Sprite.fromJson(Map<String, Object?> json) => _$SpriteFromJson(json);
 }

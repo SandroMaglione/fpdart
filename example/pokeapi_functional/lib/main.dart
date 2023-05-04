@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_hooks/flutter_hooks.dart' show useTextEditingController;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:pokeapi_functional/controllers/pokemon_provider.dart';
 
@@ -13,14 +13,8 @@ class MyApp extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     /// [TextEditingController] using hooks
     final controller = useTextEditingController();
-    final requestStatus = ref.watch(pokemonProvider);
-    useEffect(() {
-      /// Fetch the initial pokemon information (random pokemon).
-      Future.delayed(Duration.zero, () {
-        ref.read(pokemonProvider.notifier).fetchRandom();
-      });
-      return;
-    }, []);
+    final requestStatus = ref.watch(pokemonStateProvider);
+    final pokemonNotifier = ref.watch(pokemonStateProvider.notifier);
 
     return MaterialApp(
       title: 'Fpdart PokeAPI',
@@ -29,45 +23,31 @@ class MyApp extends HookConsumerWidget {
           children: [
             /// [TextField] and [ElevatedButton] to input pokemon id to fetch
             TextField(
+              textInputAction: TextInputAction.next,
+              textAlign: TextAlign.center,
               controller: controller,
               decoration: InputDecoration(
                 hintText: 'Insert pokemon id number',
               ),
             ),
             ElevatedButton(
-              onPressed: () => ref
-                  .read(
-                    pokemonProvider.notifier,
-                  )
-                  .fetch(
-                    controller.text,
-                  ),
+              onPressed: () => pokemonNotifier.fetch(controller.text),
               child: Text('Get my pokemon!'),
             ),
 
-            /// Map each [RequestStatus] to a different UI
+            /// Map each [AsyncValue] to a different UI
             requestStatus.when(
-              initial: () => Center(
-                child: Column(
-                  children: [
-                    Text('Loading intial pokemon'),
-                    CircularProgressIndicator(),
-                  ],
-                ),
-              ),
-              loading: () => Center(
-                child: CircularProgressIndicator(),
-              ),
+              loading: () => Center(child: CircularProgressIndicator()),
 
               /// When either is [Left], display error message 💥
-              error: (error) => Text(error),
+              error: (error, stackTrace) => Text(error.toString()),
 
               /// When either is [Right], display pokemon 🤩
-              success: (pokemon) => Card(
+              data: (pokemon) => Card(
                 child: Column(
                   children: [
                     Image.network(
-                      pokemon.sprites.front_default,
+                      pokemon.sprites.frontDefault,
                       width: 200,
                       height: 200,
                     ),

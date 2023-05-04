@@ -1,25 +1,16 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:pokeapi_functional/api/fetch_pokemon.dart';
-import 'package:pokeapi_functional/constants/constants.dart';
-import 'package:pokeapi_functional/models/pokemon.dart';
-import 'package:pokeapi_functional/unions/request_status.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-/// Manage the [Pokemon] state using [Either] ([TaskEither]) to handle possible errors.
-///
-/// Each [RequestStatus] changes the UI displayed to the user.
-class PokemonState extends StateNotifier<RequestStatus> {
-  PokemonState() : super(const RequestStatus.initial());
+import '../api/fetch_pokemon.dart';
+import '../models/pokemon.dart';
 
-  /// Initial request, fetch random pokemon passing the pokemon id.
-  Future<Unit> fetchRandom() async => _pokemonRequest(
-        () => fetchPokemon(
-          randomInt(
-            Constants.minimumPokemonId,
-            Constants.maximumPokemonId + 1,
-          ).run(),
-        ),
-      );
+part 'pokemon_provider.g.dart';
+
+@riverpod
+class PokemonState extends _$PokemonState {
+  @override
+  FutureOr<Pokemon> build() async =>
+      fetchRandomPokemon().getOrElse((l) => throw Exception(l)).run();
 
   /// User request, try to convert user input to [int] and then
   /// request the pokemon if successful.
@@ -31,17 +22,12 @@ class PokemonState extends StateNotifier<RequestStatus> {
   Future<Unit> _pokemonRequest(
     TaskEither<String, Pokemon> Function() request,
   ) async {
-    state = RequestStatus.loading();
+    state = AsyncLoading();
     final pokemon = request();
     state = (await pokemon.run()).match(
-      (error) => RequestStatus.error(error),
-      (pokemon) => RequestStatus.success(pokemon),
+      (error) => AsyncError(error, StackTrace.current),
+      (pokemon) => AsyncData(pokemon),
     );
     return unit;
   }
 }
-
-/// Create and expose provider.
-final pokemonProvider = StateNotifierProvider<PokemonState, RequestStatus>(
-  (_) => PokemonState(),
-);
