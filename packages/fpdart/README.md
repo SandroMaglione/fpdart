@@ -1,6 +1,6 @@
 <h3 align="center">
   <a href="https://github.com/SandroMaglione/fpdart">
-    <img src="https://raw.githubusercontent.com/SandroMaglione/fpdart/main/example/screenshots/screenshot_fpdart.png" width="500" />
+    <img src="https://raw.githubusercontent.com/SandroMaglione/fpdart/main/resources/screenshots/screenshot_fpdart.png" width="500" />
   </a>
 </h3>
 
