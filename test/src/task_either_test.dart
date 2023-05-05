@@ -940,5 +940,88 @@ void main() {
         expect(sideEffect, 11);
       });
     });
+
+    group('Do Notation', () {
+      test('should return the correct value', () async {
+        final doTaskEither =
+            TaskEither<String, int>.Do(($) => $(TaskEither.of(10)));
+        final run = await doTaskEither.run();
+        run.matchTestRight((t) {
+          expect(t, 10);
+        });
+      });
+
+      test('should extract the correct values', () async {
+        final doTaskEither = TaskEither<String, int>.Do(($) async {
+          final a = await $(TaskEither.of(10));
+          final b = await $(TaskEither.of(5));
+          return a + b;
+        });
+        final run = await doTaskEither.run();
+        run.matchTestRight((t) {
+          expect(t, 15);
+        });
+      });
+
+      test('should return Left if any Either is Left', () async {
+        final doTaskEither = TaskEither<String, int>.Do(($) async {
+          final a = await $(TaskEither.of(10));
+          final b = await $(TaskEither.of(5));
+          final c = await $(TaskEither<String, int>.left('Error'));
+          return a + b + c;
+        });
+        final run = await doTaskEither.run();
+        run.matchTestLeft((t) {
+          expect(t, 'Error');
+        });
+      });
+
+      test('should rethrow if throw is used inside Do', () {
+        final doTaskEither = TaskEither<String, int>.Do(($) {
+          $(TaskEither.of(10));
+          throw UnimplementedError();
+        });
+
+        expect(
+            doTaskEither.run, throwsA(const TypeMatcher<UnimplementedError>()));
+      });
+
+      test('should rethrow if Left is thrown inside Do', () {
+        final doTaskEither = TaskEither<String, int>.Do(($) {
+          $(TaskEither.of(10));
+          throw Left('Error');
+        });
+
+        expect(doTaskEither.run, throwsA(const TypeMatcher<Left>()));
+      });
+
+      test('should no execute past the first Left', () async {
+        var mutable = 10;
+        final doTaskEitherLeft = TaskEither<String, int>.Do(($) async {
+          final a = await $(TaskEither.of(10));
+          final b = await $(TaskEither<String, int>.left("Error"));
+          mutable += 10;
+          return a + b;
+        });
+
+        final runLeft = await doTaskEitherLeft.run();
+        expect(mutable, 10);
+        runLeft.matchTestLeft((l) {
+          expect(l, "Error");
+        });
+
+        final doTaskEitherRight = TaskEither<String, int>.Do(($) async {
+          final a = await $(TaskEither.of(10));
+          mutable += 10;
+          return a;
+        });
+
+        final runRight = await doTaskEitherRight.run();
+        expect(mutable, 20);
+        runRight.matchTestRight((t) {
+          expect(t, 10);
+        });
+      });
+    });
   });
 }

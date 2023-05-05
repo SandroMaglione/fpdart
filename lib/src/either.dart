@@ -15,6 +15,19 @@ Either<L, R> right<L, R>(R r) => Right<L, R>(r);
 /// Shortcut for `Either.left(l)`.
 Either<L, R> left<L, R>(L l) => Left<L, R>(l);
 
+class _EitherThrow<L> {
+  final L value;
+  const _EitherThrow(this.value);
+}
+
+typedef DoAdapterEither<L> = R Function<R>(Either<L, R>);
+DoAdapterEither<L> _doAdapter<L>() =>
+    <R>(Either<L, R> either) => either.getOrElse(
+          (l) => throw _EitherThrow(l),
+        );
+
+typedef DoFunctionEither<L, R> = R Function(DoAdapterEither<L> $);
+
 /// Tag the [HKT2] interface for the actual [Either].
 abstract class _EitherHKT {}
 
@@ -33,6 +46,16 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
         Alt2<_EitherHKT, L, R>,
         Extend2<_EitherHKT, L, R> {
   const Either();
+
+  /// Initialize a **Do Notation** chain.
+  // ignore: non_constant_identifier_names
+  factory Either.Do(DoFunctionEither<L, R> f) {
+    try {
+      return Either.of(f(_doAdapter<L>()));
+    } on _EitherThrow<L> catch (e) {
+      return Either.left(e.value);
+    }
+  }
 
   /// Return the result of `f` called with `b` and the value of [Right].
   /// If this [Either] is [Left], return `b`.

@@ -9,6 +9,17 @@ import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
+class _IOEitherThrow<L> {
+  final L value;
+  const _IOEitherThrow(this.value);
+}
+
+typedef DoAdapterIOEither<E> = A Function<A>(IOEither<E, A>);
+DoAdapterIOEither<L> _doAdapter<L>() =>
+    <A>(ioEither) => ioEither.run().getOrElse((l) => throw _IOEitherThrow(l));
+
+typedef DoFunctionIOEither<L, A> = A Function(DoAdapterIOEither<L> $);
+
 /// Tag the [HKT2] interface for the actual [IOEither].
 abstract class _IOEitherHKT {}
 
@@ -27,6 +38,16 @@ class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
 
   /// Build an instance of [IOEither] from `Either<L, R> Function()`.
   const IOEither(this._run);
+
+  /// Initialize a **Do Notation** chain.
+  // ignore: non_constant_identifier_names
+  factory IOEither.Do(DoFunctionIOEither<L, R> f) => IOEither(() {
+        try {
+          return Either.of(f(_doAdapter<L>()));
+        } on _IOEitherThrow<L> catch (e) {
+          return Either.left(e.value);
+        }
+      });
 
   /// Used to chain multiple functions that return a [IOEither].
   ///

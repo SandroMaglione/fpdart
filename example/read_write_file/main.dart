@@ -31,38 +31,51 @@ class FoundWord {
 /// Word to search in each sentence
 const searchWords = ['that', 'and', 'for'];
 
+Iterable<FoundWord> collectFoundWords(
+  Iterable<Tuple2<String, String>> iterable,
+) =>
+    iterable.flatMapWithIndex(
+      (tuple, index) => searchWords.foldLeftWithIndex<List<FoundWord>>(
+        [],
+        (acc, word, wordIndex) =>
+            tuple.second.toLowerCase().split(' ').contains(word)
+                ? [
+                    ...acc,
+                    FoundWord(
+                      index,
+                      word,
+                      wordIndex,
+                      tuple.second.replaceAll(word, '<\$>'),
+                      tuple.first,
+                    ),
+                  ]
+                : acc,
+      ),
+    );
+
 void main() async {
-  /// Read file async using [TaskEither]
-  ///
-  /// Since we are using [TaskEither], until we call the `run` method,
-  /// no actual reading is performed.
-  final task = readFileAsync('./assets/source_ita.txt')
+  final collectDoNotation = TaskEither<String, Iterable<FoundWord>>.Do(
+    ($) async {
+      final linesIta = await $(readFileAsync('./assets/source_ita.txt'));
+      final linesEng = await $(readFileAsync('./assets/source_eng.txt'));
+      final linesZip = linesIta.zip(linesEng);
+      return collectFoundWords(linesZip);
+    },
+  );
+
+  final collectFlatMap = readFileAsync('./assets/source_ita.txt')
       .flatMap(
         (linesIta) => readFileAsync('./assets/source_eng.txt').map(
           (linesEng) => linesIta.zip(linesEng),
         ),
       )
-      .map(
-        (iterable) => iterable.flatMapWithIndex(
-          (tuple, index) => searchWords.foldLeftWithIndex<List<FoundWord>>(
-            [],
-            (acc, word, wordIndex) =>
-                tuple.second.toLowerCase().split(' ').contains(word)
-                    ? [
-                        ...acc,
-                        FoundWord(
-                          index,
-                          word,
-                          wordIndex,
-                          tuple.second.replaceAll(word, '<\$>'),
-                          tuple.first,
-                        ),
-                      ]
-                    : acc,
-          ),
-        ),
-      )
-      .match(
+      .map(collectFoundWords);
+
+  /// Read file async using [TaskEither]
+  ///
+  /// Since we are using [TaskEither], until we call the `run` method,
+  /// no actual reading is performed.
+  final task = collectDoNotation.match(
     (l) => print(l),
     (list) {
       /// Print all the found [FoundWord]

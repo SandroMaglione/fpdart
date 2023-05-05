@@ -1142,4 +1142,80 @@ void main() {
       });
     });
   });
+
+  group('Do Notation', () {
+    test('should return the correct value', () {
+      final doEither = Either.Do(($) => $(Either.of(10)));
+      doEither.matchTestRight((t) {
+        expect(t, 10);
+      });
+    });
+
+    test('should extract the correct values', () {
+      final doEither = Either.Do(($) {
+        final a = $(Either.of(10));
+        final b = $(Either.of(5));
+        return a + b;
+      });
+      doEither.matchTestRight((t) {
+        expect(t, 15);
+      });
+    });
+
+    test('should return Left if any Either is Left', () {
+      final doEither = Either<String, int>.Do(($) {
+        final a = $(Either.of(10));
+        final b = $(Either.of(5));
+        final c = $(Either<String, int>.left('Error'));
+        return a + b + c;
+      });
+      doEither.matchTestLeft((t) {
+        expect(t, 'Error');
+      });
+    });
+
+    test('should rethrow if throw is used inside Do', () {
+      final doEither = () => Either<String, int>.Do(($) {
+            $(Either.of(10));
+            throw UnimplementedError();
+          });
+
+      expect(doEither, throwsA(const TypeMatcher<UnimplementedError>()));
+    });
+
+    test('should rethrow if Left is thrown inside Do', () {
+      final doEither = () => Either<String, int>.Do(($) {
+            $(Either.of(10));
+            throw Left('Error');
+          });
+
+      expect(doEither, throwsA(const TypeMatcher<Left>()));
+    });
+
+    test('should no execute past the first Left', () {
+      var mutable = 10;
+      final doEitherLeft = Either<String, int>.Do(($) {
+        final a = $(Either.of(10));
+        final b = $(Either<String, int>.left("Error"));
+        mutable += 10;
+        return a + b;
+      });
+
+      expect(mutable, 10);
+      doEitherLeft.matchTestLeft((l) {
+        expect(l, "Error");
+      });
+
+      final doEitherRight = Either<String, int>.Do(($) {
+        final a = $(Either.of(10));
+        mutable += 10;
+        return a;
+      });
+
+      expect(mutable, 20);
+      doEitherRight.matchTestRight((t) {
+        expect(t, 10);
+      });
+    });
+  });
 }

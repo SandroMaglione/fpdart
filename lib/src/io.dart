@@ -1,5 +1,10 @@
 import 'package:fpdart/fpdart.dart';
 
+typedef DoAdapterIO = A Function<A>(IO<A>);
+A _doAdapter<A>(IO<A> io) => io.run();
+
+typedef DoFunctionIO<A> = A Function(DoAdapterIO $);
+
 /// Tag the [HKT] interface for the actual [Option].
 abstract class _IOHKT {}
 
@@ -13,6 +18,10 @@ class IO<A> extends HKT<_IOHKT, A>
 
   /// Build an instance of [IO] from `A Function()`.
   const IO(this._run);
+
+  /// Initialize a **Do Notation** chain.
+  // ignore: non_constant_identifier_names
+  factory IO.Do(DoFunctionIO<A> f) => IO(() => f(_doAdapter));
 
   /// Flat a [IO] contained inside another [IO] to be a single [IO].
   factory IO.flatten(IO<IO<A>> io) => io.flatMap(identity);

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
 import 'package:fpdart/fpdart.dart';
+import 'package:http/http.dart' as http;
 import 'package:pokeapi_functional/constants/constants.dart';
 import 'package:pokeapi_functional/models/pokemon.dart';
 
@@ -51,9 +51,17 @@ TaskEither<String, Pokemon> fetchPokemon(int pokemonId) => TaskEither.tryCatch(
 ///
 /// All the functions are simply chained together following the principle of composability.
 TaskEither<String, Pokemon> fetchPokemonFromUserInput(String pokemonId) =>
-    _validateUserPokemonId(pokemonId).flatMapTask(fetchPokemon);
+    TaskEither.Do(($) async {
+      final validPokemonId = await $(_validateUserPokemonId(
+        pokemonId,
+      ).toTaskEither());
+      return $(fetchPokemon(validPokemonId));
+    });
 
-TaskEither<String, Pokemon> fetchRandomPokemon() => randomInt(
-      Constants.minimumPokemonId,
-      Constants.maximumPokemonId + 1,
-    ).toIOEither<String>().flatMapTask(fetchPokemon);
+TaskEither<String, Pokemon> fetchRandomPokemon = TaskEither.Do(($) async {
+  final pokemonId = await $(randomInt(
+    Constants.minimumPokemonId,
+    Constants.maximumPokemonId + 1,
+  ).toTaskEither());
+  return $(fetchPokemon(pokemonId));
+});

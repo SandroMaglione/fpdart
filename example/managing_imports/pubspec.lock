@@ -87,7 +87,7 @@ packages:
       path: "../.."
       relative: true
     source: path
-    version: "0.5.0"
+    version: "0.6.0-dev.1"
   frontend_server_client:
     dependency: transitive
     description:

@@ -28,46 +28,52 @@ class OpenMeteoApiClientFpdart {
           ),
         ),
         LocationHttpRequestFpdartFailure.new,
-      )
-          .chainEither(
-            (response) =>
-                _validResponseBody(response, LocationRequestFpdartFailure.new),
-          )
-          .chainEither(
-            (body) => Either.tryCatch(
+      ).chainEither(
+        (response) => Either.Do(($) {
+          final body = $(
+            _validResponseBody(response, LocationRequestFpdartFailure.new),
+          );
+
+          final json = $(
+            Either.tryCatch(
               () => jsonDecode(body),
               (_, __) => LocationInvalidJsonDecodeFpdartFailure(body),
             ),
-          )
-          .chainEither(
-            (json) => Either<OpenMeteoApiFpdartLocationFailure,
+          );
+
+          final data = $(
+            Either<OpenMeteoApiFpdartLocationFailure,
                 Map<dynamic, dynamic>>.safeCast(
               json,
               LocationInvalidMapFpdartFailure.new,
             ),
-          )
-          .chainEither(
-            (body) => body
+          );
+
+          final currentWeather = $(
+            data
                 .lookup('results')
                 .toEither(LocationKeyNotFoundFpdartFailure.new),
-          )
-          .chainEither(
-            (currentWeather) => Either<OpenMeteoApiFpdartLocationFailure,
-                List<dynamic>>.safeCast(
+          );
+
+          final results = $(
+            Either<OpenMeteoApiFpdartLocationFailure, List<dynamic>>.safeCast(
               currentWeather,
               LocationInvalidListFpdartFailure.new,
             ),
-          )
-          .chainEither(
-            (results) =>
-                results.head.toEither(LocationDataNotFoundFpdartFailure.new),
-          )
-          .chainEither(
-            (weather) => Either.tryCatch(
+          );
+
+          final weather = $(
+            results.head.toEither(LocationDataNotFoundFpdartFailure.new),
+          );
+
+          return $(
+            Either.tryCatch(
               () => Location.fromJson(weather as Map<String, dynamic>),
               LocationFormattingFpdartFailure.new,
             ),
           );
+        }),
+      );
 
   /// Fetches [Weather] for a given [latitude] and [longitude].
   TaskEither<OpenMeteoApiFpdartWeatherFailure, Weather> getWeather({

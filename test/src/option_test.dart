@@ -742,4 +742,86 @@ void main() {
       expect(cast, isA<None>());
     });
   });
+
+  group('Do Notation', () {
+    test('should return the correct value', () {
+      final doOption = Option.Do(($) => $(Option.of(10)));
+      doOption.matchTestSome((t) {
+        expect(t, 10);
+      });
+    });
+
+    test('should extract the correct values', () {
+      final doOption = Option.Do(($) {
+        final a = $(Option.of(10));
+        final b = $(Option.of(5));
+        return a + b;
+      });
+      doOption.matchTestSome((t) {
+        expect(t, 15);
+      });
+    });
+
+    test('should return None if any Option is None', () {
+      final doOption = Option.Do(($) {
+        final a = $(Option.of(10));
+        final b = $(Option.of(5));
+        final c = $(Option<int>.none());
+        return a + b + c;
+      });
+
+      expect(doOption, isA<None>());
+    });
+
+    test('should rethrow if throw is used inside Do', () {
+      final doOption = () => Option.Do(($) {
+            $(Option.of(10));
+            throw UnimplementedError();
+          });
+
+      expect(doOption, throwsA(const TypeMatcher<UnimplementedError>()));
+    });
+
+    test('should rethrow if None is thrown inside Do', () {
+      final doOption = () => Option.Do(($) {
+            $(Option.of(10));
+            throw None();
+          });
+
+      expect(doOption, throwsA(const TypeMatcher<None>()));
+    });
+
+    test('should throw if the error is not None', () {
+      final doOption = () => Option.Do(($) {
+            $(Option.of(10));
+            throw UnimplementedError();
+          });
+
+      expect(doOption, throwsA(const TypeMatcher<UnimplementedError>()));
+    });
+
+    test('should no execute past the first None', () {
+      var mutable = 10;
+      final doOptionNone = Option.Do(($) {
+        final a = $(Option.of(10));
+        final b = $(Option<int>.none());
+        mutable += 10;
+        return a + b;
+      });
+
+      expect(mutable, 10);
+      expect(doOptionNone, isA<None>());
+
+      final doOptionSome = Option.Do(($) {
+        final a = $(Option.of(10));
+        mutable += 10;
+        return a;
+      });
+
+      expect(mutable, 20);
+      doOptionSome.matchTestSome((t) {
+        expect(t, 10);
+      });
+    });
+  });
 }

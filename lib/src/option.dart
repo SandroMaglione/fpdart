@@ -36,6 +36,16 @@ Option<T> optionOf<T>(T? t) => Option.fromNullable(t);
 Option<T> option<T>(T value, bool Function(T) predicate) =>
     Option.fromPredicate(value, predicate);
 
+class _OptionThrow {
+  const _OptionThrow();
+}
+
+typedef DoAdapterOption = A Function<A>(Option<A>);
+A _doAdapter<A>(Option<A> option) =>
+    option.getOrElse(() => throw const _OptionThrow());
+
+typedef DoFunctionOption<A> = A Function(DoAdapterOption $);
+
 /// Tag the [HKT] interface for the actual [Option].
 abstract class _OptionHKT {}
 
@@ -70,6 +80,16 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
         Extend<_OptionHKT, T>,
         Filterable<_OptionHKT, T> {
   const Option();
+
+  /// Initialize a **Do Notation** chain.
+  // ignore: non_constant_identifier_names
+  factory Option.Do(DoFunctionOption<T> f) {
+    try {
+      return Option.of(f(_doAdapter));
+    } on _OptionThrow catch (_) {
+      return const Option.none();
+    }
+  }
 
   /// Change the value of type `T` to a value of type `B` using function `f`.
   /// ```dart

@@ -8,6 +8,20 @@ import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
+class _TaskEitherThrow<L> {
+  final L value;
+  const _TaskEitherThrow(this.value);
+}
+
+typedef DoAdapterTaskEither<E> = Future<A> Function<A>(TaskEither<E, A>);
+DoAdapterTaskEither<L> _doAdapter<L>() =>
+    <A>(taskEither) => taskEither.run().then(
+          (either) => either.getOrElse((l) => throw _TaskEitherThrow(l)),
+        );
+
+typedef DoFunctionTaskEither<L, A> = Future<A> Function(
+    DoAdapterTaskEither<L> $);
+
 /// Tag the [HKT2] interface for the actual [TaskEither].
 abstract class _TaskEitherHKT {}
 
@@ -25,6 +39,16 @@ class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
 
   /// Build a [TaskEither] from a function returning a `Future<Either<L, R>>`.
   const TaskEither(this._run);
+
+  /// Initialize a **Do Notation** chain.
+  // ignore: non_constant_identifier_names
+  factory TaskEither.Do(DoFunctionTaskEither<L, R> f) => TaskEither(() async {
+        try {
+          return Either.of(await f(_doAdapter<L>()));
+        } on _TaskEitherThrow<L> catch (e) {
+          return Either.left(e.value);
+        }
+      });
 
   /// Used to chain multiple functions that return a [TaskEither].
   ///
