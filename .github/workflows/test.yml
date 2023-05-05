@@ -1,4 +1,4 @@
-name: Dart CI
+name: fpdart CI
 
 on:
   # Run on PRs and pushes to the default branch.
@@ -10,6 +10,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/fpdart
     steps:
       - uses: actions/checkout@v3
       - uses: dart-lang/setup-dart@v1.3

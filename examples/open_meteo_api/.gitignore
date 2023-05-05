@@ -5,4 +5,3 @@ pubspec.lock
 # Generated files
 **.g.dart
 .idea/
-build/
