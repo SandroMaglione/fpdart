@@ -1,7 +1,7 @@
-# v0.6.0 - 5 May 2023
+## v0.6.0 - 6 May 2023
 - Do notation [#97](https://github.com/SandroMaglione/fpdart/pull/97) 🎉
 
-# v0.5.0 - 4 March 2023
+## v0.5.0 - 4 March 2023
 - Updates to `Option` type [#92](https://github.com/SandroMaglione/fpdart/pull/92)  [⚠️ **BREAKING CHANGE**]
   - Added `const factory` constructor for `None` (fixes [#95](https://github.com/SandroMaglione/fpdart/issues/95))
   - Removed `Alt` and `Foldable` type classes, the following methods are not available anymore
@@ -19,7 +19,7 @@
     - `append`
 - Updated examples and fixed lint warnings [#93](https://github.com/SandroMaglione/fpdart/pull/93) (thanks to [tim-smart](https://github.com/tim-smart) 🎉)
 
-# v0.4.1 - 25 February 2023
+## v0.4.1 - 25 February 2023
 - New methods for `Option` type (thanks to [tim-smart](https://github.com/tim-smart) 🎉)
   - `flatMapNullable`
   - `flatMapThrowable`
@@ -65,7 +65,7 @@ map.extractMap('a'); /// 👈 `Some({'b': 2})`
 - New [`managing_imports`](./example/managing_imports) example (thanks to [RandalSchwartz](https://github.com/RandalSchwartz) 🎉)
 - Updated [README](./README.md) introduction
 
-# v0.4.0 - 16 December 2022
+## v0.4.0 - 16 December 2022
 - Added extension methods to work with nullable types (`T?`)
   - From `T?` to `fpdart`'s types
     - `toOption`
@@ -128,7 +128,7 @@ final firstEither = wellYeah.map((list) => list.first);
   - [Open Meteo API - Functional programming with fpdart (Part 1)](https://www.sandromaglione.com/techblog/real_example_fpdart_open_meteo_api_part_1)
   - [Open Meteo API - Functional programming with fpdart (Part 2)](https://www.sandromaglione.com/techblog/real_example_fpdart_open_meteo_api_part_2)
 
-# v0.3.0 - 11 October 2022
+## v0.3.0 - 11 October 2022
 - Inverted `onSome` and `onNone` functions parameters in `match` method of `Option` [⚠️ **BREAKING CHANGE**] (*Read more on why* 👉 [#56](https://github.com/SandroMaglione/fpdart/pull/56))
 ```dart
 /// Everywhere you are using `Option.match` you must change this:
@@ -207,7 +207,7 @@ environment:
 - Contribution improvements
   - Added [testing workflow](.github/workflows/test.yml) with Github actions ([#54](https://github.com/SandroMaglione/fpdart/pull/54))
 
-# v0.2.0 - 16 July 2022
+## v0.2.0 - 16 July 2022
 - Refactoring for [mixin breaking change](https://github.com/dart-lang/sdk/issues/48167) ([#42](https://github.com/SandroMaglione/fpdart/pull/42)) by [TimWhiting](https://github.com/TimWhiting) 🎉
 - Added `chainFirst` method for the following classes ([#39](https://github.com/SandroMaglione/fpdart/issues/39))
   - `TaskEither`
@@ -218,7 +218,7 @@ environment:
   - `StateAsync`
   - `Reader`
 
-# v0.1.0 - 17 June 2022
+## v0.1.0 - 17 June 2022
 - Added `idFuture` and `identityFuture` methods ([#38](https://github.com/SandroMaglione/fpdart/pull/38)) by [f-person](https://github.com/f-person) 🎉
 - Added `mapBoth` method to `Tuple2` ([#30](https://github.com/SandroMaglione/fpdart/issues/30))
 - Fixed linting warnings
@@ -228,10 +228,10 @@ environment:
 environment:
   sdk: ">=2.16.0 <3.0.0"
 ```
-# v0.0.14 - 31 January 2022
+## v0.0.14 - 31 January 2022
 - Updated package linting to [`lints`](https://pub.dev/packages/lints)
 
-# v0.0.13 - 26 January 2022
+## v0.0.13 - 26 January 2022
 - New methods to `TaskEither`, `TaskOption`, `Either`, and `Option`
   - `mapLeft` (`TaskEither`)
   - `bimap` (`TaskEither`)
@@ -240,24 +240,24 @@ environment:
 - New **Blog posts and tutorials** section in [`README`](README.md)
   - New blog post [How to map an Either to a Future in fpdart](https://blog.sandromaglione.com/techblog/from-sync-to-async-functional-programming)
 
-# v0.0.12 - 24 October 2021
+## v0.0.12 - 24 October 2021
 
 - Completed `IORef` type implementation, documentation, and testing
   - Merged PR ([#25](https://github.com/SandroMaglione/fpdart/pull/25)) by [purplenoodlesoop](https://github.com/purplenoodlesoop) 🎉
 
-# v0.0.11 - 22 September 2021
+## v0.0.11 - 22 September 2021
 
 - Fixed major issue in `State` and `StateAsync` implementation [**BREAKING CHANGE**]
   - Methods `flatMap`, `map`, `map2`, `map3`, `ap`, `andThen`, `call`, and `flatten` had an implementation issue that has been now fixed
 
-# v0.0.10 - 13 August 2021
+## v0.0.10 - 13 August 2021
 
 - Released introduction to [**Practical Functional Programming**](https://www.sandromaglione.com/practical-functional-programming-step-by-step-haskell-typescript-dart-part-1/)
 - Completed `StateAsync` type implementation, documentation, and testing
 - Fixed problem with `Alt` typeclass ([#21](https://github.com/SandroMaglione/fpdart/issues/21))
 - Added `call` method to more easily chain functions in `Monad` and `Monad2`
 
-# v0.0.9 - 3 August 2021
+## v0.0.9 - 3 August 2021
 
 - Released two new tutorials on the `Option` type:
   - [**Functional Programming Option type – Introduction**](https://www.sandromaglione.com/functional-programming-option-type-tutorial/)
@@ -266,7 +266,7 @@ environment:
 - Added functional extension methods on `Map`
 - Added composable `Predicate` type (and `&`, or `|`, not `~`, xor `^`) ([#18](https://github.com/SandroMaglione/fpdart/issues/18))
 
-# v0.0.8 - 13 July 2021
+## v0.0.8 - 13 July 2021
 
 - Released Part 3 of [**Fpdart, Functional Programming in Dart and Flutter**](https://www.sandromaglione.com/pure-functional-app-in-flutter-using-fpdart-functional-programming/)
 - Added Pure Functional Flutter app example (`pokeapi_functional`)
@@ -276,7 +276,7 @@ environment:
 - Added functions to get random `int`, `double`, and `bool` in a functional way (using `IO`) (`random.dart`)
 - Added functions, extension methods, `Ord`, and `Eq` instances to `DateTime` (`date.dart`)
 
-# v0.0.7 - 6 July 2021
+## v0.0.7 - 6 July 2021
 
 - Released Part 2 of [**Fpdart, Functional Programming in Dart and Flutter**](https://www.sandromaglione.com/how-to-use-fpdart-functional-programming-in-dart-and-flutter/)
 - Added `Compose` and `Compose2`, used to easily compose functions in a chain
@@ -285,7 +285,7 @@ environment:
 - Expanded documentation and examples
 - Added `TaskEither.tryCatchK` and `Either.tryCatchK`, by [tim-smart](https://github.com/tim-smart) ([#10](https://github.com/SandroMaglione/fpdart/pull/10), [#11](https://github.com/SandroMaglione/fpdart/pull/11)) 🎉
 
-# v0.0.6 - 29 June 2021
+## v0.0.6 - 29 June 2021
 
 - Released Part 1 of [**Fpdart, Functional Programming in Dart and Flutter**](https://www.sandromaglione.com/fpdart-functional-programming-in-dart-and-flutter/)
 - Added functional extension methods on `Iterable` (`List`)
@@ -297,7 +297,7 @@ environment:
 - Added more [examples](https://github.com/SandroMaglione/fpdart/tree/main/example)
 - Added constant constructors to Eq and variants, by [mateusfccp](https://github.com/mateusfccp) ([#4](https://github.com/SandroMaglione/fpdart/pull/4)) 🎉
 
-# v0.0.5 - 20 June 2021
+## v0.0.5 - 20 June 2021
 
 - Completed `State` type implementation, documentation, and testing
 - Completed `Reader` type implementation, documentation, and testing
@@ -309,7 +309,7 @@ environment:
   - Added `bind` method to `Either` (same as `flatMap`)
   - Added `bindFuture` method to `Either`, which returns `TaskEither`
 
-# v0.0.4 - 15 June 2021
+## v0.0.4 - 15 June 2021
 
 - Completed `Unit` type documentation
 - Completed `Task` type implementation, documentation, and testing
@@ -320,15 +320,15 @@ environment:
 - Updated methods API (`foldRight`, `foldLeft`, etc.) of `Foldable` instances (`Option`, `Either`, `Tuple`) [**BREAKING CHANGE**]
 - `IList` not longer working correctly (waiting for a [better solution for immutable collections](https://github.com/SandroMaglione/fpdart#roadmap)) [**BREAKING CHANGE**]
 
-# v0.0.3 - 13 June 2021
+## v0.0.3 - 13 June 2021
 
 - Changed name of type `Maybe` to `Option` to be inline with fp-ts, cats, and dartz [**BREAKING CHANGE**]
 
-# v0.0.2 - 13 June 2021
+## v0.0.2 - 13 June 2021
 
 First major release:
 
-## Types
+### Types
 
 - `Either`
 - `IList`
@@ -340,7 +340,7 @@ First major release:
 - `Tuple`
 - `Unit`
 
-## Typeclasses
+### Typeclasses
 
 - `Alt`
 - `Applicative`
@@ -364,7 +364,7 @@ First major release:
 - `Semigroup`
 - `Semilattice`
 
-## Examples
+### Examples
 
 - `Either`
 - `curry`
@@ -372,7 +372,7 @@ First major release:
 - `Reader`
 - `State`
 
-# v0.0.1 - 28 May 2021
+## v0.0.1 - 28 May 2021
 
 - `Eq`
 - `Hash`
