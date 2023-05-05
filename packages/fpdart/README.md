@@ -100,7 +100,7 @@ Check out also this series of articles about functional programming with `fpdart
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.6.0-dev.1 # Check out the latest version
+  fpdart: ^0.6.0 # Check out the latest version
 ```
 
 ## ✨ Examples
@@ -328,7 +328,7 @@ Fpdart is a rewrite based on fp-ts and cats. The main differences are:
 
 - Fpdart is fully documented.
 - Fpdart implements higher-kinded types using [defunctionalization](https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf).
-- Fpdart is based on Dart 2.
+- Fpdart is based on **Dart 3**.
 - Fpdart is completely null-safe from the beginning.
 - Fpdart has a richer API.
 - Fpdart implements some missing types in dartz.
@@ -347,6 +347,8 @@ The roadmap for types development is highlighted below (breaking changes to _'st
 5. `Writer`
 6. `Lens`
 
+> **Note**: There is also an experimental research in progress to implement [`ZIO`](https://zio.dev/) in `fpdart`, stay tuned 🔜
+
 ***
 
 The long-term goal is to provide **all the main types and typeclasses available in other functional programming languages and packages**. All the types should be **completely** documented and fully tested.
@@ -357,6 +359,7 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
 
+- **v0.6.0** - 6 May 2023
 - **v0.5.0** - 4 March 2023
 - v0.4.1 - 25 February 2023
 - **v0.4.0** - 16 December 2022

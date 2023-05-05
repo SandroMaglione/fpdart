@@ -1,5 +1,50 @@
 ## v0.6.0 - 6 May 2023
-- Do notation [#97](https://github.com/SandroMaglione/fpdart/pull/97) 🎉
+- Do notation [#97](https://github.com/SandroMaglione/fpdart/pull/97) (Special thanks to [@tim-smart](https://github.com/tim-smart) 🎉)
+  - Updated examples to use Do notation (new recommended API 🎯) 
+
+
+```dart
+/// Without the Do notation
+String goShopping() => goToShoppingCenter()
+    .alt(goToLocalMarket)
+    .flatMap(
+      (market) => market.buyBanana().flatMap(
+            (banana) => market.buyApple().flatMap(
+                  (apple) => market.buyPear().flatMap(
+                        (pear) => Option.of('Shopping: $banana, $apple, $pear'),
+                      ),
+                ),
+          ),
+    )
+    .getOrElse(
+      () => 'I did not find 🍌 or 🍎 or 🍐, so I did not buy anything 🤷‍♂️',
+    );
+```
+
+```dart
+/// Using the Do notation
+String goShoppingDo() => Option.Do(
+      ($) {
+        final market = $(goToShoppingCenter().alt(goToLocalMarket));
+        final amount = $(market.buyAmount());
+
+        final banana = $(market.buyBanana());
+        final apple = $(market.buyApple());
+        final pear = $(market.buyPear());
+
+        return 'Shopping: $banana, $apple, $pear';
+      },
+    ).getOrElse(
+      () => 'I did not find 🍌 or 🍎 or 🍐, so I did not buy anything 🤷‍♂️',
+    );
+```
+
+- Added new `IOOption` type
+- Added conversion methods from and to all classes (`IO`, `IOOption`, `IOEither`, `Task`, `TaskOption`, `TaskEither`)
+  - Removed `toTask` in `IOEither` (use `toTaskEither` instead) ⚠️
+- Improved performance of `fpdart`'s `sortBy` list extension [#101](https://github.com/SandroMaglione/fpdart/pull/101) (thanks to [@hbock-42](https://github.com/hbock-42) 🎉)
+- Updated `pokeapi_functional` example to **Riverpod v2** [#99](https://github.com/SandroMaglione/fpdart/pull/99) (thanks to [@utamori](https://github.com/utamori) 🎉)
+- Updated repository folder structure [#105](https://github.com/SandroMaglione/fpdart/pull/105)
 
 ## v0.5.0 - 4 March 2023
 - Updates to `Option` type [#92](https://github.com/SandroMaglione/fpdart/pull/92)  [⚠️ **BREAKING CHANGE**]
