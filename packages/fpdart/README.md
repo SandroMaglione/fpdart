@@ -1,6 +1,6 @@
 <h3 align="center">
   <a href="https://github.com/SandroMaglione/fpdart">
-    <img src="https://raw.githubusercontent.com/SandroMaglione/fpdart/main/example/screenshots/screenshot_fpdart.png" width="500" />
+    <img src="https://raw.githubusercontent.com/SandroMaglione/fpdart/main/resources/screenshots/screenshot_fpdart.png" width="500" />
   </a>
 </h3>
 
@@ -55,6 +55,7 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
   - [Utility types](#utility-types)
   - [Reader](#reader)
   - [State](#state)
+  - [🔗 Do notation](#-do-notation)
   - [📦 Immutable Collections](#-immutable-collections)
   - [More](#more)
 - [🎯 Types](#-types)
@@ -100,7 +101,7 @@ Check out also this series of articles about functional programming with `fpdart
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.6.0-dev.1 # Check out the latest version
+  fpdart: ^0.6.0 # Check out the latest version
 ```
 
 ## ✨ Examples
@@ -257,6 +258,57 @@ Read values from a **context** without explicitly passing the dependency between
 ### [State](./lib/src/state.dart)
 Used to **store**, **update**, and **extract** state in a functional way. View the [example folder for an explained usecase example](./example/src/state).
 
+### 🔗 Do notation
+Version `v0.6.0` introduced the **Do notation** in `fpdart`. Using the Do notation makes chaining functions easier.
+
+For example, a typical chain of methods in `fpdart` looks as follows:
+
+```dart
+/// Without the Do notation
+String goShopping() => goToShoppingCenter()
+    .alt(goToLocalMarket)
+    .flatMap(
+      (market) => market.buyBanana().flatMap(
+            (banana) => market.buyApple().flatMap(
+                  (apple) => market.buyPear().flatMap(
+                        (pear) => Option.of('Shopping: $banana, $apple, $pear'),
+                      ),
+                ),
+          ),
+    )
+    .getOrElse(
+      () => 'I did not find 🍌 or 🍎 or 🍐, so I did not buy anything 🤷‍♂️',
+    );
+```
+
+Notice how you need to call `flatMap` multiple times to collect multiple variables and use them together (`market`, `banana`, `apple`, `pear`).
+
+Everything looks more **linear and simple** by using the Do notation:
+
+```dart
+/// Using the Do notation
+String goShoppingDo() => Option.Do(
+      ($) {
+        final market = $(goToShoppingCenter().alt(goToLocalMarket));
+        final amount = $(market.buyAmount());
+
+        final banana = $(market.buyBanana());
+        final apple = $(market.buyApple());
+        final pear = $(market.buyPear());
+
+        return 'Shopping: $banana, $apple, $pear';
+      },
+    ).getOrElse(
+      () => 'I did not find 🍌 or 🍎 or 🍐, so I did not buy anything 🤷‍♂️',
+    );
+```
+
+You initialize the Do notation using the **`Do()` constructor**.
+
+You have access to a `$` function, that you can use to extract and use the value inside each `Option`, without using `flatMap`.
+
+> **Note**: We recommend using the Do notation whenever possible to improve the legibility of your code 🤝
+
 ### 📦 Immutable Collections
 
 Fpdart provides some extension methods on `Iterable` (`List`) and `Map` that extend the methods available by providing some functional programming signatures (safe methods that never mutate the original collection and that never throw exceptions).
@@ -328,7 +380,7 @@ Fpdart is a rewrite based on fp-ts and cats. The main differences are:
 
 - Fpdart is fully documented.
 - Fpdart implements higher-kinded types using [defunctionalization](https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf).
-- Fpdart is based on Dart 2.
+- Fpdart is based on **Dart 3**.
 - Fpdart is completely null-safe from the beginning.
 - Fpdart has a richer API.
 - Fpdart implements some missing types in dartz.
@@ -347,6 +399,8 @@ The roadmap for types development is highlighted below (breaking changes to _'st
 5. `Writer`
 6. `Lens`
 
+> **Note**: There is also an experimental research in progress to implement [`ZIO`](https://zio.dev/) in `fpdart`, stay tuned 🔜
+
 ***
 
 The long-term goal is to provide **all the main types and typeclasses available in other functional programming languages and packages**. All the types should be **completely** documented and fully tested.
@@ -357,6 +411,7 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
 
+- **v0.6.0** - 6 May 2023
 - **v0.5.0** - 4 March 2023
 - v0.4.1 - 25 February 2023
 - **v0.4.0** - 16 December 2022
