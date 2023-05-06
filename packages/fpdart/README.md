@@ -55,6 +55,7 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
   - [Utility types](#utility-types)
   - [Reader](#reader)
   - [State](#state)
+  - [🔗 Do notation](#-do-notation)
   - [📦 Immutable Collections](#-immutable-collections)
   - [More](#more)
 - [🎯 Types](#-types)
@@ -256,6 +257,57 @@ Read values from a **context** without explicitly passing the dependency between
 
 ### [State](./lib/src/state.dart)
 Used to **store**, **update**, and **extract** state in a functional way. View the [example folder for an explained usecase example](./example/src/state).
+
+### 🔗 Do notation
+Version `v0.6.0` introduced the **Do notation** in `fpdart`. Using the Do notation makes chaining functions easier.
+
+For example, a typical chain of methods in `fpdart` looks as follows:
+
+```dart
+/// Without the Do notation
+String goShopping() => goToShoppingCenter()
+    .alt(goToLocalMarket)
+    .flatMap(
+      (market) => market.buyBanana().flatMap(
+            (banana) => market.buyApple().flatMap(
+                  (apple) => market.buyPear().flatMap(
+                        (pear) => Option.of('Shopping: $banana, $apple, $pear'),
+                      ),
+                ),
+          ),
+    )
+    .getOrElse(
+      () => 'I did not find 🍌 or 🍎 or 🍐, so I did not buy anything 🤷‍♂️',
+    );
+```
+
+Notice how you need to call `flatMap` multiple times to collect multiple variables and use them together (`market`, `banana`, `apple`, `pear`).
+
+Everything looks more **linear and simple** by using the Do notation:
+
+```dart
+/// Using the Do notation
+String goShoppingDo() => Option.Do(
+      ($) {
+        final market = $(goToShoppingCenter().alt(goToLocalMarket));
+        final amount = $(market.buyAmount());
+
+        final banana = $(market.buyBanana());
+        final apple = $(market.buyApple());
+        final pear = $(market.buyPear());
+
+        return 'Shopping: $banana, $apple, $pear';
+      },
+    ).getOrElse(
+      () => 'I did not find 🍌 or 🍎 or 🍐, so I did not buy anything 🤷‍♂️',
+    );
+```
+
+You initialize the Do notation using the **`Do()` constructor**.
+
+You have access to a `$` function, that you can use to extract and use the value inside each `Option`, without using `flatMap`.
+
+> **Note**: We recommend using the Do notation whenever possible to improve the legibility of your code 🤝
 
 ### 📦 Immutable Collections
 
