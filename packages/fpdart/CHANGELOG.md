@@ -28,6 +28,7 @@ final result = boolValue.fold<int>(() => -1, () => 1);
 final result = boolValue ? 1 : -1;
 final result = switch (boolValue) { true => 1, false => -1 };
 ```
+- Organized all extensions inside internal `extension` folder 
 
 ## v0.6.0 - 6 May 2023
 - Do notation [#97](https://github.com/SandroMaglione/fpdart/pull/97) (Special thanks to [@tim-smart](https://github.com/tim-smart) 🎉)
