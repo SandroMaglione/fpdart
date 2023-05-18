@@ -11,7 +11,7 @@ import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
-class _IOOptionThrow {
+final class _IOOptionThrow {
   const _IOOptionThrow();
 }
 
@@ -23,7 +23,7 @@ A _doAdapter<A>(IOOption<A> iOOption) => iOOption.run().getOrElse(
 typedef DoFunctionIOOption<A> = A Function(DoAdapterIOOption $);
 
 /// Tag the [HKT] interface for the actual [IOOption].
-abstract class _IOOptionHKT {}
+abstract final class _IOOptionHKT {}
 
 /// `IOOption<R>` represents an **synchronous** computation that
 /// may fails yielding a [None] or returns a `Some(R)` when successful.
@@ -32,7 +32,7 @@ abstract class _IOOptionHKT {}
 ///
 /// If you want to represent an synchronous computation that returns an object when it fails,
 /// see [IOEither].
-class IOOption<R> extends HKT<_IOOptionHKT, R>
+final class IOOption<R> extends HKT<_IOOptionHKT, R>
     with
         Functor<_IOOptionHKT, R>,
         Applicative<_IOOptionHKT, R>,

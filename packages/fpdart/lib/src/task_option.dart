@@ -9,7 +9,7 @@ import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
-class _TaskOptionThrow {
+final class _TaskOptionThrow {
   const _TaskOptionThrow();
 }
 
@@ -21,7 +21,7 @@ Future<A> _doAdapter<A>(TaskOption<A> taskOption) => taskOption.run().then(
 typedef DoFunctionTaskOption<A> = Future<A> Function(DoAdapterTaskOption $);
 
 /// Tag the [HKT] interface for the actual [TaskOption].
-abstract class _TaskOptionHKT {}
+abstract final class _TaskOptionHKT {}
 
 /// `TaskOption<R>` represents an **asynchronous** computation that
 /// may fails yielding a [None] or returns a `Some(R)` when successful.
@@ -30,7 +30,7 @@ abstract class _TaskOptionHKT {}
 ///
 /// If you want to represent an asynchronous computation that returns an object when it fails,
 /// see [TaskEither].
-class TaskOption<R> extends HKT<_TaskOptionHKT, R>
+final class TaskOption<R> extends HKT<_TaskOptionHKT, R>
     with
         Functor<_TaskOptionHKT, R>,
         Applicative<_TaskOptionHKT, R>,

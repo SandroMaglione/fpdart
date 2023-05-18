@@ -8,7 +8,7 @@ import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
-class _TaskEitherThrow<L> {
+final class _TaskEitherThrow<L> {
   final L value;
   const _TaskEitherThrow(this.value);
 }
@@ -23,13 +23,13 @@ typedef DoFunctionTaskEither<L, A> = Future<A> Function(
     DoAdapterTaskEither<L> $);
 
 /// Tag the [HKT2] interface for the actual [TaskEither].
-abstract class _TaskEitherHKT {}
+abstract final class _TaskEitherHKT {}
 
 /// `TaskEither<L, R>` represents an asynchronous computation that
 /// either yields a value of type `R` or fails yielding an error of type `L`.
 ///
 /// If you want to represent an asynchronous computation that never fails, see [Task].
-class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
+final class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
     with
         Functor2<_TaskEitherHKT, L, R>,
         Applicative2<_TaskEitherHKT, L, R>,
