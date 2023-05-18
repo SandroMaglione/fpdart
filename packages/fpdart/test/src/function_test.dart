@@ -23,6 +23,30 @@ void main() {
           (stringValue) {
         expect(stringValue.toBoolOption, toBoolOption(stringValue));
       });
+
+      Glados(any.letterOrDigits).test('toNumEither (same as extension)',
+          (stringValue) {
+        expect(stringValue.toNumEither(() => "left"),
+            toNumEither(() => "left")(stringValue));
+      });
+
+      Glados(any.letterOrDigits).test('toIntEither (same as extension)',
+          (stringValue) {
+        expect(stringValue.toIntEither(() => "left"),
+            toIntEither(() => "left")(stringValue));
+      });
+
+      Glados(any.letterOrDigits).test('toDoubleEither (same as extension)',
+          (stringValue) {
+        expect(stringValue.toDoubleEither(() => "left"),
+            toDoubleEither(() => "left")(stringValue));
+      });
+
+      Glados(any.letterOrDigits).test('toBoolEither (same as extension)',
+          (stringValue) {
+        expect(stringValue.toBoolEither(() => "left"),
+            toBoolEither(() => "left")(stringValue));
+      });
     });
   });
 }
