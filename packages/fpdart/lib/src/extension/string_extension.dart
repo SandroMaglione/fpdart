@@ -14,7 +14,7 @@ extension FpdartOnString on String {
   Option<double> get toDoubleOption => double.tryParse(this).toOption();
 
   /// Convert this [String] to [bool], returns [None] for invalid inputs.
-  Option<bool> get toBooleanOption => bool.tryParse(this).toOption();
+  Option<bool> get toBoolOption => bool.tryParse(this).toOption();
 
   /// Convert this [String] to [num], returns the result of `onLeft` for invalid inputs.
   Either<L, num> toNumEither<L>(L Function() onLeft) =>
@@ -29,6 +29,6 @@ extension FpdartOnString on String {
       double.tryParse(this).toEither(onLeft);
 
   /// Convert this [String] to [bool], returns the result of `onLeft` for invalid inputs.
-  Either<L, bool> toBooleanEither<L>(L Function() onLeft) =>
+  Either<L, bool> toBoolEither<L>(L Function() onLeft) =>
       bool.tryParse(this).toEither(onLeft);
 }
