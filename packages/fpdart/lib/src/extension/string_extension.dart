@@ -4,16 +4,16 @@ import 'nullable_extension.dart';
 
 /// Functional programming functions on dart [String] using `fpdart`.
 extension FpdartOnString on String {
-  /// Convert this [String] to [num], returns [None] for invalid inputs.
+  /// {@macro fpdart_string_extension_to_num_option}
   Option<num> get toNumOption => num.tryParse(this).toOption();
 
-  /// Convert this [String] to [int], returns [None] for invalid inputs.
+  /// {@macro fpdart_string_extension_to_int_option}
   Option<int> get toIntOption => int.tryParse(this).toOption();
 
-  /// Convert this [String] to [double], returns [None] for invalid inputs.
+  /// {@macro fpdart_string_extension_to_double_option}
   Option<double> get toDoubleOption => double.tryParse(this).toOption();
 
-  /// Convert this [String] to [bool], returns [None] for invalid inputs.
+  /// {@macro fpdart_string_extension_to_bool_option}
   Option<bool> get toBoolOption => bool.tryParse(this).toOption();
 
   /// Convert this [String] to [num], returns the result of `onLeft` for invalid inputs.
