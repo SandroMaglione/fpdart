@@ -36,7 +36,7 @@ Option<T> optionOf<T>(T? t) => Option.fromNullable(t);
 Option<T> option<T>(T value, bool Function(T) predicate) =>
     Option.fromPredicate(value, predicate);
 
-class _OptionThrow {
+final class _OptionThrow {
   const _OptionThrow();
 }
 
@@ -47,7 +47,7 @@ A _doAdapter<A>(Option<A> option) =>
 typedef DoFunctionOption<A> = A Function(DoAdapterOption $);
 
 /// Tag the [HKT] interface for the actual [Option].
-abstract class _OptionHKT {}
+abstract final class _OptionHKT {}
 
 // `Option<T> implements Functor<OptionHKT, T>` expresses correctly the
 // return type of the `map` function as `HKT<OptionHKT, B>`.
@@ -72,7 +72,7 @@ abstract class _OptionHKT {}
 ///   printString,
 /// );
 /// ```
-abstract class Option<T> extends HKT<_OptionHKT, T>
+sealed class Option<T> extends HKT<_OptionHKT, T>
     with
         Functor<_OptionHKT, T>,
         Applicative<_OptionHKT, T>,

@@ -15,7 +15,7 @@ Either<L, R> right<L, R>(R r) => Right<L, R>(r);
 /// Shortcut for `Either.left(l)`.
 Either<L, R> left<L, R>(L l) => Left<L, R>(l);
 
-class _EitherThrow<L> {
+final class _EitherThrow<L> {
   final L value;
   const _EitherThrow(this.value);
 }
@@ -29,7 +29,7 @@ DoAdapterEither<L> _doAdapter<L>() =>
 typedef DoFunctionEither<L, R> = R Function(DoAdapterEither<L> $);
 
 /// Tag the [HKT2] interface for the actual [Either].
-abstract class _EitherHKT {}
+abstract final class _EitherHKT {}
 
 /// Represents a value of one of two possible types, [Left] or [Right].
 ///
@@ -37,7 +37,7 @@ abstract class _EitherHKT {}
 /// values when a computation may fail (such as `-1`, `null`, etc.), we return an instance
 /// of [Right] containing the correct result when a computation is successful, otherwise we return
 /// an instance of [Left] containing information about the kind of error that occurred.
-abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
+sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
     with
         Functor2<_EitherHKT, L, R>,
         Applicative2<_EitherHKT, L, R>,
