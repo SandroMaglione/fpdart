@@ -396,5 +396,463 @@ void main() {
         });
       });
     });
+
+    group('toNumEither', () {
+      group('Right', () {
+        test('"10"', () {
+          final result = "10".toNumEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 10);
+          });
+        });
+
+        test('"10.0"', () {
+          final result = "10.0".toNumEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 10.0);
+          });
+        });
+
+        test('"10.5"', () {
+          final result = "10.5".toNumEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 10.5);
+          });
+        });
+
+        test('"10.512"', () {
+          final result = "10.512".toNumEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 10.512);
+          });
+        });
+
+        test('"  10   "', () {
+          final result = "  10   ".toNumEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 10);
+          });
+        });
+
+        test('"-10"', () {
+          final result = "-10".toNumEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, -10);
+          });
+        });
+
+        test('"  3.14 \xA0"', () {
+          final result = "  3.14 \xA0".toNumEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 3.14);
+          });
+        });
+
+        test('"0."', () {
+          final result = "0.".toNumEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 0);
+          });
+        });
+
+        test('".0"', () {
+          final result = ".0".toNumEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 0);
+          });
+        });
+
+        test('"-1.e3"', () {
+          final result = "-1.e3".toNumEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, -1000);
+          });
+        });
+
+        test('"1234E+7"', () {
+          final result = "1234E+7".toNumEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 12340000000);
+          });
+        });
+
+        test('"0xFF"', () {
+          final result = "0xFF".toNumEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 255);
+          });
+        });
+      });
+
+      group('Left', () {
+        test('"-  10"', () {
+          final result = "-  10".toNumEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"10,0"', () {
+          final result = "10,0".toNumEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"10a"', () {
+          final result = "10a".toNumEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"none"', () {
+          final result = "none".toNumEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"10.512a"', () {
+          final result = "10.512a".toNumEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"1f"', () {
+          final result = "1f".toNumEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+      });
+    });
+
+    group('toIntEither', () {
+      group('Some', () {
+        test('"10"', () {
+          final result = "10".toIntEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 10);
+          });
+        });
+
+        test('"-10"', () {
+          final result = "-10".toIntEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, -10);
+          });
+        });
+
+        test('"  10   "', () {
+          final result = "  10   ".toIntEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 10);
+          });
+        });
+
+        test('"0xFF"', () {
+          final result = "0xFF".toIntEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 255);
+          });
+        });
+      });
+
+      group('None', () {
+        test('"-  10"', () {
+          final result = "-  10".toIntEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"-1.e3"', () {
+          final result = "-1.e3".toIntEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"1234E+7"', () {
+          final result = "1234E+7".toIntEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"0."', () {
+          final result = "0.".toIntEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"10.5"', () {
+          final result = "10.5".toIntEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"10.0"', () {
+          final result = "10.0".toIntEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"10.512"', () {
+          final result = "10.512".toIntEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"  3.14 \xA0"', () {
+          final result = "  3.14 \xA0".toIntEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('".0"', () {
+          final result = ".0".toIntEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"10,0"', () {
+          final result = "10,0".toIntEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"10a"', () {
+          final result = "10a".toIntEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"none"', () {
+          final result = "none".toIntEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"10.512a"', () {
+          final result = "10.512a".toIntEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"1f"', () {
+          final result = "1f".toIntEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+      });
+    });
+
+    group('toDoubleEither', () {
+      group('Some', () {
+        test('"10"', () {
+          final result = "10".toDoubleEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 10.0);
+          });
+        });
+
+        test('"10.0"', () {
+          final result = "10.0".toDoubleEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 10.0);
+          });
+        });
+
+        test('"10.5"', () {
+          final result = "10.5".toDoubleEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 10.5);
+          });
+        });
+
+        test('"10.512"', () {
+          final result = "10.512".toDoubleEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 10.512);
+          });
+        });
+
+        test('"  10   "', () {
+          final result = "  10   ".toDoubleEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 10.0);
+          });
+        });
+
+        test('"-10"', () {
+          final result = "-10".toDoubleEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, -10.0);
+          });
+        });
+
+        test('"  3.14 \xA0"', () {
+          final result = "  3.14 \xA0".toDoubleEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 3.14);
+          });
+        });
+
+        test('"0."', () {
+          final result = "0.".toDoubleEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 0.0);
+          });
+        });
+
+        test('".0"', () {
+          final result = ".0".toDoubleEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 0.0);
+          });
+        });
+
+        test('"-1.e3"', () {
+          final result = "-1.e3".toDoubleEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, -1000.0);
+          });
+        });
+
+        test('"1234E+7"', () {
+          final result = "1234E+7".toDoubleEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, 12340000000.0);
+          });
+        });
+      });
+
+      group('None', () {
+        test('"0xFF"', () {
+          final result = "0xFF".toDoubleEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"-  10"', () {
+          final result = "-  10".toDoubleEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"10,0"', () {
+          final result = "10,0".toDoubleEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"10a"', () {
+          final result = "10a".toDoubleEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"none"', () {
+          final result = "none".toDoubleEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"10.512a"', () {
+          final result = "10.512a".toDoubleEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"1f"', () {
+          final result = "1f".toDoubleEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+      });
+    });
+
+    group('toBoolEither', () {
+      group('Some', () {
+        test('"true"', () {
+          final result = "true".toBoolEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, true);
+          });
+        });
+
+        test('"false"', () {
+          final result = "false".toBoolEither(() => "left");
+          result.matchTestRight((t) {
+            expect(t, false);
+          });
+        });
+      });
+
+      group('None', () {
+        test('"TRUE"', () {
+          final result = "TRUE".toBoolEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"FALSE"', () {
+          final result = "FALSE".toBoolEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"NO"', () {
+          final result = "NO".toBoolEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"YES"', () {
+          final result = "YES".toBoolEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"0"', () {
+          final result = "0".toBoolEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+
+        test('"1"', () {
+          final result = "1".toBoolEither(() => "left");
+          result.matchTestLeft((t) {
+            expect(t, "left");
+          });
+        });
+      });
+    });
   });
 }
