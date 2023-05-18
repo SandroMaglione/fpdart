@@ -16,6 +16,30 @@
   - `Task` 
   - `TaskOption` 
   - `TaskEither` 
+- Added conversions helpers from `String` to `num`, `int`, `double`, and `bool` using `Option` and `Either` (both as extension methods on `String` and as functions)
+  - `toNumOption` 
+  - `toIntOption` 
+  - `toDoubleOption` 
+  - `toBoolOption` 
+  - `toNumEither` 
+  - `toIntEither` 
+  - `toDoubleEither` 
+  - `toBoolEither` 
+```dart
+/// As extension on [String]
+final result = "10".toNumOption; /// `Some(10)`
+final result = "10.5".toNumOption; /// `Some(10.5)`
+final result = "0xFF".toIntOption; /// `Some(255)`
+final result = "10.5".toDoubleOption; /// `Some(10.5)`
+final result = "NO".toBoolEither(() => "left"); /// `Left("left")`
+
+/// As functions
+final result = toNumOption("10"); /// `Some(10)`
+final result = toNumOption("10.5"); /// `Some(10.5)`
+final result = toIntOption("0xFF"); /// `Some(255)`
+final result = toDoubleOption("10.5"); /// `Some(10.5)`
+final result = toBoolEither(() => "left")("NO"); /// `Left("left")`
+```
 - Removed `bool` extension (`match` and `fold`), use the ternary operator or pattern matching instead ⚠️
 ```dart
 final boolValue = Random().nextBool();
