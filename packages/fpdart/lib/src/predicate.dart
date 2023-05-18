@@ -1,5 +1,5 @@
 /// Compose functions that given a generic value [T] return a `bool`.
-class Predicate<T> {
+final class Predicate<T> {
   final bool Function(T t) _predicate;
 
   /// Build a [Predicate] given a function returning a `bool`.

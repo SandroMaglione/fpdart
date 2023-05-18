@@ -5,7 +5,7 @@ import 'typeclass/typeclass.export.dart';
 import 'unit.dart';
 
 /// Tag the [HKT2] interface for the actual [StateAsync].
-abstract class _StateAsyncHKT {}
+abstract final class _StateAsyncHKT {}
 
 /// `StateAsync<S, A>` is used to store, update, and extract async state in a functional way.
 ///
@@ -14,7 +14,7 @@ abstract class _StateAsyncHKT {}
 /// (Account Balance fetched from the current state of your Bank Account `S`).
 ///
 /// Used when fetching and updating the state is **asynchronous**. Use [State] otherwise.
-class StateAsync<S, A> extends HKT2<_StateAsyncHKT, S, A>
+final class StateAsync<S, A> extends HKT2<_StateAsyncHKT, S, A>
     with
         Functor2<_StateAsyncHKT, S, A>,
         Applicative2<_StateAsyncHKT, S, A>,

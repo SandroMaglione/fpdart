@@ -9,7 +9,7 @@ import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
-class _IOEitherThrow<L> {
+final class _IOEitherThrow<L> {
   final L value;
   const _IOEitherThrow(this.value);
 }
@@ -21,14 +21,14 @@ DoAdapterIOEither<L> _doAdapter<L>() =>
 typedef DoFunctionIOEither<L, A> = A Function(DoAdapterIOEither<L> $);
 
 /// Tag the [HKT2] interface for the actual [IOEither].
-abstract class _IOEitherHKT {}
+abstract final class _IOEitherHKT {}
 
 /// `IOEither<L, R>` represents a **non-deterministic synchronous** computation that
 /// can **cause side effects**, yields a value of type `R` or **can fail** by returning
 /// a value of type `L`.
 ///
 /// If you want to represent a synchronous computation that may never fail, see [IO].
-class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
+final class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
     with
         Functor2<_IOEitherHKT, L, R>,
         Applicative2<_IOEitherHKT, L, R>,

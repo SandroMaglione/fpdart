@@ -15,12 +15,12 @@ Future<A> _doAdapter<A>(Task<A> task) => task.run();
 typedef DoFunctionTask<A> = Future<A> Function(DoAdapterTask $);
 
 /// Tag the [HKT] interface for the actual [Task].
-abstract class _TaskHKT {}
+abstract final class _TaskHKT {}
 
 /// [Task] represents an asynchronous computation that yields a value of type `A` and **never fails**.
 ///
 /// If you want to represent an asynchronous computation that may fail, see [TaskEither].
-class Task<A> extends HKT<_TaskHKT, A>
+final class Task<A> extends HKT<_TaskHKT, A>
     with Functor<_TaskHKT, A>, Applicative<_TaskHKT, A>, Monad<_TaskHKT, A> {
   final Future<A> Function() _run;
 
