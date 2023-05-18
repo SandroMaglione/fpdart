@@ -5,14 +5,14 @@ import 'typeclass/typeclass.export.dart';
 import 'unit.dart';
 
 /// Tag the [HKT2] interface for the actual [State].
-abstract class _StateHKT {}
+abstract final class _StateHKT {}
 
 /// `State<S, A>` is used to store, update, and extract state in a functional way.
 ///
 /// `S` is a State (e.g. the current _State_ of your Bank Account).
 /// `A` is value that you _extract out of the [State]_
 /// (Account Balance fetched from the current state of your Bank Account `S`).
-class State<S, A> extends HKT2<_StateHKT, S, A>
+final class State<S, A> extends HKT2<_StateHKT, S, A>
     with
         Functor2<_StateHKT, S, A>,
         Applicative2<_StateHKT, S, A>,

@@ -5,12 +5,12 @@ import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
 /// Tag the [HKT2] interface for the actual [Reader].
-abstract class ReaderHKT {}
+abstract final class ReaderHKT {}
 
 /// `Reader<R, A>` allows to read values `A` from a dependency/context `R`
 /// without explicitly passing the dependency between multiple nested
 /// function calls.
-class Reader<R, A> extends HKT2<ReaderHKT, R, A>
+final class Reader<R, A> extends HKT2<ReaderHKT, R, A>
     with
         Functor2<ReaderHKT, R, A>,
         Applicative2<ReaderHKT, R, A>,
