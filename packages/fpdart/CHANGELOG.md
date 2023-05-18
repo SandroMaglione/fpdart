@@ -3,7 +3,19 @@
   - You can now use exhaustive pattern matching (`Left` or `Right`)
 - `Option` as `sealed` class
   - You can now use exhaustive pattern matching (`None` or `Some`)
-- `Unit` type as `final` class (no `extends` nor `implements`)
+- Types marked as `final` (no `extends` nor `implements`)
+  - `Unit`
+  - `Predicate`
+  - `Reader`
+  - `State`
+  - `StateAsync`
+  - `IO` 
+  - `IORef` 
+  - `IOOption` 
+  - `IOEither` 
+  - `Task` 
+  - `TaskOption` 
+  - `TaskEither` 
 
 ## v0.6.0 - 6 May 2023
 - Do notation [#97](https://github.com/SandroMaglione/fpdart/pull/97) (Special thanks to [@tim-smart](https://github.com/tim-smart) 🎉)
