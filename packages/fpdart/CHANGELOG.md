@@ -16,6 +16,18 @@
   - `Task` 
   - `TaskOption` 
   - `TaskEither` 
+- Removed `bool` extension (`match` and `fold`), use the ternary operator or pattern matching instead ⚠️
+```dart
+final boolValue = Random().nextBool();
+
+/// Before
+final result = boolValue.match<int>(() => -1, () => 1);
+final result = boolValue.fold<int>(() => -1, () => 1);
+
+/// New
+final result = boolValue ? 1 : -1;
+final result = switch (boolValue) { true => 1, false => -1 };
+```
 
 ## v0.6.0 - 6 May 2023
 - Do notation [#97](https://github.com/SandroMaglione/fpdart/pull/97) (Special thanks to [@tim-smart](https://github.com/tim-smart) 🎉)
