@@ -4,7 +4,7 @@
 /// to understand why it is better to not use `void` and use [Unit] instead.
 ///
 /// There is only one value of type [Unit].
-class Unit {
+final class Unit {
   static const Unit _unit = Unit._instance();
   const Unit._instance();
 
