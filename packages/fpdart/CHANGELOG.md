@@ -1,3 +1,10 @@
+## v1.0.0 - Soon
+- `Either` as `sealed` class
+  - You can now use exhaustive pattern matching (`Left` or `Right`)
+- `Option` as `sealed` class
+  - You can now use exhaustive pattern matching (`None` or `Some`)
+- `Unit` type as `final` class (no `extends` nor `implements`)
+
 ## v0.6.0 - 6 May 2023
 - Do notation [#97](https://github.com/SandroMaglione/fpdart/pull/97) (Special thanks to [@tim-smart](https://github.com/tim-smart) 🎉)
   - All the main types now have a **`Do()` constructor** used to initialize a Do notation chain
