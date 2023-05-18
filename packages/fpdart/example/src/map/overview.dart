@@ -1,5 +1,5 @@
 import 'package:fpdart/src/date.dart';
-import 'package:fpdart/src/map_extension.dart';
+import 'package:fpdart/src/extension/map_extension.dart';
 
 void main() {
   final d1 = DateTime(2001, 1, 1);
