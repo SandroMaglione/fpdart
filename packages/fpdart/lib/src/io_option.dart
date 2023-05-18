@@ -1,4 +1,5 @@
 import 'either.dart';
+import 'extension/option_extension.dart';
 import 'function.dart';
 import 'io.dart';
 import 'io_either.dart';

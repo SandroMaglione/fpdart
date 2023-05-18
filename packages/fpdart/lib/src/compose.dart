@@ -263,19 +263,3 @@ class _ChainCompose22<Input1C2_1, Input2C2_1, OutputC2_1, InputC2_2,
   OutputC2_2 call() =>
       _composeC2_2(_composeC2_1(_input1c2_1, _input2c2_1), _inputC2_2);
 }
-
-// --- Extensions below 👇 --- //
-
-extension ComposeOnFunction1<Input, Output> on Output Function(Input) {
-  /// Build a [Compose] from the function that can be used to
-  /// easily compose functions in a chain.
-  Compose<Input, Output> c(Input input) => Compose(this, input);
-}
-
-extension ComposeOnFunction2<Input1, Input2, Output> on Output Function(
-    Input1, Input2) {
-  /// Build a [Compose2] from the function that can be used to
-  /// easily compose functions in a chain.
-  Compose2<Input1, Input2, Output> c(Input1 input1, Input2 input2) =>
-      Compose2(this, input1, input2);
-}
