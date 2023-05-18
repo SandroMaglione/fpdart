@@ -1,9 +1,10 @@
+import '../option.dart';
+import '../tuple.dart';
+import '../typeclass/eq.dart';
+import '../typeclass/order.dart';
+import '../typedef.dart';
 import 'list_extension.dart';
-import 'option.dart';
-import 'tuple.dart';
-import 'typeclass/eq.dart';
-import 'typeclass/order.dart';
-import 'typedef.dart';
+import 'option_extension.dart';
 
 /// Functional programming functions on a mutable dart [Map] using `fpdart`.
 extension FpdartOnMutableMap<K, V> on Map<K, V> {
