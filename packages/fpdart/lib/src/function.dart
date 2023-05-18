@@ -1,3 +1,6 @@
+import 'extension/string_extension.dart';
+import 'option.dart';
+
 typedef Endo<A> = A Function(A a);
 
 /// Returns the given `a`.
@@ -155,3 +158,23 @@ F Function(A a, B b, C c, D d, E e) uncurry5<A, B, C, D, E, F>(
         function) {
   return (A a, B b, C c, D d, E e) => function(a)(b)(c)(d)(e);
 }
+
+/// {@template fpdart_string_extension_to_num_option}
+/// Convert this [String] to [num], returns [None] for invalid inputs.
+/// {@endtemplate}
+Option<num> toNumOption(String str) => str.toNumOption;
+
+/// {@template fpdart_string_extension_to_int_option}
+/// Convert this [String] to [int], returns [None] for invalid inputs.
+/// {@endtemplate}
+Option<int> toIntOption(String str) => str.toIntOption;
+
+/// {@template fpdart_string_extension_to_double_option}
+/// Convert this [String] to [double], returns [None] for invalid inputs.
+/// {@endtemplate}
+Option<double> toDoubleOption(String str) => str.toDoubleOption;
+
+/// {@template fpdart_string_extension_to_bool_option}
+/// Convert this [String] to [bool], returns [None] for invalid inputs.
+/// {@endtemplate}
+Option<bool> toBoolOption(String str) => str.toBoolOption;
