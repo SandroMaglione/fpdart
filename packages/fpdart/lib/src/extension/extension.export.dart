@@ -5,3 +5,4 @@ export 'list_extension.dart';
 export 'map_extension.dart';
 export 'nullable_extension.dart';
 export 'option_extension.dart';
+export 'string_extension.dart';
