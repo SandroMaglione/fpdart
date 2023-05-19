@@ -40,7 +40,10 @@ final result = toIntOption("0xFF"); /// `Some(255)`
 final result = toDoubleOption("10.5"); /// `Some(10.5)`
 final result = toBoolEither(() => "left")("NO"); /// `Left("left")`
 ```
-- Changed `uncurry` and `curry` extension to getter function ⚠️
+- Updated curry / uncarry extensions ⚠️
+  - Renamed `curry` to `curryAll` for functions with 3, 4, 5 parameters 
+  - Changed definition of `curry` to curry only the first parameter
+  - Changed `uncurry` and `curry` extension to getter function
 ```dart
 int Function(int) subtractCurried(int n1) => (n2) => n1 - n2;
 

@@ -29,6 +29,6 @@ void main() {
   print(sumBy2Extension(10));
   print(sumBy10Extension(2));
 
-  final fourParamsCurry = sumMultiplyDivide.curry;
+  final fourParamsCurry = sumMultiplyDivide.curryAll;
   final fourParamsUncurry = fourParamsCurry.uncurry;
 }
