@@ -2,7 +2,7 @@ import '../function.dart';
 import '../option.dart';
 import '../typeclass/eq.dart';
 
-extension OptionExtension<T> on Option<T> {
+extension FpdartOnOption<T> on Option<T> {
   /// Return the current [Option] if it is a [Some], otherwise return the result of `orElse`.
   ///
   /// Used to provide an **alt**ernative [Option] in case the current one is [None].

@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 
-import './utils/utils.dart';
+import '../utils/utils.dart';
 
 /// Used to test sorting with [DateTime] (`sortWithDate`)
 class SortDate {

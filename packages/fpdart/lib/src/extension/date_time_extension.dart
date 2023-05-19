@@ -1,7 +1,7 @@
 import '../date.dart';
 
 /// `fpdart` extension methods on [DateTime]
-extension FpdartDateTime on DateTime {
+extension FpdartOnDateTime on DateTime {
   /// Return `true` when this [DateTime] and `other` have the same **year**.
   bool eqvYear(DateTime other) => dateEqYear.eqv(this, other);
 
