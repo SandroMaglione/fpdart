@@ -1098,8 +1098,8 @@ void main() {
       right<String, int>(3),
     ];
     final result = Either.partitionEithers(list);
-    expect(result.first, ['a', 'b']);
-    expect(result.second, [1, 2, 3]);
+    expect(result.$1, ['a', 'b']);
+    expect(result.$2, [1, 2, 3]);
   });
 
   group('safeCast', () {

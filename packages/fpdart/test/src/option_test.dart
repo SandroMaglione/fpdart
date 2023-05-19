@@ -230,22 +230,22 @@ void main() {
       test('Some (true)', () {
         final option = Option.of(10);
         final value = option.partition((a) => a > 5);
-        expect(value.first, isA<None>());
-        value.second.matchTestSome((some) => expect(some, 10));
+        expect(value.$1, isA<None>());
+        value.$2.matchTestSome((some) => expect(some, 10));
       });
 
       test('Some (false)', () {
         final option = Option.of(10);
         final value = option.partition((a) => a < 5);
-        value.first.matchTestSome((some) => expect(some, 10));
-        expect(value.second, isA<None>());
+        value.$1.matchTestSome((some) => expect(some, 10));
+        expect(value.$2, isA<None>());
       });
 
       test('None', () {
         final option = Option<int>.none();
         final value = option.partition((a) => a > 5);
-        expect(value.first, isA<None>());
-        expect(value.second, isA<None>());
+        expect(value.$1, isA<None>());
+        expect(value.$2, isA<None>());
       });
     });
 
@@ -254,24 +254,24 @@ void main() {
         final option = Option.of(10);
         final value =
             option.partitionMap<String, double>((a) => Either.of(a / 2));
-        expect(value.first, isA<None>());
-        value.second.matchTestSome((some) => expect(some, 5.0));
+        expect(value.$1, isA<None>());
+        value.$2.matchTestSome((some) => expect(some, 5.0));
       });
 
       test('Some (left)', () {
         final option = Option.of(10);
         final value =
             option.partitionMap<String, double>((a) => Either.left('$a'));
-        value.first.matchTestSome((some) => expect(some, '10'));
-        expect(value.second, isA<None>());
+        value.$1.matchTestSome((some) => expect(some, '10'));
+        expect(value.$2, isA<None>());
       });
 
       test('None', () {
         final option = Option<int>.none();
         final value =
             option.partitionMap<String, double>((a) => Either.of(a / 2));
-        expect(value.first, isA<None>());
-        expect(value.second, isA<None>());
+        expect(value.$1, isA<None>());
+        expect(value.$2, isA<None>());
       });
     });
 
@@ -353,15 +353,15 @@ void main() {
     group('separate', () {
       test('Right', () {
         final option = Option.separate<String, int>(Option.of(Either.of(10)));
-        expect(option.first, isA<None>());
-        option.second.matchTestSome((some) => expect(some, 10));
+        expect(option.$1, isA<None>());
+        option.$2.matchTestSome((some) => expect(some, 10));
       });
 
       test('Left', () {
         final option =
             Option.separate<String, int>(Option.of(Either.left('none')));
-        option.first.matchTestSome((some) => expect(some, 'none'));
-        expect(option.second, isA<None>());
+        option.$1.matchTestSome((some) => expect(some, 'none'));
+        expect(option.$2, isA<None>());
       });
     });
 
