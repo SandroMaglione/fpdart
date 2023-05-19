@@ -1,5 +1,6 @@
 import '../function.dart';
 import '../tuple.dart';
+import '../typedef.dart';
 import 'hkt.dart';
 import 'monoid.dart';
 

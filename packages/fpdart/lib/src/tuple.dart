@@ -4,6 +4,7 @@ import 'typeclass/foldable.dart';
 import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monoid.dart';
+import 'typedef.dart';
 
 /// Return a `Tuple2(a, b)`.
 Tuple2<A, B> tuple2<A, B>(A a, B b) => Tuple2(a, b);

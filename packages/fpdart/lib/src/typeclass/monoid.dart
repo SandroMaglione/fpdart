@@ -1,4 +1,5 @@
 import '../function.dart';
+import '../typedef.dart';
 import 'eq.dart';
 import 'semigroup.dart';
 

@@ -4,6 +4,7 @@ import 'option.dart';
 import 'task_either.dart';
 import 'tuple.dart';
 import 'typeclass/typeclass.export.dart';
+import 'typedef.dart';
 
 /// Return a `Right(r)`.
 ///

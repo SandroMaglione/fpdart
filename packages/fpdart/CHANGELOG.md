@@ -44,14 +44,26 @@ final result = toBoolEither(() => "left")("NO"); /// `Left("left")`
   - Renamed `curry` to `curryAll` for functions with 3, 4, 5 parameters 
   - Changed definition of `curry` to curry only the first parameter
   - Changed `uncurry` and `curry` extension to getter function
+  - Removed `curry` and `uncurry` as functions (use extension method instead)
 ```dart
 int Function(int) subtractCurried(int n1) => (n2) => n1 - n2;
 
 /// Before
 subtractCurried.uncurry()(10, 5);
 
+final addFunction = (int a, int b) => a + b;
+final add = curry2(addFunction);
+
+[1, 2, 3].map(add(1));  // returns [2, 3, 4]
+
 /// New
 subtractCurried.uncurry(10, 5);
+
+final addFunction = (int a, int b) => a + b;
+final add = addFunction.curry;
+
+[1, 2, 3].map(add(1)); // returns [2, 3, 4]
+[1, 2, 3].map(addFunction.curry(1)); // returns [2, 3, 4]
 ``` 
 - Removed `bool` extension (`match` and `fold`), use the ternary operator or pattern matching instead ⚠️
 ```dart
@@ -65,7 +77,10 @@ final result = boolValue.fold<int>(() => -1, () => 1);
 final result = boolValue ? 1 : -1;
 final result = switch (boolValue) { true => 1, false => -1 };
 ```
-- Organized all extensions inside internal `extension` folder 
+- Organized all extensions inside internal `extension` folder
+
+***
+
 
 ## v0.6.0 - 6 May 2023
 - Do notation [#97](https://github.com/SandroMaglione/fpdart/pull/97) (Special thanks to [@tim-smart](https://github.com/tim-smart) 🎉)
