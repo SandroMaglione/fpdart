@@ -62,8 +62,8 @@ void main() {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
         final ap = map.lookupWithKey('b');
         ap.matchTestSome((t) {
-          expect(t.first, 'b');
-          expect(t.second, 2);
+          expect(t.$1, 'b');
+          expect(t.$2, 2);
         });
       });
 
@@ -268,8 +268,8 @@ void main() {
         final ap = map.pop(Eq.instance((a1, a2) => a1 == a2))('b');
         expect(map.lookup('b'), isA<Some>());
         ap.matchTestSome((t) {
-          expect(t.first, 2);
-          expect(t.second.lookup('b'), isA<None>());
+          expect(t.$1, 2);
+          expect(t.$2.lookup('b'), isA<None>());
         });
       });
 
