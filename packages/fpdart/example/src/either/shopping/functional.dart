@@ -13,7 +13,7 @@ class Market {
       getRandomEither(randomInt(1, 10).run(), "Empty 💁🏼‍♂️");
 }
 
-Either<L, R> getRandomEither<L, R>(R right, L left) => randomBool()
+Either<L, R> getRandomEither<L, R>(R right, L left) => randomBool
     .map<Either<L, R>>(
       (isValid) => isValid ? Either.of(right) : Either.left(left),
     )

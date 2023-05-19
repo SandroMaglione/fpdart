@@ -40,6 +40,18 @@ final result = toIntOption("0xFF"); /// `Some(255)`
 final result = toDoubleOption("10.5"); /// `Some(10.5)`
 final result = toBoolEither(() => "left")("NO"); /// `Left("left")`
 ```
+- Changed `dateNow`, `now`, `random`, and `randomBool` to getter functions
+```dart
+/// Before
+Option<T> getRandomOption<T>(T value) => randomBool()
+    .map((isValid) => isValid ? some(value) : none<T>())
+    .run();
+
+/// Now
+Option<T> getRandomOption<T>(T value) => randomBool
+    .map((isValid) => isValid ? some(value) : none<T>())
+    .run();
+```
 - Updated curry / uncarry extensions ⚠️
   - Renamed `curry` to `curryAll` for functions with 3, 4, 5 parameters 
   - Changed definition of `curry` to curry only the first parameter
@@ -79,6 +91,8 @@ final result = switch (boolValue) { true => 1, false => -1 };
 ```
 - Removed `id` and `idFuture`, use `identity` and `identityFuture` instead ⚠️
 - Removed `idFirst` and `idSecond` functions ⚠️
+- Removed `Compose` class and extension methods ⚠️
+- Removed extension methods on nullable types (`toOption`, `toEither`, `toTaskOption`, `toIOEither`, `toTaskEither`, `toTaskEitherAsync`) ⚠️
 - Organized all extensions inside internal `extension` folder
 
 ***
