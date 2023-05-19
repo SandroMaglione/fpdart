@@ -15,7 +15,6 @@ export 'src/state_async.dart';
 export 'src/task.dart';
 export 'src/task_either.dart';
 export 'src/task_option.dart';
-export 'src/tuple.dart';
 export 'src/typeclass/typeclass.export.dart';
 export 'src/typedef.dart';
 export 'src/unit.dart';
