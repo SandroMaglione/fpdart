@@ -7,7 +7,7 @@ description: Example of Functional programming in Dart and Flutter using fpdart.
 author: Maglione Sandro <lass.maglio@gmail.com>
 
 environment:
-  sdk: ">=2.13.0 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   fpdart:
