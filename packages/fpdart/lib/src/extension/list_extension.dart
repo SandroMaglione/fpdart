@@ -23,12 +23,12 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
             ];
 
   /// `zip` is used to join elements at the same index from two different [List]
-  /// into one [List] of [Tuple2].
+  /// into one [List] of a record.
   /// ```dart
   /// final list1 = ['a', 'b'];
   /// final list2 = [1, 2];
   /// final zipList = list1.zip(list2);
-  /// print(zipList); // -> [Tuple2(a, 1), Tuple2(b, 2)]
+  /// print(zipList); // -> [(a, 1), (b, 2)]
   /// ```
   Iterable<(T, B)> zip<B>(Iterable<B> lb) =>
       zipWith<B, (T, B)>((a) => (b) => (a, b))(lb);
@@ -126,7 +126,7 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
         },
       ).$2;
 
-  /// Return a [Tuple2] where first element is longest prefix (possibly empty) of this [Iterable]
+  /// Return a record where first element is longest prefix (possibly empty) of this [Iterable]
   /// with elements that **satisfy** `predicate` and second element is the remainder of the [Iterable].
   (Iterable<T>, Iterable<T>) span(bool Function(T t) predicate) =>
       foldLeft<(bool, (Iterable<T>, Iterable<T>))>(
@@ -143,7 +143,7 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
         },
       ).$2;
 
-  /// Return a [Tuple2] where first element is longest prefix (possibly empty) of this [Iterable]
+  /// Return a record where first element is longest prefix (possibly empty) of this [Iterable]
   /// with elements that **do not satisfy** `predicate` and second element is the remainder of the [Iterable].
   (Iterable<T>, Iterable<T>) breakI(bool Function(T t) predicate) =>
       foldLeft<(bool, (Iterable<T>, Iterable<T>))>(
@@ -160,7 +160,7 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
         },
       ).$2;
 
-  /// Return a [Tuple2] where first element is an [Iterable] with the first `n` elements of this [Iterable],
+  /// Return a record where first element is an [Iterable] with the first `n` elements of this [Iterable],
   /// and the second element contains the rest of the [Iterable].
   (Iterable<T>, Iterable<T>) splitAt(int n) => (take(n), skip(n));
 
@@ -322,7 +322,7 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
   Iterable<B> bindWithIndex<B>(Iterable<B> Function(T t, int index) f) =>
       concatMapWithIndex(f);
 
-  /// Return a [Tuple2] where the first element is an [Iterable] with all the elements
+  /// Return a record where the first element is an [Iterable] with all the elements
   /// of this [Iterable] that do not satisfy `f` and the second all the elements that
   /// do satisfy f.
   (Iterable<T>, Iterable<T>) partition(bool Function(T t) f) =>

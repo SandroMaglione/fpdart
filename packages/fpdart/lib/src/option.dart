@@ -224,7 +224,7 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   @override
   Option<Z> filterMap<Z>(Option<Z> Function(T t) f);
 
-  /// Return a [Tuple2]. If this [Option] is a [Some]:
+  /// Return a record. If this [Option] is a [Some]:
   /// - if `f` applied to its value returns `true`, then the tuple contains this [Option] as second value
   /// - if `f` applied to its value returns `false`, then the tuple contains this [Option] as first value
   /// Otherwise the tuple contains both [None].
@@ -232,7 +232,7 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   (Option<T>, Option<T>) partition(bool Function(T t) f) =>
       (filter((a) => !f(a)), filter(f));
 
-  /// Return a [Tuple2] that contains as first value a [Some] when `f` returns [Left],
+  /// Return a record that contains as first value a [Some] when `f` returns [Left],
   /// otherwise the [Some] will be the second value of the tuple.
   @override
   (Option<Z>, Option<Y>) partitionMap<Z, Y>(Either<Z, Y> Function(T t) f) =>
@@ -425,7 +425,7 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
     }
   }
 
-  /// Return a [Tuple2] of [Option] from a `Option<Either<A, B>>`.
+  /// Return a record of [Option] from a `Option<Either<A, B>>`.
   ///
   /// The value on the left of the [Either] will be the first value of the tuple,
   /// while the right value of the [Either] will be the second of the tuple.
