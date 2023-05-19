@@ -40,6 +40,16 @@ final result = toIntOption("0xFF"); /// `Some(255)`
 final result = toDoubleOption("10.5"); /// `Some(10.5)`
 final result = toBoolEither(() => "left")("NO"); /// `Left("left")`
 ```
+- Changed `uncurry` extension to getter function ⚠️
+```dart
+int Function(int) subtractCurried(int n1) => (n2) => n1 - n2;
+
+/// Before
+subtractCurried.uncurry()(10, 5);
+
+/// New
+subtractCurried.uncurry(10, 5);
+``` 
 - Removed `bool` extension (`match` and `fold`), use the ternary operator or pattern matching instead ⚠️
 ```dart
 final boolValue = Random().nextBool();
