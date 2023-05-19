@@ -4,8 +4,6 @@ import 'option.dart';
 
 /// Returns the given `a`.
 ///
-/// Same as `id`.
-///
 /// Shortcut function to return the input parameter:
 /// ```dart
 /// final either = Either<String, int>.of(10);
@@ -14,29 +12,10 @@ import 'option.dart';
 /// /// the input parameter `(l) => l`.
 /// final noId = either.match((l) => l, (r) => '$r');
 ///
-/// /// Using `identity`/`id`, the function just returns its input parameter.
+/// /// Using `identity`, the function just returns its input parameter.
 /// final withIdentity = either.match(identity, (r) => '$r');
-/// final withId = either.match(id, (r) => '$r');
 /// ```
 T identity<T>(T a) => a;
-
-/// Returns the given `a`.
-///
-/// Same as `identity`.
-///
-/// Shortcut function to return the input parameter:
-/// ```dart
-/// final either = Either<String, int>.of(10);
-///
-/// /// Without using `identity`, you must write a function to return
-/// /// the input parameter `(l) => l`.
-/// final noId = either.match((l) => l, (r) => '$r');
-///
-/// /// Using `identity`/`id`, the function just returns its input parameter.
-/// final withIdentity = either.match(identity, (r) => '$r');
-/// final withId = either.match(id, (r) => '$r');
-/// ```
-T id<T>(T a) => a;
 
 /// Returns the given `a`, wrapped in `Future.value`.
 ///
@@ -50,35 +29,10 @@ T id<T>(T a) => a;
 /// /// the input parameter `(l) async => l`.
 /// final noId = await either.match((l) async => l, (r) async => '$r');
 ///
-/// /// Using `identityFuture`/`idFuture`, the function just returns its input parameter.
+/// /// Using `identityFuture`, the function just returns its input parameter.
 /// final withIdentityFuture = either.match(identityFuture, (r) async => '$r');
-/// final withIdFuture = await either.match(idFuture, (r) async => '$r');
 /// ```
 Future<T> identityFuture<T>(T a) => Future.value(a);
-
-/// Returns the given `a`, wrapped in `Future.value`.
-///
-/// Same as `identityFuture`.
-///
-/// Shortcut function to return the input parameter:
-/// ```dart
-/// final either = Either<String, int>.of(10);
-///
-/// /// Without using `idFuture`, you must write a function to return
-/// /// the input parameter `(l) async => l`.
-/// final noId = await either.match((l) async => l, (r) async => '$r');
-///
-/// /// Using `identityFuture`/`idFuture`, the function just returns its input parameter.
-/// final withIdentity = either.match(identityFuture, (r) async => '$r');
-/// final withId = await either.match(idFuture, (r) async => '$r');
-/// ```
-Future<T> idFuture<T>(T a) => Future.value(a);
-
-/// Returns the **first parameter** from a function that takes two parameters as input.
-T1 idFirst<T1, T2>(T1 t1, T2 t2) => t1;
-
-/// Returns the **second parameter** from a function that takes two parameters as input.
-T2 idSecond<T1, T2>(T1 t1, T2 t2) => t2;
 
 /// `constf a` is a unary function which evaluates to `a` for all inputs.
 /// ```dart
@@ -87,7 +41,7 @@ T2 idSecond<T1, T2>(T1 t1, T2 t2) => t2;
 /// print(c('any')); // -> 10
 /// print(c(112.12)); // -> 10
 /// ```
-A Function(dynamic b) constF<A>(A a) => (dynamic b) => a;
+A Function(dynamic b) constF<A>(A a) => <B>(B b) => a;
 
 /// {@template fpdart_string_extension_to_num_option}
 /// Convert this [String] to [num], returns [None] for invalid inputs.
