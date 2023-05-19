@@ -16,6 +16,8 @@
   - `Task` 
   - `TaskOption` 
   - `TaskEither` 
+- Removed `Tuple2`, use Dart 3 Records instead (`Tuple2(a, b)` becomes simply `(a, b)` 🎯) ⚠️
+  - Updated all internal APIs to use records instead of `Tuple2` 
 - Added conversions helpers from `String` to `num`, `int`, `double`, and `bool` using `Option` and `Either` (both as extension methods on `String` and as functions)
   - `toNumOption` 
   - `toIntOption` 
