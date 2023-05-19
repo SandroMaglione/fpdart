@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 
-import './utils/utils.dart';
+import '../utils/utils.dart';
 
 void main() {
   group('FpdartOnMutableMap', () {

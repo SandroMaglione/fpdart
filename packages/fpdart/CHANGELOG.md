@@ -16,6 +16,73 @@
   - `Task` 
   - `TaskOption` 
   - `TaskEither` 
+- Added conversions helpers from `String` to `num`, `int`, `double`, and `bool` using `Option` and `Either` (both as extension methods on `String` and as functions)
+  - `toNumOption` 
+  - `toIntOption` 
+  - `toDoubleOption` 
+  - `toBoolOption` 
+  - `toNumEither` 
+  - `toIntEither` 
+  - `toDoubleEither` 
+  - `toBoolEither` 
+```dart
+/// As extension on [String]
+final result = "10".toNumOption; /// `Some(10)`
+final result = "10.5".toNumOption; /// `Some(10.5)`
+final result = "0xFF".toIntOption; /// `Some(255)`
+final result = "10.5".toDoubleOption; /// `Some(10.5)`
+final result = "NO".toBoolEither(() => "left"); /// `Left("left")`
+
+/// As functions
+final result = toNumOption("10"); /// `Some(10)`
+final result = toNumOption("10.5"); /// `Some(10.5)`
+final result = toIntOption("0xFF"); /// `Some(255)`
+final result = toDoubleOption("10.5"); /// `Some(10.5)`
+final result = toBoolEither(() => "left")("NO"); /// `Left("left")`
+```
+- Updated curry / uncarry extensions ⚠️
+  - Renamed `curry` to `curryAll` for functions with 3, 4, 5 parameters 
+  - Changed definition of `curry` to curry only the first parameter
+  - Changed `uncurry` and `curry` extension to getter function
+  - Removed `curry` and `uncurry` as functions (use extension method instead)
+```dart
+int Function(int) subtractCurried(int n1) => (n2) => n1 - n2;
+
+/// Before
+subtractCurried.uncurry()(10, 5);
+
+final addFunction = (int a, int b) => a + b;
+final add = curry2(addFunction);
+
+[1, 2, 3].map(add(1));  // returns [2, 3, 4]
+
+/// New
+subtractCurried.uncurry(10, 5);
+
+final addFunction = (int a, int b) => a + b;
+final add = addFunction.curry;
+
+[1, 2, 3].map(add(1)); // returns [2, 3, 4]
+[1, 2, 3].map(addFunction.curry(1)); // returns [2, 3, 4]
+``` 
+- Removed `bool` extension (`match` and `fold`), use the ternary operator or pattern matching instead ⚠️
+```dart
+final boolValue = Random().nextBool();
+
+/// Before
+final result = boolValue.match<int>(() => -1, () => 1);
+final result = boolValue.fold<int>(() => -1, () => 1);
+
+/// New
+final result = boolValue ? 1 : -1;
+final result = switch (boolValue) { true => 1, false => -1 };
+```
+- Removed `id` and `idFuture`, use `identity` and `identityFuture` instead ⚠️
+- Removed `idFirst` and `idSecond` functions ⚠️
+- Organized all extensions inside internal `extension` folder
+
+***
+
 
 ## v0.6.0 - 6 May 2023
 - Do notation [#97](https://github.com/SandroMaglione/fpdart/pull/97) (Special thanks to [@tim-smart](https://github.com/tim-smart) 🎉)

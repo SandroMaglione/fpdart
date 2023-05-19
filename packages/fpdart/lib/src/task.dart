@@ -1,6 +1,6 @@
 import 'either.dart';
+import 'extension/list_extension.dart';
 import 'function.dart';
-import 'list_extension.dart';
 import 'option.dart';
 import 'task_either.dart';
 import 'task_option.dart';

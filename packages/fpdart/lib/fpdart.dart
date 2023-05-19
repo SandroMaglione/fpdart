@@ -1,15 +1,12 @@
-export 'src/boolean.dart';
 export 'src/compose.dart';
 export 'src/date.dart';
 export 'src/either.dart';
+export 'src/extension/extension.export.dart';
 export 'src/function.dart';
 export 'src/io.dart';
 export 'src/io_either.dart';
 export 'src/io_option.dart';
 export 'src/io_ref.dart';
-export 'src/list_extension.dart';
-export 'src/map_extension.dart';
-export 'src/nullable_extension.dart';
 export 'src/option.dart';
 export 'src/predicate.dart';
 export 'src/random.dart';

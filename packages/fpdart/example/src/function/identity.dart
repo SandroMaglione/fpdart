@@ -9,7 +9,6 @@ Future<void> main() async {
 
   /// Using `identity`/`id`, the function just returns its input parameter.
   final withIdentity = either.match(identity, (r) => '$r');
-  final withId = either.match(id, (r) => '$r');
 
   /// Using `identityFuture`/`idFuture`, the function just returns its input
   /// parameter, wrapped in `Future.value`.
@@ -17,5 +16,4 @@ Future<void> main() async {
     identityFuture,
     (r) async => '$r',
   );
-  final withidFuture = await either.match(idFuture, (r) async => '$r');
 }

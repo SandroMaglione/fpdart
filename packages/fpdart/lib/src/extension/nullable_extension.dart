@@ -1,10 +1,10 @@
-import 'either.dart';
-import 'io_either.dart';
-import 'io_option.dart';
-import 'option.dart';
-import 'task.dart';
-import 'task_either.dart';
-import 'task_option.dart';
+import '../either.dart';
+import '../io_either.dart';
+import '../io_option.dart';
+import '../option.dart';
+import '../task.dart';
+import '../task_either.dart';
+import '../task_option.dart';
 
 /// `fpdart` extension to work on nullable values `T?`
 extension FpdartOnNullable<T> on T? {

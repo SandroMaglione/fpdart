@@ -1,14 +1,14 @@
-import 'date.dart';
-import 'either.dart';
-import 'io.dart';
-import 'io_either.dart';
-import 'io_option.dart';
-import 'option.dart';
-import 'task.dart';
-import 'task_either.dart';
-import 'task_option.dart';
-import 'tuple.dart';
-import 'typeclass/order.dart';
+import '../date.dart';
+import '../either.dart';
+import '../io.dart';
+import '../io_either.dart';
+import '../io_option.dart';
+import '../option.dart';
+import '../task.dart';
+import '../task_either.dart';
+import '../task_option.dart';
+import '../tuple.dart';
+import '../typeclass/order.dart';
 
 /// Functional programming functions on a mutable dart [Iterable] using `fpdart`.
 extension FpdartOnMutableIterable<T> on Iterable<T> {

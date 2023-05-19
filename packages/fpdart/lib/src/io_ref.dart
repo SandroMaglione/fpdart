@@ -1,6 +1,6 @@
-import 'function.dart';
 import 'io.dart';
 import 'typeclass/eq.dart';
+import 'typedef.dart';
 import 'unit.dart';
 
 /// Mutable reference in the [IO] monad.
