@@ -32,21 +32,21 @@ class FoundWord {
 const searchWords = ['that', 'and', 'for'];
 
 Iterable<FoundWord> collectFoundWords(
-  Iterable<Tuple2<String, String>> iterable,
+  Iterable<(String, String)> iterable,
 ) =>
     iterable.flatMapWithIndex(
       (tuple, index) => searchWords.foldLeftWithIndex<List<FoundWord>>(
         [],
         (acc, word, wordIndex) =>
-            tuple.second.toLowerCase().split(' ').contains(word)
+            tuple.$2.toLowerCase().split(' ').contains(word)
                 ? [
                     ...acc,
                     FoundWord(
                       index,
                       word,
                       wordIndex,
-                      tuple.second.replaceAll(word, '<\$>'),
-                      tuple.first,
+                      tuple.$2.replaceAll(word, '<\$>'),
+                      tuple.$1,
                     ),
                   ]
                 : acc,
