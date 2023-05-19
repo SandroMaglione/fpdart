@@ -4,6 +4,20 @@ import 'package:glados/glados.dart';
 void main() {
   group('function', () {
     group('[Property-based testing]', () {
+      Glados(any.letterOrDigits).test('identity', (stringValue) {
+        expect(identity(stringValue), stringValue);
+      });
+
+      Glados(any.letterOrDigits).test('constF', (stringValue) {
+        final fun = constF(10);
+        expect(fun(stringValue), 10);
+      });
+
+      Glados(any.letterOrDigits).test('identityFuture', (stringValue) async {
+        final id = await identityFuture(stringValue);
+        expect(id, stringValue);
+      });
+
       Glados(any.letterOrDigits).test('toNumOption (same as extension)',
           (stringValue) {
         expect(stringValue.toNumOption, toNumOption(stringValue));

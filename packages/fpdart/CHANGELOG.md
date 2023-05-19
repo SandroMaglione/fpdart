@@ -77,6 +77,8 @@ final result = boolValue.fold<int>(() => -1, () => 1);
 final result = boolValue ? 1 : -1;
 final result = switch (boolValue) { true => 1, false => -1 };
 ```
+- Removed `id` and `idFuture`, use `identity` and `identityFuture` instead ⚠️
+- Removed `idFirst` and `idSecond` functions ⚠️
 - Organized all extensions inside internal `extension` folder
 
 ***
