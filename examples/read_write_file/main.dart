@@ -6,7 +6,7 @@ import 'package:fpdart/fpdart.dart';
  * Read lines from a `.txt` file using [TaskEither] of fpdart.
  * 
  * This application reads from two files containing english and italian sentences.
- * It then uses `zip` to join the two resulting lists together in a `List<Tuple2<String, String>>`.
+ * It then uses `zip` to join the two resulting lists together in a `List<(String, String)>`.
  * 
  * Finally, it uses `flatMap` and `foldLeft` to iterate over the sentences and search words from a predefined list (`searchWords`).
  * At the end, we have a list of [FoundWord] containing all the sentences and words matched.

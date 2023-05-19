@@ -366,7 +366,7 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
 
   /// {@template fpdart_partition_eithers_either}
   /// Extract all the [Left] and [Right] values from a `List<Either<E, A>>` and
-  /// return them in two partitioned [List] inside [Tuple2].
+  /// return them in two partitioned [List] inside a record.
   /// {@endtemplate}
   static (List<E>, List<A>) partitionEithers<E, A>(List<Either<E, A>> list) {
     final resultListLefts = <E>[];
