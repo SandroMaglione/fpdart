@@ -1,5 +1,4 @@
 import '../option.dart';
-import '../tuple.dart';
 import '../typeclass/eq.dart';
 import '../typeclass/order.dart';
 import '../typedef.dart';
@@ -81,9 +80,9 @@ extension FpdartOnMutableMap<K, V> on Map<K, V> {
   Option<V> lookup(K key) => Option.fromNullable(this[key]);
 
   /// Get the value and key at given `key` if present, otherwise return [None].
-  Option<Tuple2<K, V>> lookupWithKey(K key) {
+  Option<(K, V)> lookupWithKey(K key) {
     final value = this[key];
-    return value != null ? some(tuple2(key, value)) : none();
+    return value != null ? some((key, value)) : none();
   }
 
   /// Return an [Option] that conditionally accesses map keys, only if they match the
@@ -181,8 +180,8 @@ extension FpdartOnMutableMap<K, V> on Map<K, V> {
       };
 
   /// Delete a key and value from a this [Map], returning the deleted value as well as the subsequent [Map].
-  Option<Tuple2<V, Map<K, V>>> Function(K key) pop(Eq<K> eq) =>
-      (K key) => lookup(key).map((v) => tuple2(v, deleteAt(eq)(key)));
+  Option<(V, Map<K, V>)> Function(K key) pop(Eq<K> eq) =>
+      (K key) => lookup(key).map((v) => (v, deleteAt(eq)(key)));
 
   /// Apply `fun` to all the values of this [Map] sorted based on `order` on their key,
   /// and return the result of combining all the intermediate values.

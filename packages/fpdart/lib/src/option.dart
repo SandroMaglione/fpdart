@@ -3,7 +3,6 @@ import 'extension/option_extension.dart';
 import 'function.dart';
 import 'io_option.dart';
 import 'task_option.dart';
-import 'tuple.dart';
 import 'typeclass/applicative.dart';
 import 'typeclass/eq.dart';
 import 'typeclass/extend.dart';
@@ -230,14 +229,13 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   /// - if `f` applied to its value returns `false`, then the tuple contains this [Option] as first value
   /// Otherwise the tuple contains both [None].
   @override
-  Tuple2<Option<T>, Option<T>> partition(bool Function(T t) f) =>
-      Tuple2(filter((a) => !f(a)), filter(f));
+  (Option<T>, Option<T>) partition(bool Function(T t) f) =>
+      (filter((a) => !f(a)), filter(f));
 
   /// Return a [Tuple2] that contains as first value a [Some] when `f` returns [Left],
   /// otherwise the [Some] will be the second value of the tuple.
   @override
-  Tuple2<Option<Z>, Option<Y>> partitionMap<Z, Y>(
-          Either<Z, Y> Function(T t) f) =>
+  (Option<Z>, Option<Y>) partitionMap<Z, Y>(Either<Z, Y> Function(T t) f) =>
       Option.separate(map(f));
 
   /// If this [Option] is a [Some], then return the result of calling `then`.
@@ -431,10 +429,10 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   ///
   /// The value on the left of the [Either] will be the first value of the tuple,
   /// while the right value of the [Either] will be the second of the tuple.
-  static Tuple2<Option<A>, Option<B>> separate<A, B>(Option<Either<A, B>> m) =>
+  static (Option<A>, Option<B>) separate<A, B>(Option<Either<A, B>> m) =>
       m.match(
-        () => Tuple2(const Option.none(), const Option.none()),
-        (either) => Tuple2(either.getLeft(), either.getRight()),
+        () => (const Option.none(), const Option.none()),
+        (either) => (either.getLeft(), either.getRight()),
       );
 
   /// Build an `Eq<Option>` by comparing the values inside two [Option].
