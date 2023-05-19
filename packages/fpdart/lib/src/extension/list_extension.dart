@@ -213,7 +213,7 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
           return (a.$1, a.$2.append(e));
         }
 
-        return e == element ? (false, a.$2.append(e)) : (a.$1, a.$2.append(e));
+        return e == element ? (false, a.$2) : (a.$1, a.$2.append(e));
       }).$2;
 
   /// The largest element of this [Iterable] based on `order`.
