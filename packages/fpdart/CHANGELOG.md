@@ -79,6 +79,8 @@ final result = switch (boolValue) { true => 1, false => -1 };
 ```
 - Removed `id` and `idFuture`, use `identity` and `identityFuture` instead ⚠️
 - Removed `idFirst` and `idSecond` functions ⚠️
+- Removed `Compose` class and extension methods ⚠️
+- Removed extension methods on nullable types (`toOption`, `toEither`, `toTaskOption`, `toIOEither`, `toTaskEither`, `toTaskEitherAsync`) ⚠️
 - Organized all extensions inside internal `extension` folder
 
 ***
