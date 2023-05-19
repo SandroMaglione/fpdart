@@ -1,5 +1,4 @@
 import '../function.dart';
-import '../tuple.dart';
 import '../typedef.dart';
 import 'hkt.dart';
 import 'monoid.dart';
@@ -20,16 +19,16 @@ mixin Foldable<G, A> on HKT<G, A> {
       foldRight(monoid.empty, (b, a) => monoid.combine(f(a), b));
 
   B foldRightWithIndex<B>(B b, B Function(int i, B acc, A a) f) =>
-      foldRight<Tuple2<B, int>>(
-        Tuple2(b, length() - 1),
-        (t, a) => Tuple2(f(t.second, t.first, a), t.second - 1),
-      ).first;
+      foldRight<(B, int)>(
+        (b, length() - 1),
+        (t, a) => (f(t.$2, t.$1, a), t.$2 - 1),
+      ).$1;
 
   B foldLeftWithIndex<B>(B b, B Function(int i, B acc, A a) f) =>
-      foldLeft<Tuple2<B, int>>(
-        Tuple2(b, 0),
-        (t, a) => Tuple2(f(t.second, t.first, a), t.second + 1),
-      ).first;
+      foldLeft<(B, int)>(
+        (b, 0),
+        (t, a) => (f(t.$2, t.$1, a), t.$2 + 1),
+      ).$1;
 
   int length() => foldLeft(0, (b, _) => b + 1);
 
@@ -57,16 +56,16 @@ mixin Foldable2<G, A, B> on HKT2<G, A, B> {
       foldRight(monoid.empty, (c, b) => monoid.combine(f(b), c));
 
   C foldRightWithIndex<C>(C c, C Function(int i, C acc, B b) f) =>
-      foldRight<Tuple2<C, int>>(
-        Tuple2(c, length() - 1),
-        (t, b) => Tuple2(f(t.second, t.first, b), t.second - 1),
-      ).first;
+      foldRight<(C, int)>(
+        (c, length() - 1),
+        (t, b) => (f(t.$2, t.$1, b), t.$2 - 1),
+      ).$1;
 
   C foldLeftWithIndex<C>(C c, C Function(int i, C acc, B b) f) =>
-      foldLeft<Tuple2<C, int>>(
-        Tuple2(c, 0),
-        (t, b) => Tuple2(f(t.second, t.first, b), t.second + 1),
-      ).first;
+      foldLeft<(C, int)>(
+        (c, 0),
+        (t, b) => (f(t.$2, t.$1, b), t.$2 + 1),
+      ).$1;
 
   int length() => foldLeft(0, (b, _) => b + 1);
 
