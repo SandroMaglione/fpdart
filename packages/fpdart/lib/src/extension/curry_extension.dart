@@ -4,8 +4,8 @@ extension CurryExtension2<Input1, Input2, Output> on Output Function(
   /// that returns another function both accepting one parameter.
   ///
   /// Inverse of `uncurry`.
-  Output Function(Input2) curry(Input1 input1) =>
-      (input2) => this(input1, input2);
+  Output Function(Input2) Function(Input1) get curry =>
+      (input1) => (input2) => this(input1, input2);
 }
 
 extension UncurryExtension2<Input1, Input2, Output> on Output Function(Input2)
@@ -15,7 +15,7 @@ extension UncurryExtension2<Input1, Input2, Output> on Output Function(Input2)
   ///
   /// Inverse of `curry`.
   Output Function(Input1, Input2) get uncurry =>
-      (Input1 input1, Input2 input2) => this(input1)(input2);
+      (input1, input2) => this(input1)(input2);
 }
 
 extension CurryExtension3<Input1, Input2, Input3, Output> on Output Function(
@@ -24,8 +24,8 @@ extension CurryExtension3<Input1, Input2, Input3, Output> on Output Function(
   /// of functions that all accept one parameter.
   ///
   /// Inverse of `uncurry`.
-  Output Function(Input3) Function(Input2) curry(Input1 input1) =>
-      (input2) => (input3) => this(input1, input2, input3);
+  Output Function(Input3) Function(Input2) Function(Input1) get curry =>
+      (input1) => (input2) => (input3) => this(input1, input2, input3);
 }
 
 extension UncurryExtension3<Input1, Input2, Input3, Output>
@@ -35,8 +35,7 @@ extension UncurryExtension3<Input1, Input2, Input3, Output>
   ///
   /// Inverse of `curry`.
   Output Function(Input1, Input2, Input3) get uncurry =>
-      (Input1 input1, Input2 input2, Input3 input3) =>
-          this(input1)(input2)(input3);
+      (input1, input2, input3) => this(input1)(input2)(input3);
 }
 
 extension CurryExtension4<Input1, Input2, Input3, Input4, Output> on Output
@@ -45,9 +44,9 @@ extension CurryExtension4<Input1, Input2, Input3, Input4, Output> on Output
   /// of functions that all accept one parameter.
   ///
   /// Inverse of `uncurry`.
-  Output Function(Input4) Function(Input3) Function(Input2) curry(
-          Input1 input1) =>
-      (input2) => (input3) => (input4) => this(input1, input2, input3, input4);
+  Output Function(Input4) Function(Input3) Function(Input2) Function(Input1)
+      get curry => (input1) => (input2) =>
+          (input3) => (input4) => this(input1, input2, input3, input4);
 }
 
 extension UncurryExtension4<Input1, Input2, Input3, Input4, Output>
@@ -69,7 +68,8 @@ extension CurryExtension5<Input1, Input2, Input3, Input4, Input5, Output>
   ///
   /// Inverse of `uncurry`.
   Output Function(Input5) Function(Input4) Function(Input3) Function(Input2)
-      curry(Input1 input1) => (input2) => (input3) =>
+          Function(Input1)
+      get curry => (input1) => (input2) => (input3) =>
           (input4) => (input5) => this(input1, input2, input3, input4, input5);
 }
 
@@ -82,7 +82,6 @@ extension UncurryExtension5<Input1, Input2, Input3, Input4, Input5, Output>
   ///
   /// Inverse of `curry`.
   Output Function(Input1, Input2, Input3, Input4, Input5) get uncurry =>
-      (Input1 input1, Input2 input2, Input3 input3, Input4 input4,
-              Input5 input5) =>
+      (input1, input2, input3, input4, input5) =>
           this(input1)(input2)(input3)(input4)(input5);
 }
