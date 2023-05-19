@@ -12,7 +12,7 @@ class Market {
   Option<int> buyAmount() => getRandomOption(randomInt(1, 10).run());
 }
 
-Option<T> getRandomOption<T>(T value) => randomBool()
+Option<T> getRandomOption<T>(T value) => randomBool
     .map(
       (isValid) => isValid ? some(value) : none<T>(),
     )
