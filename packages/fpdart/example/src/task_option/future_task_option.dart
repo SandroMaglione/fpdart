@@ -12,11 +12,6 @@ final taskOp = TaskOption.flatten(
   )),
 );
 
-/// New API `toOption`: from `Map<String, Object>?` to `Option<Map<String, Object>>`
-final taskOpNew = TaskOption<Map<String, Object>>(
-  () async => (await example).toOption(),
-);
-
 /// Using `Option.fromNullable`, the [Future] cannot fail
 final taskOpNoFail = TaskOption<Map<String, Object>>(
   () async => Option.fromNullable(await example),
