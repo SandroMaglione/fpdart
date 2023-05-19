@@ -7,7 +7,6 @@ import '../option.dart';
 import '../task.dart';
 import '../task_either.dart';
 import '../task_option.dart';
-import '../tuple.dart';
 import '../typeclass/order.dart';
 
 /// Functional programming functions on a mutable dart [Iterable] using `fpdart`.
@@ -31,8 +30,8 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
   /// final zipList = list1.zip(list2);
   /// print(zipList); // -> [Tuple2(a, 1), Tuple2(b, 2)]
   /// ```
-  Iterable<Tuple2<T, B>> zip<B>(Iterable<B> lb) =>
-      zipWith<B, Tuple2<T, B>>((a) => (b) => Tuple2(a, b))(lb);
+  Iterable<(T, B)> zip<B>(Iterable<B> lb) =>
+      zipWith<B, (T, B)>((a) => (b) => (a, b))(lb);
 
   /// Get the first element of the list.
   /// If the list is empty, return [None].
@@ -73,107 +72,97 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
 
   /// Extract all elements **starting from the first** as long as `predicate` returns `true`.
   Iterable<T> takeWhileLeft(bool Function(T t) predicate) =>
-      foldLeft<Tuple2<bool, Iterable<T>>>(
-        const Tuple2(true, []),
+      foldLeft<(bool, Iterable<T>)>(
+        (true, []),
         (a, e) {
-          if (!a.first) {
+          if (!a.$1) {
             return a;
           }
 
           final check = predicate(e);
-          return check
-              ? Tuple2(check, [...a.second, e])
-              : Tuple2(check, a.second);
+          return check ? (check, [...a.$2, e]) : (check, a.$2);
         },
-      ).second;
+      ).$2;
 
   /// Remove all elements **starting from the first** as long as `predicate` returns `true`.
   Iterable<T> dropWhileLeft(bool Function(T t) predicate) =>
-      foldLeft<Tuple2<bool, Iterable<T>>>(
-        const Tuple2(true, []),
+      foldLeft<(bool, Iterable<T>)>(
+        (true, []),
         (a, e) {
-          if (!a.first) {
-            return Tuple2(a.first, a.second.append(e));
+          if (!a.$1) {
+            return (a.$1, a.$2.append(e));
           }
 
           final check = predicate(e);
-          return check
-              ? Tuple2(check, a.second)
-              : Tuple2(check, a.second.append(e));
+          return check ? (check, a.$2) : (check, a.$2.append(e));
         },
-      ).second;
+      ).$2;
 
   /// Extract all elements **starting from the last** as long as `predicate` returns `true`.
   Iterable<T> takeWhileRight(bool Function(T t) predicate) =>
-      foldRight<Tuple2<bool, Iterable<T>>>(
-        const Tuple2(true, []),
+      foldRight<(bool, Iterable<T>)>(
+        const (true, []),
         (e, a) {
-          if (!a.first) {
+          if (!a.$1) {
             return a;
           }
 
           final check = predicate(e);
-          return check
-              ? Tuple2(check, a.second.prepend(e))
-              : Tuple2(check, a.second);
+          return check ? (check, a.$2.prepend(e)) : (check, a.$2);
         },
-      ).second;
+      ).$2;
 
   /// Remove all elements **starting from the last** as long as `predicate` returns `true`.
   Iterable<T> dropWhileRight(bool Function(T t) predicate) =>
-      foldRight<Tuple2<bool, Iterable<T>>>(
-        const Tuple2(true, []),
+      foldRight<(bool, Iterable<T>)>(
+        const (true, []),
         (e, a) {
-          if (!a.first) {
-            return Tuple2(a.first, a.second.prepend(e));
+          if (!a.$1) {
+            return (a.$1, a.$2.prepend(e));
           }
 
           final check = predicate(e);
-          return check
-              ? Tuple2(check, a.second)
-              : Tuple2(check, a.second.prepend(e));
+          return check ? (check, a.$2) : (check, a.$2.prepend(e));
         },
-      ).second;
+      ).$2;
 
   /// Return a [Tuple2] where first element is longest prefix (possibly empty) of this [Iterable]
   /// with elements that **satisfy** `predicate` and second element is the remainder of the [Iterable].
-  Tuple2<Iterable<T>, Iterable<T>> span(bool Function(T t) predicate) =>
-      foldLeft<Tuple2<bool, Tuple2<Iterable<T>, Iterable<T>>>>(
-        const Tuple2(true, Tuple2([], [])),
+  (Iterable<T>, Iterable<T>) span(bool Function(T t) predicate) =>
+      foldLeft<(bool, (Iterable<T>, Iterable<T>))>(
+        (true, ([], [])),
         (a, e) {
-          if (!a.first) {
-            return Tuple2(
-                a.first, a.second.mapSecond((second) => second.append(e)));
+          if (!a.$1) {
+            return (a.$1, (a.$2.$1, a.$2.$2.append(e)));
           }
 
           final check = predicate(e);
           return check
-              ? Tuple2(check, a.second.mapFirst((first) => first.append(e)))
-              : Tuple2(check, a.second.mapSecond((second) => second.append(e)));
+              ? (check, (a.$2.$1.append(e), a.$2.$2))
+              : (check, (a.$2.$1, a.$2.$2.append(e)));
         },
-      ).second;
+      ).$2;
 
   /// Return a [Tuple2] where first element is longest prefix (possibly empty) of this [Iterable]
   /// with elements that **do not satisfy** `predicate` and second element is the remainder of the [Iterable].
-  Tuple2<Iterable<T>, Iterable<T>> breakI(bool Function(T t) predicate) =>
-      foldLeft<Tuple2<bool, Tuple2<Iterable<T>, Iterable<T>>>>(
-        const Tuple2(false, Tuple2([], [])),
+  (Iterable<T>, Iterable<T>) breakI(bool Function(T t) predicate) =>
+      foldLeft<(bool, (Iterable<T>, Iterable<T>))>(
+        (false, ([], [])),
         (a, e) {
-          if (a.first) {
-            return Tuple2(
-                a.first, a.second.mapSecond((second) => second.append(e)));
+          if (a.$1) {
+            return (a.$1, (a.$2.$1, a.$2.$2.append(e)));
           }
 
           final check = predicate(e);
           return check
-              ? Tuple2(check, a.second.mapSecond((second) => second.append(e)))
-              : Tuple2(check, a.second.mapFirst((first) => first.append(e)));
+              ? (check, (a.$2.$1, a.$2.$2.append(e)))
+              : (check, (a.$2.$1.append(e), a.$2.$2));
         },
-      ).second;
+      ).$2;
 
   /// Return a [Tuple2] where first element is an [Iterable] with the first `n` elements of this [Iterable],
   /// and the second element contains the rest of the [Iterable].
-  Tuple2<Iterable<T>, Iterable<T>> splitAt(int n) => Tuple2(take(n), skip(n));
+  (Iterable<T>, Iterable<T>) splitAt(int n) => (take(n), skip(n));
 
   /// Check if `element` is contained inside this [Iterable].
   ///
@@ -219,15 +208,13 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
 
   /// Remove the **first occurrence** of `element` from this [Iterable].
   Iterable<T> delete(T element) =>
-      foldLeft<Tuple2<bool, Iterable<T>>>(const Tuple2(true, []), (a, e) {
-        if (!a.first) {
-          return a.mapSecond((second) => second.append(e));
+      foldLeft<(bool, Iterable<T>)>((true, []), (a, e) {
+        if (!a.$1) {
+          return (a.$1, a.$2.append(e));
         }
 
-        return e == element
-            ? a.mapFirst((first) => false)
-            : a.mapSecond((second) => second.append(e));
-      }).second;
+        return e == element ? (false, a.$2.append(e)) : (a.$1, a.$2.append(e));
+      }).$2;
 
   /// The largest element of this [Iterable] based on `order`.
   ///
@@ -274,10 +261,10 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
   /// **from the first to the last** using their index.
   B foldLeftWithIndex<B>(
           B initialValue, B Function(B accumulator, T element, int index) f) =>
-      fold<Tuple2<B, int>>(
-        Tuple2(initialValue, 0),
-        (p, e) => Tuple2(f(p.first, e, p.second), p.second + 1),
-      ).first;
+      fold<(B, int)>(
+        (initialValue, 0),
+        (p, e) => (f(p.$1, e, p.$2), p.$2 + 1),
+      ).$1;
 
   /// Fold a [List] into a single value by aggregating each element of the list
   /// **from the last to the first**.
@@ -288,10 +275,10 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
   /// **from the last to the first** using their index.
   B foldRightWithIndex<B>(
           B initialValue, B Function(T element, B accumulator, int index) f) =>
-      foldRight<Tuple2<B, int>>(
-        Tuple2(initialValue, 0),
-        (e, p) => Tuple2(f(e, p.first, p.second), p.second + 1),
-      ).first;
+      foldRight<(B, int)>(
+        (initialValue, 0),
+        (e, p) => (f(e, p.$1, p.$2), p.$2 + 1),
+      ).$1;
 
   /// Map [Iterable] from type `T` to type `B` using the index.
   Iterable<B> mapWithIndex<B>(B Function(T t, int index) f) =>
@@ -338,8 +325,8 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
   /// Return a [Tuple2] where the first element is an [Iterable] with all the elements
   /// of this [Iterable] that do not satisfy `f` and the second all the elements that
   /// do satisfy f.
-  Tuple2<Iterable<T>, Iterable<T>> partition(bool Function(T t) f) =>
-      Tuple2(filter((t) => !f(t)), filter(f));
+  (Iterable<T>, Iterable<T>) partition(bool Function(T t) f) =>
+      (filter((t) => !f(t)), filter(f));
 
   /// Sort [Iterable] based on [DateTime] extracted from type `T` using `getDate`.
   ///
@@ -531,7 +518,7 @@ extension FpdartSequenceIterableEither<E, A> on Iterable<Either<E, A>> {
   List<E> leftsEither() => Either.lefts(toList());
 
   /// {@macro fpdart_partition_eithers_either}
-  Tuple2<List<E>, List<A>> partitionEithersEither() =>
+  (List<E>, List<A>) partitionEithersEither() =>
       Either.partitionEithers(toList());
 }
 

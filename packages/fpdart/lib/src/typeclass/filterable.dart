@@ -1,6 +1,5 @@
 import '../either.dart';
 import '../option.dart';
-import '../tuple.dart';
 import '../typedef.dart';
 import 'functor.dart';
 import 'hkt.dart';
@@ -14,7 +13,7 @@ mixin Filterable<KT, A> on HKT<KT, A>, Functor<KT, A> {
 
   /// Partition a data structure based on a boolean predicate.
   Separated<KT, A, A> partition(bool Function(A a) f) =>
-      Tuple2(filter((a) => !f(a)), filter(f));
+      (filter((a) => !f(a)), filter(f));
 
   /// Partition a data structure based on an [Either] predicate.
   Separated<KT, Z, Y> partitionMap<Z, Y>(Either<Z, Y> Function(A a) f);
