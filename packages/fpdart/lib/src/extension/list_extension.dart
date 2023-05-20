@@ -10,7 +10,7 @@ import '../task_option.dart';
 import '../typeclass/order.dart';
 
 /// Functional programming functions on a mutable dart [Iterable] using `fpdart`.
-extension FpdartOnMutableIterable<T> on Iterable<T> {
+extension FpdartOnMutableIterable<T> on List<T> {
   /// Join elements at the same index from two different [List] into
   /// one [List] containing the result of calling `f` on the elements pair.
   Iterable<C> Function(Iterable<B> lb) zipWith<B, C>(
@@ -70,18 +70,6 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
         },
       ).$2;
 
-  /// Return a record where first element is an [Iterable] with the first `n` elements of this [Iterable],
-  /// and the second element contains the rest of the [Iterable].
-  (Iterable<T>, Iterable<T>) splitAt(int n) => (take(n), skip(n));
-
-  /// Check if `element` is contained inside this [Iterable].
-  ///
-  /// Same as standard dart `contains`.
-  bool elem(T element) => contains(element);
-
-  /// Check if `element` is **not** contained inside this [Iterable].
-  bool notElem(T element) => !elem(element);
-
   /// Insert `element` into the list at the first position where it is less than or equal to the next element
   /// based on `order`.
   ///
@@ -104,9 +92,8 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
               ? [first, ...drop(1).insertWith(insert, order, element)]
               : [element, first, ...drop(1)];
 
-  /// Sort this [Iterable] based on `order`.
-  Iterable<T> sortBy(Order<T> order) =>
-      [...this]..sort((x, y) => order.compare(x, y));
+  /// Sort this [List] based on `order`.
+  List<T> sortBy(Order<T> order) => [...this]..sort(order.compare);
 
   /// Sort this [Iterable] based on `order` of an object of type `A` extracted from `T` using `sort`.
   Iterable<T> sortWith<A>(A Function(T instance) sort, Order<A> order) =>
@@ -150,23 +137,6 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
             ),
           ));
 
-  /// Checks whether every element of this [Iterable] satisfies [test].
-  ///
-  /// Same as standard dart `every`.
-  bool all(bool Function(T t) predicate) => every(predicate);
-
-  /// Return the suffix of this [Iterable] after the first `n` elements.
-  ///
-  /// Same as standard dart `skip`.
-  Iterable<T> drop(int n) => skip(n);
-
-  /// Fold a [List] into a single value by aggregating each element of the list
-  /// **from the first to the last**.
-  ///
-  /// Same as standard `fold`.
-  B foldLeft<B>(B initialValue, B Function(B b, T t) f) =>
-      fold(initialValue, f);
-
   /// Fold a [List] into a single value by aggregating each element of the list
   /// **from the first to the last** using their index.
   B foldLeftWithIndex<B>(
@@ -198,11 +168,6 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
   Iterable<B> ap<B>(Iterable<B Function(T t)> fl) =>
       fl.concatMap((f) => map(f));
 
-  /// Apply `f` to each element of the [Iterable] and flat the result using `concat`.
-  ///
-  /// Same as `bind` and `flatMap`.
-  Iterable<B> concatMap<B>(Iterable<B> Function(T t) f) => map(f).concat;
-
   /// Apply `f` to each element of the [Iterable] using the index
   /// and flat the result using `concat`.
   ///
@@ -210,21 +175,11 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
   Iterable<B> concatMapWithIndex<B>(Iterable<B> Function(T t, int index) f) =>
       mapWithIndex(f).concat;
 
-  /// For each element of the [Iterable] apply function `f` and flat the result.
-  ///
-  /// Same as `bind` and `concatMap`.
-  Iterable<B> flatMap<B>(Iterable<B> Function(T t) f) => concatMap(f);
-
   /// For each element of the [Iterable] apply function `f` with the index and flat the result.
   ///
   /// Same as `bindWithIndex` and `concatMapWithIndex`.
   Iterable<B> flatMapWithIndex<B>(Iterable<B> Function(T t, int index) f) =>
       concatMapWithIndex(f);
-
-  /// For each element of the [Iterable] apply function `f` and flat the result.
-  ///
-  /// Same as `flatMap` and `concatMap`.
-  Iterable<B> bind<B>(Iterable<B> Function(T t) f) => flatMap(f);
 
   /// For each element of the [Iterable] apply function `f` with the index and flat the result.
   ///
@@ -232,23 +187,11 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
   Iterable<B> bindWithIndex<B>(Iterable<B> Function(T t, int index) f) =>
       concatMapWithIndex(f);
 
-  /// Return a record where the first element is an [Iterable] with all the elements
-  /// of this [Iterable] that do not satisfy `f` and the second all the elements that
-  /// do satisfy f.
-  (Iterable<T>, Iterable<T>) partition(bool Function(T t) f) =>
-      (filter((t) => !f(t)), filter(f));
-
   /// Sort [Iterable] based on [DateTime] extracted from type `T` using `getDate`.
   ///
   /// Sorting [DateTime] in **ascending** order (older dates first).
   Iterable<T> sortWithDate(DateTime Function(T instance) getDate) =>
       sortWith(getDate, dateOrder);
-}
-
-/// Functional programming functions on a mutable dart `Iterable<Iterable<T>>` using `fpdart`.
-extension FpdartOnMutableIterableOfIterable<T> on Iterable<Iterable<T>> {
-  /// From a container of `Iterable<Iterable<T>>` return a `Iterable<T>` of their concatenation.
-  Iterable<T> get concat => foldRight([], (a, e) => [...a, ...e]);
 }
 
 extension FpdartTraversableIterable<T> on Iterable<T> {
