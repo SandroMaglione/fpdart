@@ -18,6 +18,17 @@
   - `TaskEither` 
 - Removed `Tuple2`, use Dart 3 Records instead (`Tuple2(a, b)` becomes simply `(a, b)` 🎯) ⚠️
   - Updated all internal APIs to use records instead of `Tuple2` 
+- Major refactoring of `Iterable` and `List` extension methods
+  - Improved performance
+  - Correct return types (`Iterable` and `List`) ([#65](https://github.com/SandroMaglione/fpdart/issues/65))
+  - Added the following methods
+    - `concat` (`Iterable`) 
+  - Renamed the following methods ⚠️
+    - `concat` → `flatten` (on `Iterable<Iterable<T>>`)
+  - Removed the following methods ⚠️
+    - `breakI` (use `partition` instead) 
+    - `concatMap` (use `flatMap` instead) 
+    - `bind` (use `flatMap` instead) 
 - Added conversions helpers from `String` to `num`, `int`, `double`, and `bool` using `Option` and `Either` (both as extension methods on `String` and as functions)
   - `toNumOption` 
   - `toIntOption` 
