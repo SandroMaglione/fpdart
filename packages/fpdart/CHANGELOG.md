@@ -22,8 +22,8 @@
   - Improved performance
   - Correct return types (`Iterable` and `List`) ([#65](https://github.com/SandroMaglione/fpdart/issues/65))
   - Added the following methods
-    - `intersectBy` (`Iterable`)
-    - `intersectWith` (`Iterable`)
+    - `prependAll` (`Iterable`)
+    - `intersperse` (`Iterable`)
   - Fixed the following methods ⚠️
     - `takeWhileRight`: Result `List` reversed 
     - `dropWhileRight`: Result `List` reversed 
