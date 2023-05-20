@@ -22,13 +22,20 @@
   - Improved performance
   - Correct return types (`Iterable` and `List`) ([#65](https://github.com/SandroMaglione/fpdart/issues/65))
   - Added the following methods
-    - `concat` (`Iterable`) 
+    - `intersectBy` (`Iterable`)
+    - `intersectWith` (`Iterable`)
+  - Updated the following methods ⚠️
+    - `foldRight`, `foldRightWithIndex` (`List`): Changed parameter order in `combine` function
+    - `toIterable` changed to `toList` (`Map`)
   - Renamed the following methods ⚠️
+    - `plus` → `concat` (`Iterable`) 
     - `concat` → `flatten` (on `Iterable<Iterable<T>>`)
   - Removed the following methods ⚠️
     - `breakI` (use `partition` instead) 
     - `concatMap` (use `flatMap` instead) 
     - `bind` (use `flatMap` instead) 
+    - `bindWithIndex` (use `flatMapWithIndex` instead) 
+    - `concatMapWithIndex` (use `flatMapWithIndex` instead) 
 - Added conversions helpers from `String` to `num`, `int`, `double`, and `bool` using `Option` and `Either` (both as extension methods on `String` and as functions)
   - `toNumOption` 
   - `toIntOption` 
