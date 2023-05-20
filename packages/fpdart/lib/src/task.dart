@@ -1,5 +1,5 @@
 import 'either.dart';
-import 'extension/list_extension.dart';
+import 'extension/iterable_extension.dart';
 import 'function.dart';
 import 'option.dart';
 import 'task_either.dart';
