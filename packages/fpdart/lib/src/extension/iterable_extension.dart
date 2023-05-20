@@ -211,9 +211,10 @@ extension FpdartOnIterable<T> on Iterable<T> {
     if (isNotEmpty) {
       if (first != element) {
         yield first;
+        yield* skip(1).delete(element);
+      } else {
+        yield* skip(1);
       }
-
-      yield* skip(1).delete(element);
     }
   }
 

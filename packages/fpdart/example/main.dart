@@ -50,7 +50,7 @@ void imperativeVSfunctional() {
   /// Is it even possible? 🤷‍♂️
   final result = list
       .where((e) => e > 2)
-      .plus([1, 2, 3])
+      .concat([1, 2, 3])
       .drop(2)
       .intersect([1, 2, 3])
       .map((e) => e * 2)
