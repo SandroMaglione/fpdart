@@ -106,24 +106,24 @@ dependencies:
 
 ## ✨ Examples
 
-### [Pokeapi](./example/pokeapi_functional/)
+### [Pokeapi](./examples/pokeapi_functional/)
 Flutter app that lets you search and view your favorite Pokemon:
 - API request
 - Response validation
 - JSON conversion
 - State management ([riverpod](https://pub.dev/packages/riverpod))
 
-### [Open Meteo API](./example/open_meteo_api/)
+### [Open Meteo API](./examples/open_meteo_api/)
 Re-implementation using `fpdart` and functional programming of the [Open Meteo API](https://github.com/felangel/bloc/tree/master/examples/flutter_weather/packages/open_meteo_api) from the [flutter_weather](https://bloclibrary.dev/#/flutterweathertutorial) app example in the [bloc](https://pub.dev/packages/bloc) package.
 
 A 2 parts series explains step by step the Open Meteo API code:
 - [Open Meteo API - Functional programming with fpdart (Part 1)](https://www.sandromaglione.com/techblog/real_example_fpdart_open_meteo_api_part_1)
 - [Open Meteo API - Functional programming with fpdart (Part 2)](https://www.sandromaglione.com/techblog/real_example_fpdart_open_meteo_api_part_2)
 
-### [Read/Write local file](./example/read_write_file/)
+### [Read/Write local file](./examples/read_write_file/)
 Example of how to read and write a local file using functional programming.
 
-### [Manage imports](./example/managing_imports)
+### [Manage imports](./examples/managing_imports)
 Using `fpdart` with other libraries and noticing naming conflicts? Learn how to rename the classes that conflict with other SDK or third-party packages.
 
 ### [Option](./lib/src/option.dart)
@@ -253,10 +253,10 @@ These types compose together the 4 above ([`Option`](#option), [`Either`](#eithe
 
 
 ### [Reader](./lib/src/reader.dart)
-Read values from a **context** without explicitly passing the dependency between multiple nested function calls. View the [example folder for an explained usecase example](./example/src/reader).
+Read values from a **context** without explicitly passing the dependency between multiple nested function calls. View the [example folder for an explained usecase example](./examples/src/reader).
 
 ### [State](./lib/src/state.dart)
-Used to **store**, **update**, and **extract** state in a functional way. View the [example folder for an explained usecase example](./example/src/state).
+Used to **store**, **update**, and **extract** state in a functional way. View the [example folder for an explained usecase example](./examples/src/state).
 
 ### 🔗 Do notation
 Version `v0.6.0` introduced the **Do notation** in `fpdart`. Using the Do notation makes chaining functions easier.
@@ -366,7 +366,7 @@ Differently from many other functional programming packages, `fpdart` aims to in
 
 > **You do not need to have any previous experience with functional programming to start using `fpdart`.**
 
-Fpdart also provides [real-world examples](https://github.com/SandroMaglione/fpdart/tree/main/example/src) of why a type is useful and how it can be used in your application. Check out [**my website**](https://www.sandromaglione.com/) for blog posts and articles.
+Fpdart also provides [real-world examples](https://github.com/SandroMaglione/fpdart/tree/main/examples/) of why a type is useful and how it can be used in your application. Check out [**my website**](https://www.sandromaglione.com/) for blog posts and articles.
 
 ### Comparison with `dartz`
 
