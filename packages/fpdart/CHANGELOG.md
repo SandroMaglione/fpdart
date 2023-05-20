@@ -24,9 +24,13 @@
   - Added the following methods
     - `intersectBy` (`Iterable`)
     - `intersectWith` (`Iterable`)
+  - Fixed the following methods ⚠️
+    - `takeWhileRight`: Result `List` reversed 
+    - `dropWhileRight`: Result `List` reversed 
+    - `partition`, `span`: Returns longest **prefix** (and not all elements matching `test`)
   - Updated the following methods ⚠️
     - `foldRight`, `foldRightWithIndex` (`List`): Changed parameter order in `combine` function
-    - `toIterable` changed to `toList` (`Map`)
+    - `zipWith` (`Iterable`): Changed parameters definition, no more curried
   - Renamed the following methods ⚠️
     - `plus` → `concat` (`Iterable`) 
     - `concat` → `flatten` (on `Iterable<Iterable<T>>`)

@@ -8,9 +8,22 @@ import '../task_either.dart';
 import '../task_option.dart';
 
 /// Functional programming functions on a mutable dart [Iterable] using `fpdart`.
-extension FpdartOnMutableIterable<T> on List<T> {
+extension FpdartOnList<T> on List<T> {
   /// Fold this [List] into a single value by aggregating each element of the list
-  /// **from the last to the first** using their index.
+  /// **from the last to the first**.
+  B foldRight<B>(
+    B initialValue,
+    B Function(B previousValue, T element) combine,
+  ) {
+    var value = initialValue;
+    for (var element in reversed) {
+      value = combine(value, element);
+    }
+    return value;
+  }
+
+  /// Same as `foldRight` but provides also the `index` of each mapped
+  /// element in the `combine` function.
   B foldRightWithIndex<B>(
     B initialValue,
     B Function(B previousValue, T element, int index) combine,
