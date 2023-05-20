@@ -32,7 +32,7 @@ void main() {
       final list2 = ['a', 'b'];
       final ap = list1.zip(list2);
 
-      expect(eq(ap, [const Tuple2(1, 'a'), const Tuple2(2, 'b')]), true);
+      expect(eq(ap, [(1, 'a'), (2, 'b')]), true);
     });
 
     test('filter', () {
@@ -217,22 +217,22 @@ void main() {
     test('span', () {
       final list1 = [1, 2, 3, 4];
       final ap = list1.span((t) => t < 3);
-      expect(eq(ap.first, [1, 2]), true);
-      expect(eq(ap.second, [3, 4]), true);
+      expect(eq(ap.$1, [1, 2]), true);
+      expect(eq(ap.$2, [3, 4]), true);
     });
 
     test('breakI', () {
       final list1 = [1, 2, 3, 4];
       final ap = list1.breakI((t) => t > 2);
-      expect(eq(ap.first, [1, 2]), true);
-      expect(eq(ap.second, [3, 4]), true);
+      expect(eq(ap.$1, [1, 2]), true);
+      expect(eq(ap.$2, [3, 4]), true);
     });
 
     test('splitAt', () {
       final list1 = [1, 2, 3, 4];
       final ap = list1.splitAt(2);
-      expect(eq(ap.first, [1, 2]), true);
-      expect(eq(ap.second, [3, 4]), true);
+      expect(eq(ap.$1, [1, 2]), true);
+      expect(eq(ap.$2, [3, 4]), true);
     });
 
     test('delete', () {
@@ -334,8 +334,8 @@ void main() {
     test('partition', () {
       final list1 = [2, 4, 5, 6, 1, 3];
       final ap = list1.partition((t) => t > 2);
-      expect(eq(ap.first, [2, 1]), true);
-      expect(eq(ap.second, [4, 5, 6, 3]), true);
+      expect(eq(ap.$1, [2, 1]), true);
+      expect(eq(ap.$2, [4, 5, 6, 3]), true);
     });
 
     group('all', () {
@@ -1236,8 +1236,8 @@ void main() {
         right<String, int>(3),
       ];
       final result = list.partitionEithersEither();
-      expect(result.first, ['a', 'b']);
-      expect(result.second, [1, 2, 3]);
+      expect(result.$1, ['a', 'b']);
+      expect(result.$2, [1, 2, 3]);
     });
   });
 

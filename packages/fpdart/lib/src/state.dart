@@ -1,6 +1,5 @@
 import 'function.dart';
 import 'state_async.dart';
-import 'tuple.dart';
 import 'typeclass/typeclass.export.dart';
 import 'unit.dart';
 
@@ -17,9 +16,9 @@ final class State<S, A> extends HKT2<_StateHKT, S, A>
         Functor2<_StateHKT, S, A>,
         Applicative2<_StateHKT, S, A>,
         Monad2<_StateHKT, S, A> {
-  final Tuple2<A, S> Function(S state) _run;
+  final (A, S) Function(S state) _run;
 
-  /// Build a new [State] given a `Tuple2<A, S> Function(S)`.
+  /// Build a new [State] given a `(A, S) Function(S)`.
   const State(this._run);
 
   /// Flat a [State] contained inside another [State] to be a single [State].
@@ -33,7 +32,7 @@ final class State<S, A> extends HKT2<_StateHKT, S, A>
   State<S, C> flatMap<C>(covariant State<S, C> Function(A a) f) =>
       State((state) {
         final tuple = run(state);
-        return f(tuple.first).run(tuple.second);
+        return f(tuple.$1).run(tuple.$2);
       });
 
   /// Apply the function contained inside `a` to change the value of type `A` to
@@ -44,7 +43,7 @@ final class State<S, A> extends HKT2<_StateHKT, S, A>
 
   /// Return a `State<S, C>` containing `c` as value.
   @override
-  State<S, C> pure<C>(C c) => State((state) => Tuple2(c, state));
+  State<S, C> pure<C>(C c) => State((state) => (c, state));
 
   /// Change the value inside `State<S, A>` from type `A` to type `C` using `f`.
   @override
@@ -74,18 +73,18 @@ final class State<S, A> extends HKT2<_StateHKT, S, A>
   State<S, C> call<C>(covariant State<S, C> state) => flatMap((_) => state);
 
   /// Extract the current state `S`.
-  State<S, S> get() => State((state) => Tuple2(state, state));
+  State<S, S> get() => State((state) => (state, state));
 
   /// Change the value getter based on the current state `S`.
   State<S, A> gets(A Function(S state) f) =>
-      State((state) => Tuple2(f(state), state));
+      State((state) => (f(state), state));
 
   /// Change the current state `S` using `f` and return nothing ([Unit]).
   State<S, Unit> modify(S Function(S state) f) =>
-      State((state) => Tuple2(unit, f(state)));
+      State((state) => (unit, f(state)));
 
   /// Set a new state and return nothing ([Unit]).
-  State<S, Unit> put(S state) => State((_) => Tuple2(unit, state));
+  State<S, Unit> put(S state) => State((_) => (unit, state));
 
   /// Chain a request that returns another [State], execute it, ignore
   /// the result, and return the same value as the current [State].
@@ -103,21 +102,21 @@ final class State<S, A> extends HKT2<_StateHKT, S, A>
   /// To extract both the value and the state use `run`.
   ///
   /// To extract only the state `S` use `execute`.
-  A evaluate(S state) => run(state).first;
+  A evaluate(S state) => run(state).$1;
 
   /// Execute `run` and extract the state `S`.
   ///
   /// To extract both the value and the state use `run`.
   ///
   /// To extract only the value `A` use `evaluate`.
-  S execute(S state) => run(state).second;
+  S execute(S state) => run(state).$2;
 
   /// Extract value `A` and state `S` by passing the original state `S`.
   ///
   /// To extract only the value `A` use `evaluate`.
   ///
   /// To extract only the state `S` use `execute`.
-  Tuple2<A, S> run(S state) => _run(state);
+  (A, S) run(S state) => _run(state);
 
   @override
   bool operator ==(Object other) => (other is State) && other._run == _run;
