@@ -33,34 +33,6 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
   Iterable<(T, B)> zip<B>(Iterable<B> lb) =>
       zipWith<B, (T, B)>((a) => (b) => (a, b))(lb);
 
-  /// Get the first element of the list.
-  /// If the list is empty, return [None].
-  ///
-  /// Same as `firstOption`.
-  Option<T> get head => isEmpty ? none() : some(first);
-
-  /// Get the first element of the list.
-  /// If the list is empty, return [None].
-  ///
-  /// Same as `head`.
-  Option<T> get firstOption => head;
-
-  /// Return all the elements of a list except the first one.
-  /// If the list is empty, return [None].
-  Option<Iterable<T>> get tail => isEmpty ? none() : some(skip(1));
-
-  /// Return all the elements of a list except the last one.
-  /// If the list is empty, return [None].
-  Option<Iterable<T>> get init => isEmpty ? none() : some(take(length - 1));
-
-  /// Get the last element of the list.
-  /// If the list is empty, return [None].
-  Option<T> get lastOption => isEmpty ? none() : some(last);
-
-  /// Returns the list of those elements that satisfy `predicate`.
-  Iterable<T> filter(bool Function(T t) predicate) =>
-      foldLeft([], (a, e) => predicate(e) ? [...a, e] : a);
-
   /// Append `l` to this [Iterable].
   Iterable<T> plus(Iterable<T> l) => [...this, ...l];
 
@@ -69,34 +41,6 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
 
   /// Insert element `t` at the beginning of the [Iterable].
   Iterable<T> prepend(T t) => [t, ...this];
-
-  /// Extract all elements **starting from the first** as long as `predicate` returns `true`.
-  Iterable<T> takeWhileLeft(bool Function(T t) predicate) =>
-      foldLeft<(bool, Iterable<T>)>(
-        (true, []),
-        (a, e) {
-          if (!a.$1) {
-            return a;
-          }
-
-          final check = predicate(e);
-          return check ? (check, [...a.$2, e]) : (check, a.$2);
-        },
-      ).$2;
-
-  /// Remove all elements **starting from the first** as long as `predicate` returns `true`.
-  Iterable<T> dropWhileLeft(bool Function(T t) predicate) =>
-      foldLeft<(bool, Iterable<T>)>(
-        (true, []),
-        (a, e) {
-          if (!a.$1) {
-            return (a.$1, a.$2.append(e));
-          }
-
-          final check = predicate(e);
-          return check ? (check, a.$2) : (check, a.$2.append(e));
-        },
-      ).$2;
 
   /// Extract all elements **starting from the last** as long as `predicate` returns `true`.
   Iterable<T> takeWhileRight(bool Function(T t) predicate) =>
@@ -123,40 +67,6 @@ extension FpdartOnMutableIterable<T> on Iterable<T> {
 
           final check = predicate(e);
           return check ? (check, a.$2) : (check, a.$2.prepend(e));
-        },
-      ).$2;
-
-  /// Return a record where first element is longest prefix (possibly empty) of this [Iterable]
-  /// with elements that **satisfy** `predicate` and second element is the remainder of the [Iterable].
-  (Iterable<T>, Iterable<T>) span(bool Function(T t) predicate) =>
-      foldLeft<(bool, (Iterable<T>, Iterable<T>))>(
-        (true, ([], [])),
-        (a, e) {
-          if (!a.$1) {
-            return (a.$1, (a.$2.$1, a.$2.$2.append(e)));
-          }
-
-          final check = predicate(e);
-          return check
-              ? (check, (a.$2.$1.append(e), a.$2.$2))
-              : (check, (a.$2.$1, a.$2.$2.append(e)));
-        },
-      ).$2;
-
-  /// Return a record where first element is longest prefix (possibly empty) of this [Iterable]
-  /// with elements that **do not satisfy** `predicate` and second element is the remainder of the [Iterable].
-  (Iterable<T>, Iterable<T>) breakI(bool Function(T t) predicate) =>
-      foldLeft<(bool, (Iterable<T>, Iterable<T>))>(
-        (false, ([], [])),
-        (a, e) {
-          if (a.$1) {
-            return (a.$1, (a.$2.$1, a.$2.$2.append(e)));
-          }
-
-          final check = predicate(e);
-          return check
-              ? (check, (a.$2.$1, a.$2.$2.append(e)))
-              : (check, (a.$2.$1.append(e), a.$2.$2));
         },
       ).$2;
 
