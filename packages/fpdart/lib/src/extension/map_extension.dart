@@ -2,7 +2,7 @@ import '../option.dart';
 import '../typeclass/eq.dart';
 import '../typeclass/order.dart';
 import '../typedef.dart';
-import 'list_extension.dart';
+import 'iterable_extension.dart';
 import 'option_extension.dart';
 
 /// Functional programming functions on a mutable dart [Map] using `fpdart`.
