@@ -64,6 +64,13 @@ void main() {
       expect(eq(ap, [0, 1, 2, 3, 4, 5, 6]), true);
     });
 
+    test('prependAll', () {
+      final list1 = [1, 2, 3, 4, 5, 6];
+      final ap = list1.prependAll([10, 11, 12]);
+
+      expect(eq(ap, [10, 11, 12, 1, 2, 3, 4, 5, 6]), true);
+    });
+
     test('insertBy', () {
       final list1 = [1, 2, 3, 4, 5, 6];
       final ap = list1.insertBy(Order.from((a1, a2) => a1.compareTo(a2)), 4);
@@ -137,6 +144,12 @@ void main() {
       final ap = list1.intersect([1, 2, 3, 10, 11, 12]);
 
       expect(eq(ap, [1, 2, 3]), true);
+    });
+
+    test('intersperse', () {
+      final ap = [1, 2, 3].intersperse(10);
+
+      expect(eq(ap, [1, 10, 2, 10, 3]), true);
     });
 
     group('head', () {

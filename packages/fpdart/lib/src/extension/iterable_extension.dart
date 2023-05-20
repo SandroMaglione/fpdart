@@ -1,7 +1,6 @@
 import '../date.dart';
 import '../function.dart';
 import '../option.dart';
-import '../typeclass/eq.dart';
 import '../typeclass/order.dart';
 import 'predicate_extension.dart';
 
@@ -87,6 +86,12 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// Insert `element` at the beginning of the [Iterable].
   Iterable<T> prepend(T element) sync* {
     yield element;
+    yield* this;
+  }
+
+  /// Insert all the elements inside `other` at the beginning of the [Iterable].
+  Iterable<T> prependAll(Iterable<T> other) sync* {
+    yield* other;
     yield* this;
   }
 
@@ -287,38 +292,19 @@ extension FpdartOnIterable<T> on Iterable<T> {
     }
   }
 
-  /// Return the intersection of two [Iterable] (all the elements that both [Iterable] have in common)
-  /// based on `eq` to check equality.
-  Iterable<T> intersectBy(Eq<T> eq, Iterable<T> iterable) sync* {
-    for (var element in this) {
+  /// Return an [Iterable] placing an `middle` in between elements of the this [Iterable].
+  Iterable<T> intersperse(T middle) sync* {
+    if (isNotEmpty) {
       try {
-        final e = iterable.firstWhere(
-          (e) => eq.eqv(e, element),
-        );
-        yield e;
-      } catch (_) {
-        continue;
-      }
-    }
-  }
+        // Check not last element
+        elementAt(1);
 
-  /// Return the intersection of two [Iterable] (all the elements that both [Iterable] have in common)
-  /// based on `eq` to check equality.
-  ///
-  /// `eq` refers to a value of type `A` extracted from `T` using `extract`.
-  Iterable<T> intersectWith<A>(
-    A Function(T t) extract,
-    Eq<A> eq,
-    Iterable<T> iterable,
-  ) sync* {
-    for (var element in this) {
-      try {
-        final e = iterable.firstWhere(
-          (e) => eq.eqv(extract(e), extract(element)),
-        );
-        yield e;
+        yield first;
+        yield middle;
+        yield* skip(1).intersperse(middle);
       } catch (_) {
-        continue;
+        // No element at 1, this is the last of the list
+        yield first;
       }
     }
   }
