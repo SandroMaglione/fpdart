@@ -1,4 +1,3 @@
-import '../date.dart';
 import '../either.dart';
 import '../io.dart';
 import '../io_either.dart';
@@ -7,191 +6,31 @@ import '../option.dart';
 import '../task.dart';
 import '../task_either.dart';
 import '../task_option.dart';
-import '../typeclass/order.dart';
 
 /// Functional programming functions on a mutable dart [Iterable] using `fpdart`.
 extension FpdartOnMutableIterable<T> on List<T> {
-  /// Join elements at the same index from two different [List] into
-  /// one [List] containing the result of calling `f` on the elements pair.
-  Iterable<C> Function(Iterable<B> lb) zipWith<B, C>(
-          C Function(B b) Function(T t) f) =>
-      (Iterable<B> lb) => isEmpty || lb.isEmpty
-          ? []
-          : [
-              f(elementAt(0))(lb.elementAt(0)),
-              ...skip(1).zipWith(f)(lb.skip(1)),
-            ];
-
-  /// `zip` is used to join elements at the same index from two different [List]
-  /// into one [List] of a record.
-  /// ```dart
-  /// final list1 = ['a', 'b'];
-  /// final list2 = [1, 2];
-  /// final zipList = list1.zip(list2);
-  /// print(zipList); // -> [(a, 1), (b, 2)]
-  /// ```
-  Iterable<(T, B)> zip<B>(Iterable<B> lb) =>
-      zipWith<B, (T, B)>((a) => (b) => (a, b))(lb);
-
-  /// Append `l` to this [Iterable].
-  Iterable<T> plus(Iterable<T> l) => [...this, ...l];
-
-  /// Insert element `t` at the end of the [Iterable].
-  Iterable<T> append(T t) => [...this, t];
-
-  /// Insert element `t` at the beginning of the [Iterable].
-  Iterable<T> prepend(T t) => [t, ...this];
-
-  /// Extract all elements **starting from the last** as long as `predicate` returns `true`.
-  Iterable<T> takeWhileRight(bool Function(T t) predicate) =>
-      foldRight<(bool, Iterable<T>)>(
-        const (true, []),
-        (e, a) {
-          if (!a.$1) {
-            return a;
-          }
-
-          final check = predicate(e);
-          return check ? (check, a.$2.prepend(e)) : (check, a.$2);
-        },
-      ).$2;
-
-  /// Remove all elements **starting from the last** as long as `predicate` returns `true`.
-  Iterable<T> dropWhileRight(bool Function(T t) predicate) =>
-      foldRight<(bool, Iterable<T>)>(
-        const (true, []),
-        (e, a) {
-          if (!a.$1) {
-            return (a.$1, a.$2.prepend(e));
-          }
-
-          final check = predicate(e);
-          return check ? (check, a.$2) : (check, a.$2.prepend(e));
-        },
-      ).$2;
-
-  /// Insert `element` into the list at the first position where it is less than or equal to the next element
-  /// based on `order`.
-  ///
-  /// Note: The element is added **before** an equal element already in the [Iterable].
-  Iterable<T> insertBy(Order<T> order, T element) => isEmpty
-      ? [element]
-      : order.compare(element, first) > 0
-          ? [first, ...drop(1).insertBy(order, element)]
-          : [element, first, ...drop(1)];
-
-  /// Insert `element` into the list at the first position where it is less than or equal to the next element
-  /// based on `order` of an object of type `A` extracted from `element` using `insert`.
-  ///
-  /// Note: The element is added **before** an equal element already in the [Iterable].
-  Iterable<T> insertWith<A>(
-          A Function(T instance) insert, Order<A> order, T element) =>
-      isEmpty
-          ? [element]
-          : order.compare(insert(element), insert(first)) > 0
-              ? [first, ...drop(1).insertWith(insert, order, element)]
-              : [element, first, ...drop(1)];
-
-  /// Sort this [List] based on `order`.
-  List<T> sortBy(Order<T> order) => [...this]..sort(order.compare);
-
-  /// Sort this [Iterable] based on `order` of an object of type `A` extracted from `T` using `sort`.
-  Iterable<T> sortWith<A>(A Function(T instance) sort, Order<A> order) =>
-      foldRight([], (e, a) => a.insertWith(sort, order, e));
-
-  /// Return the intersection of two [Iterable] (all the elements that both [Iterable] have in common).
-  Iterable<T> intersect(Iterable<T> l) =>
-      foldLeft([], (a, e) => l.elem(e) ? [...a, e] : a);
-
-  /// Remove the **first occurrence** of `element` from this [Iterable].
-  Iterable<T> delete(T element) =>
-      foldLeft<(bool, Iterable<T>)>((true, []), (a, e) {
-        if (!a.$1) {
-          return (a.$1, a.$2.append(e));
-        }
-
-        return e == element ? (false, a.$2) : (a.$1, a.$2.append(e));
-      }).$2;
-
-  /// The largest element of this [Iterable] based on `order`.
-  ///
-  /// If the list is empty, return [None].
-  Option<T> maximumBy(Order<T> order) => foldLeft(
-      none(),
-      (a, c) => some(
-            a.match(
-              () => c,
-              (t) => order.compare(c, t) > 0 ? c : t,
-            ),
-          ));
-
-  /// The least element of this [Iterable] based on `order`.
-  ///
-  /// If the list is empty, return [None].
-  Option<T> minimumBy(Order<T> order) => foldLeft(
-      none(),
-      (a, c) => some(
-            a.match(
-              () => c,
-              (t) => order.compare(c, t) < 0 ? c : t,
-            ),
-          ));
-
-  /// Fold a [List] into a single value by aggregating each element of the list
-  /// **from the first to the last** using their index.
-  B foldLeftWithIndex<B>(
-          B initialValue, B Function(B accumulator, T element, int index) f) =>
-      fold<(B, int)>(
-        (initialValue, 0),
-        (p, e) => (f(p.$1, e, p.$2), p.$2 + 1),
-      ).$1;
-
-  /// Fold a [List] into a single value by aggregating each element of the list
-  /// **from the last to the first**.
-  B foldRight<B>(B initialValue, B Function(T element, B accumulator) f) =>
-      toList().reversed.fold(initialValue, (a, e) => f(e, a));
-
-  /// Fold a [List] into a single value by aggregating each element of the list
+  /// Fold this [List] into a single value by aggregating each element of the list
   /// **from the last to the first** using their index.
   B foldRightWithIndex<B>(
-          B initialValue, B Function(T element, B accumulator, int index) f) =>
-      foldRight<(B, int)>(
-        (initialValue, 0),
-        (e, p) => (f(e, p.$1, p.$2), p.$2 + 1),
-      ).$1;
+    B initialValue,
+    B Function(B previousValue, T element, int index) combine,
+  ) {
+    var index = 0;
+    var value = initialValue;
+    for (var element in reversed) {
+      value = combine(value, element, index);
+      index += 1;
+    }
+    return value;
+  }
 
-  /// Map [Iterable] from type `T` to type `B` using the index.
-  Iterable<B> mapWithIndex<B>(B Function(T t, int index) f) =>
-      foldLeftWithIndex([], (a, e, i) => [...a, f(e, i)]);
+  /// Extract all elements **starting from the last** as long as `test` returns `true`.
+  Iterable<T> takeWhileRight(bool Function(T t) test) =>
+      reversed.takeWhile(test);
 
-  /// Apply all the functions inside `fl` to the [Iterable].
-  Iterable<B> ap<B>(Iterable<B Function(T t)> fl) =>
-      fl.concatMap((f) => map(f));
-
-  /// Apply `f` to each element of the [Iterable] using the index
-  /// and flat the result using `concat`.
-  ///
-  /// Same as `bindWithIndex` and `flatMapWithIndex`.
-  Iterable<B> concatMapWithIndex<B>(Iterable<B> Function(T t, int index) f) =>
-      mapWithIndex(f).concat;
-
-  /// For each element of the [Iterable] apply function `f` with the index and flat the result.
-  ///
-  /// Same as `bindWithIndex` and `concatMapWithIndex`.
-  Iterable<B> flatMapWithIndex<B>(Iterable<B> Function(T t, int index) f) =>
-      concatMapWithIndex(f);
-
-  /// For each element of the [Iterable] apply function `f` with the index and flat the result.
-  ///
-  /// Same as `flatMapWithIndex` and `concatMapWithIndex`.
-  Iterable<B> bindWithIndex<B>(Iterable<B> Function(T t, int index) f) =>
-      concatMapWithIndex(f);
-
-  /// Sort [Iterable] based on [DateTime] extracted from type `T` using `getDate`.
-  ///
-  /// Sorting [DateTime] in **ascending** order (older dates first).
-  Iterable<T> sortWithDate(DateTime Function(T instance) getDate) =>
-      sortWith(getDate, dateOrder);
+  /// Remove all elements **starting from the last** as long as `test` returns `true`.
+  Iterable<T> dropWhileRight(bool Function(T t) test) =>
+      reversed.skipWhile(test);
 }
 
 extension FpdartTraversableIterable<T> on Iterable<T> {

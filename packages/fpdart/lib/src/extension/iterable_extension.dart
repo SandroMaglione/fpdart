@@ -1,4 +1,9 @@
-import 'package:fpdart/fpdart.dart';
+import '../date.dart';
+import '../function.dart';
+import '../option.dart';
+import '../typeclass/eq.dart';
+import '../typeclass/order.dart';
+import 'predicate_extension.dart';
 
 /// {@template fpdart_iterable_extension_head}
 /// Get the first element of the [Iterable].
@@ -79,6 +84,18 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// Equivalent to `Iterable.followedBy`.
   Iterable<T> concat(Iterable<T> other) => followedBy(other);
 
+  /// Insert `element` at the beginning of the [Iterable].
+  Iterable<T> prepend(T element) sync* {
+    yield element;
+    yield* this;
+  }
+
+  /// Insert `element` at the end of the [Iterable].
+  Iterable<T> append(T element) sync* {
+    yield* this;
+    yield element;
+  }
+
   /// Check if `element` is contained inside this [Iterable].
   ///
   /// Equivalent to `Iterable.contains`.
@@ -87,12 +104,27 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// Check if `element` is **not** contained inside this [Iterable].
   bool notElem(T element) => !elem(element);
 
-  /// Fold a [List] into a single value by aggregating each element of the list
+  /// Fold this [Iterable] into a single value by aggregating each element of the list
   /// **from the first to the last**.
   ///
   /// Equivalent to `Iterable.fold`.
   B foldLeft<B>(B initialValue, B Function(B b, T t) combine) =>
       fold(initialValue, combine);
+
+  /// Same as `foldLeft` (`fold`) but provides also the `index` of each mapped
+  /// element in the `combine` function.
+  B foldLeftWithIndex<B>(
+    B initialValue,
+    B Function(B previousValue, T element, int index) combine,
+  ) {
+    var index = 0;
+    var value = initialValue;
+    for (var element in this) {
+      value = combine(value, element, index);
+      index += 1;
+    }
+    return value;
+  }
 
   /// For each element of the [Iterable] apply function `toElements` and flat the result.
   ///
@@ -103,21 +135,205 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// Join elements at the same index from two different [Iterable] into
   /// one [Iterable] containing the result of calling `combine` on
   /// each element pair.
+  ///
+  /// If one input [Iterable] is shorter,
+  /// excess elements of the longer [Iterable] are discarded.
   Iterable<C> zipWith<B, C>(
     C Function(T t, B b) combine,
-    Iterable<B> iterableB,
-  ) {
-    final iteratorB = iterableB.iterator;
-    if (!iteratorB.moveNext()) return [];
+    Iterable<B> iterable,
+  ) sync* {
+    if (isNotEmpty && iterable.isNotEmpty) {
+      yield combine(first, iterable.first);
+      yield* skip(1).zipWith(
+        combine,
+        iterable.skip(1),
+      );
+    }
+  }
 
-    final resultList = <C>[];
-    for (T elementT in this) {
-      resultList.add(combine(elementT, iteratorB.current));
-      if (!iteratorB.moveNext()) break;
+  /// `zip` is used to join elements at the same index from two different [Iterable]
+  /// into one [Iterable] of a record.
+  /// ```dart
+  /// final list1 = ['a', 'b'];
+  /// final list2 = [1, 2];
+  /// final zipList = list1.zip(list2);
+  /// print(zipList); // -> [(a, 1), (b, 2)]
+  /// ```
+  Iterable<(T, B)> zip<B>(Iterable<B> iterable) =>
+      zipWith((a, b) => (a, b), iterable);
+
+  /// Insert `element` into the list at the first position where it is less than or equal to the next element
+  /// based on `order` ([Order]).
+  ///
+  /// Note: The element is added **before** an equal element already in the [Iterable].
+  Iterable<T> insertBy(Order<T> order, T element) sync* {
+    if (isEmpty) {
+      yield element;
+    } else {
+      if (order.compare(element, first) > 0) {
+        yield first;
+        yield* skip(1).insertBy(order, element);
+      } else {
+        yield element;
+        yield* this;
+      }
+    }
+  }
+
+  /// Insert `element` into the [Iterable] at the first position where
+  /// it is less than or equal to the next element
+  /// based on `order` ([Order]).
+  ///
+  /// `order` refers to values of type `A`
+  /// extracted from `element` using `extract`.
+  ///
+  /// Note: The element is added **before** an equal element already in the [Iterable].
+  Iterable<T> insertWith<A>(
+    A Function(T instance) extract,
+    Order<A> order,
+    T element,
+  ) sync* {
+    if (isEmpty) {
+      yield element;
+    } else {
+      if (order.compare(extract(element), extract(first)) > 0) {
+        yield first;
+        yield* skip(1).insertWith(extract, order, element);
+      } else {
+        yield element;
+        yield* this;
+      }
+    }
+  }
+
+  /// Remove the **first occurrence** of `element` from this [Iterable].
+  Iterable<T> delete(T element) sync* {
+    if (isNotEmpty) {
+      if (first != element) {
+        yield first;
+      }
+
+      yield* skip(1).delete(element);
+    }
+  }
+
+  /// Same as `map` but provides also the `index` of each mapped
+  /// element in the mapping function (`toElement`).
+  Iterable<B> mapWithIndex<B>(B Function(T t, int index) toElement) sync* {
+    var index = 0;
+    for (var value in this) {
+      yield toElement(value, index);
+      index += 1;
+    }
+  }
+
+  /// Same as `flatMap` (`extend`) but provides also the `index` of each mapped
+  /// element in the mapping function (`toElements`).
+  Iterable<B> flatMapWithIndex<B>(
+    Iterable<B> Function(T t, int index) toElements,
+  ) sync* {
+    var index = 0;
+    for (var value in this) {
+      yield* toElements(value, index);
+      index += 1;
+    }
+  }
+
+  /// The largest element of this [Iterable] based on `order`.
+  ///
+  /// If the list is empty, return [None].
+  Option<T> maximumBy(Order<T> order) {
+    if (isEmpty) return const None();
+
+    var max = first;
+    for (var element in skip(1)) {
+      if (order.compare(element, max) > 0) {
+        max = element;
+      }
     }
 
-    return resultList;
+    return some(max);
   }
+
+  /// The least element of this [Iterable] based on `order`.
+  ///
+  /// If the list is empty, return [None].
+  Option<T> minimumBy(Order<T> order) {
+    if (isEmpty) return const None();
+
+    var min = first;
+    for (var element in skip(1)) {
+      if (order.compare(element, min) < 0) {
+        min = element;
+      }
+    }
+
+    return some(min);
+  }
+
+  /// Apply all the functions inside `iterable` to this [Iterable].
+  Iterable<B> ap<B>(Iterable<B Function(T)> iterable) => iterable.flatMap(map);
+
+  /// Return the intersection of two [Iterable] (all the elements that both [Iterable] have in common).
+  Iterable<T> intersect(Iterable<T> iterable) sync* {
+    for (var element in this) {
+      try {
+        final e = iterable.firstWhere((e) => e == element);
+        yield e;
+      } catch (_) {
+        continue;
+      }
+    }
+  }
+
+  /// Return the intersection of two [Iterable] (all the elements that both [Iterable] have in common)
+  /// based on `eq` to check equality.
+  Iterable<T> intersectBy(Eq<T> eq, Iterable<T> iterable) sync* {
+    for (var element in this) {
+      try {
+        final e = iterable.firstWhere(
+          (e) => eq.eqv(e, element),
+        );
+        yield e;
+      } catch (_) {
+        continue;
+      }
+    }
+  }
+
+  /// Return the intersection of two [Iterable] (all the elements that both [Iterable] have in common)
+  /// based on `eq` to check equality.
+  ///
+  /// `eq` refers to a value of type `A` extracted from `T` using `extract`.
+  Iterable<T> intersectWith<A>(
+    A Function(T t) extract,
+    Eq<A> eq,
+    Iterable<T> iterable,
+  ) sync* {
+    for (var element in this) {
+      try {
+        final e = iterable.firstWhere(
+          (e) => eq.eqv(extract(e), extract(element)),
+        );
+        yield e;
+      } catch (_) {
+        continue;
+      }
+    }
+  }
+
+  /// Sort this [List] based on `order` ([Order]).
+  List<T> sortBy(Order<T> order) => [...this]..sort(order.compare);
+
+  /// Sort this [Iterable] based on `order` of an object of type `A` extracted from `T` using `extract`.
+  List<T> sortWith<A>(A Function(T t) extract, Order<A> order) =>
+      [...this]..sort((e1, e2) => order.compare(extract(e1), extract(e2)));
+
+  /// Sort this [Iterable] based on [DateTime] extracted from type `T` using `getDate`.
+  ///
+  /// Sorting [DateTime] in **ascending** order (older dates first).
+  List<T> sortWithDate(DateTime Function(T instance) getDate) =>
+      sortWith(getDate, dateOrder);
 }
 
 /// Functional programming functions on `Iterable<Iterable<T>>` using `fpdart`.
