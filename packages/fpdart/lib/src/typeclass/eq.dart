@@ -53,6 +53,21 @@ abstract class Eq<T> {
   /// An `Eq<A>` in which everything is the same
   /// (calling `eqv` returns always `true`).
   static Eq<A> allEqual<A>() => _Eq((x, y) => true);
+
+  /// Instance of `Eq` for `num` using the standard `==` operator.
+  static Eq<num> eqNum() => _Eq((x, y) => x == y);
+
+  /// Instance of `Eq` for `int` using the standard `==` operator.
+  static Eq<int> eqInt() => _Eq((x, y) => x == y);
+
+  /// Instance of `Eq` for `double` using the standard `==` operator.
+  static Eq<double> eqDouble() => _Eq((x, y) => x == y);
+
+  /// Instance of `Eq` for `String` using the standard `==` operator.
+  static Eq<String> eqString() => _Eq((x, y) => x == y);
+
+  /// Instance of `Eq` for `bool` using the standard `==` operator.
+  static Eq<bool> eqBool() => _Eq((x, y) => x == y);
 }
 
 class _Eq<T> extends Eq<T> {
