@@ -12,6 +12,28 @@ abstract class Eq<T> {
   /// Returns `false` if `x` and `y` are equivalent, `true` otherwise.
   bool neqv(T x, T y) => !eqv(x, y);
 
+  /// Return an [Eq] instance based on a parameter of type `T` extracted from a class `A`.
+  /// ```dart
+  /// class Parent {
+  ///   final int value1;
+  ///   final double value2;
+  ///   const Parent(this.value1, this.value2);
+  /// }
+
+  /// /// Equality for values of type [Parent] based on their `value1` ([int]).
+  /// final eqParentInt = Eq.eqInt().contramap<Parent>(
+  ///   (p) => p.value1,
+  /// );
+
+  /// /// Equality for of type [Parent] based on their `value2` ([double]).
+  /// final eqParentDouble = Eq.eqDouble().contramap<Parent>(
+  ///   (p) => p.value2,
+  /// );
+  /// ```
+  Eq<A> contramap<A>(T Function(A) map) => _Eq<A>(
+        (a1, a2) => eqv(map(a1), map(a2)),
+      );
+
   /// Convert an implicit `Eq<B>` to an `Eq<A>` using the given function `f`.
   ///
   /// ```dart

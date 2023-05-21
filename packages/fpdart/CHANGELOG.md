@@ -104,6 +104,55 @@ final add = addFunction.curry;
 ```dart
 [1, 2, 3].difference(Eq.eqInt(), [2, 3, 4]); /// `[1]`
 ```
+- Added new method to `Eq`
+  - `contramap`
+```dart
+class Parent {
+  final int value1;
+  final double value2;
+  const Parent(this.value1, this.value2);
+}
+
+/// Equality for values of type [Parent] based on their `value1` ([int]).
+final eqParentInt = Eq.eqInt().contramap<Parent>(
+  (p) => p.value1,
+);
+
+/// Equality for of type [Parent] based on their `value2` ([double]).
+final eqParentDouble = Eq.eqDouble().contramap<Parent>(
+  (p) => p.value2,
+);
+``` 
+- Changed `reverse` in `Order` from static constructor to getter method
+```dart
+/// Before
+final reversed = Order.reverse(instance);
+
+/// Before
+final reversed = instance.reverse;
+```
+- Added `Order` instances for `num`, `int`, `double`
+- Added new methods to `Order`
+  - `between`
+  - `clamp` 
+  - `contramap` 
+```dart
+class Parent {
+  final int value1;
+  final double value2;
+  const Parent(this.value1, this.value2);
+}
+
+/// Order values of type [Parent] based on their `value1` ([int]).
+final orderParentInt = Order.orderInt().contramap<Parent>(
+  (p) => p.value1,
+);
+
+/// Order values of type [Parent] based on their `value2` ([double]).
+final orderParentDouble = Order.orderDouble().contramap<Parent>(
+  (p) => p.value2,
+);
+```
 - Removed `bool` extension (`match` and `fold`), use the ternary operator or pattern matching instead ⚠️
 ```dart
 final boolValue = Random().nextBool();

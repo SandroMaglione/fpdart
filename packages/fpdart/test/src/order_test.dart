@@ -1,6 +1,12 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:test/test.dart';
 
+class _Parent {
+  final int value1;
+  final double value2;
+  const _Parent(this.value1, this.value2);
+}
+
 void main() {
   group('Order', () {
     group('is a', () {
@@ -22,9 +28,9 @@ void main() {
       expect(instance.compare(2, 1), 1);
     });
 
-    test('.reverse', () {
-      final instance = Order.from<int>((a1, a2) => a1.compareTo(a2));
-      final reverse = Order.reverse(instance);
+    test('reverse', () {
+      final instance = Order.orderInt();
+      final reverse = instance.reverse;
       expect(reverse.compare(1, 1), 0);
       expect(reverse.compare(1, 2), 1);
       expect(reverse.compare(2, 1), -1);
@@ -115,6 +121,109 @@ void main() {
       expect(instance.gt(0, 10), false);
       expect(instance.gt(0, 0), false);
       expect(instance.gt(0, -1), true);
+    });
+
+    test('between', () {
+      final instance = Order.orderInt();
+      expect(instance.between(0, 10, 4), true);
+      expect(instance.between(0, 0, 0), true);
+      expect(instance.between(-1, 0, 0), true);
+      expect(instance.between(0, 10, 11), false);
+      expect(instance.between(0, 10, -1), false);
+    });
+
+    test('clamp', () {
+      final instance = Order.orderInt();
+      expect(instance.clamp(1, 10, 2), 2);
+      expect(instance.clamp(1, 10, 10), 10);
+      expect(instance.clamp(1, 10, 20), 10);
+      expect(instance.clamp(1, 10, 1), 1);
+      expect(instance.clamp(1, 10, -10), 1);
+    });
+
+    test('orderNum', () {
+      final ord = Order.orderNum();
+      expect(ord.eqv(10, 10), true);
+      expect(ord.eqv(10.0, 10), true);
+      expect(ord.gt(10, 0), true);
+      expect(ord.gt(0, 10), false);
+      expect(ord.lt(0, 10), true);
+    });
+
+    test('orderDouble', () {
+      final ord = Order.orderDouble();
+      expect(ord.eqv(10.5, 10.5), true);
+      expect(ord.eqv(10.0, 10), true);
+      expect(ord.gt(1.5, 1.2), true);
+      expect(ord.gt(1.001, 1.005), false);
+      expect(ord.lt(0.5, 1.2), true);
+    });
+
+    test('orderInt', () {
+      final ord = Order.orderInt();
+      expect(ord.eqv(10, 10), true);
+      expect(ord.eqv(-10, 10), false);
+      expect(ord.gt(1, 1), false);
+      expect(ord.gt(10, 1), true);
+      expect(ord.lt(-2, 2), true);
+    });
+
+    group('contramap', () {
+      test('int', () {
+        final orderParentInt = Order.orderInt().contramap<_Parent>(
+          (p) => p.value1,
+        );
+
+        expect(
+          orderParentInt.eqv(
+            _Parent(1, 2.5),
+            _Parent(1, 12.5),
+          ),
+          true,
+        );
+        expect(
+          orderParentInt.eqv(
+            _Parent(1, 2.5),
+            _Parent(4, 2.5),
+          ),
+          false,
+        );
+        expect(
+          orderParentInt.eqv(
+            _Parent(-1, 2.5),
+            _Parent(1, 12.5),
+          ),
+          false,
+        );
+      });
+
+      test('double', () {
+        final orderParentDouble = Order.orderDouble().contramap<_Parent>(
+          (p) => p.value2,
+        );
+
+        expect(
+          orderParentDouble.eqv(
+            _Parent(1, 2.5),
+            _Parent(1, 2.5),
+          ),
+          true,
+        );
+        expect(
+          orderParentDouble.eqv(
+            _Parent(1, 2.5),
+            _Parent(1, 12.5),
+          ),
+          false,
+        );
+        expect(
+          orderParentDouble.eqv(
+            _Parent(-1, 2.5),
+            _Parent(1, 2),
+          ),
+          false,
+        );
+      });
     });
   });
 }
