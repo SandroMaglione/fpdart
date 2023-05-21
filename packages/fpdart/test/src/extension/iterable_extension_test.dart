@@ -229,6 +229,20 @@ void main() {
       expect(ap.$2.elementAt(3), 4);
     });
 
+    test('breakI', () {
+      final list1 = [4, 5, 1, 3, 4];
+      final ap = list1.breakI((t) => t < 3);
+
+      expect(ap.$1.length, 2);
+      expect(ap.$1.elementAt(0), 4);
+      expect(ap.$1.elementAt(1), 5);
+
+      expect(ap.$2.length, 3);
+      expect(ap.$2.elementAt(0), 1);
+      expect(ap.$2.elementAt(1), 3);
+      expect(ap.$2.elementAt(2), 4);
+    });
+
     test('splitAt', () {
       final list1 = [1, 2, 3, 4];
       final ap = list1.splitAt(2);
@@ -302,15 +316,16 @@ void main() {
     test('partition', () {
       final list1 = [2, 4, 5, 6, 1, 3];
       final ap = list1.partition((t) => t > 2);
-      expect(ap.$1.length, 1);
-      expect(ap.$1.elementAt(0), 2);
 
-      expect(ap.$2.length, 5);
+      expect(ap.$1.length, 2);
+      expect(ap.$1.elementAt(0), 2);
+      expect(ap.$1.elementAt(1), 1);
+
+      expect(ap.$2.length, 4);
       expect(ap.$2.elementAt(0), 4);
       expect(ap.$2.elementAt(1), 5);
       expect(ap.$2.elementAt(2), 6);
-      expect(ap.$2.elementAt(3), 1);
-      expect(ap.$2.elementAt(4), 3);
+      expect(ap.$2.elementAt(3), 3);
     });
 
     group('all', () {

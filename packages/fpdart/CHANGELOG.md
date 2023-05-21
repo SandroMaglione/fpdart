@@ -27,7 +27,6 @@
   - Fixed the following methods ⚠️
     - `takeWhileRight`: Result `List` reversed 
     - `dropWhileRight`: Result `List` reversed 
-    - `partition`, `span`: Returns longest **prefix** (and not all elements matching `test`)
   - Updated the following methods ⚠️
     - `foldRight`, `foldRightWithIndex` (`List`): Changed parameter order in `combine` function
     - `zipWith` (`Iterable`): Changed parameters definition, no more curried
@@ -35,7 +34,6 @@
     - `plus` → `concat` (`Iterable`) 
     - `concat` → `flatten` (on `Iterable<Iterable<T>>`)
   - Removed the following methods ⚠️
-    - `breakI` (use `partition` instead) 
     - `concatMap` (use `flatMap` instead) 
     - `bind` (use `flatMap` instead) 
     - `bindWithIndex` (use `flatMapWithIndex` instead) 
