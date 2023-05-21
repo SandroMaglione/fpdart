@@ -1,6 +1,12 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:test/test.dart';
 
+class _Parent {
+  final int value1;
+  final double value2;
+  const _Parent(this.value1, this.value2);
+}
+
 void main() {
   group('Eq', () {
     test('.instance (int)', () {
@@ -65,6 +71,107 @@ void main() {
       final by = Eq.by<String, int>((a) => a.length, instance);
       expect(by.eqv('abc', 'abc'), true);
       expect(by.eqv('abc', 'ab'), false);
+    });
+
+    test('.eqNum', () {
+      final eq = Eq.eqNum();
+      expect(eq.eqv(10, 10), true);
+      expect(eq.eqv(10.0, 10), true);
+      expect(eq.eqv(10.5, 10.5), true);
+      expect(eq.eqv(-10, -10.0), true);
+      expect(eq.eqv(10, 10.5), false);
+    });
+
+    test('.eqInt', () {
+      final eq = Eq.eqInt();
+      expect(eq.eqv(10, 10), true);
+      expect(eq.eqv(11, 10), false);
+      expect(eq.eqv(-10, -10), true);
+      expect(eq.eqv(10, 11), false);
+    });
+
+    test('.eqDouble', () {
+      final eq = Eq.eqDouble();
+      expect(eq.eqv(10, 10), true);
+      expect(eq.eqv(10.0, 10), true);
+      expect(eq.eqv(10.5, 10.5), true);
+      expect(eq.eqv(-10, -10.0), true);
+      expect(eq.eqv(10, 10.5), false);
+    });
+
+    test('.eqString', () {
+      final eq = Eq.eqString();
+      expect(eq.eqv("abc", "abc"), true);
+      expect(eq.eqv("abc", "abd"), false);
+      expect(eq.eqv("abc", "ab"), false);
+      expect(eq.eqv("a", "a"), true);
+      expect(eq.eqv("a", "ab"), false);
+    });
+
+    test('.eqBool', () {
+      final eq = Eq.eqBool();
+      expect(eq.eqv(true, true), true);
+      expect(eq.eqv(false, true), false);
+      expect(eq.eqv(true, false), false);
+      expect(eq.eqv(false, false), true);
+    });
+
+    group('contramap', () {
+      test('int', () {
+        final eqParentInt = Eq.eqInt().contramap<_Parent>(
+          (p) => p.value1,
+        );
+
+        expect(
+          eqParentInt.eqv(
+            _Parent(1, 2.5),
+            _Parent(1, 12.5),
+          ),
+          true,
+        );
+        expect(
+          eqParentInt.eqv(
+            _Parent(1, 2.5),
+            _Parent(4, 2.5),
+          ),
+          false,
+        );
+        expect(
+          eqParentInt.eqv(
+            _Parent(-1, 2.5),
+            _Parent(1, 12.5),
+          ),
+          false,
+        );
+      });
+
+      test('double', () {
+        final eqParentDouble = Eq.eqDouble().contramap<_Parent>(
+          (p) => p.value2,
+        );
+
+        expect(
+          eqParentDouble.eqv(
+            _Parent(1, 2.5),
+            _Parent(1, 2.5),
+          ),
+          true,
+        );
+        expect(
+          eqParentDouble.eqv(
+            _Parent(1, 2.5),
+            _Parent(1, 12.5),
+          ),
+          false,
+        );
+        expect(
+          eqParentDouble.eqv(
+            _Parent(-1, 2.5),
+            _Parent(1, 2),
+          ),
+          false,
+        );
+      });
     });
   });
 }

@@ -35,6 +35,11 @@ abstract class PartialOrder<T> extends Eq<T> {
   /// - positive iff `x > y`
   double? partialCompare(T x, T y);
 
+  @override
+  PartialOrder<A> contramap<A>(T Function(A) map) => PartialOrder.from<A>(
+        (a1, a2) => partialCompare(map(a1), map(a2)),
+      );
+
   /// Returns `true` if `x` == `y`, `false` otherwise.
   @override
   bool eqv(T x, T y) {
