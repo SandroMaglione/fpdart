@@ -12,14 +12,23 @@ abstract class Eq<T> {
   /// Returns `false` if `x` and `y` are equivalent, `true` otherwise.
   bool neqv(T x, T y) => !eqv(x, y);
 
-  /// Return an `Eq` that gives the result of the **and** of `eq1` and `eq2`.
+  /// Return an `Eq` that gives the result of **and** of `eq1` and `eq2`.
   Eq<T> and(Eq<T> eq) => _Eq(
         (x, y) => eqv(x, y) && eq.eqv(x, y),
       );
 
-  /// Return an `Eq` that gives the result of the **or** of this [Eq] and `eq`.
+  /// Return an `Eq` that gives the result of **or** of this [Eq] and `eq`.
   Eq<T> or(Eq<T> eq) => _Eq(
         (x, y) => eqv(x, y) || eq.eqv(x, y),
+      );
+
+  /// Return an `Eq` that gives the result of **xor** of this [Eq] and `eq`.
+  Eq<T> xor(Eq<T> eq) => _Eq(
+        (x, y) {
+          final eqThis = eqv(x, y);
+          final eqOther = eq.eqv(x, y);
+          return eqThis ? !eqOther : eqOther;
+        },
       );
 
   /// Return an [Eq] instance based on a parameter of type `T` extracted from a class `A`.

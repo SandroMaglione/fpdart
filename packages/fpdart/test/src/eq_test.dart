@@ -53,6 +53,17 @@ void main() {
       expect(or.eqv(5, 1), false);
     });
 
+    test('xor', () {
+      final instance1 = Eq.instance<int>((a1, a2) => a1 == (a2 + 2));
+      final instance2 = Eq.instance<int>((a1, a2) => a1 == (a2 + 3));
+      final xor = instance1.xor(instance2);
+      final xorSame = instance1.xor(instance1);
+      expect(xor.eqv(2, 1), false);
+      expect(xor.eqv(3, 1), true);
+      expect(xor.eqv(4, 1), true);
+      expect(xorSame.eqv(3, 1), false);
+    });
+
     test('.fromUniversalEquals', () {
       final instance = Eq.fromUniversalEquals<int>();
       expect(instance.eqv(1, 1), true);
