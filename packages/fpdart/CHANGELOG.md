@@ -5,7 +5,6 @@
   - You can now use exhaustive pattern matching (`None` or `Some`)
 - Types marked as `final` (no `extends` nor `implements`)
   - `Unit`
-  - `Predicate`
   - `Reader`
   - `State`
   - `StateAsync`
@@ -74,6 +73,16 @@ Option<T> getRandomOption<T>(T value) => randomBool()
 Option<T> getRandomOption<T>(T value) => randomBool
     .map((isValid) => isValid ? some(value) : none<T>())
     .run();
+```
+- Removed `Predicate` class and added extension methods in its place ⚠️
+```dart
+bool isEven(int n) => n % 2 == 0;
+bool isDivisibleBy3(int n) => n % 3 == 0;
+
+final isOdd = isEven.negate;
+final isEvenAndDivisibleBy3 = isEven.and(isDivisibleBy3);
+final isEvenOrDivisibleBy3 = isEven.or(isDivisibleBy3);
+final isStringWithEvenLength = isEven.contramap<String>((n) => n.length);
 ```
 - Updated curry / uncarry extensions ⚠️
   - Renamed `curry` to `curryAll` for functions with 3, 4, 5 parameters 
@@ -169,8 +178,8 @@ final result = boolValue.fold<int>(() => -1, () => 1);
 final result = boolValue ? 1 : -1;
 final result = switch (boolValue) { true => 1, false => -1 };
 ```
-- Removed `id` and `idFuture`, use `identity` and `identityFuture` instead ⚠️
-- Removed `idFirst` and `idSecond` functions ⚠️
+- Removed global `id` and `idFuture`, use `identity` and `identityFuture` instead ⚠️
+- Removed global `idFirst` and `idSecond` functions ⚠️
 - Removed `Compose` class and extension methods ⚠️
 - Removed extension methods on nullable types (`toOption`, `toEither`, `toTaskOption`, `toIOEither`, `toTaskEither`, `toTaskEitherAsync`) ⚠️
 - Organized all extensions inside internal `extension` folder
