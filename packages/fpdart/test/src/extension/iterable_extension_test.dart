@@ -146,6 +146,16 @@ void main() {
       expect(eq(ap, [1, 2, 3]), true);
     });
 
+    test('difference', () {
+      final list1 = [1, 2, 3];
+      final ap = list1.difference(
+        Eq.instance<int>((a1, a2) => a1 == a2),
+        [2, 3, 4],
+      );
+
+      expect(eq(ap, [1]), true);
+    });
+
     test('intersperse', () {
       final ap = [1, 2, 3].intersperse(10);
 

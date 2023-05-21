@@ -1,6 +1,7 @@
 import '../date.dart';
 import '../function.dart';
 import '../option.dart';
+import '../typeclass/eq.dart';
 import '../typeclass/order.dart';
 import 'predicate_extension.dart';
 
@@ -292,6 +293,16 @@ extension FpdartOnIterable<T> on Iterable<T> {
         yield e;
       } catch (_) {
         continue;
+      }
+    }
+  }
+
+  /// Returns an [Iterable] containing the values of this [Iterable] not included
+  /// in `other` based on `eq`.
+  Iterable<T> difference(Eq<T> eq, Iterable<T> other) sync* {
+    for (var element in this) {
+      if (!other.any((e) => eq.eqv(e, element))) {
+        yield element;
       }
     }
   }

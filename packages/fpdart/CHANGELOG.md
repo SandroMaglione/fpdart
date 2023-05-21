@@ -24,6 +24,7 @@
   - Added the following methods
     - `prependAll` (`Iterable`)
     - `intersperse` (`Iterable`)
+    - `difference` (`Iterable`)
   - Fixed the following methods ⚠️
     - `takeWhileRight`: Result `List` reversed 
     - `dropWhileRight`: Result `List` reversed 
