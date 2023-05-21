@@ -59,10 +59,14 @@ extension FpdartOnIterable<T> on Iterable<T> {
 
   /// Return a record where first element is longest prefix (possibly empty) of this [Iterable]
   /// with elements that **do not satisfy** `test` and second element is the remainder of the [Iterable].
-  (Iterable<T>, Iterable<T>) partition(bool Function(T t) test) {
-    final notTest = test.negate;
-    return (takeWhile(notTest), skipWhile(notTest));
-  }
+  (Iterable<T>, Iterable<T>) breakI(bool Function(T t) test) =>
+      (takeWhile(test.negate), skipWhile(test.negate));
+
+  /// Return a record containing the values of this [Iterable]
+  /// for which `test` is `false` in the first element,
+  /// and the values for which it is `true` in the second element.
+  (Iterable<T>, Iterable<T>) partition(bool Function(T t) test) =>
+      (where(test.negate), where(test));
 
   /// Return a record where first element is an [Iterable] with the first `n` elements of this [Iterable],
   /// and the second element contains the rest of the [Iterable].
