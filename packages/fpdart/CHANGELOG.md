@@ -100,6 +100,9 @@ final add = addFunction.curry;
 [1, 2, 3].map(add(1)); // returns [2, 3, 4]
 [1, 2, 3].map(addFunction.curry(1)); // returns [2, 3, 4]
 ``` 
+- Changed `Eq` static constructors to methods
+  - `or`
+  - `and` 
 - Added `Eq` instances for `num`, `int`, `double`, `String`, and `bool`
 ```dart
 [1, 2, 3].difference(Eq.eqInt(), [2, 3, 4]); /// `[1]`

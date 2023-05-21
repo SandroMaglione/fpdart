@@ -30,12 +30,12 @@ void main() {
       expect(instance.eqv('abc', 'acb'), false);
     });
 
-    test('.and', () {
+    test('and', () {
       final instance1 = Eq.instance<String>(
           (a1, a2) => a1.substring(0, 2) == a2.substring(0, 2));
       final instance2 = Eq.instance<String>(
           (a1, a2) => a1.substring(2, 4) == a2.substring(2, 4));
-      final and = Eq.and(instance1, instance2);
+      final and = instance1.and(instance2);
       expect(instance1.eqv('abef', 'abcd'), true);
       expect(instance2.eqv('abef', 'zxef'), true);
       expect(and.eqv('abcd', 'abcd'), true);
@@ -43,10 +43,10 @@ void main() {
       expect(and.eqv('bacd', 'abcd'), false);
     });
 
-    test('.or', () {
+    test('or', () {
       final instance1 = Eq.instance<int>((a1, a2) => a1 == (a2 + 2));
       final instance2 = Eq.instance<int>((a1, a2) => a1 == (a2 + 3));
-      final or = Eq.or(instance1, instance2);
+      final or = instance1.or(instance2);
       expect(or.eqv(2, 1), false);
       expect(or.eqv(3, 1), true);
       expect(or.eqv(4, 1), true);

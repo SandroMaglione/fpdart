@@ -12,6 +12,16 @@ abstract class Eq<T> {
   /// Returns `false` if `x` and `y` are equivalent, `true` otherwise.
   bool neqv(T x, T y) => !eqv(x, y);
 
+  /// Return an `Eq` that gives the result of the **and** of `eq1` and `eq2`.
+  Eq<T> and(Eq<T> eq) => _Eq(
+        (x, y) => eqv(x, y) && eq.eqv(x, y),
+      );
+
+  /// Return an `Eq` that gives the result of the **or** of this [Eq] and `eq`.
+  Eq<T> or(Eq<T> eq) => _Eq(
+        (x, y) => eqv(x, y) || eq.eqv(x, y),
+      );
+
   /// Return an [Eq] instance based on a parameter of type `T` extracted from a class `A`.
   /// ```dart
   /// class Parent {
@@ -46,18 +56,6 @@ abstract class Eq<T> {
   /// ```
   static Eq<A> by<A, B>(B Function(A a) f, Eq<B> eq) =>
       _Eq((x, y) => eq.eqv(f(x), f(y)));
-
-  /// Return an `Eq` that gives the result of the **and** of `eq1` and `eq2`.
-  ///
-  /// Note this is idempotent.
-  static Eq<A> and<A>(Eq<A> eq1, Eq<A> eq2) =>
-      _Eq((x, y) => eq1.eqv(x, y) && eq2.eqv(x, y));
-
-  /// Return an `Eq` that gives the result of the **or** of `eq1` and `eq2`.
-  ///
-  /// Note this is idempotent.
-  static Eq<A> or<A>(Eq<A> eq1, Eq<A> eq2) =>
-      _Eq((x, y) => eq1.eqv(x, y) || eq2.eqv(x, y));
 
   /// Create an `Eq` instance from an `eqv` implementation.
   ///
