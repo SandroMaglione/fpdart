@@ -103,6 +103,7 @@ final add = addFunction.curry;
 - Changed `Eq` static constructors to methods
   - `or`
   - `and` 
+- Added `xor` method to `Eq` 
 - Added `Eq` instances for `num`, `int`, `double`, `String`, and `bool`
 ```dart
 [1, 2, 3].difference(Eq.eqInt(), [2, 3, 4]); /// `[1]`
