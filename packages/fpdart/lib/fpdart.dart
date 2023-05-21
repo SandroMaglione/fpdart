@@ -7,7 +7,6 @@ export 'src/io_either.dart';
 export 'src/io_option.dart';
 export 'src/io_ref.dart';
 export 'src/option.dart';
-export 'src/predicate.dart';
 export 'src/random.dart';
 export 'src/reader.dart';
 export 'src/state.dart';
