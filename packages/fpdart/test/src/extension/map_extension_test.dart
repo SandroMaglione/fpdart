@@ -57,6 +57,82 @@ void main() {
       });
     });
 
+    group('lookupEq', () {
+      test('Some', () {
+        final map = <DateTime, int>{
+          DateTime(2000, 1, 1): 1,
+          DateTime(2001, 1, 1): 2,
+        };
+        final ap = map.lookupEq(dateEqYear, DateTime(2000, 10, 10));
+        ap.matchTestSome((t) {
+          expect(t, 1);
+        });
+      });
+
+      test('None', () {
+        final map = <DateTime, int>{
+          DateTime(2000, 1, 1): 1,
+          DateTime(2001, 1, 1): 2,
+        };
+        final ap = map.lookupEq(dateEqYear, DateTime(2002, 1, 1));
+        expect(ap, isA<None>());
+      });
+    });
+
+    group('lookupWithKeyEq', () {
+      test('Some', () {
+        final map = <DateTime, int>{
+          DateTime(2000, 1, 1): 1,
+          DateTime(2001, 1, 1): 2,
+        };
+        final ap = map.lookupWithKeyEq(dateEqYear, DateTime(2000, 10, 10));
+        ap.matchTestSome((t) {
+          expect(t, (DateTime(2000, 1, 1), 1));
+        });
+      });
+
+      test('None', () {
+        final map = <DateTime, int>{
+          DateTime(2000, 1, 1): 1,
+          DateTime(2001, 1, 1): 2,
+        };
+        final ap = map.lookupWithKeyEq(dateEqYear, DateTime(2002, 1, 1));
+        expect(ap, isA<None>());
+      });
+    });
+
+    group('containsKeyEq', () {
+      test('Some', () {
+        final map = <DateTime, int>{
+          DateTime(2000, 1, 1): 1,
+          DateTime(2001, 1, 1): 2,
+        };
+        final ap = map.containsKeyEq(dateEqYear, DateTime(2000, 10, 10));
+        ap.matchTestSome((t) {
+          t
+              .lookupWithKeyEq(dateEqYear, DateTime(2000, 1, 1))
+              .matchTestSome((v) {
+            expect(v, (DateTime(2000, 1, 1), 1));
+          });
+
+          t
+              .lookupWithKeyEq(dateEqYear, DateTime(2001, 1, 1))
+              .matchTestSome((v) {
+            expect(v, (DateTime(2001, 1, 1), 2));
+          });
+        });
+      });
+
+      test('None', () {
+        final map = <DateTime, int>{
+          DateTime(2000, 1, 1): 1,
+          DateTime(2001, 1, 1): 2,
+        };
+        final ap = map.containsKeyEq(dateEqYear, DateTime(2002, 1, 1));
+        expect(ap, isA<None>());
+      });
+    });
+
     group('lookupWithKey', () {
       test('Some', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
@@ -206,7 +282,7 @@ void main() {
       test('found', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
         final ap =
-            map.updateAtIfPresent(Eq.instance((a1, a2) => a1 == a2))('b', 10);
+            map.updateAtIfPresent(Eq.instance((a1, a2) => a1 == a2), 'b', 10);
         ap.lookup('b').matchTestSome((t) {
           expect(t, 10);
         });
@@ -215,7 +291,7 @@ void main() {
       test('not found', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
         final ap =
-            map.updateAtIfPresent(Eq.instance((a1, a2) => a1 == a2))('e', 10);
+            map.updateAtIfPresent(Eq.instance((a1, a2) => a1 == a2), 'e', 10);
         ap.lookup('b').matchTestSome((t) {
           expect(t, 2);
         });
@@ -225,7 +301,7 @@ void main() {
     test('deleteAt', () {
       final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
       expect(map.lookup('b'), isA<Some>());
-      final ap = map.deleteAt(Eq.instance((a1, a2) => a1 == a2))('b');
+      final ap = map.deleteAt(Eq.instance((a1, a2) => a1 == a2), 'b');
       expect(map.lookup('b'), isA<Some>());
       expect(ap.lookup('b'), isA<None>());
     });
@@ -234,8 +310,10 @@ void main() {
       test('insert', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
         expect(map.lookup('e'), isA<None>());
-        final ap = map.upsertAt(Eq.instance((a1, a2) => a1 == a2))('e', 10);
+
+        final ap = map.upsertAt(Eq.instance((a1, a2) => a1 == a2), 'e', 10);
         expect(map.lookup('e'), isA<None>());
+
         ap.lookup('e').matchTestSome((t) {
           expect(t, 10);
         });
@@ -246,7 +324,7 @@ void main() {
         map.lookup('b').matchTestSome((t) {
           expect(t, 2);
         });
-        final ap = map.upsertAt(Eq.instance((a1, a2) => a1 == a2))('b', 10);
+        final ap = map.upsertAt(Eq.instance((a1, a2) => a1 == a2), 'b', 10);
         map.lookup('b').matchTestSome((t) {
           expect(t, 2);
         });
@@ -259,12 +337,13 @@ void main() {
         final d1 = DateTime(2001, 1, 1);
         final d2 = DateTime(2001, 1, 2);
         final map = <DateTime, int>{}
-            .upsertAt(dateEqYear)(d1, 1)
-            .upsertAt(dateEqYear)(d2, 2);
+            .upsertAt(dateEqYear, d1, 1)
+            .upsertAt(dateEqYear, d2, 2);
 
-        expect(map.lookup(d1), isA<None>());
-        expect(map.lookup(d2), isA<Some>());
-        map.lookup(d2).matchTestSome((t) {
+        map.lookupEq(dateEqYear, d1).matchTestSome((t) {
+          expect(t, 2);
+        });
+        map.lookupEq(dateEqYear, d2).matchTestSome((t) {
           expect(t, 2);
         });
       });
@@ -273,7 +352,7 @@ void main() {
     group('pop', () {
       test('Some', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.pop(Eq.instance((a1, a2) => a1 == a2))('b');
+        final ap = map.pop(Eq.instance((a1, a2) => a1 == a2), 'b');
         expect(map.lookup('b'), isA<Some>());
         ap.matchTestSome((t) {
           expect(t.$1, 2);
@@ -283,7 +362,7 @@ void main() {
 
       test('None', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.pop(Eq.instance((a1, a2) => a1 == a2))('e');
+        final ap = map.pop(Eq.instance((a1, a2) => a1 == a2), 'e');
         expect(ap, isA<None>());
       });
     });
@@ -291,56 +370,56 @@ void main() {
     test('foldLeft', () {
       final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
       final ap =
-          map.foldLeft<String>(Order.allEqual())('', (acc, a) => '$acc$a');
+          map.foldLeft<String>(Order.allEqual(), '', (acc, a) => '$acc$a');
       expect(ap, '1234');
     });
 
     test('foldLeftWithIndex', () {
       final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.foldLeftWithIndex<String>(Order.allEqual())(
-          '', (acc, a, i) => '$acc$a$i');
+      final ap = map.foldLeftWithIndex<String>(
+          Order.allEqual(), '', (acc, a, i) => '$acc$a$i');
       expect(ap, '10213243');
     });
 
     test('foldLeftWithKey', () {
       final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.foldLeftWithKey<String>(Order.allEqual())(
-          '', (acc, k, v) => '$acc$k$v');
+      final ap = map.foldLeftWithKey<String>(
+          Order.allEqual(), '', (acc, k, v) => '$acc$k$v');
       expect(ap, 'a1b2c3d4');
     });
 
     test('foldLeftWithKeyAndIndex', () {
       final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.foldLeftWithKeyAndIndex<String>(Order.allEqual())(
-          '', (acc, k, v, i) => '$acc$k$v$i');
+      final ap = map.foldLeftWithKeyAndIndex<String>(
+          Order.allEqual(), '', (acc, k, v, i) => '$acc$k$v$i');
       expect(ap, 'a10b21c32d43');
     });
 
     test('foldRight', () {
       final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
       final ap =
-          map.foldRight<String>(Order.allEqual())('', (a, acc) => '$acc$a');
+          map.foldRight<String>(Order.allEqual(), '', (a, acc) => '$acc$a');
       expect(ap, '4321');
     });
 
     test('foldRightWithIndex', () {
       final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.foldRightWithIndex<String>(Order.allEqual())(
-          '', (a, acc, i) => '$acc$a$i');
+      final ap = map.foldRightWithIndex<String>(
+          Order.allEqual(), '', (a, acc, i) => '$acc$a$i');
       expect(ap, '40312213');
     });
 
     test('foldRightWithKey', () {
       final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.foldRightWithKey<String>(Order.allEqual())(
-          '', (k, v, acc) => '$acc$k$v');
+      final ap = map.foldRightWithKey<String>(
+          Order.allEqual(), '', (k, v, acc) => '$acc$k$v');
       expect(ap, 'd4c3b2a1');
     });
 
     test('foldRightWithKeyAndIndex', () {
       final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.foldRightWithKeyAndIndex<String>(Order.allEqual())(
-          '', (k, v, acc, i) => '$acc$k$v$i');
+      final ap = map.foldRightWithKeyAndIndex<String>(
+          Order.allEqual(), '', (k, v, acc, i) => '$acc$k$v$i');
       expect(ap, 'd40c31b22a13');
     });
 
@@ -350,9 +429,9 @@ void main() {
       expect(ap, 4);
     });
 
-    test('toIterable', () {
+    test('toSortedList', () {
       final map = <String, int>{'c': 3, 'd': 4, 'a': 1, 'b': 2};
-      final ap = map.toIterable(Order.from((a1, a2) => a1.compareTo(a2)));
+      final ap = map.toSortedList(Order.from((a1, a2) => a1.compareTo(a2)));
       expect(ap.elementAt(0).value, 1);
       expect(ap.elementAt(1).value, 2);
       expect(ap.elementAt(2).value, 3);
@@ -367,7 +446,7 @@ void main() {
       final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
       final map1 = <String, int>{'c': 20, 'e': 10};
       final ap =
-          map.union(Eq.instance((a1, a2) => a1 == a2), (x, y) => x + y)(map1);
+          map.union(Eq.instance((a1, a2) => a1 == a2), (x, y) => x + y, map1);
       expect(ap['a'], 1);
       expect(ap['b'], 2);
       expect(ap['c'], 23);
@@ -379,7 +458,7 @@ void main() {
       final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
       final map1 = <String, int>{'c': 20, 'e': 10};
       final ap = map.intersection(
-          Eq.instance((a1, a2) => a1 == a2), (x, y) => x + y)(map1);
+          Eq.instance((a1, a2) => a1 == a2), (x, y) => x + y, map1);
       expect(ap['a'], null);
       expect(ap['b'], null);
       expect(ap['c'], 23);
@@ -391,31 +470,34 @@ void main() {
       test('true', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
         final map1 = <String, int>{'a': 1, 'c': 3};
-        final ap = map1.isSubmap(Eq.instance((a1, a2) => a1 == a2))(
-            Eq.instance((a1, a2) => a1 == a2))(map);
+        final ap = map1.isSubmap(Eq.instance((a1, a2) => a1 == a2),
+            Eq.instance((a1, a2) => a1 == a2), map);
         expect(ap, true);
       });
 
       test('false (value)', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
         final map1 = <String, int>{'a': 1, 'c': 2};
-        final ap = map1.isSubmap(Eq.instance((a1, a2) => a1 == a2))(
-            Eq.instance((a1, a2) => a1 == a2))(map);
+        final ap = map1.isSubmap(Eq.instance((a1, a2) => a1 == a2),
+            Eq.instance((a1, a2) => a1 == a2), map);
         expect(ap, false);
       });
 
       test('false (key)', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
         final map1 = <String, int>{'a': 1, 'd': 3};
-        final ap = map1.isSubmap(Eq.instance((a1, a2) => a1 == a2))(
-            Eq.instance((a1, a2) => a1 == a2))(map);
+        final ap = map1.isSubmap(Eq.instance((a1, a2) => a1 == a2),
+            Eq.instance((a1, a2) => a1 == a2), map);
         expect(ap, false);
       });
     });
 
     test('collect', () {
       final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.collect<String>(Order.from((a1, a2) => a1.compareTo(a2)))(
+      final ap = map.collect<String>(
+          Order.from(
+            (a1, a2) => a1.compareTo(a2),
+          ),
           (k, v) => '$k$v');
       expect(ap.elementAt(0), 'a1');
       expect(ap.elementAt(1), 'b2');
@@ -426,7 +508,7 @@ void main() {
     test('difference', () {
       final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
       final map1 = <String, int>{'a': 1, 'c': 3};
-      final ap = map.difference(Eq.instance((a1, a2) => a1 == a2))(map1);
+      final ap = map.difference(Eq.instance((a1, a2) => a1 == a2), map1);
       expect(ap['a'], null);
       expect(ap['b'], 2);
       expect(ap['c'], null);

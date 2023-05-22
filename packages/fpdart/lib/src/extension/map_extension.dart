@@ -66,14 +66,32 @@ extension FpdartOnMap<K, V> on Map<K, V> {
         ),
       );
 
+  /// Returns this [Map] if it contains a key based on `eq`.
+  Option<Map<K, V>> containsKeyEq(Eq<K> eq, K key) => Option.tryCatch(
+        () => entries.firstWhere((entry) => eq.eqv(entry.key, key)),
+      ).map((_) => {...this});
+
   /// Get the value at given `key` if present, otherwise return [None].
   Option<V> lookup(K key) => Option.fromNullable(this[key]);
+
+  /// Get the value at given `key` if present using `eq`, otherwise return [None].
+  Option<V> lookupEq(Eq<K> eq, K key) => Option.tryCatch(
+        () => entries.firstWhere((entry) => eq.eqv(entry.key, key)).value,
+      );
 
   /// Get the value and key at given `key` if present, otherwise return [None].
   Option<(K, V)> lookupWithKey(K key) {
     final value = this[key];
     return value != null ? some((key, value)) : const None();
   }
+
+  /// Get the value and key at given `key` if present using `eq`, otherwise return [None].
+  Option<(K, V)> lookupWithKeyEq(Eq<K> eq, K key) => Option.tryCatch(
+        () {
+          final entry = entries.firstWhere((entry) => eq.eqv(entry.key, key));
+          return (entry.key, entry.value);
+        },
+      );
 
   /// Return an [Option] that conditionally accesses map keys, only if they match the
   /// given type.
@@ -108,22 +126,15 @@ extension FpdartOnMap<K, V> on Map<K, V> {
     Eq<K> eq,
     V Function(V value) update,
     K key,
-  ) {
-    if (containsKey(key)) {
-      return some(
-        map(
-          (k, v) => eq.eqv(k, key)
-              ? MapEntry(
-                  key,
-                  update(v),
-                )
-              : MapEntry(k, v),
+  ) =>
+      containsKeyEq(eq, key).map(
+        (newMap) => newMap.map(
+          (k, v) => MapEntry(
+            key,
+            eq.eqv(k, key) ? update(v) : v,
+          ),
         ),
       );
-    }
-
-    return const None();
-  }
 
   /// If the given `key` is present in the [Map], then modify its value
   /// using `update` and return a the new [Map].
@@ -139,22 +150,15 @@ extension FpdartOnMap<K, V> on Map<K, V> {
   /// If the given `key` is present in the [Map], then update its value to `value`.
   ///
   /// Otherwise, return [None].
-  Option<Map<K, V>> updateAt(Eq<K> eq, K key, V value) {
-    if (containsKey(key)) {
-      return some(
-        map(
-          (k, v) => eq.eqv(k, key)
-              ? MapEntry(
-                  key,
-                  value,
-                )
-              : MapEntry(k, v),
+  Option<Map<K, V>> updateAt(Eq<K> eq, K key, V value) =>
+      containsKeyEq(eq, key).map(
+        (newMap) => newMap.map(
+          (k, v) => MapEntry(
+            key,
+            eq.eqv(k, key) ? value : v,
+          ),
         ),
       );
-    }
-
-    return const None();
-  }
 
   /// If the given `key` is present in the [Map], then update its value to `value`.
   /// Otherwise, return a copy of the original unmodified [Map].
@@ -173,12 +177,14 @@ extension FpdartOnMap<K, V> on Map<K, V> {
 
   /// Insert or replace a key/value pair in a [Map].
   Map<K, V> upsertAt(Eq<K> eq, K key, V value) =>
-      modifyAtIfPresent(eq, (_) => value, key);
+      modifyAt(eq, (_) => value, key).getOrElse(
+        () => {...this, key: value},
+      );
 
   /// Delete a `key` and value from a this [Map], returning the deleted value as well as the updated [Map].
   ///
   /// If `key` is not present, then return [None].
-  Option<(V, Map<K, V>)> pop(Eq<K> eq, K key) => lookup(key).map(
+  Option<(V, Map<K, V>)> pop(Eq<K> eq, K key) => lookupEq(eq, key).map(
         (v) => (v, deleteAt(eq, key)),
       );
 
@@ -343,7 +349,7 @@ extension FpdartOnMap<K, V> on Map<K, V> {
       map.foldLeftWithKey<Map<K, V>>(
         Order.allEqual(),
         {},
-        (acc, key, value) => lookup(key).match(
+        (acc, key, value) => lookupEq(eq, key).match(
           () => acc,
           (v) => acc.upsertAt(
             eq,
