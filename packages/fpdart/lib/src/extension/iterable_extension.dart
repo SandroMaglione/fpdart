@@ -43,6 +43,17 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// Equivalent to `Iterable.where`.
   Iterable<T> filter(bool Function(T t) test) => where(test);
 
+  /// Returns the list of those elements that satisfy `test`.
+  Iterable<T> filterWithIndex(bool Function(T t, int index) test) sync* {
+    var index = 0;
+    for (var value in this) {
+      if (test(value, index)) {
+        yield value;
+      }
+      index += 1;
+    }
+  }
+
   /// Extract all elements **starting from the first** as long as `test` returns `true`.
   ///
   /// Equivalent to `Iterable.takeWhile`.

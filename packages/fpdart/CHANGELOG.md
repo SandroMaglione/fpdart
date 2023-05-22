@@ -24,6 +24,7 @@
     - `prependAll` (`Iterable`)
     - `intersperse` (`Iterable`)
     - `difference` (`Iterable`)
+    - `filterWithIndex` (`Iterable`)
   - Fixed the following methods ⚠️
     - `takeWhileRight`: Result `List` reversed 
     - `dropWhileRight`: Result `List` reversed 
@@ -38,6 +39,34 @@
     - `bind` (use `flatMap` instead) 
     - `bindWithIndex` (use `flatMapWithIndex` instead) 
     - `concatMapWithIndex` (use `flatMapWithIndex` instead) 
+- Refactoring of `Map` extension methods 
+  - Improved performance
+  - Removed the following methods ⚠️
+    - `member` (use `containsKey` instead)
+    - `elem` (use `containsValue` instead)
+    - `toIterable` (use `toSortedList` instead)
+  - Updated the following methods ⚠️
+    - `toIterable` renamed to `toSortedList` (return a `List` instead of `Iterable`)
+    - `modifyAt` changed parameter order and no more curried 
+    - `modifyAtIfPresent` changed parameter order and no more curried 
+    - `updateAt` no more curried 
+    - `updateAtIfPresent` no more curried 
+    - `deleteAt` no more curried 
+    - `upsertAt` no more curried 
+    - `pop` no more curried 
+    - `foldLeft` no more curried 
+    - `foldLeftWithKey` no more curried 
+    - `foldLeftWithIndex` no more curried 
+    - `foldLeftWithKeyAndIndex` no more curried 
+    - `foldRight` no more curried 
+    - `foldRightWithKey` no more curried 
+    - `foldRightWithIndex` no more curried 
+    - `foldRightWithKeyAndIndex` no more curried 
+    - `union` no more curried 
+    - `intersection` no more curried 
+    - `isSubmap` no more curried 
+    - `collect` no more curried 
+    - `difference` no more curried 
 - Added conversions helpers from `String` to `num`, `int`, `double`, and `bool` using `Option` and `Either` (both as extension methods on `String` and as functions)
   - `toNumOption` 
   - `toIntOption` 
@@ -181,6 +210,7 @@ final result = switch (boolValue) { true => 1, false => -1 };
 - Removed global `id` and `idFuture`, use `identity` and `identityFuture` instead ⚠️
 - Removed global `idFirst` and `idSecond` functions ⚠️
 - Removed `Compose` class and extension methods ⚠️
+- Removed `Magma` typedef ⚠️
 - Removed extension methods on nullable types (`toOption`, `toEither`, `toTaskOption`, `toIOEither`, `toTaskEither`, `toTaskEitherAsync`) ⚠️
 - Organized all extensions inside internal `extension` folder
 

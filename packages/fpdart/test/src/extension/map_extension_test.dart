@@ -126,25 +126,24 @@ void main() {
 
     test('member', () {
       final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.member('b');
-      final ap2 = map.member('e');
-      expect(ap, true);
-      expect(ap2, false);
+      expect(map.containsKey('b'), true);
+      expect(map.containsKey('e'), false);
     });
 
     test('elem', () {
       final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.elem(1);
-      final ap2 = map.elem(0);
-      expect(ap, true);
-      expect(ap2, false);
+      expect(map.containsValue(1), true);
+      expect(map.containsValue(0), false);
     });
 
     group('modifyAt', () {
       test('Some', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap =
-            map.modifyAt(Eq.instance((a1, a2) => a1 == a2))('b', (v) => v + 2);
+        final ap = map.modifyAt(
+          Eq.instance((a1, a2) => a1 == a2),
+          (v) => v + 2,
+          'b',
+        );
         ap.matchTestSome((t) => t.lookup('b').matchTestSome((t) {
               expect(t, 4);
             }));
@@ -152,8 +151,11 @@ void main() {
 
       test('None', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap =
-            map.modifyAt(Eq.instance((a1, a2) => a1 == a2))('e', (v) => v + 2);
+        final ap = map.modifyAt(
+          Eq.instance((a1, a2) => a1 == a2),
+          (v) => v + 2,
+          'e',
+        );
         expect(ap, isA<None>());
       });
     });
@@ -161,8 +163,11 @@ void main() {
     group('modifyAtIfPresent', () {
       test('found', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.modifyAtIfPresent(Eq.instance((a1, a2) => a1 == a2))(
-            'b', (v) => v + 2);
+        final ap = map.modifyAtIfPresent(
+          Eq.instance((a1, a2) => a1 == a2),
+          (v) => v + 2,
+          'b',
+        );
         ap.lookup('b').matchTestSome((t) {
           expect(t, 4);
         });
@@ -170,8 +175,11 @@ void main() {
 
       test('not found', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.modifyAtIfPresent(Eq.instance((a1, a2) => a1 == a2))(
-            'e', (v) => v + 2);
+        final ap = map.modifyAtIfPresent(
+          Eq.instance((a1, a2) => a1 == a2),
+          (v) => v + 2,
+          'e',
+        );
         ap.lookup('b').matchTestSome((t) {
           expect(t, 2);
         });
@@ -181,7 +189,7 @@ void main() {
     group('updateAt', () {
       test('Some', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.updateAt(Eq.instance((a1, a2) => a1 == a2))('b', 10);
+        final ap = map.updateAt(Eq.instance((a1, a2) => a1 == a2), 'b', 10);
         ap.matchTestSome((t) => t.lookup('b').matchTestSome((t) {
               expect(t, 10);
             }));
@@ -189,7 +197,7 @@ void main() {
 
       test('None', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.updateAt(Eq.instance((a1, a2) => a1 == a2))('e', 10);
+        final ap = map.updateAt(Eq.instance((a1, a2) => a1 == a2), 'e', 10);
         expect(ap, isA<None>());
       });
     });
