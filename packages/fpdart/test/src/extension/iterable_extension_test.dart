@@ -43,6 +43,13 @@ void main() {
       expect(eq(ap, [4, 5, 6]), true);
     });
 
+    test('filterWithIndex', () {
+      final list1 = [0, 1, 2, 3, 4, 5, 6];
+      final ap = list1.filterWithIndex((t, index) => t > 3 && index < 6);
+
+      expect(eq(ap, [4, 5]), true);
+    });
+
     test('concat', () {
       final list1 = [1, 2, 3, 4, 5, 6];
       final ap = list1.concat([7, 8]);
