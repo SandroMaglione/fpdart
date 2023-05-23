@@ -68,7 +68,7 @@ extension FpdartOnMap<K, V> on Map<K, V> {
 
   /// Returns this [Map] if it contains a key based on `eq`.
   Option<Map<K, V>> containsKeyEq(Eq<K> eq, K key) => Option.tryCatch(
-        () => entries.firstWhere((entry) => eq.eqv(entry.key, key)),
+        () => keys.firstWhere((entryKey) => eq.eqv(entryKey, key)),
       ).map((_) => {...this});
 
   /// Get the value at given `key` if present, otherwise return [None].
@@ -129,9 +129,9 @@ extension FpdartOnMap<K, V> on Map<K, V> {
   ) =>
       containsKeyEq(eq, key).map(
         (newMap) => newMap.map(
-          (k, v) => MapEntry(
-            key,
-            eq.eqv(k, key) ? update(v) : v,
+          (entryKey, oldValue) => MapEntry(
+            entryKey,
+            eq.eqv(entryKey, key) ? update(oldValue) : oldValue,
           ),
         ),
       );
@@ -153,9 +153,9 @@ extension FpdartOnMap<K, V> on Map<K, V> {
   Option<Map<K, V>> updateAt(Eq<K> eq, K key, V value) =>
       containsKeyEq(eq, key).map(
         (newMap) => newMap.map(
-          (k, v) => MapEntry(
-            key,
-            eq.eqv(k, key) ? value : v,
+          (entryKey, oldValue) => MapEntry(
+            entryKey,
+            eq.eqv(entryKey, key) ? value : oldValue,
           ),
         ),
       );

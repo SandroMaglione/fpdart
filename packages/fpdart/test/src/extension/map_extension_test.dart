@@ -265,7 +265,7 @@ void main() {
     group('updateAt', () {
       test('Some', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.updateAt(Eq.instance((a1, a2) => a1 == a2), 'b', 10);
+        final ap = map.updateAt(Eq.eqString(), 'b', 10);
         ap.matchTestSome((t) => t.lookup('b').matchTestSome((t) {
               expect(t, 10);
             }));
@@ -273,7 +273,7 @@ void main() {
 
       test('None', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.updateAt(Eq.instance((a1, a2) => a1 == a2), 'e', 10);
+        final ap = map.updateAt(Eq.eqString(), 'e', 10);
         expect(ap, isA<None>());
       });
     });
@@ -321,14 +321,14 @@ void main() {
 
       test('update', () {
         final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        map.lookup('b').matchTestSome((t) {
+        map.lookupEq(Eq.eqString(), 'b').matchTestSome((t) {
           expect(t, 2);
         });
-        final ap = map.upsertAt(Eq.instance((a1, a2) => a1 == a2), 'b', 10);
-        map.lookup('b').matchTestSome((t) {
+        final ap = map.upsertAt(Eq.eqString(), 'b', 10);
+        map.lookupEq(Eq.eqString(), 'b').matchTestSome((t) {
           expect(t, 2);
         });
-        ap.lookup('b').matchTestSome((t) {
+        ap.lookupEq(Eq.eqString(), 'b').matchTestSome((t) {
           expect(t, 10);
         });
       });
