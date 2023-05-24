@@ -9,6 +9,7 @@ export 'src/io_ref.dart';
 export 'src/option.dart';
 export 'src/random.dart';
 export 'src/reader.dart';
+export 'src/reader_task_either.dart';
 export 'src/state.dart';
 export 'src/state_async.dart';
 export 'src/task.dart';
