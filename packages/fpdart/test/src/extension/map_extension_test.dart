@@ -5,424 +5,604 @@ import '../utils/utils.dart';
 void main() {
   group('FpdartOnMutableMap', () {
     test('mapValue', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.mapValue((value) => '${value * 2}');
-      expect(ap, {'a': '2', 'b': '4', 'c': '6', 'd': '8'});
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+        expect(
+          value.mapValue((value) => '${value * 2}'),
+          {'a': '2', 'b': '4', 'c': '6', 'd': '8'},
+        );
+      });
     });
 
     test('mapWithIndex', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.mapWithIndex((value, index) => '${value + index}');
-      expect(ap, {'a': '1', 'b': '3', 'c': '5', 'd': '7'});
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+        expect(
+          value.mapWithIndex((value, index) => '${value + index}'),
+          {'a': '1', 'b': '3', 'c': '5', 'd': '7'},
+        );
+      });
     });
 
     test('filter', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.filter((t) => t > 2);
-      expect(ap, {'c': 3, 'd': 4});
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+        expect(
+          value.filter((t) => t > 2),
+          {'c': 3, 'd': 4},
+        );
+      });
     });
 
     test('filterWithIndex', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.filterWithIndex((t, i) => t > 2 && i != 3);
-      expect(ap, {'c': 3});
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+        expect(
+          value.filterWithIndex((t, i) => t > 2 && i != 3),
+          {'c': 3},
+        );
+      });
     });
 
     test('filterWithKey', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.filterWithKey((k, v) => v > 2 && k != 'd');
-      expect(ap, {'c': 3});
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+        expect(
+          value.filterWithKey((k, v) => v > 2 && k != 'd'),
+          {'c': 3},
+        );
+      });
     });
 
     test('filterWithKeyAndIndex', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap =
-          map.filterWithKeyAndIndex((k, v, i) => v > 1 && i != 1 && k != 'd');
-      expect(ap, {'c': 3});
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+        expect(
+          value.filterWithKeyAndIndex((k, v, i) => v > 1 && i != 1 && k != 'd'),
+          {'c': 3},
+        );
+      });
     });
 
     group('lookup', () {
       test('Some', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.lookup('b');
-        ap.matchTestSome((t) {
-          expect(t, 2);
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          value.lookup('b').matchTestSome((t) {
+            expect(t, 2);
+          });
         });
       });
 
       test('None', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.lookup('e');
-        expect(ap, isA<None>());
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          expect(value.lookup('e'), isA<None>());
+        });
+      });
+    });
+
+    group('lookupEq', () {
+      test('Some', () {
+        testImmutableMap({
+          DateTime(2000, 1, 1): 1,
+          DateTime(2001, 1, 1): 2,
+        }, (value) {
+          value.lookupEq(dateEqYear, DateTime(2000, 10, 10)).matchTestSome((t) {
+            expect(t, 1);
+          });
+        });
+      });
+
+      test('None', () {
+        testImmutableMap({
+          DateTime(2000, 1, 1): 1,
+          DateTime(2001, 1, 1): 2,
+        }, (value) {
+          expect(value.lookupEq(dateEqYear, DateTime(2002, 1, 1)), isA<None>());
+        });
+      });
+    });
+
+    group('lookupWithKeyEq', () {
+      test('Some', () {
+        testImmutableMap({
+          DateTime(2000, 1, 1): 1,
+          DateTime(2001, 1, 1): 2,
+        }, (value) {
+          value
+              .lookupWithKeyEq(
+            dateEqYear,
+            DateTime(2000, 10, 10),
+          )
+              .matchTestSome((t) {
+            expect(t, (DateTime(2000, 1, 1), 1));
+          });
+        });
+      });
+
+      test('None', () {
+        testImmutableMap({
+          DateTime(2000, 1, 1): 1,
+          DateTime(2001, 1, 1): 2,
+        }, (value) {
+          expect(
+            value.lookupWithKeyEq(dateEqYear, DateTime(2002, 1, 1)),
+            isA<None>(),
+          );
+        });
       });
     });
 
     group('lookupWithKey', () {
       test('Some', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.lookupWithKey('b');
-        ap.matchTestSome((t) {
-          expect(t.$1, 'b');
-          expect(t.$2, 2);
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          value.lookupWithKey('b').matchTestSome((t) {
+            expect(t.$1, 'b');
+            expect(t.$2, 2);
+          });
         });
       });
 
       test('None', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.lookupWithKey('e');
-        expect(ap, isA<None>());
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          expect(value.lookupWithKey('e'), isA<None>());
+        });
       });
     });
 
     group('extract', () {
       test('valid', () {
-        final map = <String, dynamic>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.extract<int>('b');
-        expect(ap, Option.of(2));
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          value.extract<int>('b').matchTestSome((t) {
+            expect(t, 2);
+          });
+        });
       });
 
       test('wrong type', () {
-        final map = <String, dynamic>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.extract<String>('b');
-        expect(ap, isA<None>());
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          expect(value.extract<String>('b'), isA<None>());
+        });
       });
     });
 
     group('extractMap', () {
       test('no map', () {
-        final map = <String, dynamic>{'a': 1};
-        final ap = map.extractMap('a');
-        expect(ap, isA<None>());
+        testImmutableMap({'a': 1}, (value) {
+          expect(value.extractMap('a'), isA<None>());
+        });
       });
 
       test('one level', () {
-        final map = <String, dynamic>{
+        testImmutableMap({
           'a': {'b': 2}
-        };
-        final ap = map.extractMap('a');
-        expect(ap.toNullable(), equals({'b': 2}));
+        }, (value) {
+          expect(value.extractMap('a').toNullable(), equals({'b': 2}));
+        });
       });
 
       test('two levels', () {
-        final map = <String, dynamic>{
+        testImmutableMap({
           'a': {
             'b': {'c': 3}
           }
-        };
-        final ap = map.extractMap('a').extractMap('b');
-        expect(ap.toNullable(), equals({'c': 3}));
+        }, (value) {
+          expect(value.extractMap('a').extractMap('b').toNullable(),
+              equals({'c': 3}));
+        });
       });
 
       test('two levels with extract', () {
-        final map = <String, dynamic>{
+        testImmutableMap({
           'a': {
             'b': {'c': 3}
           }
-        };
-        final ap = map.extractMap('a').extractMap('b').extract<int>('c');
-        expect(ap, Option.of(3));
+        }, (value) {
+          value
+              .extractMap('a')
+              .extractMap('b')
+              .extract<int>('c')
+              .matchTestSome((t) {
+            expect(t, 3);
+          });
+        });
       });
-    });
-
-    test('member', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.member('b');
-      final ap2 = map.member('e');
-      expect(ap, true);
-      expect(ap2, false);
-    });
-
-    test('elem', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.elem(1);
-      final ap2 = map.elem(0);
-      expect(ap, true);
-      expect(ap2, false);
     });
 
     group('modifyAt', () {
       test('Some', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap =
-            map.modifyAt(Eq.instance((a1, a2) => a1 == a2))('b', (v) => v + 2);
-        ap.matchTestSome((t) => t.lookup('b').matchTestSome((t) {
-              expect(t, 4);
-            }));
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          value
+              .modifyAt(
+                Eq.instance((a1, a2) => a1 == a2),
+                (v) => v + 2,
+                'b',
+              )
+              .matchTestSome(
+                (t) => t.lookup('b').matchTestSome((t) {
+                  expect(t, 4);
+                }),
+              );
+        });
       });
 
       test('None', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap =
-            map.modifyAt(Eq.instance((a1, a2) => a1 == a2))('e', (v) => v + 2);
-        expect(ap, isA<None>());
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          expect(
+            value.modifyAt(
+              Eq.instance((a1, a2) => a1 == a2),
+              (v) => v + 2,
+              'e',
+            ),
+            isA<None>(),
+          );
+        });
       });
     });
 
     group('modifyAtIfPresent', () {
       test('found', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.modifyAtIfPresent(Eq.instance((a1, a2) => a1 == a2))(
-            'b', (v) => v + 2);
-        ap.lookup('b').matchTestSome((t) {
-          expect(t, 4);
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          value
+              .modifyAtIfPresent(
+                Eq.instance((a1, a2) => a1 == a2),
+                (v) => v + 2,
+                'b',
+              )
+              .lookup('b')
+              .matchTestSome((t) {
+            expect(t, 4);
+          });
         });
       });
 
       test('not found', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.modifyAtIfPresent(Eq.instance((a1, a2) => a1 == a2))(
-            'e', (v) => v + 2);
-        ap.lookup('b').matchTestSome((t) {
-          expect(t, 2);
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          value
+              .modifyAtIfPresent(
+                Eq.instance((a1, a2) => a1 == a2),
+                (v) => v + 2,
+                'e',
+              )
+              .lookup('b')
+              .matchTestSome((t) {
+            expect(t, 2);
+          });
         });
       });
     });
 
     group('updateAt', () {
       test('Some', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.updateAt(Eq.instance((a1, a2) => a1 == a2))('b', 10);
-        ap.matchTestSome((t) => t.lookup('b').matchTestSome((t) {
-              expect(t, 10);
-            }));
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          value.updateAt(Eq.eqString(), 'b', 10).matchTestSome(
+                (t) => t.lookup('b').matchTestSome((t) {
+                  expect(t, 10);
+                }),
+              );
+        });
       });
 
       test('None', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.updateAt(Eq.instance((a1, a2) => a1 == a2))('e', 10);
-        expect(ap, isA<None>());
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          expect(value.updateAt(Eq.eqString(), 'e', 10), isA<None>());
+        });
       });
     });
 
     group('updateAtIfPresent', () {
       test('found', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap =
-            map.updateAtIfPresent(Eq.instance((a1, a2) => a1 == a2))('b', 10);
-        ap.lookup('b').matchTestSome((t) {
-          expect(t, 10);
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          value
+              .updateAtIfPresent(Eq.instance((a1, a2) => a1 == a2), 'b', 10)
+              .lookup('b')
+              .matchTestSome((t) {
+            expect(t, 10);
+          });
         });
       });
 
       test('not found', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap =
-            map.updateAtIfPresent(Eq.instance((a1, a2) => a1 == a2))('e', 10);
-        ap.lookup('b').matchTestSome((t) {
-          expect(t, 2);
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          value
+              .updateAtIfPresent(Eq.instance((a1, a2) => a1 == a2), 'e', 10)
+              .lookup('b')
+              .matchTestSome((t) {
+            expect(t, 2);
+          });
         });
       });
     });
 
     test('deleteAt', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      expect(map.lookup('b'), isA<Some>());
-      final ap = map.deleteAt(Eq.instance((a1, a2) => a1 == a2))('b');
-      expect(map.lookup('b'), isA<Some>());
-      expect(ap.lookup('b'), isA<None>());
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+        expect(value.lookup('b'), isA<Some>());
+
+        final result = value.deleteAt(Eq.instance((a1, a2) => a1 == a2), 'b');
+        expect(value.lookup('b'), isA<Some>());
+        expect(result.lookup('b'), isA<None>());
+      });
     });
 
     group('upsertAt', () {
       test('insert', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        expect(map.lookup('e'), isA<None>());
-        final ap = map.upsertAt(Eq.instance((a1, a2) => a1 == a2))('e', 10);
-        expect(map.lookup('e'), isA<None>());
-        ap.lookup('e').matchTestSome((t) {
-          expect(t, 10);
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          expect(value.lookup('e'), isA<None>());
+
+          final result =
+              value.upsertAt(Eq.instance((a1, a2) => a1 == a2), 'e', 10);
+          expect(value.lookup('e'), isA<None>());
+
+          result.lookup('e').matchTestSome((t) {
+            expect(t, 10);
+          });
         });
       });
 
       test('update', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        map.lookup('b').matchTestSome((t) {
-          expect(t, 2);
-        });
-        final ap = map.upsertAt(Eq.instance((a1, a2) => a1 == a2))('b', 10);
-        map.lookup('b').matchTestSome((t) {
-          expect(t, 2);
-        });
-        ap.lookup('b').matchTestSome((t) {
-          expect(t, 10);
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          value.lookupEq(Eq.eqString(), 'b').matchTestSome((t) {
+            expect(t, 2);
+          });
+
+          final result = value.upsertAt(Eq.eqString(), 'b', 10);
+          value.lookupEq(Eq.eqString(), 'b').matchTestSome((t) {
+            expect(t, 2);
+          });
+          result.lookupEq(Eq.eqString(), 'b').matchTestSome((t) {
+            expect(t, 10);
+          });
         });
       });
 
       test('modify by eq date year', () {
-        final d1 = DateTime(2001, 1, 1);
-        final d2 = DateTime(2001, 1, 2);
-        final map = <DateTime, int>{}
-            .upsertAt(dateEqYear)(d1, 1)
-            .upsertAt(dateEqYear)(d2, 2);
+        testImmutableMap(<DateTime, int>{}, (value) {
+          final d1 = DateTime(2001, 1, 1);
+          final d2 = DateTime(2001, 1, 2);
 
-        expect(map.lookup(d1), isA<None>());
-        expect(map.lookup(d2), isA<Some>());
-        map.lookup(d2).matchTestSome((t) {
-          expect(t, 2);
+          final result = value
+              .upsertAt(
+                dateEqYear,
+                d1,
+                1,
+              )
+              .upsertAt(
+                dateEqYear,
+                d2,
+                2,
+              );
+
+          result.lookupEq(dateEqYear, d1).matchTestSome((t) {
+            expect(t, 2);
+          });
+          result.lookupEq(dateEqYear, d2).matchTestSome((t) {
+            expect(t, 2);
+          });
         });
       });
     });
 
     group('pop', () {
       test('Some', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.pop(Eq.instance((a1, a2) => a1 == a2))('b');
-        expect(map.lookup('b'), isA<Some>());
-        ap.matchTestSome((t) {
-          expect(t.$1, 2);
-          expect(t.$2.lookup('b'), isA<None>());
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          final result = value.pop(Eq.instance((a1, a2) => a1 == a2), 'b');
+          expect(value.lookup('b'), isA<Some>());
+
+          result.matchTestSome((t) {
+            expect(t.$1, 2);
+            expect(t.$2.lookup('b'), isA<None>());
+          });
         });
       });
 
       test('None', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final ap = map.pop(Eq.instance((a1, a2) => a1 == a2))('e');
-        expect(ap, isA<None>());
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          expect(
+            value.pop(Eq.instance((a1, a2) => a1 == a2), 'e'),
+            isA<None>(),
+          );
+        });
       });
     });
 
     test('foldLeft', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap =
-          map.foldLeft<String>(Order.allEqual())('', (acc, a) => '$acc$a');
-      expect(ap, '1234');
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+        expect(
+          value.foldLeft<String>(Order.allEqual(), '', (acc, a) => '$acc$a'),
+          '1234',
+        );
+      });
     });
 
     test('foldLeftWithIndex', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.foldLeftWithIndex<String>(Order.allEqual())(
-          '', (acc, a, i) => '$acc$a$i');
-      expect(ap, '10213243');
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+        expect(
+          value.foldLeftWithIndex<String>(
+              Order.allEqual(), '', (acc, a, i) => '$acc$a$i'),
+          '10213243',
+        );
+      });
     });
 
     test('foldLeftWithKey', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.foldLeftWithKey<String>(Order.allEqual())(
-          '', (acc, k, v) => '$acc$k$v');
-      expect(ap, 'a1b2c3d4');
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+        expect(
+          value.foldLeftWithKey<String>(
+              Order.allEqual(), '', (acc, k, v) => '$acc$k$v'),
+          'a1b2c3d4',
+        );
+      });
     });
 
     test('foldLeftWithKeyAndIndex', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.foldLeftWithKeyAndIndex<String>(Order.allEqual())(
-          '', (acc, k, v, i) => '$acc$k$v$i');
-      expect(ap, 'a10b21c32d43');
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+        expect(
+          value.foldLeftWithKeyAndIndex<String>(
+              Order.allEqual(), '', (acc, k, v, i) => '$acc$k$v$i'),
+          'a10b21c32d43',
+        );
+      });
     });
 
     test('foldRight', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap =
-          map.foldRight<String>(Order.allEqual())('', (a, acc) => '$acc$a');
-      expect(ap, '4321');
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+        expect(
+          value.foldRight<String>(Order.allEqual(), '', (a, acc) => '$acc$a'),
+          '4321',
+        );
+      });
     });
 
     test('foldRightWithIndex', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.foldRightWithIndex<String>(Order.allEqual())(
-          '', (a, acc, i) => '$acc$a$i');
-      expect(ap, '40312213');
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+        expect(
+          value.foldRightWithIndex<String>(
+              Order.allEqual(), '', (a, acc, i) => '$acc$a$i'),
+          '40312213',
+        );
+      });
     });
 
     test('foldRightWithKey', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.foldRightWithKey<String>(Order.allEqual())(
-          '', (k, v, acc) => '$acc$k$v');
-      expect(ap, 'd4c3b2a1');
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+        expect(
+          value.foldRightWithKey<String>(
+              Order.allEqual(), '', (k, v, acc) => '$acc$k$v'),
+          'd4c3b2a1',
+        );
+      });
     });
 
     test('foldRightWithKeyAndIndex', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.foldRightWithKeyAndIndex<String>(Order.allEqual())(
-          '', (k, v, acc, i) => '$acc$k$v$i');
-      expect(ap, 'd40c31b22a13');
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+        expect(
+          value.foldRightWithKeyAndIndex<String>(
+              Order.allEqual(), '', (k, v, acc, i) => '$acc$k$v$i'),
+          'd40c31b22a13',
+        );
+      });
     });
 
     test('size', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.size;
-      expect(ap, 4);
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+        expect(value.size, 4);
+      });
     });
 
-    test('toIterable', () {
-      final map = <String, int>{'c': 3, 'd': 4, 'a': 1, 'b': 2};
-      final ap = map.toIterable(Order.from((a1, a2) => a1.compareTo(a2)));
-      expect(ap.elementAt(0).value, 1);
-      expect(ap.elementAt(1).value, 2);
-      expect(ap.elementAt(2).value, 3);
-      expect(ap.elementAt(3).value, 4);
-      expect(ap.elementAt(0).key, 'a');
-      expect(ap.elementAt(1).key, 'b');
-      expect(ap.elementAt(2).key, 'c');
-      expect(ap.elementAt(3).key, 'd');
+    test('toSortedList', () {
+      testImmutableMap({'c': 3, 'd': 4, 'a': 1, 'b': 2}, (value) {
+        final result =
+            value.toSortedList(Order.from((a1, a2) => a1.compareTo(a2)));
+        expect(result.elementAt(0).value, 1);
+        expect(result.elementAt(1).value, 2);
+        expect(result.elementAt(2).value, 3);
+        expect(result.elementAt(3).value, 4);
+        expect(result.elementAt(0).key, 'a');
+        expect(result.elementAt(1).key, 'b');
+        expect(result.elementAt(2).key, 'c');
+        expect(result.elementAt(3).key, 'd');
+      });
     });
 
     test('union', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final map1 = <String, int>{'c': 20, 'e': 10};
-      final ap =
-          map.union(Eq.instance((a1, a2) => a1 == a2), (x, y) => x + y)(map1);
-      expect(ap['a'], 1);
-      expect(ap['b'], 2);
-      expect(ap['c'], 23);
-      expect(ap['d'], 4);
-      expect(ap['e'], 10);
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value1) {
+        testImmutableMap({'c': 20, 'e': 10}, (value2) {
+          final ap = value1.union(
+            Eq.instance((a1, a2) => a1 == a2),
+            (x, y) => x + y,
+            value2,
+          );
+
+          expect(ap['a'], 1);
+          expect(ap['b'], 2);
+          expect(ap['c'], 23);
+          expect(ap['d'], 4);
+          expect(ap['e'], 10);
+        });
+      });
     });
 
     test('intersection', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final map1 = <String, int>{'c': 20, 'e': 10};
-      final ap = map.intersection(
-          Eq.instance((a1, a2) => a1 == a2), (x, y) => x + y)(map1);
-      expect(ap['a'], null);
-      expect(ap['b'], null);
-      expect(ap['c'], 23);
-      expect(ap['d'], null);
-      expect(ap['e'], null);
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value1) {
+        testImmutableMap({'c': 20, 'e': 10}, (value2) {
+          final ap = value1.intersection(
+            Eq.instance((a1, a2) => a1 == a2),
+            (x, y) => x + y,
+            value2,
+          );
+
+          expect(ap['a'], null);
+          expect(ap['b'], null);
+          expect(ap['c'], 23);
+          expect(ap['d'], null);
+          expect(ap['e'], null);
+        });
+      });
     });
 
     group('isSubmap', () {
       test('true', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final map1 = <String, int>{'a': 1, 'c': 3};
-        final ap = map1.isSubmap(Eq.instance((a1, a2) => a1 == a2))(
-            Eq.instance((a1, a2) => a1 == a2))(map);
-        expect(ap, true);
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value1) {
+          testImmutableMap({'a': 1, 'c': 3}, (value2) {
+            final result = value2.isSubmap(
+              Eq.eqString(),
+              Eq.eqInt(),
+              value1,
+            );
+
+            expect(result, true);
+          });
+        });
       });
 
       test('false (value)', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final map1 = <String, int>{'a': 1, 'c': 2};
-        final ap = map1.isSubmap(Eq.instance((a1, a2) => a1 == a2))(
-            Eq.instance((a1, a2) => a1 == a2))(map);
-        expect(ap, false);
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value1) {
+          testImmutableMap({'a': 1, 'c': 2}, (value2) {
+            final result = value2.isSubmap(
+              Eq.eqString(),
+              Eq.eqInt(),
+              value1,
+            );
+
+            expect(result, false);
+          });
+        });
       });
 
       test('false (key)', () {
-        final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-        final map1 = <String, int>{'a': 1, 'd': 3};
-        final ap = map1.isSubmap(Eq.instance((a1, a2) => a1 == a2))(
-            Eq.instance((a1, a2) => a1 == a2))(map);
-        expect(ap, false);
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value1) {
+          testImmutableMap({'a': 1, 'd': 3}, (value2) {
+            final result = value2.isSubmap(
+              Eq.eqString(),
+              Eq.eqInt(),
+              value1,
+            );
+
+            expect(result, false);
+          });
+        });
       });
     });
 
     test('collect', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final ap = map.collect<String>(Order.from((a1, a2) => a1.compareTo(a2)))(
-          (k, v) => '$k$v');
-      expect(ap.elementAt(0), 'a1');
-      expect(ap.elementAt(1), 'b2');
-      expect(ap.elementAt(2), 'c3');
-      expect(ap.elementAt(3), 'd4');
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+        final result = value.collect<String>(
+          Order.from(
+            (a1, a2) => a1.compareTo(a2),
+          ),
+          (k, v) => '$k$v',
+        );
+
+        expect(result.elementAt(0), 'a1');
+        expect(result.elementAt(1), 'b2');
+        expect(result.elementAt(2), 'c3');
+        expect(result.elementAt(3), 'd4');
+      });
     });
 
     test('difference', () {
-      final map = <String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4};
-      final map1 = <String, int>{'a': 1, 'c': 3};
-      final ap = map.difference(Eq.instance((a1, a2) => a1 == a2))(map1);
-      expect(ap['a'], null);
-      expect(ap['b'], 2);
-      expect(ap['c'], null);
-      expect(ap['d'], 4);
+      testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value1) {
+        testImmutableMap({'a': 1, 'c': 3}, (value2) {
+          final result = value1.difference(Eq.eqString(), value2);
+          expect(result['a'], null);
+          expect(result['b'], 2);
+          expect(result['c'], null);
+          expect(result['d'], 4);
+        });
+      });
     });
   });
 }

@@ -9,8 +9,11 @@ void main() {
   ///
   /// The first date `d1` will be overwritten by the second date `d2`,
   /// since the year is the same.
-  final map =
-      <DateTime, int>{}.upsertAt(dateEqYear)(d1, 1).upsertAt(dateEqYear)(d2, 2);
+  final map = <DateTime, int>{}.upsertAt(dateEqYear, d1, 1).upsertAt(
+        dateEqYear,
+        d2,
+        2,
+      );
 
   print(map); // {2001-01-02 00:00:00.000: 2}
 }
