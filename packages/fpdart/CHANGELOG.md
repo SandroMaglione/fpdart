@@ -44,7 +44,6 @@
   - Added the following methods
     - `lookupEq`
     - `lookupWithKeyEq`
-    - `containsKeyEq`
   - Removed the following methods ⚠️
     - `member` (use `containsKey` instead)
     - `elem` (use `containsValue` instead)
