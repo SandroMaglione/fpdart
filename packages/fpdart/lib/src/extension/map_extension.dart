@@ -6,7 +6,7 @@ import 'option_extension.dart';
 
 /// Functional programming functions on a mutable dart [Map] using `fpdart`.
 extension FpdartOnMap<K, V> on Map<K, V> {
-  /// Return number of keys in the [Map] (`keys.length`).
+  /// Return number of elements in the [Map] (`keys.length`).
   int get size => keys.length;
 
   /// Convert each **value** of the [Map] using
@@ -29,14 +29,16 @@ extension FpdartOnMap<K, V> on Map<K, V> {
         ),
       );
 
-  /// Returns the list of those elements of the [Map] whose **value** satisfies `test`.
+  /// Returns a new [Map] containing all the elements of this [Map]
+  /// where the **value** satisfies `test`.
   Map<K, V> filter(bool Function(V value) test) => Map.fromEntries(
         entries.where(
           (entry) => test(entry.value),
         ),
       );
 
-  /// Returns the list of those elements of the [Map] whose **value** satisfies `test`.
+  /// Returns a new [Map] containing all the elements of this [Map]
+  /// where the **value** satisfies `test`.
   Map<K, V> filterWithIndex(bool Function(V value, int index) test) =>
       Map.fromEntries(
         entries.filterWithIndex(
@@ -44,7 +46,8 @@ extension FpdartOnMap<K, V> on Map<K, V> {
         ),
       );
 
-  /// Returns the list of those elements of the [Map] whose key/value satisfies `test`.
+  /// Returns a new [Map] containing all the elements of this [Map]
+  /// where **key/value** satisfies `test`.
   Map<K, V> filterWithKey(bool Function(K key, V value) test) =>
       Map.fromEntries(
         entries.where(
@@ -52,7 +55,8 @@ extension FpdartOnMap<K, V> on Map<K, V> {
         ),
       );
 
-  /// Returns the list of those elements of the [Map] whose key/value satisfies `test`.
+  /// Returns a new [Map] containing all the elements of this [Map]
+  /// where **key/value** satisfies `test`.
   Map<K, V> filterWithKeyAndIndex(
     bool Function(K key, V value, int index) test,
   ) =>
@@ -66,24 +70,19 @@ extension FpdartOnMap<K, V> on Map<K, V> {
         ),
       );
 
-  /// Returns this [Map] if it contains a key based on `eq`.
-  Option<Map<K, V>> containsKeyEq(Eq<K> eq, K key) => Option.tryCatch(
-        () => keys.firstWhere((entryKey) => eq.eqv(entryKey, key)),
-      ).map((_) => {...this});
-
   /// Get the value at given `key` if present, otherwise return [None].
   Option<V> lookup(K key) => Option.fromNullable(this[key]);
-
-  /// Get the value at given `key` if present using `eq`, otherwise return [None].
-  Option<V> lookupEq(Eq<K> eq, K key) => Option.tryCatch(
-        () => entries.firstWhere((entry) => eq.eqv(entry.key, key)).value,
-      );
 
   /// Get the value and key at given `key` if present, otherwise return [None].
   Option<(K, V)> lookupWithKey(K key) {
     final value = this[key];
     return value != null ? some((key, value)) : const None();
   }
+
+  /// Get the value at given `key` if present using `eq`, otherwise return [None].
+  Option<V> lookupEq(Eq<K> eq, K key) => Option.tryCatch(
+        () => entries.firstWhere((entry) => eq.eqv(entry.key, key)).value,
+      );
 
   /// Get the value and key at given `key` if present using `eq`, otherwise return [None].
   Option<(K, V)> lookupWithKeyEq(Eq<K> eq, K key) => Option.tryCatch(
@@ -127,8 +126,10 @@ extension FpdartOnMap<K, V> on Map<K, V> {
     V Function(V value) update,
     K key,
   ) =>
-      containsKeyEq(eq, key).map(
-        (newMap) => newMap.map(
+      Option.tryCatch(
+        () => keys.firstWhere((entryKey) => eq.eqv(entryKey, key)),
+      ).map(
+        (_) => map(
           (entryKey, oldValue) => MapEntry(
             entryKey,
             eq.eqv(entryKey, key) ? update(oldValue) : oldValue,
@@ -150,9 +151,10 @@ extension FpdartOnMap<K, V> on Map<K, V> {
   /// If the given `key` is present in the [Map], then update its value to `value`.
   ///
   /// Otherwise, return [None].
-  Option<Map<K, V>> updateAt(Eq<K> eq, K key, V value) =>
-      containsKeyEq(eq, key).map(
-        (newMap) => newMap.map(
+  Option<Map<K, V>> updateAt(Eq<K> eq, K key, V value) => Option.tryCatch(
+        () => keys.firstWhere((entryKey) => eq.eqv(entryKey, key)),
+      ).map(
+        (_) => map(
           (entryKey, oldValue) => MapEntry(
             entryKey,
             eq.eqv(entryKey, key) ? value : oldValue,
@@ -172,6 +174,8 @@ extension FpdartOnMap<K, V> on Map<K, V> {
       );
 
   /// Delete entry at given `key` if present in the [Map] and return updated [Map].
+  ///
+  /// See also `pop`.
   Map<K, V> deleteAt(Eq<K> eq, K key) =>
       filterWithKey((k, v) => !eq.eqv(k, key));
 
@@ -184,6 +188,8 @@ extension FpdartOnMap<K, V> on Map<K, V> {
   /// Delete a `key` and value from a this [Map], returning the deleted value as well as the updated [Map].
   ///
   /// If `key` is not present, then return [None].
+  ///
+  /// See also `deleteAt`.
   Option<(V, Map<K, V>)> pop(Eq<K> eq, K key) => lookupEq(eq, key).map(
         (v) => (v, deleteAt(eq, key)),
       );
@@ -359,6 +365,13 @@ extension FpdartOnMap<K, V> on Map<K, V> {
         ),
       );
 
+  /// Remove from this [Map] all the elements that have **key** contained in the given `map`.
+  Map<K, V> difference(Eq<K> eq, Map<K, V> map) => filterWithKey(
+        (key, value) => !map.keys.any(
+          (element) => eq.eqv(element, key),
+        ),
+      );
+
   /// Test whether or not the given `map` contains all of the keys and values contained in this [Map].
   bool isSubmap(
     Eq<K> eqK,
@@ -377,6 +390,8 @@ extension FpdartOnMap<K, V> on Map<K, V> {
 
   /// Collect all the entries in this [Map] into an [Iterable] using `compose`,
   /// with the values ordered using `order`.
+  ///
+  /// See also `toSortedList`.
   Iterable<A> collect<A>(Order<K> order, A Function(K key, V value) compose) =>
       toSortedList(order).map(
         (item) => compose(
@@ -385,15 +400,10 @@ extension FpdartOnMap<K, V> on Map<K, V> {
         ),
       );
 
-  /// Remove from this [Map] all the elements that have **key** contained in the given `map`.
-  Map<K, V> difference(Eq<K> eq, Map<K, V> map) => filterWithKey(
-        (key, value) => !map.keys.any(
-          (element) => eq.eqv(element, key),
-        ),
-      );
-
   /// Get a sorted [List] of the key/value pairs contained in this [Map]
   /// based on `order` on keys.
+  ///
+  /// See also `collect`.
   List<MapEntry<K, V>> toSortedList(Order<K> order) => entries.sortWith(
         (map) => map.key,
         order,
