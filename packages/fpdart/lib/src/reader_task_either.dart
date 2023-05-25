@@ -32,10 +32,12 @@ typedef DoFunctionReaderTaskEither<E, L, A> = Future<A> Function(
 /// Tag the [HKT3] interface for the actual [ReaderTaskEither].
 abstract final class _ReaderTaskEitherHKT {}
 
-/// `ReaderTaskEither<L, R>` represents an asynchronous computation that
-/// either yields a value of type `R` or fails yielding an error of type `L`.
+/// `ReaderTaskEither<E, L, R>` represents an asynchronous computation (`Task`) that
+/// either yields a value of type `R` or fails yielding an error of type `L` (`Either`),
+/// that allows to read values from a dependency/context `E` (`Reader`).
 ///
-/// If you want to represent an asynchronous computation that never fails, see [Task].
+/// [ReaderTaskEither] models a complete program using `Reader` for dependency injection,
+/// `Task` to perform asynchronous computation, and `Either` to handle errors.
 final class ReaderTaskEither<E, L, R>
     extends HKT3<_ReaderTaskEitherHKT, E, L, R>
     with

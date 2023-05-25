@@ -1,9 +1,16 @@
 ## v1.0.0 - Soon
-- `Either` as `sealed` class
+- Minimum environment dart sdk to `3.0.0` ⚠️ (Dart 3️⃣)
+```yaml
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+```
+- Added new `ReaderTaskEither` type
+  - `ReaderTaskEither` models a complete program using `Reader` for dependency injection, `Task` to perform asynchronous computation, and `Either` to handle errors 🎯
+- `Either` as `sealed` class (Dart 3️⃣)
   - You can now use exhaustive pattern matching (`Left` or `Right`)
-- `Option` as `sealed` class
+- `Option` as `sealed` class (Dart 3️⃣)
   - You can now use exhaustive pattern matching (`None` or `Some`)
-- Types marked as `final` (no `extends` nor `implements`)
+- Types marked as `final` (no `extends` nor `implements`) (Dart 3️⃣)
   - `Unit`
   - `Reader`
   - `State`
@@ -15,7 +22,7 @@
   - `Task` 
   - `TaskOption` 
   - `TaskEither` 
-- Removed `Tuple2`, use Dart 3 Records instead (`Tuple2(a, b)` becomes simply `(a, b)` 🎯) ⚠️
+- Removed `Tuple2`, use Dart 3 Records instead (`Tuple2(a, b)` becomes simply `(a, b)` 🎯) ⚠️ (Dart 3️⃣)
   - Updated all internal APIs to use records instead of `Tuple2` 
 - Major refactoring of `Iterable` and `List` extension methods
   - Improved performance
