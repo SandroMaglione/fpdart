@@ -257,4 +257,14 @@ final class ReaderTaskEither<E, L, R>
           return Left<L, R>(onError(error, stack));
         }
       });
+
+  /// Extract a value `A` given the current dependency `E`.
+  factory ReaderTaskEither.asks(R Function(E) f) => ReaderTaskEither(
+        (env) async => right(f(env)),
+      );
+
+  /// Read the current dependency `E`.
+  static ReaderTaskEither<E, L, E> ask<E, L>() => ReaderTaskEither(
+        (env) async => right(env),
+      );
 }
