@@ -51,3 +51,46 @@ mixin Monad2<KT, A, B> on HKT2<KT, A, B>, Applicative2<KT, A, B> {
 
   HKT2<KT, A, C> call<C>(HKT2<KT, A, C> chain) => flatMap((_) => chain);
 }
+
+mixin Monad3<KT, P1, P2, P3>
+    on HKT3<KT, P1, P2, P3>, Applicative3<KT, P1, P2, P3> {
+  HKT3<KT, P1, P2, N1> flatMap<N1>(HKT3<KT, P1, P2, N1> Function(P3) f);
+
+  /// Derive `ap` from `flatMap`.
+  ///
+  /// Use `flatMap` to extract the value from `a` and from the current [Monad].
+  /// If both these values are present, apply the function from `a` to the value
+  /// of the current [Monad], using `pure` to return the correct type.
+  @override
+  HKT3<KT, P1, P2, N1> ap<N1>(
+          covariant Monad3<KT, P1, P2, N1 Function(P3)> a) =>
+      a.flatMap((f) => flatMap((v) => pure(f(v))));
+
+  HKT3<KT, P1, P2, N1> map2<N1>(
+    Monad3<KT, P1, P2, N1> m1,
+    N1 Function(P3, N1) f,
+  ) =>
+      flatMap((b) => m1.map((c) => f(b, c)));
+
+  HKT3<KT, P1, P2, N2> map3<N1, N2>(
+    Monad3<KT, P1, P2, N1> m1,
+    Monad3<KT, P1, P2, N2> m2,
+    N2 Function(P3, N1, N2) f,
+  ) =>
+      flatMap(
+        (b) => m1.flatMap((c) => m2.map((d) => f(b, c, d))),
+      );
+
+  HKT3<KT, P1, P2, N1> andThen<N1>(
+    HKT3<KT, P1, P2, N1> Function() then,
+  ) =>
+      flatMap((_) => then());
+
+  HKT3<KT, P1, P2, P3> chainFirst<N1>(
+    covariant Monad3<KT, P1, P2, N1> Function(P3) chain,
+  ) =>
+      flatMap((b) => chain(b).map((c) => b));
+
+  HKT3<KT, P1, P2, N1> call<N1>(HKT3<KT, P1, P2, N1> chain) =>
+      flatMap((_) => chain);
+}

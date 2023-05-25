@@ -12,3 +12,7 @@ mixin Alt<KT, A> on HKT<KT, A>, Functor<KT, A> {
 mixin Alt2<KT, A, B> on HKT2<KT, A, B>, Functor2<KT, A, B> {
   HKT2<KT, A, B> alt(HKT2<KT, A, B> Function() orElse);
 }
+
+mixin Alt3<KT, P1, P2, P3> on HKT3<KT, P1, P2, P3>, Functor3<KT, P1, P2, P3> {
+  HKT3<KT, P1, P2, P3> alt(HKT3<KT, P1, P2, P3> Function() orElse);
+}
