@@ -1,9 +1,13 @@
 import 'either.dart';
 import 'function.dart';
+import 'io.dart';
+import 'io_either.dart';
+import 'io_option.dart';
 import 'option.dart';
 import 'reader.dart';
 import 'task.dart';
 import 'task_either.dart';
+import 'task_option.dart';
 import 'typeclass/alt.dart';
 import 'typeclass/applicative.dart';
 import 'typeclass/functor.dart';
@@ -213,8 +217,8 @@ final class ReaderTaskEither<E, L, R>
   ) =>
       readerTaskEither.flatMap(identity);
 
-  /// Build a [ReaderTaskEither] from a `Reader<E, R>`.
-  factory ReaderTaskEither.rightReader(Reader<E, R> reader) => ReaderTaskEither(
+  /// Build a [ReaderTaskEither] that returns a [Right] containing the result of running `reader`.
+  factory ReaderTaskEither.fromReader(Reader<E, R> reader) => ReaderTaskEither(
         (env) async => Right(reader.run(env)),
       );
 
@@ -234,10 +238,44 @@ final class ReaderTaskEither<E, L, R>
       );
 
   /// Build a [ReaderTaskEither] that returns a [Right] containing the result of running `task`.
-  ///
-  /// Same of `ReaderTaskEither.fromTask`
   factory ReaderTaskEither.fromTask(Task<R> task) => ReaderTaskEither(
         (_) async => Right(await task.run()),
+      );
+
+  /// Build a [ReaderTaskEither] that returns a [Right] containing the result of running `task`,
+  /// or the result of `onNone` if `task` is [Left].
+  factory ReaderTaskEither.fromTaskOption(
+    TaskOption<R> task,
+    L Function() onNone,
+  ) =>
+      ReaderTaskEither(
+        (_) async => Either.fromOption(await task.run(), onNone),
+      );
+
+  /// Build a [ReaderTaskEither] that returns a [Right] containing the result of running `task`.
+  factory ReaderTaskEither.fromTaskEither(TaskEither<L, R> task) =>
+      ReaderTaskEither(
+        (_) async => task.run(),
+      );
+
+  /// Build a [ReaderTaskEither] that returns a [Right] containing the result of running `io`.
+  factory ReaderTaskEither.fromIO(IO<R> io) => ReaderTaskEither(
+        (_) async => Right(io.run()),
+      );
+
+  /// Build a [ReaderTaskEither] that returns a [Right] containing the result of running `io`,
+  /// or the result of `onNone` if `io` is [Left].
+  factory ReaderTaskEither.fromIOOption(
+    IOOption<R> io,
+    L Function() onNone,
+  ) =>
+      ReaderTaskEither(
+        (_) async => Either.fromOption(io.run(), onNone),
+      );
+
+  /// Build a [ReaderTaskEither] that returns a [Right] containing the result of running `io`.
+  factory ReaderTaskEither.fromIOEither(IOEither<L, R> io) => ReaderTaskEither(
+        (_) async => io.run(),
       );
 
   /// {@template fpdart_from_nullable_reader_task_either}

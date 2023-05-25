@@ -535,6 +535,115 @@ void main() {
       });
     });
 
+    group('fromIOOption', () {
+      test('Right', () async {
+        final apply = ReaderTaskEither<double, String, int>.fromIOOption(
+          IOOption.of(10),
+          () => "none",
+        );
+
+        final result = await apply.run(12.2);
+        result.matchTestRight((r) {
+          expect(r, 10);
+        });
+      });
+
+      test('Left', () async {
+        final apply = ReaderTaskEither<double, String, int>.fromIOOption(
+          IOOption.none(),
+          () => "none",
+        );
+
+        final result = await apply.run(12.2);
+        result.matchTestLeft((l) {
+          expect(l, "none");
+        });
+      });
+    });
+
+    group('fromTaskOption', () {
+      test('Right', () async {
+        final apply = ReaderTaskEither<double, String, int>.fromTaskOption(
+          TaskOption.of(10),
+          () => "none",
+        );
+
+        final result = await apply.run(12.2);
+        result.matchTestRight((r) {
+          expect(r, 10);
+        });
+      });
+
+      test('Left', () async {
+        final apply = ReaderTaskEither<double, String, int>.fromTaskOption(
+          TaskOption.none(),
+          () => "none",
+        );
+
+        final result = await apply.run(12.2);
+        result.matchTestLeft((l) {
+          expect(l, "none");
+        });
+      });
+    });
+
+    test('fromTaskEither', () async {
+      final apply = ReaderTaskEither<double, String, int>.fromTaskEither(
+        TaskEither.of(10),
+      );
+
+      final result = await apply.run(12.2);
+      result.matchTestRight((r) {
+        expect(r, 10);
+      });
+    });
+
+    test('fromIO', () async {
+      final apply = ReaderTaskEither<double, String, int>.fromIO(
+        IO(
+          () => 10,
+        ),
+      );
+
+      final result = await apply.run(12.2);
+      result.matchTestRight((r) {
+        expect(r, 10);
+      });
+    });
+
+    test('fromIOEither', () async {
+      final apply = ReaderTaskEither<double, String, int>.fromIOEither(
+        IOEither.of(10),
+      );
+
+      final result = await apply.run(12.2);
+      result.matchTestRight((r) {
+        expect(r, 10);
+      });
+    });
+
+    test('fromReader', () async {
+      final apply = ReaderTaskEither<double, String, int>.fromReader(
+        Reader((env) => env.toInt()),
+      );
+
+      final result = await apply.run(12.2);
+      result.matchTestRight((r) {
+        expect(r, 12);
+      });
+    });
+
+    test('leftReader', () async {
+      final apply = ReaderTaskEither<double, String, int>.leftReader(
+        Reader((env) => "$env"),
+      );
+
+      final result = await apply.run(12.2);
+      result.matchTestLeft((l) {
+        expect(l, "12.2");
+      });
+    });
+
     test('left', () async {
       final apply = ReaderTaskEither<double, String, int>.left(
         'none',

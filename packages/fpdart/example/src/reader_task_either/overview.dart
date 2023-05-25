@@ -7,7 +7,7 @@ typedef Success = String;
 void main(List<String> args) async {
   final rte = ReaderTaskEither<Env, Error, Success>.Do(($) async {
     final a = 10;
-    final val = await $(ReaderTaskEither.rightReader(
+    final val = await $(ReaderTaskEither.fromReader(
       Reader(
         (env) => env.$1 + env.$2.length,
       ),
