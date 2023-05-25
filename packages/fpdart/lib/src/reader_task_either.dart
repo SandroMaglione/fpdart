@@ -109,17 +109,17 @@ final class ReaderTaskEither<E, L, R>
   ReaderTaskEither<E, L, C> map<C>(C Function(R r) f) => ap(pure(f));
 
   @override
-  ReaderTaskEither<E, L, N1> map2<N1>(
+  ReaderTaskEither<E, L, N2> map2<N1, N2>(
     covariant ReaderTaskEither<E, L, N1> m1,
-    N1 Function(R p1, N1 p2) f,
+    N2 Function(R p1, N1 p2) f,
   ) =>
       flatMap((b) => m1.map((c) => f(b, c)));
 
   @override
-  ReaderTaskEither<E, L, N2> map3<N1, N2>(
+  ReaderTaskEither<E, L, N3> map3<N1, N2, N3>(
     covariant ReaderTaskEither<E, L, N1> m1,
     covariant ReaderTaskEither<E, L, N2> m2,
-    N2 Function(R p1, N1 p2, N2 p3) f,
+    N3 Function(R p1, N1 p2, N2 p3) f,
   ) =>
       flatMap(
         (b) => m1.flatMap((c) => m2.map((d) => f(b, c, d))),

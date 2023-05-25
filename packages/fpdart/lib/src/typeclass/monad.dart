@@ -66,16 +66,16 @@ mixin Monad3<KT, P1, P2, P3>
           covariant Monad3<KT, P1, P2, N1 Function(P3)> a) =>
       a.flatMap((f) => flatMap((v) => pure(f(v))));
 
-  HKT3<KT, P1, P2, N1> map2<N1>(
+  HKT3<KT, P1, P2, N2> map2<N1, N2>(
     Monad3<KT, P1, P2, N1> m1,
-    N1 Function(P3, N1) f,
+    N2 Function(P3, N1) f,
   ) =>
       flatMap((b) => m1.map((c) => f(b, c)));
 
-  HKT3<KT, P1, P2, N2> map3<N1, N2>(
+  HKT3<KT, P1, P2, N3> map3<N1, N2, N3>(
     Monad3<KT, P1, P2, N1> m1,
     Monad3<KT, P1, P2, N2> m2,
-    N2 Function(P3, N1, N2) f,
+    N3 Function(P3, N1, N2) f,
   ) =>
       flatMap(
         (b) => m1.flatMap((c) => m2.map((d) => f(b, c, d))),
