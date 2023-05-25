@@ -218,6 +218,7 @@ final class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   /// {@template fpdart_from_nullable_task_either}
   /// If `r` is `null`, then return the result of `onNull` in [Left].
   /// Otherwise return `Right(r)`.
+
   /// {@endtemplate}
   factory TaskEither.fromNullable(R? r, L Function() onNull) =>
       Either.fromNullable(r, onNull).toTaskEither();

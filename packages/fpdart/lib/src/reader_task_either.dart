@@ -4,7 +4,11 @@ import 'option.dart';
 import 'reader.dart';
 import 'task.dart';
 import 'task_either.dart';
+import 'typeclass/alt.dart';
+import 'typeclass/applicative.dart';
+import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
+import 'typeclass/monad.dart';
 
 final class _ReaderTaskEitherThrow<L> {
   final L value;
@@ -30,12 +34,11 @@ abstract final class _ReaderTaskEitherHKT {}
 /// If you want to represent an asynchronous computation that never fails, see [Task].
 final class ReaderTaskEither<E, L, R>
     extends HKT3<_ReaderTaskEitherHKT, E, L, R>
-// with
-//     Functor2<_ReaderTaskEitherHKT, L, R>,
-//     Applicative2<_ReaderTaskEitherHKT, L, R>,
-//     Monad2<_ReaderTaskEitherHKT, L, R>,
-//     Alt2<_ReaderTaskEitherHKT, L, R>
-{
+    with
+        Functor3<_ReaderTaskEitherHKT, E, L, R>,
+        Applicative3<_ReaderTaskEitherHKT, E, L, R>,
+        Monad3<_ReaderTaskEitherHKT, E, L, R>,
+        Alt3<_ReaderTaskEitherHKT, E, L, R> {
   final Future<Either<L, R>> Function(E env) _run;
 
   /// Build a [ReaderTaskEither] from a function returning a `Future<Either<L, R>>`.
@@ -56,6 +59,7 @@ final class ReaderTaskEither<E, L, R>
   Future<Either<L, R>> run(E env) => _run(env);
 
   /// Returns a [ReaderTaskEither] that returns a `Right(a)`.
+  @override
   ReaderTaskEither<E, L, C> pure<C>(C a) => ReaderTaskEither(
         (_) async => Right(a),
       );
@@ -66,6 +70,7 @@ final class ReaderTaskEither<E, L, R>
   /// handling all possible missing cases.
   ///
   /// If running any of the tasks in the chain returns [Left], the result is [Left].
+  @override
   ReaderTaskEither<E, L, C> flatMap<C>(
     covariant ReaderTaskEither<E, L, C> Function(R r) f,
   ) =>
@@ -92,6 +97,7 @@ final class ReaderTaskEither<E, L, R>
 
   /// If running this [ReaderTaskEither] returns [Right], then return the result of calling `then`.
   /// Otherwise return [Left].
+  @override
   ReaderTaskEither<E, L, C> andThen<C>(
     covariant ReaderTaskEither<E, L, C> Function() then,
   ) =>
@@ -99,7 +105,25 @@ final class ReaderTaskEither<E, L, R>
 
   /// If running this [ReaderTaskEither] returns [Right], then change its value from type `R` to
   /// type `C` using function `f`.
+  @override
   ReaderTaskEither<E, L, C> map<C>(C Function(R r) f) => ap(pure(f));
+
+  @override
+  ReaderTaskEither<E, L, N1> map2<N1>(
+    covariant ReaderTaskEither<E, L, N1> m1,
+    N1 Function(R p1, N1 p2) f,
+  ) =>
+      flatMap((b) => m1.map((c) => f(b, c)));
+
+  @override
+  ReaderTaskEither<E, L, N2> map3<N1, N2>(
+    covariant ReaderTaskEither<E, L, N1> m1,
+    covariant ReaderTaskEither<E, L, N2> m2,
+    N2 Function(R p1, N1 p2, N2 p3) f,
+  ) =>
+      flatMap(
+        (b) => m1.flatMap((c) => m2.map((d) => f(b, c, d))),
+      );
 
   /// Change the value in the [Left] of [ReaderTaskEither].
   ReaderTaskEither<E, C, R> mapLeft<C>(C Function(L l) f) => ReaderTaskEither(
@@ -119,6 +143,7 @@ final class ReaderTaskEither<E, L, R>
 
   /// Apply the function contained inside `a` to change the value on the [Right] from
   /// type `R` to a value of type `C`.
+  @override
   ReaderTaskEither<E, L, C> ap<C>(
     covariant ReaderTaskEither<E, L, C Function(R r)> a,
   ) =>
@@ -128,7 +153,14 @@ final class ReaderTaskEither<E, L, R>
         ),
       );
 
+  @override
+  ReaderTaskEither<E, L, R> chainFirst<N1>(
+    covariant ReaderTaskEither<E, L, N1> Function(R p1) chain,
+  ) =>
+      flatMap((b) => chain(b).map((c) => b));
+
   /// Chain multiple functions having the same left type `L`.
+  @override
   ReaderTaskEither<E, L, C> call<C>(
     covariant ReaderTaskEither<E, L, C> chain,
   ) =>
@@ -143,6 +175,7 @@ final class ReaderTaskEither<E, L, R>
   /// Otherwise return the result of `orElse`.
   ///
   /// Used to provide an **alt**ernative [ReaderTaskEither] in case the current one returns [Left].
+  @override
   ReaderTaskEither<E, L, R> alt(
     covariant ReaderTaskEither<E, L, R> Function() orElse,
   ) =>
@@ -247,12 +280,12 @@ final class ReaderTaskEither<E, L, R>
   ///
   /// Used to work with [Future] and exceptions using [Either] instead of `try`/`catch`.
   factory ReaderTaskEither.tryCatch(
-    Future<R> Function() run,
+    Future<R> Function(E) run,
     L Function(Object error, StackTrace stackTrace) onError,
   ) =>
-      ReaderTaskEither<E, L, R>((_) async {
+      ReaderTaskEither<E, L, R>((env) async {
         try {
-          return Right<L, R>(await run());
+          return Right<L, R>(await run(env));
         } catch (error, stack) {
           return Left<L, R>(onError(error, stack));
         }
