@@ -4,6 +4,26 @@ import './utils/utils.dart';
 
 void main() {
   group('ReaderTaskEither', () {
+    test('ask', () async {
+      final apply = ReaderTaskEither.ask();
+
+      final result = await apply.run(12.2);
+      result.matchTestRight((r) {
+        expect(r, 12.2);
+      });
+    });
+
+    test('asks', () async {
+      final apply = ReaderTaskEither<double, String, int>.asks(
+        (env) => env.toInt(),
+      );
+
+      final result = await apply.run(12.2);
+      result.matchTestRight((r) {
+        expect(r, 12);
+      });
+    });
+
     group('tryCatch', () {
       test('Success', () async {
         final apply = ReaderTaskEither<double, String, int>.tryCatch(
@@ -705,7 +725,7 @@ void main() {
         });
 
         expect(
-          doTaskEither.run,
+          () => doTaskEither.run(12.2),
           throwsA(
             const TypeMatcher<UnimplementedError>(),
           ),
@@ -720,7 +740,12 @@ void main() {
           throw Left('error');
         });
 
-        expect(doTaskEither.run, throwsA(const TypeMatcher<Left>()));
+        expect(
+          () => doTaskEither.run(12.2),
+          throwsA(
+            const TypeMatcher<Left>(),
+          ),
+        );
       });
 
       test('should no execute past the first Left', () async {
