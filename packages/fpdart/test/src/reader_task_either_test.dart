@@ -191,70 +191,108 @@ void main() {
 
     group('map2', () {
       test('Right', () async {
-        final task = TaskEither<String, int>(() async => Either.of(10));
-        final ap = task.map2<int, double>(
-            TaskEither<String, int>(() async => Either.of(2)), (b, c) => b / c);
-        final r = await ap.run();
-        r.match((_) {
-          fail('should be right');
-        }, (r) => expect(r, 5.0));
+        final apply = ReaderTaskEither<double, String, int>(
+          (env) async => Either.of(env.toInt()),
+        ).map2<int, double>(
+          ReaderTaskEither(
+            (env) async => Either.of(env.toInt()),
+          ),
+          (b, c) => b / c,
+        );
+
+        final result = await apply.run(12.2);
+        result.matchTestRight((r) {
+          expect(r, 1);
+        });
       });
 
       test('Left', () async {
-        final task = TaskEither<String, int>(() async => Either.left('abc'));
-        final ap = task.map2<int, double>(
-            TaskEither<String, int>(() async => Either.of(2)), (b, c) => b / c);
-        final r = await ap.run();
-        r.match((l) => expect(l, 'abc'), (_) {
-          fail('should be left');
+        final apply = ReaderTaskEither<double, String, int>(
+          (env) async => Either.left('$env'),
+        ).map2<int, double>(
+          ReaderTaskEither(
+            (env) async => Either.of(env.toInt()),
+          ),
+          (b, c) => b / c,
+        );
+
+        final result = await apply.run(12.2);
+        result.matchTestLeft((l) {
+          expect(l, "12.2");
         });
       });
     });
 
     group('map3', () {
       test('Right', () async {
-        final task = TaskEither<String, int>(() async => Either.of(10));
-        final ap = task.map3<int, int, double>(
-            TaskEither<String, int>(() async => Either.of(2)),
-            TaskEither<String, int>(() async => Either.of(5)),
-            (b, c, d) => b * c / d);
-        final r = await ap.run();
-        r.match((_) {
-          fail('should be right');
-        }, (r) => expect(r, 4.0));
+        final apply = ReaderTaskEither<double, String, int>(
+          (env) async => Either.of(env.toInt()),
+        ).map3<int, int, double>(
+          ReaderTaskEither(
+            (env) async => Either.of(env.toInt()),
+          ),
+          ReaderTaskEither(
+            (env) async => Either.of(env.toInt()),
+          ),
+          (b, c, d) => b * c / d,
+        );
+
+        final result = await apply.run(12.2);
+        result.matchTestRight((r) {
+          expect(r, 12);
+        });
       });
 
       test('Left', () async {
-        final task = TaskEither<String, int>(() async => Either.left('abc'));
-        final ap = task.map3<int, int, double>(
-            TaskEither<String, int>(() async => Either.of(2)),
-            TaskEither<String, int>(() async => Either.of(5)),
-            (b, c, d) => b * c / d);
-        final r = await ap.run();
-        r.match((l) => expect(l, 'abc'), (_) {
-          fail('should be left');
+        final apply = ReaderTaskEither<double, String, int>(
+          (env) async => Either.left('$env'),
+        ).map3<int, int, double>(
+          ReaderTaskEither(
+            (env) async => Either.of(env.toInt()),
+          ),
+          ReaderTaskEither(
+            (env) async => Either.of(env.toInt()),
+          ),
+          (b, c, d) => b * c / d,
+        );
+
+        final result = await apply.run(12.2);
+        result.matchTestLeft((l) {
+          expect(l, "12.2");
         });
       });
     });
 
     group('andThen', () {
       test('Right', () async {
-        final task = TaskEither<String, int>(() async => Either.of(10));
-        final ap = task.andThen(
-            () => TaskEither<String, double>(() async => Either.of(12.5)));
-        final r = await ap.run();
-        r.match((_) {
-          fail('should be right');
-        }, (r) => expect(r, 12.5));
+        final apply = ReaderTaskEither<double, String, int>(
+          (env) async => Either.of(env.toInt()),
+        ).andThen(
+          () => ReaderTaskEither(
+            (env) async => Either.of(
+              env.toInt() / 2,
+            ),
+          ),
+        );
+
+        final result = await apply.run(12.2);
+        result.matchTestRight((r) {
+          expect(r, 6);
+        });
       });
 
       test('Left', () async {
-        final task = TaskEither<String, int>(() async => Either.left('abc'));
-        final ap = task.andThen(
-            () => TaskEither<String, double>(() async => Either.of(12.5)));
-        final r = await ap.run();
-        r.match((l) => expect(l, 'abc'), (_) {
-          fail('should be left');
+        final apply = ReaderTaskEither<double, String, int>(
+          (env) async => Either.left('$env'),
+        ).andThen(
+          () => ReaderTaskEither(
+            (env) async => Either.of(env.toInt() / 2),
+          ),
+        );
+
+        final result = await apply.run(12.2);
+        result.matchTestLeft((l) {
+          expect(l, "12.2");
         });
       });
     });
