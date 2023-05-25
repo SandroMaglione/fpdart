@@ -2,7 +2,7 @@ import 'package:fpdart/fpdart.dart';
 
 typedef Env = (int, String);
 typedef Error = String;
-typedef Success = int;
+typedef Success = String;
 
 void main(List<String> args) async {
   final rte = ReaderTaskEither<Env, Error, Success>.Do(($) async {
@@ -12,8 +12,10 @@ void main(List<String> args) async {
         (env) => env.$1 + env.$2.length,
       ),
     ));
+    final env = await $(ReaderTaskEither.ask());
+    final env2 = await $(ReaderTaskEither.asks((dep) => dep.$2));
 
-    return a + val;
+    return "$a and $val and $env and $env2";
   });
 
   final result = await rte.run((30, "abc"));
