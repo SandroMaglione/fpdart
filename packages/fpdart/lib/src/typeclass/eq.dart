@@ -40,12 +40,12 @@ abstract class Eq<T> {
   /// }
 
   /// /// Equality for values of type [Parent] based on their `value1` ([int]).
-  /// final eqParentInt = Eq.eqInt().contramap<Parent>(
+  /// final eqParentInt = Eq.eqInt.contramap<Parent>(
   ///   (p) => p.value1,
   /// );
 
   /// /// Equality for of type [Parent] based on their `value2` ([double]).
-  /// final eqParentDouble = Eq.eqDouble().contramap<Parent>(
+  /// final eqParentDouble = Eq.eqDouble.contramap<Parent>(
   ///   (p) => p.value2,
   /// );
   /// ```
@@ -84,19 +84,42 @@ abstract class Eq<T> {
   static Eq<A> allEqual<A>() => _Eq((x, y) => true);
 
   /// Instance of `Eq` for `num` using the standard `==` operator.
-  static Eq<num> eqNum() => _Eq((x, y) => x == y);
+  static Eq<num> eqNum = _Eq((x, y) => x == y);
 
   /// Instance of `Eq` for `int` using the standard `==` operator.
-  static Eq<int> eqInt() => _Eq((x, y) => x == y);
+  static Eq<int> eqInt = _Eq((x, y) => x == y);
 
   /// Instance of `Eq` for `double` using the standard `==` operator.
-  static Eq<double> eqDouble() => _Eq((x, y) => x == y);
+  static Eq<double> eqDouble = _Eq((x, y) => x == y);
 
   /// Instance of `Eq` for `String` using the standard `==` operator.
-  static Eq<String> eqString() => _Eq((x, y) => x == y);
+  static Eq<String> eqString = _Eq((x, y) => x == y);
 
   /// Instance of `Eq` for `bool` using the standard `==` operator.
-  static Eq<bool> eqBool() => _Eq((x, y) => x == y);
+  static Eq<bool> eqBool = _Eq((x, y) => x == y);
+
+  /// [Eq] instance to compare [DateTime] years.
+  static Eq<DateTime> dateEqYear = _Eq<DateTime>(
+    (a1, a2) => a1.year == a2.year,
+  );
+
+  /// [Eq] instance to compare [DateTime] months.
+  static Eq<DateTime> dateEqMonth = _Eq<DateTime>(
+    (a1, a2) => a1.month == a2.month,
+  );
+
+  /// [Eq] instance to compare [DateTime] days.
+  static Eq<DateTime> dateEqDay = _Eq<DateTime>(
+    (a1, a2) => a1.day == a2.day,
+  );
+
+  /// [Eq] instance to compare [DateTime] by year, month, and day.
+  static Eq<DateTime> dateEqYearMonthDay = _Eq<DateTime>(
+    (a1, a2) =>
+        dateEqYear.eqv(a1, a2) &&
+        dateEqMonth.eqv(a1, a2) &&
+        dateEqDay.eqv(a1, a2),
+  );
 }
 
 class _Eq<T> extends Eq<T> {

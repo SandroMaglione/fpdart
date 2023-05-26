@@ -1,16 +1,17 @@
-import '../date.dart';
+import '../typeclass/eq.dart';
 
 /// `fpdart` extension methods on [DateTime]
 extension FpdartOnDateTime on DateTime {
   /// Return `true` when this [DateTime] and `other` have the same **year**.
-  bool eqvYear(DateTime other) => dateEqYear.eqv(this, other);
+  bool eqvYear(DateTime other) => Eq.dateEqYear.eqv(this, other);
 
   /// Return `true` when this [DateTime] and `other` have the same **month**.
-  bool eqvMonth(DateTime other) => dateEqMonth.eqv(this, other);
+  bool eqvMonth(DateTime other) => Eq.dateEqMonth.eqv(this, other);
 
   /// Return `true` when this [DateTime] and `other` have the same **day**.
-  bool eqvDay(DateTime other) => dateEqDay.eqv(this, other);
+  bool eqvDay(DateTime other) => Eq.dateEqDay.eqv(this, other);
 
   /// Return `true` when this [DateTime] and `other` have the same **year, month, and day**.
-  bool eqvYearMonthDay(DateTime other) => dateEqYearMonthDay.eqv(this, other);
+  bool eqvYearMonthDay(DateTime other) =>
+      Eq.dateEqYearMonthDay.eqv(this, other);
 }
