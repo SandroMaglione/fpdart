@@ -1,4 +1,4 @@
-## v1.0.0 - Soon
+## v1.0.0-beta.1 - 27 May 2023
 - Minimum environment dart sdk to `3.0.0` ⚠️ (Dart 3️⃣)
 ```yaml
 environment:
@@ -9,8 +9,34 @@ environment:
 - Added new `ReaderTask` type 
 - `Either` as `sealed` class (Dart 3️⃣)
   - You can now use exhaustive pattern matching (`Left` or `Right`)
+```dart
+/// Pattern matching
+final match = right.match(
+  (l) => print('Left($l)'),
+  (r) => print('Right($r)'),
+);
+
+/// or use Dart's pattern matching as well 🤝
+final dartMatch = switch (right) {
+  Left(value: final l) => 'Left($l)',
+  Right(value: final r) => 'Right($r)',
+};
+```
 - `Option` as `sealed` class (Dart 3️⃣)
   - You can now use exhaustive pattern matching (`None` or `Some`)
+```dart
+/// Pattern matching
+final match = option.match(
+  () => print('None'),
+  (a) => print('Some($a)'),
+);
+
+/// or use Dart's pattern matching as well 🤝
+final dartMatch = switch (option) {
+  None() => 'None',
+  Some(value: final a) => 'Some($a)',
+};
+```
 - Types marked as `final` (no `extends` nor `implements`) (Dart 3️⃣)
   - `Unit`
   - `Reader`
@@ -36,8 +62,8 @@ environment:
     - `difference` (`Iterable`)
     - `filterWithIndex` (`Iterable`)
   - Fixed the following methods ⚠️
-    - `takeWhileRight`: Result `List` reversed 
-    - `dropWhileRight`: Result `List` reversed 
+    - `takeWhileRight`: Resulting `List` now in reversed order as expected 
+    - `dropWhileRight`: Resulting `List` now in reversed order as expected 
   - Updated the following methods ⚠️
     - `foldRight`, `foldRightWithIndex` (`List`): Changed parameter order in `combine` function
     - `zipWith` (`Iterable`): Changed parameters definition, no more curried
@@ -160,7 +186,7 @@ final add = addFunction.curry;
 /// Before
 final eq = dateEqYear; // Global
 
-/// New
+/// Now
 final eq = Eq.dateEqYear;
 ```
 - Added `Eq` instances for `num`, `int`, `double`, `String`, and `bool`
@@ -191,7 +217,7 @@ final eqParentDouble = Eq.eqDouble.contramap<Parent>(
 /// Before
 final reversed = Order.reverse(instance);
 
-/// Before
+/// Now
 final reversed = instance.reverse;
 ```
 - Moved `DateTime` instances of `Order` as `Order` static members
@@ -225,7 +251,7 @@ final boolValue = Random().nextBool();
 final result = boolValue.match<int>(() => -1, () => 1);
 final result = boolValue.fold<int>(() => -1, () => 1);
 
-/// New
+/// Now
 final result = boolValue ? 1 : -1;
 final result = switch (boolValue) { true => 1, false => -1 };
 ```
