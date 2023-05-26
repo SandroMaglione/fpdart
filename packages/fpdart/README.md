@@ -35,7 +35,7 @@ All the main functional programming types and patterns <strong>fully documented<
 
 Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://typelevel.org/cats/typeclasses.html#type-classes-in-cats), and [dartz](https://github.com/spebbe/dartz).
 
-> **Note**: The API is still evolving and it may change. New documentation and testing is always ongoing. Follow my [**Twitter**](https://twitter.com/SandroMaglione) for updates, or [subscribe to the newsletter](https://www.sandromaglione.com/newsletter)
+> Follow my [**Twitter**](https://twitter.com/SandroMaglione) for updates, or [subscribe to the newsletter](https://www.sandromaglione.com/newsletter)
 
 ***
 
@@ -54,6 +54,8 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
   - [Task](#task)
   - [Utility types](#utility-types)
   - [Reader](#reader)
+    - [ReaderTask](#readertask)
+    - [ReaderTaskEither](#readertaskeither)
   - [State](#state)
   - [🔗 Do notation](#-do-notation)
   - [📦 Immutable Collections](#-immutable-collections)
@@ -255,6 +257,12 @@ These types compose together the 4 above ([`Option`](#option), [`Either`](#eithe
 ### [Reader](./lib/src/reader.dart)
 Read values from a **context** without explicitly passing the dependency between multiple nested function calls. View the [example folder for an explained usecase example](./examples/src/reader).
 
+#### [ReaderTask](./lib/src/reader_task.dart)
+Combine the `Reader` type (dependecy) with `Task` (asynchronous).
+
+#### [ReaderTaskEither](./lib/src/reader_task_either.dart)
+Combine the `Reader` type (dependecy) with `Task` (asynchronous) and `Either` (error handling).
+
 ### [State](./lib/src/state.dart)
 Used to **store**, **update**, and **extract** state in a functional way. View the [example folder for an explained usecase example](./examples/src/state).
 
@@ -341,9 +349,9 @@ Many more examples are coming soon. Check out [**my website**](https://www.sandr
 - [x] `TaskOption`
 - [x] `Predicate`
 - [x] `IOOption`
+- [x] `ReaderTask`
+- [x] `ReaderTaskEither`
 - [ ] `ReaderEither`
-- [ ] `ReaderTask`
-- [ ] `ReaderTaskEither`
 - [ ] `StateReaderTaskEither`
 - [ ] `Lens`
 - [ ] `Writer`
@@ -393,11 +401,9 @@ Being documentation and stability important goals of the package, every type wil
 The roadmap for types development is highlighted below (breaking changes to _'stable'_ types are to be expected in this early stages):
 
 1. `ReaderEither`
-2. `ReaderTask`
-3. `ReaderTaskEither`
-4. `StateReaderTaskEither`
-5. `Writer`
-6. `Lens`
+2. `StateReaderTaskEither`
+3. `Writer`
+4. `Lens`
 
 > **Note**: There is also an experimental research in progress to implement [`ZIO`](https://zio.dev/) in `fpdart`, stay tuned 🔜
 
