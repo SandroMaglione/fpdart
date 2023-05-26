@@ -127,7 +127,7 @@ final class ReaderTask<E, A> extends HKT2<_ReaderTaskHKT, E, A>
   Future<A> run(E env) => _run(env);
 
   /// Convert this [ReaderTask] to [ReaderTaskEither].
-  ReaderTaskEither<E, L, A> toTaskReaderEither<L>() => ReaderTaskEither(
+  ReaderTaskEither<E, L, A> toReaderTaskEither<L>() => ReaderTaskEither(
         (env) async => Either.of(
           await run(env),
         ),
