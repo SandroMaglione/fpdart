@@ -25,7 +25,7 @@ final class ReaderTask<E, A> extends HKT2<_ReaderTaskHKT, E, A>
         Functor2<_ReaderTaskHKT, E, A>,
         Applicative2<_ReaderTaskHKT, E, A>,
         Monad2<_ReaderTaskHKT, E, A> {
-  final Future<A> Function(E) _run;
+  final Future<A> Function(E env) _run;
 
   /// Build a [ReaderTask] from a function returning a [Future] given `E`.
   const ReaderTask(this._run);
@@ -131,5 +131,15 @@ final class ReaderTask<E, A> extends HKT2<_ReaderTaskHKT, E, A>
         (env) async => Either.of(
           await run(env),
         ),
+      );
+
+  /// Extract a value `A` given the current dependency `E`.
+  factory ReaderTask.asks(A Function(E) f) => ReaderTask(
+        (env) async => f(env),
+      );
+
+  /// Read the current dependency `E`.
+  static ReaderTask<E, E> ask<E, A>() => ReaderTask(
+        (env) async => env,
       );
 }
