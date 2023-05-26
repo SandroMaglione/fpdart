@@ -14,3 +14,7 @@ abstract class HKT<G, A> {
 abstract class HKT2<G1, G2, A> {
   const HKT2();
 }
+
+abstract class HKT3<G1, G2, G3, A> {
+  const HKT3();
+}

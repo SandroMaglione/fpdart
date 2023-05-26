@@ -72,11 +72,11 @@ final class Reader<R, A> extends HKT2<ReaderHKT, R, A>
   /// Change dependency type of `Reader<R, A>` from `R` to `R1` after calling `run`.
   Reader<R1, A> local<R1>(R Function(R1 context) f) => Reader((r) => run(f(r)));
 
-  /// Read the current dependecy `R`.
+  /// Read the current dependency `R`.
   Reader<R, R> ask() => Reader(identity);
 
   /// Change reading function to `f` given context/dependency `R`.
-  Reader<R, A> asks(A Function(R r) f) => Reader((r) => f(r));
+  Reader<R, A> asks(A Function(R r) f) => Reader(f);
 
   /// Chain a request that returns another [Reader], execute it, ignore
   /// the result, and return the same value as the current [Reader].
