@@ -103,7 +103,7 @@ Check out also this series of articles about functional programming with `fpdart
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.6.0 # Check out the latest version
+  fpdart: ^1.0.0-beta.1 # Check out the latest version
 ```
 
 ## ✨ Examples
@@ -461,6 +461,10 @@ A well explained documentation is the key for the long-term success of the proje
 In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
+
+- **v1.0.0-beta.1** - 27 May 2023
+
+***
 
 - **v0.6.0** - 6 May 2023
 - **v0.5.0** - 4 March 2023
