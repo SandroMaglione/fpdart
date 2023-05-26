@@ -49,6 +49,12 @@ void main() {
     (a) => print('Some($a)'),
   );
 
+  /// or use Dart's pattern matching as well 🤝
+  final dartMatch = switch (option) {
+    None() => 'None',
+    Some(value: final a) => 'Some($a)',
+  };
+
   /// Convert to [Either]
   final either = option.toEither(() => 'missing');
 
