@@ -4,6 +4,22 @@ import 'utils/utils.dart';
 
 void main() {
   group('ReaderTask', () {
+    test('ask', () async {
+      final apply = ReaderTask.ask<String, int>();
+
+      final result = await apply.run("abc");
+      expect(result, "abc");
+    });
+
+    test('asks', () async {
+      final apply = ReaderTask<String, int>.asks(
+        (env) => env.length,
+      );
+
+      final result = await apply.run("abc");
+      expect(result, 3);
+    });
+
     group('map', () {
       test('int to int', () async {
         final apply = ReaderTask<String, int>(

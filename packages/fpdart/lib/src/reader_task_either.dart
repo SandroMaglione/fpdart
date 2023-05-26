@@ -5,6 +5,7 @@ import 'io_either.dart';
 import 'io_option.dart';
 import 'option.dart';
 import 'reader.dart';
+import 'reader_task.dart';
 import 'task.dart';
 import 'task_either.dart';
 import 'task_option.dart';
@@ -213,6 +214,32 @@ final class ReaderTaskEither<E, L, R>
             (l) => orElse(l).run(env),
             (r) => ReaderTaskEither<E, TL, R>.of(r).run(env),
           ));
+
+  /// Convert this [ReaderTaskEither] to a [ReaderTask].
+  ///
+  /// The task returns a [Right] when [ReaderTaskEither] returns [Right].
+  /// Otherwise map the type `L` of [ReaderTaskEither] to type `R` by calling `orElse`.
+  ReaderTask<E, R> getOrElse(R Function(L left) orElse) => ReaderTask(
+        (env) async => (await run(env)).match(
+          orElse,
+          identity,
+        ),
+      );
+
+  /// Pattern matching to convert a [ReaderTaskEither] to a [ReaderTask].
+  ///
+  /// Execute `onLeft` when running this [ReaderTaskEither] returns a [Left].
+  /// Otherwise execute `onRight`.
+  ReaderTask<E, B> match<B>(
+    B Function(L left) onLeft,
+    B Function(R right) onRight,
+  ) =>
+      ReaderTask(
+        (env) async => (await run(env)).match(
+          onLeft,
+          onRight,
+        ),
+      );
 
   /// Flat a [ReaderTaskEither] contained inside another [ReaderTaskEither] to be a single [ReaderTaskEither].
   factory ReaderTaskEither.flatten(

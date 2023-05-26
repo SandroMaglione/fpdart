@@ -5,7 +5,7 @@ import './utils/utils.dart';
 void main() {
   group('ReaderTaskEither', () {
     test('ask', () async {
-      final apply = ReaderTaskEither.ask();
+      final apply = ReaderTaskEither.ask<double, int>();
 
       final result = await apply.run(12.2);
       result.matchTestRight((r) {
@@ -21,6 +21,56 @@ void main() {
       final result = await apply.run(12.2);
       result.matchTestRight((r) {
         expect(r, 12);
+      });
+    });
+
+    group('getOrElse', () {
+      test('Right', () async {
+        final apply = ReaderTaskEither<double, String, int>(
+          (env) async => Either.of(env.toInt()),
+        ).getOrElse(
+          (left) => left.length,
+        );
+
+        final result = await apply.run(12.2);
+        expect(result, 12);
+      });
+
+      test('Left', () async {
+        final apply = ReaderTaskEither<double, String, int>(
+          (env) async => Either.left(env.toString()),
+        ).getOrElse(
+          (left) => left.length,
+        );
+
+        final result = await apply.run(12.2);
+        expect(result, 4);
+      });
+    });
+
+    group('match', () {
+      test('Right', () async {
+        final apply = ReaderTaskEither<double, String, int>(
+          (env) async => Either.of(env.toInt()),
+        ).match(
+          (left) => left.length,
+          (right) => right + 10,
+        );
+
+        final result = await apply.run(12.2);
+        expect(result, 22);
+      });
+
+      test('Left', () async {
+        final apply = ReaderTaskEither<double, String, int>(
+          (env) async => Either.left(env.toString()),
+        ).match(
+          (left) => left.length,
+          (right) => right + 10,
+        );
+
+        final result = await apply.run(12.2);
+        expect(result, 4);
       });
     });
 
