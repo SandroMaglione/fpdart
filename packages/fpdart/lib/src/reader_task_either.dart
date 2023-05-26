@@ -21,6 +21,7 @@ final class _ReaderTaskEitherThrow<L> {
 
 typedef DoAdapterReaderTaskEither<E, L> = Future<A> Function<A>(
     ReaderTaskEither<E, L, A>);
+
 DoAdapterReaderTaskEither<E, L> _doAdapter<E, L>(E env) =>
     <A>(readerTaskEither) => readerTaskEither.run(env).then(
           (either) => either.getOrElse((l) => throw _ReaderTaskEitherThrow(l)),
