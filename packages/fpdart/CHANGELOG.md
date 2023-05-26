@@ -6,6 +6,7 @@ environment:
 ```
 - Added new `ReaderTaskEither` type
   - `ReaderTaskEither` models a complete program using `Reader` for dependency injection, `Task` to perform asynchronous computation, and `Either` to handle errors 🎯
+- Added new `ReaderTask` type 
 - `Either` as `sealed` class (Dart 3️⃣)
   - You can now use exhaustive pattern matching (`Left` or `Right`)
 - `Option` as `sealed` class (Dart 3️⃣)
@@ -22,6 +23,8 @@ environment:
   - `Task` 
   - `TaskOption` 
   - `TaskEither` 
+  - `ReaderTask` 
+  - `ReaderTaskEither` 
 - Removed `Tuple2`, use Dart 3 Records instead (`Tuple2(a, b)` becomes simply `(a, b)` 🎯) ⚠️ (Dart 3️⃣)
   - Updated all internal APIs to use records instead of `Tuple2` 
 - Major refactoring of `Iterable` and `List` extension methods
@@ -152,9 +155,17 @@ final add = addFunction.curry;
   - `or`
   - `and` 
 - Added `xor` method to `Eq` 
+- Moved `DateTime` instances of `Eq` as `Eq` static members
+```dart
+/// Before
+final eq = dateEqYear; // Global
+
+/// New
+final eq = Eq.dateEqYear;
+```
 - Added `Eq` instances for `num`, `int`, `double`, `String`, and `bool`
 ```dart
-[1, 2, 3].difference(Eq.eqInt(), [2, 3, 4]); /// `[1]`
+[1, 2, 3].difference(Eq.eqInt, [2, 3, 4]); /// `[1]`
 ```
 - Added new method to `Eq`
   - `contramap`
@@ -166,12 +177,12 @@ class Parent {
 }
 
 /// Equality for values of type [Parent] based on their `value1` ([int]).
-final eqParentInt = Eq.eqInt().contramap<Parent>(
+final eqParentInt = Eq.eqInt.contramap<Parent>(
   (p) => p.value1,
 );
 
 /// Equality for of type [Parent] based on their `value2` ([double]).
-final eqParentDouble = Eq.eqDouble().contramap<Parent>(
+final eqParentDouble = Eq.eqDouble.contramap<Parent>(
   (p) => p.value2,
 );
 ``` 
@@ -183,6 +194,7 @@ final reversed = Order.reverse(instance);
 /// Before
 final reversed = instance.reverse;
 ```
+- Moved `DateTime` instances of `Order` as `Order` static members
 - Added `Order` instances for `num`, `int`, `double`
 - Added new methods to `Order`
   - `between`
@@ -196,12 +208,12 @@ class Parent {
 }
 
 /// Order values of type [Parent] based on their `value1` ([int]).
-final orderParentInt = Order.orderInt().contramap<Parent>(
+final orderParentInt = Order.orderInt.contramap<Parent>(
   (p) => p.value1,
 );
 
 /// Order values of type [Parent] based on their `value2` ([double]).
-final orderParentDouble = Order.orderDouble().contramap<Parent>(
+final orderParentDouble = Order.orderDouble.contramap<Parent>(
   (p) => p.value2,
 );
 ```

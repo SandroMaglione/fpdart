@@ -29,7 +29,7 @@ void main() {
     });
 
     test('reverse', () {
-      final instance = Order.orderInt();
+      final instance = Order.orderInt;
       final reverse = instance.reverse;
       expect(reverse.compare(1, 1), 0);
       expect(reverse.compare(1, 2), 1);
@@ -124,7 +124,7 @@ void main() {
     });
 
     test('between', () {
-      final instance = Order.orderInt();
+      final instance = Order.orderInt;
       expect(instance.between(0, 10, 4), true);
       expect(instance.between(0, 0, 0), true);
       expect(instance.between(-1, 0, 0), true);
@@ -133,7 +133,7 @@ void main() {
     });
 
     test('clamp', () {
-      final instance = Order.orderInt();
+      final instance = Order.orderInt;
       expect(instance.clamp(1, 10, 2), 2);
       expect(instance.clamp(1, 10, 10), 10);
       expect(instance.clamp(1, 10, 20), 10);
@@ -141,8 +141,19 @@ void main() {
       expect(instance.clamp(1, 10, -10), 1);
     });
 
+    test('orderDate', () {
+      final prevDate = DateTime(2020);
+      final currDate = DateTime(2021);
+      final compareNegative = Order.orderDate.compare(prevDate, currDate);
+      final comparePositive = Order.orderDate.compare(currDate, prevDate);
+      final compareSame = Order.orderDate.compare(currDate, currDate);
+      expect(compareNegative, -1);
+      expect(comparePositive, 1);
+      expect(compareSame, 0);
+    });
+
     test('orderNum', () {
-      final ord = Order.orderNum();
+      final ord = Order.orderNum;
       expect(ord.eqv(10, 10), true);
       expect(ord.eqv(10.0, 10), true);
       expect(ord.gt(10, 0), true);
@@ -151,7 +162,7 @@ void main() {
     });
 
     test('orderDouble', () {
-      final ord = Order.orderDouble();
+      final ord = Order.orderDouble;
       expect(ord.eqv(10.5, 10.5), true);
       expect(ord.eqv(10.0, 10), true);
       expect(ord.gt(1.5, 1.2), true);
@@ -160,7 +171,7 @@ void main() {
     });
 
     test('orderInt', () {
-      final ord = Order.orderInt();
+      final ord = Order.orderInt;
       expect(ord.eqv(10, 10), true);
       expect(ord.eqv(-10, 10), false);
       expect(ord.gt(1, 1), false);
@@ -170,7 +181,7 @@ void main() {
 
     group('contramap', () {
       test('int', () {
-        final orderParentInt = Order.orderInt().contramap<_Parent>(
+        final orderParentInt = Order.orderInt.contramap<_Parent>(
           (p) => p.value1,
         );
 
@@ -198,7 +209,7 @@ void main() {
       });
 
       test('double', () {
-        final orderParentDouble = Order.orderDouble().contramap<_Parent>(
+        final orderParentDouble = Order.orderDouble.contramap<_Parent>(
           (p) => p.value2,
         );
 

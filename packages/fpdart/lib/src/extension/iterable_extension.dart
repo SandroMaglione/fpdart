@@ -1,4 +1,3 @@
-import '../date.dart';
 import '../function.dart';
 import '../option.dart';
 import '../typeclass/eq.dart';
@@ -346,7 +345,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
   ///
   /// Sorting [DateTime] in **ascending** order (older dates first).
   List<T> sortWithDate(DateTime Function(T instance) getDate) =>
-      sortWith(getDate, dateOrder);
+      sortWith(getDate, Order.orderDate);
 }
 
 /// Functional programming functions on `Iterable<Iterable<T>>` using `fpdart`.

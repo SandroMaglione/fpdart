@@ -5,7 +5,7 @@ void main() {
   group('date', () {
     group('[Property-based testing]', () {
       Glados2<DateTime, DateTime>().test('dateOrder', (d1, d2) {
-        final compare = dateOrder.compare(d1, d2);
+        final compare = Order.orderDate.compare(d1, d2);
         expect(
             compare,
             d1.isAfter(d2)
@@ -16,17 +16,17 @@ void main() {
       });
 
       Glados2<DateTime, DateTime>().test('dateEqYear', (d1, d2) {
-        final compare = dateEqYear.eqv(d1, d2);
+        final compare = Eq.dateEqYear.eqv(d1, d2);
         expect(compare, d1.year == d2.year);
       });
 
       Glados2<DateTime, DateTime>().test('dateEqMonth', (d1, d2) {
-        final compare = dateEqMonth.eqv(d1, d2);
+        final compare = Eq.dateEqMonth.eqv(d1, d2);
         expect(compare, d1.month == d2.month);
       });
 
       Glados2<DateTime, DateTime>().test('dateEqYearMonthDay', (d1, d2) {
-        final compare = dateEqYearMonthDay.eqv(d1, d2);
+        final compare = Eq.dateEqYearMonthDay.eqv(d1, d2);
         expect(compare,
             d1.year == d2.year && d1.month == d2.month && d1.day == d2.day);
       });
@@ -53,25 +53,14 @@ void main() {
       });
     });
 
-    test('dateOrder', () {
-      final prevDate = DateTime(2020);
-      final currDate = DateTime(2021);
-      final compareNegative = dateOrder.compare(prevDate, currDate);
-      final comparePositive = dateOrder.compare(currDate, prevDate);
-      final compareSame = dateOrder.compare(currDate, currDate);
-      expect(compareNegative, -1);
-      expect(comparePositive, 1);
-      expect(compareSame, 0);
-    });
-
     test('dateEqYear', () {
       final date1 = DateTime(2021, 2, 2);
       final date2 = DateTime(2021, 3, 3);
       final date3 = DateTime(2020, 2, 2);
 
-      expect(dateEqYear.eqv(date1, date1), true);
-      expect(dateEqYear.eqv(date1, date2), true);
-      expect(dateEqYear.eqv(date1, date3), false);
+      expect(Eq.dateEqYear.eqv(date1, date1), true);
+      expect(Eq.dateEqYear.eqv(date1, date2), true);
+      expect(Eq.dateEqYear.eqv(date1, date3), false);
     });
 
     test('dateEqMonth', () {
@@ -79,9 +68,9 @@ void main() {
       final date2 = DateTime(2021, 3, 3);
       final date3 = DateTime(2020, 2, 2);
 
-      expect(dateEqMonth.eqv(date1, date1), true);
-      expect(dateEqMonth.eqv(date1, date2), false);
-      expect(dateEqMonth.eqv(date1, date3), true);
+      expect(Eq.dateEqMonth.eqv(date1, date1), true);
+      expect(Eq.dateEqMonth.eqv(date1, date2), false);
+      expect(Eq.dateEqMonth.eqv(date1, date3), true);
     });
 
     test('dateEqDay', () {
@@ -89,9 +78,9 @@ void main() {
       final date2 = DateTime(2021, 3, 3);
       final date3 = DateTime(2020, 3, 2);
 
-      expect(dateEqDay.eqv(date1, date1), true);
-      expect(dateEqDay.eqv(date1, date2), false);
-      expect(dateEqDay.eqv(date1, date3), true);
+      expect(Eq.dateEqDay.eqv(date1, date1), true);
+      expect(Eq.dateEqDay.eqv(date1, date2), false);
+      expect(Eq.dateEqDay.eqv(date1, date3), true);
     });
 
     test('dateEqYearMonthDay', () {
@@ -99,9 +88,9 @@ void main() {
       final date2 = DateTime(2021, 2, 2, 11, 11);
       final date3 = DateTime(2020, 2, 2, 12, 12);
 
-      expect(dateEqYearMonthDay.eqv(date1, date1), true);
-      expect(dateEqYearMonthDay.eqv(date1, date2), true);
-      expect(dateEqYearMonthDay.eqv(date1, date3), false);
+      expect(Eq.dateEqYearMonthDay.eqv(date1, date1), true);
+      expect(Eq.dateEqYearMonthDay.eqv(date1, date2), true);
+      expect(Eq.dateEqYearMonthDay.eqv(date1, date3), false);
     });
   });
 }

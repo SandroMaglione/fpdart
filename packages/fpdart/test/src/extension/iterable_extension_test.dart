@@ -94,7 +94,7 @@ void main() {
       ];
       final ap = list1.insertWith(
         (instance) => instance.date,
-        dateOrder,
+        Order.orderDate,
         SortDate(5, DateTime(2021)),
       );
 
@@ -116,7 +116,7 @@ void main() {
         SortDate(1, DateTime(2020)),
         SortDate(3, DateTime(2018)),
       ];
-      final ap = list1.sortWith((instance) => instance.date, dateOrder);
+      final ap = list1.sortWith((instance) => instance.date, Order.orderDate);
 
       expect(ap.elementAt(0).id, 4);
       expect(ap.elementAt(1).id, 3);

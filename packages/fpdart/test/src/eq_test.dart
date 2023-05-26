@@ -85,7 +85,7 @@ void main() {
     });
 
     test('.eqNum', () {
-      final eq = Eq.eqNum();
+      final eq = Eq.eqNum;
       expect(eq.eqv(10, 10), true);
       expect(eq.eqv(10.0, 10), true);
       expect(eq.eqv(10.5, 10.5), true);
@@ -94,7 +94,7 @@ void main() {
     });
 
     test('.eqInt', () {
-      final eq = Eq.eqInt();
+      final eq = Eq.eqInt;
       expect(eq.eqv(10, 10), true);
       expect(eq.eqv(11, 10), false);
       expect(eq.eqv(-10, -10), true);
@@ -102,7 +102,7 @@ void main() {
     });
 
     test('.eqDouble', () {
-      final eq = Eq.eqDouble();
+      final eq = Eq.eqDouble;
       expect(eq.eqv(10, 10), true);
       expect(eq.eqv(10.0, 10), true);
       expect(eq.eqv(10.5, 10.5), true);
@@ -111,7 +111,7 @@ void main() {
     });
 
     test('.eqString', () {
-      final eq = Eq.eqString();
+      final eq = Eq.eqString;
       expect(eq.eqv("abc", "abc"), true);
       expect(eq.eqv("abc", "abd"), false);
       expect(eq.eqv("abc", "ab"), false);
@@ -120,7 +120,7 @@ void main() {
     });
 
     test('.eqBool', () {
-      final eq = Eq.eqBool();
+      final eq = Eq.eqBool;
       expect(eq.eqv(true, true), true);
       expect(eq.eqv(false, true), false);
       expect(eq.eqv(true, false), false);
@@ -129,7 +129,7 @@ void main() {
 
     group('contramap', () {
       test('int', () {
-        final eqParentInt = Eq.eqInt().contramap<_Parent>(
+        final eqParentInt = Eq.eqInt.contramap<_Parent>(
           (p) => p.value1,
         );
 
@@ -157,7 +157,7 @@ void main() {
       });
 
       test('double', () {
-        final eqParentDouble = Eq.eqDouble().contramap<_Parent>(
+        final eqParentDouble = Eq.eqDouble.contramap<_Parent>(
           (p) => p.value2,
         );
 
