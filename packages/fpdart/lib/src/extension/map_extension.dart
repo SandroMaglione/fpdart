@@ -11,8 +11,6 @@ extension FpdartOnMap<K, V> on Map<K, V> {
 
   /// Convert each **value** of the [Map] using
   /// the `update` function and returns a new [Map].
-  ///
-  /// Immutable version of `Map.updateAll`.
   Map<K, A> mapValue<A>(A Function(V value) update) => map(
         (key, value) => MapEntry(key, update(value)),
       );
