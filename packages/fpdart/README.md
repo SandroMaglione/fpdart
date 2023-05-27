@@ -31,6 +31,8 @@ All the main functional programming types and patterns <strong>fully documented<
 
 ## Introduction
 
+> **Note**: This is a Beta release for `fpdart` v1.0.0. Please [provide feedback](https://github.com/SandroMaglione/fpdart/issues/108) and [report any issue](https://github.com/SandroMaglione/fpdart/issues) to help the development of the package 🙏🏼
+
 > **Fpdart is fully documented. You do not need to have any previous experience with functional programming to start using `fpdart`. Give it a try!**
 
 Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://typelevel.org/cats/typeclasses.html#type-classes-in-cats), and [dartz](https://github.com/spebbe/dartz).
