@@ -51,12 +51,12 @@ abstract class Order<T> extends PartialOrder<T> {
   /// }
   ///
   /// /// Order values of type [Parent] based on their `value1` ([int]).
-  /// final orderParentInt = Order.orderInt().contramap<Parent>(
+  /// final orderParentInt = Order.orderInt.contramap<Parent>(
   ///   (p) => p.value1,
   /// );
   ///
   /// /// Order values of type [Parent] based on their `value2` ([double]).
-  /// final orderParentDouble = Order.orderDouble().contramap<Parent>(
+  /// final orderParentDouble = Order.orderDouble.contramap<Parent>(
   ///   (p) => p.value2,
   /// );
   /// ```
@@ -114,26 +114,31 @@ abstract class Order<T> extends PartialOrder<T> {
   /// (`compare` always returns `0`).
   static Order<A> allEqual<A>() => _Order((x, y) => 0);
 
-  /// Instance of `Eq` for `int`.
-  static Order<int> orderInt() => _Order((x, y) => x == y
+  /// Instance of `Order` for `int`.
+  static Order<int> orderInt = _Order((x, y) => x == y
       ? 0
       : x > y
           ? 1
           : -1);
 
-  /// Instance of `Eq` for `num`.
-  static Order<num> orderNum() => _Order((x, y) => x == y
+  /// Instance of `Order` for `num`.
+  static Order<num> orderNum = _Order((x, y) => x == y
       ? 0
       : x > y
           ? 1
           : -1);
 
-  /// Instance of `Eq` for `double`.
-  static Order<double> orderDouble() => _Order((x, y) => x == y
+  /// Instance of `Order` for `double`.
+  static Order<double> orderDouble = _Order((x, y) => x == y
       ? 0
       : x > y
           ? 1
           : -1);
+
+  /// Instance of `Order` for [DateTime].
+  static Order<DateTime> orderDate = _Order<DateTime>(
+    (a1, a2) => a1.compareTo(a2),
+  );
 }
 
 class _Order<T> extends Order<T> {

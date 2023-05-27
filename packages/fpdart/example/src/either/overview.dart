@@ -49,6 +49,12 @@ void main() {
     (r) => print('Right($r)'),
   );
 
+  /// or use Dart's pattern matching as well 🤝
+  final dartMatch = switch (right) {
+    Left(value: final l) => 'Left($l)',
+    Right(value: final r) => 'Right($r)',
+  };
+
   /// Convert to [Option]
   final option = right.toOption();
 }

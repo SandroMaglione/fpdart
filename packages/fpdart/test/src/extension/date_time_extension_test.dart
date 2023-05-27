@@ -6,20 +6,20 @@ void main() {
   group('FpdartOnDateTime', () {
     group('[Property-based testing]', () {
       Glados2<DateTime, DateTime>().test('eqvYear == dateEqYear', (d1, d2) {
-        expect(d1.eqvYear(d2), dateEqYear.eqv(d1, d2));
+        expect(d1.eqvYear(d2), Eq.dateEqYear.eqv(d1, d2));
       });
 
       Glados2<DateTime, DateTime>().test('eqvMonth == dateEqMonth', (d1, d2) {
-        expect(d1.eqvMonth(d2), dateEqMonth.eqv(d1, d2));
+        expect(d1.eqvMonth(d2), Eq.dateEqMonth.eqv(d1, d2));
       });
 
       Glados2<DateTime, DateTime>().test('eqvDay == dateEqDay', (d1, d2) {
-        expect(d1.eqvDay(d2), dateEqDay.eqv(d1, d2));
+        expect(d1.eqvDay(d2), Eq.dateEqDay.eqv(d1, d2));
       });
 
       Glados2<DateTime, DateTime>().test('eqvYearMonthDay == dateEqYear',
           (d1, d2) {
-        expect(d1.eqvYearMonthDay(d2), dateEqYear.eqv(d1, d2));
+        expect(d1.eqvYearMonthDay(d2), Eq.dateEqYear.eqv(d1, d2));
       });
     });
 

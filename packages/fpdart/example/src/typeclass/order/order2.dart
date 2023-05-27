@@ -8,12 +8,12 @@ class Parent {
 
 void main() {
   /// Order values of type [Parent] based on their `value1` ([int]).
-  final orderParentInt = Order.orderInt().contramap<Parent>(
+  final orderParentInt = Order.orderInt.contramap<Parent>(
     (p) => p.value1,
   );
 
   /// Order values of type [Parent] based on their `value2` ([double]).
-  final orderParentDouble = Order.orderDouble().contramap<Parent>(
+  final orderParentDouble = Order.orderDouble.contramap<Parent>(
     (p) => p.value2,
   );
 }

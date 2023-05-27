@@ -80,7 +80,9 @@ void main() {
           DateTime(2000, 1, 1): 1,
           DateTime(2001, 1, 1): 2,
         }, (value) {
-          value.lookupEq(dateEqYear, DateTime(2000, 10, 10)).matchTestSome((t) {
+          value
+              .lookupEq(Eq.dateEqYear, DateTime(2000, 10, 10))
+              .matchTestSome((t) {
             expect(t, 1);
           });
         });
@@ -91,7 +93,8 @@ void main() {
           DateTime(2000, 1, 1): 1,
           DateTime(2001, 1, 1): 2,
         }, (value) {
-          expect(value.lookupEq(dateEqYear, DateTime(2002, 1, 1)), isA<None>());
+          expect(
+              value.lookupEq(Eq.dateEqYear, DateTime(2002, 1, 1)), isA<None>());
         });
       });
     });
@@ -104,7 +107,7 @@ void main() {
         }, (value) {
           value
               .lookupWithKeyEq(
-            dateEqYear,
+            Eq.dateEqYear,
             DateTime(2000, 10, 10),
           )
               .matchTestSome((t) {
@@ -119,7 +122,7 @@ void main() {
           DateTime(2001, 1, 1): 2,
         }, (value) {
           expect(
-            value.lookupWithKeyEq(dateEqYear, DateTime(2002, 1, 1)),
+            value.lookupWithKeyEq(Eq.dateEqYear, DateTime(2002, 1, 1)),
             isA<None>(),
           );
         });
@@ -268,7 +271,7 @@ void main() {
     group('updateAt', () {
       test('Some', () {
         testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
-          value.updateAt(Eq.eqString(), 'b', 10).matchTestSome(
+          value.updateAt(Eq.eqString, 'b', 10).matchTestSome(
                 (t) => t.lookup('b').matchTestSome((t) {
                   expect(t, 10);
                 }),
@@ -278,7 +281,7 @@ void main() {
 
       test('None', () {
         testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
-          expect(value.updateAt(Eq.eqString(), 'e', 10), isA<None>());
+          expect(value.updateAt(Eq.eqString, 'e', 10), isA<None>());
         });
       });
     });
@@ -334,15 +337,15 @@ void main() {
 
       test('update', () {
         testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
-          value.lookupEq(Eq.eqString(), 'b').matchTestSome((t) {
+          value.lookupEq(Eq.eqString, 'b').matchTestSome((t) {
             expect(t, 2);
           });
 
-          final result = value.upsertAt(Eq.eqString(), 'b', 10);
-          value.lookupEq(Eq.eqString(), 'b').matchTestSome((t) {
+          final result = value.upsertAt(Eq.eqString, 'b', 10);
+          value.lookupEq(Eq.eqString, 'b').matchTestSome((t) {
             expect(t, 2);
           });
-          result.lookupEq(Eq.eqString(), 'b').matchTestSome((t) {
+          result.lookupEq(Eq.eqString, 'b').matchTestSome((t) {
             expect(t, 10);
           });
         });
@@ -355,20 +358,20 @@ void main() {
 
           final result = value
               .upsertAt(
-                dateEqYear,
+                Eq.dateEqYear,
                 d1,
                 1,
               )
               .upsertAt(
-                dateEqYear,
+                Eq.dateEqYear,
                 d2,
                 2,
               );
 
-          result.lookupEq(dateEqYear, d1).matchTestSome((t) {
+          result.lookupEq(Eq.dateEqYear, d1).matchTestSome((t) {
             expect(t, 2);
           });
-          result.lookupEq(dateEqYear, d2).matchTestSome((t) {
+          result.lookupEq(Eq.dateEqYear, d2).matchTestSome((t) {
             expect(t, 2);
           });
         });
@@ -538,8 +541,8 @@ void main() {
         testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value1) {
           testImmutableMap({'a': 1, 'c': 3}, (value2) {
             final result = value2.isSubmap(
-              Eq.eqString(),
-              Eq.eqInt(),
+              Eq.eqString,
+              Eq.eqInt,
               value1,
             );
 
@@ -552,8 +555,8 @@ void main() {
         testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value1) {
           testImmutableMap({'a': 1, 'c': 2}, (value2) {
             final result = value2.isSubmap(
-              Eq.eqString(),
-              Eq.eqInt(),
+              Eq.eqString,
+              Eq.eqInt,
               value1,
             );
 
@@ -566,8 +569,8 @@ void main() {
         testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value1) {
           testImmutableMap({'a': 1, 'd': 3}, (value2) {
             final result = value2.isSubmap(
-              Eq.eqString(),
-              Eq.eqInt(),
+              Eq.eqString,
+              Eq.eqInt,
               value1,
             );
 
@@ -596,7 +599,7 @@ void main() {
     test('difference', () {
       testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value1) {
         testImmutableMap({'a': 1, 'c': 3}, (value2) {
-          final result = value1.difference(Eq.eqString(), value2);
+          final result = value1.difference(Eq.eqString, value2);
           expect(result['a'], null);
           expect(result['b'], 2);
           expect(result['c'], null);

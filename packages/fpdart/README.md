@@ -103,7 +103,7 @@ Check out also this series of articles about functional programming with `fpdart
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^0.6.0 # Check out the latest version
+  fpdart: ^1.0.0-beta.1 # Check out the latest version
 ```
 
 ## ✨ Examples
@@ -152,6 +152,12 @@ final match = option.match(
   (a) => print('Some($a)'),
 );
 
+/// or use Dart's pattern matching as well 🤝
+final dartMatch = switch (option) {
+  None() => 'None',
+  Some(value: final a) => 'Some($a)',
+};
+
 /// Convert to [Either]
 final either = option.toEither(() => 'missing');
 
@@ -198,6 +204,12 @@ final match = right.match(
   (l) => print('Left($l)'),
   (r) => print('Right($r)'),
 );
+
+/// or use Dart's pattern matching as well 🤝
+final dartMatch = switch (right) {
+  Left(value: final l) => 'Left($l)',
+  Right(value: final r) => 'Right($r)',
+};
 
 /// Convert to [Option]
 final option = right.toOption();
@@ -319,9 +331,42 @@ You have access to a `$` function, that you can use to extract and use the value
 
 ### 📦 Immutable Collections
 
-Fpdart provides some extension methods on `Iterable` (`List`) and `Map` that extend the methods available by providing some functional programming signatures (safe methods that never mutate the original collection and that never throw exceptions).
+> If you are going to use `fpdart` in your project, make sure to use immutable collections as well ☝️
 
-Integrations for immutable collections (`IList`, `ISet`, `IMap`, etc.) are still being discussed with the community. `fpdart` does not want to be another immutable collection solution in the ecosystem. That is why we are working to integrate `fpdart` with other more mature packages that already implements immutable collections. Stay tuned!
+Immutability is **at the core of functional programming** (alongside pure functions 🤝).
+
+`fpdart` does **not** provide immutable collections. Instead, we strongly suggest to use the [`fast_immutable_collections`](https://pub.dev/packages/fast_immutable_collections) package. 
+
+[`fast_immutable_collections`](https://pub.dev/packages/fast_immutable_collections) provides all the necessary immutable collections (`List`, `Set`, `Map` and more) with an extensive API and [top-class performance](https://pub.dev/packages/fast_immutable_collections#12-benchmarks).
+
+
+`fpdart` instead provides some extension methods on `Iterable`, `List`, and `Map`. These are designed to **extend the native Dart API with immutable methods**, as well as providing many handy additional functions:
+
+```dart
+/// Dart: `1`
+[1, 2, 3, 4].first;
+
+/// fpdart: `Some(1)`
+[1, 2, 3, 4].head;
+
+/// Dart: Throws a [StateError] ⚠️
+[].first;
+
+/// fpdart: `None()`
+[].head;
+
+final map = {'a': 1, 'b': 2};
+
+/// Dart: mutable ⚠️
+map.updateAll((key, value) => value + 10);
+
+/// fpdart: immutable equivalent 🤝
+final newMap = map.mapValue((value) => value + 10);
+```
+
+
+You can use these extension methods on any native Dart collection and **also** in combination with [`fast_immutable_collections`](https://pub.dev/packages/fast_immutable_collections) immutable collections.
+
 
 ### More
 
@@ -416,6 +461,10 @@ A well explained documentation is the key for the long-term success of the proje
 In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
+
+- **v1.0.0-beta.1** - 27 May 2023
+
+***
 
 - **v0.6.0** - 6 May 2023
 - **v0.5.0** - 4 March 2023

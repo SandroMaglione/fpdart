@@ -1,4 +1,4 @@
-## v1.0.0 - Soon
+## v1.0.0-beta.1 - 27 May 2023
 - Minimum environment dart sdk to `3.0.0` ⚠️ (Dart 3️⃣)
 ```yaml
 environment:
@@ -6,10 +6,37 @@ environment:
 ```
 - Added new `ReaderTaskEither` type
   - `ReaderTaskEither` models a complete program using `Reader` for dependency injection, `Task` to perform asynchronous computation, and `Either` to handle errors 🎯
+- Added new `ReaderTask` type 
 - `Either` as `sealed` class (Dart 3️⃣)
   - You can now use exhaustive pattern matching (`Left` or `Right`)
+```dart
+/// Pattern matching
+final match = right.match(
+  (l) => print('Left($l)'),
+  (r) => print('Right($r)'),
+);
+
+/// or use Dart's pattern matching as well 🤝
+final dartMatch = switch (right) {
+  Left(value: final l) => 'Left($l)',
+  Right(value: final r) => 'Right($r)',
+};
+```
 - `Option` as `sealed` class (Dart 3️⃣)
   - You can now use exhaustive pattern matching (`None` or `Some`)
+```dart
+/// Pattern matching
+final match = option.match(
+  () => print('None'),
+  (a) => print('Some($a)'),
+);
+
+/// or use Dart's pattern matching as well 🤝
+final dartMatch = switch (option) {
+  None() => 'None',
+  Some(value: final a) => 'Some($a)',
+};
+```
 - Types marked as `final` (no `extends` nor `implements`) (Dart 3️⃣)
   - `Unit`
   - `Reader`
@@ -22,6 +49,8 @@ environment:
   - `Task` 
   - `TaskOption` 
   - `TaskEither` 
+  - `ReaderTask` 
+  - `ReaderTaskEither` 
 - Removed `Tuple2`, use Dart 3 Records instead (`Tuple2(a, b)` becomes simply `(a, b)` 🎯) ⚠️ (Dart 3️⃣)
   - Updated all internal APIs to use records instead of `Tuple2` 
 - Major refactoring of `Iterable` and `List` extension methods
@@ -33,8 +62,8 @@ environment:
     - `difference` (`Iterable`)
     - `filterWithIndex` (`Iterable`)
   - Fixed the following methods ⚠️
-    - `takeWhileRight`: Result `List` reversed 
-    - `dropWhileRight`: Result `List` reversed 
+    - `takeWhileRight`: Resulting `List` now in reversed order as expected 
+    - `dropWhileRight`: Resulting `List` now in reversed order as expected 
   - Updated the following methods ⚠️
     - `foldRight`, `foldRightWithIndex` (`List`): Changed parameter order in `combine` function
     - `zipWith` (`Iterable`): Changed parameters definition, no more curried
@@ -77,7 +106,7 @@ environment:
     - `isSubmap` no more curried 
     - `collect` no more curried 
     - `difference` no more curried 
-- Added conversions helpers from `String` to `num`, `int`, `double`, and `bool` using `Option` and `Either` (both as extension methods on `String` and as functions)
+- Added conversions helpers from `String` to `num`, `int`, `double`, and `bool` using `Option` and `Either` (both as extension methods on `String` and as functions) ([#80](https://github.com/SandroMaglione/fpdart/issues/80))
   - `toNumOption` 
   - `toIntOption` 
   - `toDoubleOption` 
@@ -99,7 +128,7 @@ final result = toNumOption("10"); /// `Some(10)`
 final result = toNumOption("10.5"); /// `Some(10.5)`
 final result = toIntOption("0xFF"); /// `Some(255)`
 final result = toDoubleOption("10.5"); /// `Some(10.5)`
-final result = toBoolEither(() => "left")("NO"); /// `Left("left")`
+final result = toBoolEither("NO", () => "left"); /// `Left("left")`
 ```
 - Changed `dateNow`, `now`, `random`, and `randomBool` to getter functions
 ```dart
@@ -128,6 +157,7 @@ final isStringWithEvenLength = isEven.contramap<String>((n) => n.length);
   - Changed definition of `curry` to curry only the first parameter
   - Changed `uncurry` and `curry` extension to getter function
   - Removed `curry` and `uncurry` as functions (use extension method instead)
+  - Added `curryLast` (curry **last** parameter)
 ```dart
 int Function(int) subtractCurried(int n1) => (n2) => n1 - n2;
 
@@ -152,9 +182,17 @@ final add = addFunction.curry;
   - `or`
   - `and` 
 - Added `xor` method to `Eq` 
+- Moved `DateTime` instances of `Eq` as `Eq` static members
+```dart
+/// Before
+final eq = dateEqYear; // Global
+
+/// Now
+final eq = Eq.dateEqYear;
+```
 - Added `Eq` instances for `num`, `int`, `double`, `String`, and `bool`
 ```dart
-[1, 2, 3].difference(Eq.eqInt(), [2, 3, 4]); /// `[1]`
+[1, 2, 3].difference(Eq.eqInt, [2, 3, 4]); /// `[1]`
 ```
 - Added new method to `Eq`
   - `contramap`
@@ -166,12 +204,12 @@ class Parent {
 }
 
 /// Equality for values of type [Parent] based on their `value1` ([int]).
-final eqParentInt = Eq.eqInt().contramap<Parent>(
+final eqParentInt = Eq.eqInt.contramap<Parent>(
   (p) => p.value1,
 );
 
 /// Equality for of type [Parent] based on their `value2` ([double]).
-final eqParentDouble = Eq.eqDouble().contramap<Parent>(
+final eqParentDouble = Eq.eqDouble.contramap<Parent>(
   (p) => p.value2,
 );
 ``` 
@@ -180,9 +218,10 @@ final eqParentDouble = Eq.eqDouble().contramap<Parent>(
 /// Before
 final reversed = Order.reverse(instance);
 
-/// Before
+/// Now
 final reversed = instance.reverse;
 ```
+- Moved `DateTime` instances of `Order` as `Order` static members
 - Added `Order` instances for `num`, `int`, `double`
 - Added new methods to `Order`
   - `between`
@@ -196,12 +235,12 @@ class Parent {
 }
 
 /// Order values of type [Parent] based on their `value1` ([int]).
-final orderParentInt = Order.orderInt().contramap<Parent>(
+final orderParentInt = Order.orderInt.contramap<Parent>(
   (p) => p.value1,
 );
 
 /// Order values of type [Parent] based on their `value2` ([double]).
-final orderParentDouble = Order.orderDouble().contramap<Parent>(
+final orderParentDouble = Order.orderDouble.contramap<Parent>(
   (p) => p.value2,
 );
 ```
@@ -213,7 +252,7 @@ final boolValue = Random().nextBool();
 final result = boolValue.match<int>(() => -1, () => 1);
 final result = boolValue.fold<int>(() => -1, () => 1);
 
-/// New
+/// Now
 final result = boolValue ? 1 : -1;
 final result = switch (boolValue) { true => 1, false => -1 };
 ```
