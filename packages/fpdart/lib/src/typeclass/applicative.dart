@@ -18,7 +18,7 @@ mixin Applicative2<G, A, B> on HKT2<G, A, B>, Functor2<G, A, B> {
 }
 
 mixin Applicative3<G, A, B, C> on HKT3<G, A, B, C>, Functor3<G, A, B, C> {
-  HKT3<G, A, B, C> pure<C>(C a);
+  HKT3<G, A, B, D> pure<D>(D a);
   HKT3<G, A, B, D> ap<D>(HKT3<G, A, B, D Function(C c)> a);
 
   @override
