@@ -7,8 +7,12 @@ void main() {
       int subtract(int n1, int n2) => n1 - n2;
       int Function(int) subtractCurried(int n1) => (n2) => n1 - n2;
 
-      Glados2<int, int>(any.int, any.int).test('curryAll', (n1, n2) {
+      Glados2<int, int>(any.int, any.int).test('curry', (n1, n2) {
         expect(subtract(n1, n2), subtract.curry(n1)(n2));
+      });
+
+      Glados2<int, int>(any.int, any.int).test('curryLast', (n1, n2) {
+        expect(subtract(n1, n2), subtract.curryLast(n2)(n1));
       });
 
       Glados2<int, int>(any.int, any.int).test('uncurry', (n1, n2) {
@@ -24,6 +28,11 @@ void main() {
       Glados3<int, int, int>(any.int, any.int, any.int).test('curry',
           (n1, n2, n3) {
         expect(subtract(n1, n2, n3), subtract.curry(n1)(n2, n3));
+      });
+
+      Glados3<int, int, int>(any.int, any.int, any.int).test('curryLast',
+          (n1, n2, n3) {
+        expect(subtract(n1, n2, n3), subtract.curryLast(n3)(n1, n2));
       });
 
       Glados3<int, int, int>(any.int, any.int, any.int).test('curryAll',
@@ -49,6 +58,11 @@ void main() {
         expect(subtract(n1, n2, n3, n1), subtract.curry(n1)(n2, n3, n1));
       });
 
+      Glados3<int, int, int>(any.int, any.int, any.int).test('curryLast',
+          (n1, n2, n3) {
+        expect(subtract(n1, n2, n3, n2), subtract.curryLast(n2)(n1, n2, n3));
+      });
+
       Glados3<int, int, int>(any.int, any.int, any.int).test('curryAll',
           (n1, n2, n3) {
         expect(subtract(n1, n2, n3, n1), subtract.curryAll(n1)(n2)(n3)(n1));
@@ -72,6 +86,12 @@ void main() {
           (n1, n2, n3) {
         expect(
             subtract(n1, n2, n3, n1, n2), subtract.curry(n1)(n2, n3, n1, n2));
+      });
+
+      Glados3<int, int, int>(any.int, any.int, any.int).test('curryLast',
+          (n1, n2, n3) {
+        expect(subtract(n1, n2, n3, n1, n3),
+            subtract.curryLast(n3)(n1, n2, n3, n1));
       });
 
       Glados3<int, int, int>(any.int, any.int, any.int).test('curryAll',

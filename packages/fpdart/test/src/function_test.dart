@@ -59,7 +59,7 @@ void main() {
       Glados(any.letterOrDigits).test('toBoolEither (same as extension)',
           (stringValue) {
         expect(stringValue.toBoolEither(() => "left"),
-            toBoolEither(() => "left")(stringValue));
+            toBoolEither(stringValue, () => "left"));
       });
     });
   });

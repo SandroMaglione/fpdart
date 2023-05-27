@@ -106,7 +106,7 @@ final dartMatch = switch (option) {
     - `isSubmap` no more curried 
     - `collect` no more curried 
     - `difference` no more curried 
-- Added conversions helpers from `String` to `num`, `int`, `double`, and `bool` using `Option` and `Either` (both as extension methods on `String` and as functions)
+- Added conversions helpers from `String` to `num`, `int`, `double`, and `bool` using `Option` and `Either` (both as extension methods on `String` and as functions) ([#80](https://github.com/SandroMaglione/fpdart/issues/80))
   - `toNumOption` 
   - `toIntOption` 
   - `toDoubleOption` 
@@ -128,7 +128,7 @@ final result = toNumOption("10"); /// `Some(10)`
 final result = toNumOption("10.5"); /// `Some(10.5)`
 final result = toIntOption("0xFF"); /// `Some(255)`
 final result = toDoubleOption("10.5"); /// `Some(10.5)`
-final result = toBoolEither(() => "left")("NO"); /// `Left("left")`
+final result = toBoolEither("NO", () => "left"); /// `Left("left")`
 ```
 - Changed `dateNow`, `now`, `random`, and `randomBool` to getter functions
 ```dart
@@ -157,6 +157,7 @@ final isStringWithEvenLength = isEven.contramap<String>((n) => n.length);
   - Changed definition of `curry` to curry only the first parameter
   - Changed `uncurry` and `curry` extension to getter function
   - Removed `curry` and `uncurry` as functions (use extension method instead)
+  - Added `curryLast` (curry **last** parameter)
 ```dart
 int Function(int) subtractCurried(int n1) => (n2) => n1 - n2;
 

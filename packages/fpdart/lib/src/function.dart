@@ -84,5 +84,5 @@ Either<L, double> Function(String) toDoubleEither<L>(L Function() onLeft) =>
 /// {@template fpdart_string_extension_to_bool_either}
 /// Convert this [String] to [bool], returns the result of `onLeft` for invalid inputs.
 /// {@endtemplate}
-Either<L, bool> Function(String) toBoolEither<L>(L Function() onLeft) =>
-    (str) => str.toBoolEither(onLeft);
+Either<L, bool> toBoolEither<L>(String str, L Function() onLeft) =>
+    str.toBoolEither(onLeft);
