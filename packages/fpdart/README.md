@@ -126,7 +126,7 @@ Example of how to read and write a local file using functional programming.
 ### [Manage imports](./examples/managing_imports)
 Using `fpdart` with other libraries and noticing naming conflicts? Learn how to rename the classes that conflict with other SDK or third-party packages.
 
-### [Option](./lib/src/option.dart)
+### [Option](./packages/fpdart/lib/src/option.dart)
 Used when a return value can be missing.
 > For example, when parsing a `String` to `int`, since not all `String`
 > can be converted to `int`
@@ -160,7 +160,7 @@ final flatMap = option.flatMap((a) => Option.of(a + 10));
 final tryCatch = Option.tryCatch(() => int.parse('invalid'));
 ```
 
-### [Either](./lib/src/either.dart)
+### [Either](./packages/fpdart/lib/src/either.dart)
 Used to handle errors (instead of `Exception`s).
 > `Either<L, R>`: `L` is the type of the error (for example a `String` explaining
 > the problem), `R` is the return type when the computation is successful
@@ -201,7 +201,7 @@ final match = right.match(
 final option = right.toOption();
 ```
 
-### [IO](./lib/src/io.dart)
+### [IO](./packages/fpdart/lib/src/io.dart)
 Wrapper around an **sync** function. Allows to compose synchronous functions **that never fail**.
 
 ```dart
@@ -221,7 +221,7 @@ final int value = io.run();
 final flatMap = io.flatMap((a) => IO.of(a + 10));
 ```
 
-### [Task](./lib/src/task.dart)
+### [Task](./packages/fpdart/lib/src/task.dart)
 Wrapper around an **async** function (`Future`). Allows to compose asynchronous functions **that never fail**.
 
 > If you look closely, it's the same as [`IO`](#io) but for **async functions** 💡
@@ -246,16 +246,16 @@ final flatMap = task.flatMap((a) => Task.of(a + 10));
 
 ### Utility types
 These types compose together the 4 above ([`Option`](#option), [`Either`](#either), [`IO`](#io), [`Task`](#task)) to join together their functionalities:
-- [`IOOption`](./lib/src/io_option.dart): sync function (`IO`) that may may miss the return value (`Option`)
-- [`IOEither`](./lib/src/io_either.dart): sync function (`IO`) that may fail (`Either`)
-- [`TaskOption`](./lib/src/task_option.dart): async function (`Task`) that may miss the return value (`Option`)
-- [`TaskEither`](./lib/src/task_either.dart): async function (`Task`) that may fail (`Either`)
+- [`IOOption`](./packages/fpdart/lib/src/io_option.dart): sync function (`IO`) that may may miss the return value (`Option`)
+- [`IOEither`](./packages/fpdart/lib/src/io_either.dart): sync function (`IO`) that may fail (`Either`)
+- [`TaskOption`](./packages/fpdart/lib/src/task_option.dart): async function (`Task`) that may miss the return value (`Option`)
+- [`TaskEither`](./packages/fpdart/lib/src/task_either.dart): async function (`Task`) that may fail (`Either`)
 
 
-### [Reader](./lib/src/reader.dart)
+### [Reader](./packages/fpdart/lib/src/reader.dart)
 Read values from a **context** without explicitly passing the dependency between multiple nested function calls. View the [example folder for an explained usecase example](./examples/src/reader).
 
-### [State](./lib/src/state.dart)
+### [State](./packages/fpdart/lib/src/state.dart)
 Used to **store**, **update**, and **extract** state in a functional way. View the [example folder for an explained usecase example](./examples/src/state).
 
 ### 🔗 Do notation
