@@ -110,27 +110,27 @@ dependencies:
 
 ## ✨ Examples
 
-### [Pokeapi](./examples/pokeapi_functional/)
+### [Pokeapi](/examples/pokeapi_functional/)
 Flutter app that lets you search and view your favorite Pokemon:
 - API request
 - Response validation
 - JSON conversion
 - State management ([riverpod](https://pub.dev/packages/riverpod))
 
-### [Open Meteo API](./examples/open_meteo_api/)
+### [Open Meteo API](/examples/open_meteo_api/)
 Re-implementation using `fpdart` and functional programming of the [Open Meteo API](https://github.com/felangel/bloc/tree/master/examples/flutter_weather/packages/open_meteo_api) from the [flutter_weather](https://bloclibrary.dev/#/flutterweathertutorial) app example in the [bloc](https://pub.dev/packages/bloc) package.
 
 A 2 parts series explains step by step the Open Meteo API code:
 - [Open Meteo API - Functional programming with fpdart (Part 1)](https://www.sandromaglione.com/techblog/real_example_fpdart_open_meteo_api_part_1)
 - [Open Meteo API - Functional programming with fpdart (Part 2)](https://www.sandromaglione.com/techblog/real_example_fpdart_open_meteo_api_part_2)
 
-### [Read/Write local file](./examples/read_write_file/)
+### [Read/Write local file](/examples/read_write_file/)
 Example of how to read and write a local file using functional programming.
 
-### [Manage imports](./examples/managing_imports)
+### [Manage imports](/examples/managing_imports)
 Using `fpdart` with other libraries and noticing naming conflicts? Learn how to rename the classes that conflict with other SDK or third-party packages.
 
-### [Option](./packages/fpdart/lib/src/option.dart)
+### [Option](/packages/fpdart/lib/src/option.dart)
 Used when a return value can be missing.
 > For example, when parsing a `String` to `int`, since not all `String`
 > can be converted to `int`
@@ -170,7 +170,7 @@ final flatMap = option.flatMap((a) => Option.of(a + 10));
 final tryCatch = Option.tryCatch(() => int.parse('invalid'));
 ```
 
-### [Either](./packages/fpdart/lib/src/either.dart)
+### [Either](/packages/fpdart/lib/src/either.dart)
 Used to handle errors (instead of `Exception`s).
 > `Either<L, R>`: `L` is the type of the error (for example a `String` explaining
 > the problem), `R` is the return type when the computation is successful
@@ -217,7 +217,7 @@ final dartMatch = switch (right) {
 final option = right.toOption();
 ```
 
-### [IO](./packages/fpdart/lib/src/io.dart)
+### [IO](/packages/fpdart/lib/src/io.dart)
 Wrapper around an **sync** function. Allows to compose synchronous functions **that never fail**.
 
 ```dart
@@ -237,7 +237,7 @@ final int value = io.run();
 final flatMap = io.flatMap((a) => IO.of(a + 10));
 ```
 
-### [Task](./packages/fpdart/lib/src/task.dart)
+### [Task](/packages/fpdart/lib/src/task.dart)
 Wrapper around an **async** function (`Future`). Allows to compose asynchronous functions **that never fail**.
 
 > If you look closely, it's the same as [`IO`](#io) but for **async functions** 💡
@@ -262,23 +262,23 @@ final flatMap = task.flatMap((a) => Task.of(a + 10));
 
 ### Utility types
 These types compose together the 4 above ([`Option`](#option), [`Either`](#either), [`IO`](#io), [`Task`](#task)) to join together their functionalities:
-- [`IOOption`](./packages/fpdart/lib/src/io_option.dart): sync function (`IO`) that may may miss the return value (`Option`)
-- [`IOEither`](./packages/fpdart/lib/src/io_either.dart): sync function (`IO`) that may fail (`Either`)
-- [`TaskOption`](./packages/fpdart/lib/src/task_option.dart): async function (`Task`) that may miss the return value (`Option`)
-- [`TaskEither`](./packages/fpdart/lib/src/task_either.dart): async function (`Task`) that may fail (`Either`)
+- [`IOOption`](/packages/fpdart/lib/src/io_option.dart): sync function (`IO`) that may may miss the return value (`Option`)
+- [`IOEither`](/packages/fpdart/lib/src/io_either.dart): sync function (`IO`) that may fail (`Either`)
+- [`TaskOption`](/packages/fpdart/lib/src/task_option.dart): async function (`Task`) that may miss the return value (`Option`)
+- [`TaskEither`](/packages/fpdart/lib/src/task_either.dart): async function (`Task`) that may fail (`Either`)
 
 
-### [Reader](./packages/fpdart/lib/src/reader.dart)
-Read values from a **context** without explicitly passing the dependency between multiple nested function calls. View the [example folder for an explained usecase example](./examples/src/reader).
+### [Reader](/packages/fpdart/lib/src/reader.dart)
+Read values from a **context** without explicitly passing the dependency between multiple nested function calls. View the [example folder for an explained usecase example](/packages/fpdart/example/src/reader).
 
-#### [ReaderTask](./lib/src/reader_task.dart)
+#### [ReaderTask](/packages/fpdart/lib/src/reader_task.dart)
 Combine the `Reader` type (dependecy) with `Task` (asynchronous).
 
-#### [ReaderTaskEither](./lib/src/reader_task_either.dart)
+#### [ReaderTaskEither](/packages/fpdart/lib/src/reader_task_either.dart)
 Combine the `Reader` type (dependecy) with `Task` (asynchronous) and `Either` (error handling).
 
-### [State](./lib/src/state.dart)
-Used to **store**, **update**, and **extract** state in a functional way. View the [example folder for an explained usecase example](./examples/src/state).
+### [State](/packages/fpdart/lib/src/state.dart)
+Used to **store**, **update**, and **extract** state in a functional way. View the [example folder for an explained usecase example](/packages/fpdart/example/src/state).
 
 ### 🔗 Do notation
 Version `v0.6.0` introduced the **Do notation** in `fpdart`. Using the Do notation makes chaining functions easier.
