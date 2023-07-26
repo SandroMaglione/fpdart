@@ -1,8 +1,8 @@
 import 'either.dart';
+import 'extension/option_extension.dart';
 import 'function.dart';
 import 'io_option.dart';
 import 'task_option.dart';
-import 'tuple.dart';
 import 'typeclass/applicative.dart';
 import 'typeclass/eq.dart';
 import 'typeclass/extend.dart';
@@ -36,7 +36,7 @@ Option<T> optionOf<T>(T? t) => Option.fromNullable(t);
 Option<T> option<T>(T value, bool Function(T) predicate) =>
     Option.fromPredicate(value, predicate);
 
-class _OptionThrow {
+final class _OptionThrow {
   const _OptionThrow();
 }
 
@@ -47,7 +47,7 @@ A _doAdapter<A>(Option<A> option) =>
 typedef DoFunctionOption<A> = A Function(DoAdapterOption $);
 
 /// Tag the [HKT] interface for the actual [Option].
-abstract class _OptionHKT {}
+abstract final class _OptionHKT {}
 
 // `Option<T> implements Functor<OptionHKT, T>` expresses correctly the
 // return type of the `map` function as `HKT<OptionHKT, B>`.
@@ -72,7 +72,7 @@ abstract class _OptionHKT {}
 ///   printString,
 /// );
 /// ```
-abstract class Option<T> extends HKT<_OptionHKT, T>
+sealed class Option<T> extends HKT<_OptionHKT, T>
     with
         Functor<_OptionHKT, T>,
         Applicative<_OptionHKT, T>,
@@ -224,19 +224,18 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
   @override
   Option<Z> filterMap<Z>(Option<Z> Function(T t) f);
 
-  /// Return a [Tuple2]. If this [Option] is a [Some]:
+  /// Return a record. If this [Option] is a [Some]:
   /// - if `f` applied to its value returns `true`, then the tuple contains this [Option] as second value
   /// - if `f` applied to its value returns `false`, then the tuple contains this [Option] as first value
   /// Otherwise the tuple contains both [None].
   @override
-  Tuple2<Option<T>, Option<T>> partition(bool Function(T t) f) =>
-      Tuple2(filter((a) => !f(a)), filter(f));
+  (Option<T>, Option<T>) partition(bool Function(T t) f) =>
+      (filter((a) => !f(a)), filter(f));
 
-  /// Return a [Tuple2] that contains as first value a [Some] when `f` returns [Left],
+  /// Return a record that contains as first value a [Some] when `f` returns [Left],
   /// otherwise the [Some] will be the second value of the tuple.
   @override
-  Tuple2<Option<Z>, Option<Y>> partitionMap<Z, Y>(
-          Either<Z, Y> Function(T t) f) =>
+  (Option<Z>, Option<Y>) partitionMap<Z, Y>(Either<Z, Y> Function(T t) f) =>
       Option.separate(map(f));
 
   /// If this [Option] is a [Some], then return the result of calling `then`.
@@ -426,14 +425,14 @@ abstract class Option<T> extends HKT<_OptionHKT, T>
     }
   }
 
-  /// Return a [Tuple2] of [Option] from a `Option<Either<A, B>>`.
+  /// Return a record of [Option] from a `Option<Either<A, B>>`.
   ///
   /// The value on the left of the [Either] will be the first value of the tuple,
   /// while the right value of the [Either] will be the second of the tuple.
-  static Tuple2<Option<A>, Option<B>> separate<A, B>(Option<Either<A, B>> m) =>
+  static (Option<A>, Option<B>) separate<A, B>(Option<Either<A, B>> m) =>
       m.match(
-        () => Tuple2(const Option.none(), const Option.none()),
-        (either) => Tuple2(either.getLeft(), either.getRight()),
+        () => (const Option.none(), const Option.none()),
+        (either) => (either.getLeft(), either.getRight()),
       );
 
   /// Build an `Eq<Option>` by comparing the values inside two [Option].
@@ -615,31 +614,4 @@ class None extends Option<Never> {
 
   @override
   Object? toJson(Object? Function(Never p1) toJsonT) => null;
-}
-
-extension OptionExtension<T> on Option<T> {
-  /// Return the current [Option] if it is a [Some], otherwise return the result of `orElse`.
-  ///
-  /// Used to provide an **alt**ernative [Option] in case the current one is [None].
-  /// ```dart
-  /// [🍌].alt(() => [🍎]) -> [🍌]
-  /// [_].alt(() => [🍎]) -> [🍎]
-  /// ```
-  Option<T> alt(Option<T> Function() orElse) =>
-      this is Some<T> ? this : orElse();
-
-  /// Return `true` when value of `a` is equal to the value inside the [Option].
-  bool elem(T t, Eq<T> eq) => match(() => false, (value) => eq.eqv(value, t));
-
-  /// If this [Option] is a [Some] then return the value inside the [Option].
-  /// Otherwise return the result of `orElse`.
-  /// ```dart
-  /// [🍌].getOrElse(() => 🍎) -> 🍌
-  /// [_].getOrElse(() => 🍎) -> 🍎
-  ///
-  ///  👆 same as 👇
-  ///
-  /// [🍌].match(() => 🍎, (🍌) => 🍌)
-  /// ```
-  T getOrElse(T Function() orElse) => match(orElse, identity);
 }

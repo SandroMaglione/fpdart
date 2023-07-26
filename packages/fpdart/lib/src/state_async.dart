@@ -1,11 +1,10 @@
 import 'function.dart';
 import 'state.dart';
-import 'tuple.dart';
 import 'typeclass/typeclass.export.dart';
 import 'unit.dart';
 
 /// Tag the [HKT2] interface for the actual [StateAsync].
-abstract class _StateAsyncHKT {}
+abstract final class _StateAsyncHKT {}
 
 /// `StateAsync<S, A>` is used to store, update, and extract async state in a functional way.
 ///
@@ -14,14 +13,14 @@ abstract class _StateAsyncHKT {}
 /// (Account Balance fetched from the current state of your Bank Account `S`).
 ///
 /// Used when fetching and updating the state is **asynchronous**. Use [State] otherwise.
-class StateAsync<S, A> extends HKT2<_StateAsyncHKT, S, A>
+final class StateAsync<S, A> extends HKT2<_StateAsyncHKT, S, A>
     with
         Functor2<_StateAsyncHKT, S, A>,
         Applicative2<_StateAsyncHKT, S, A>,
         Monad2<_StateAsyncHKT, S, A> {
-  final Future<Tuple2<A, S>> Function(S state) _run;
+  final Future<(A, S)> Function(S state) _run;
 
-  /// Build a new [StateAsync] given a `Future<Tuple2<A, S>> Function(S)`.
+  /// Build a new [StateAsync] given a `Future<(A, S)> Function(S)`.
   const StateAsync(this._run);
 
   /// Flat a [StateAsync] contained inside another [StateAsync] to be a single [StateAsync].
@@ -37,7 +36,7 @@ class StateAsync<S, A> extends HKT2<_StateAsyncHKT, S, A>
   StateAsync<S, C> flatMap<C>(covariant StateAsync<S, C> Function(A a) f) =>
       StateAsync((state) async {
         final tuple = await run(state);
-        return f(tuple.first).run(tuple.second);
+        return f(tuple.$1).run(tuple.$2);
       });
 
   /// Apply the function contained inside `a` to change the value of type `A` to
@@ -48,8 +47,7 @@ class StateAsync<S, A> extends HKT2<_StateAsyncHKT, S, A>
 
   /// Return a `StateAsync<S, C>` containing `c` as value.
   @override
-  StateAsync<S, C> pure<C>(C c) =>
-      StateAsync((state) async => Tuple2(c, state));
+  StateAsync<S, C> pure<C>(C c) => StateAsync((state) async => (c, state));
 
   /// Change the value inside `StateAsync<S, A>` from type `A` to type `C` using `f`.
   @override
@@ -81,33 +79,32 @@ class StateAsync<S, A> extends HKT2<_StateAsyncHKT, S, A>
       flatMap((_) => state);
 
   /// Extract the current state `S`.
-  StateAsync<S, S> get() => StateAsync((state) async => Tuple2(state, state));
+  StateAsync<S, S> get() => StateAsync((state) async => (state, state));
 
   /// Change the value getter based on the current state `S`.
   StateAsync<S, A> gets(A Function(S state) f) =>
-      StateAsync((state) async => Tuple2(f(state), state));
+      StateAsync((state) async => (f(state), state));
 
   /// Change the current state `S` using `f` and return nothing ([Unit]).
   StateAsync<S, Unit> modify(S Function(S state) f) =>
-      StateAsync((state) async => Tuple2(unit, f(state)));
+      StateAsync((state) async => (unit, f(state)));
 
   /// Set a new state and return nothing ([Unit]).
-  StateAsync<S, Unit> put(S state) =>
-      StateAsync((_) async => Tuple2(unit, state));
+  StateAsync<S, Unit> put(S state) => StateAsync((_) async => (unit, state));
 
   /// Execute `run` and extract the value `A`.
   ///
   /// To extract both the value and the state use `run`.
   ///
   /// To extract only the state `S` use `execute`.
-  Future<A> evaluate(S state) async => (await run(state)).first;
+  Future<A> evaluate(S state) async => (await run(state)).$1;
 
   /// Execute `run` and extract the state `S`.
   ///
   /// To extract both the value and the state use `run`.
   ///
   /// To extract only the value `A` use `evaluate`.
-  Future<S> execute(S state) async => (await run(state)).second;
+  Future<S> execute(S state) async => (await run(state)).$2;
 
   /// Chain a request that returns another [StateAsync], execute it, ignore
   /// the result, and return the same value as the current [StateAsync].
@@ -125,7 +122,7 @@ class StateAsync<S, A> extends HKT2<_StateAsyncHKT, S, A>
   /// To extract only the value `A` use `evaluate`.
   ///
   /// To extract only the state `S` use `execute`.
-  Future<Tuple2<A, S>> run(S state) => _run(state);
+  Future<(A, S)> run(S state) => _run(state);
 
   @override
   bool operator ==(Object other) => (other is StateAsync) && other._run == _run;

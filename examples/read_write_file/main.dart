@@ -6,7 +6,7 @@ import 'package:fpdart/fpdart.dart';
  * Read lines from a `.txt` file using [TaskEither] of fpdart.
  * 
  * This application reads from two files containing english and italian sentences.
- * It then uses `zip` to join the two resulting lists together in a `List<Tuple2<String, String>>`.
+ * It then uses `zip` to join the two resulting lists together in a `List<(String, String)>`.
  * 
  * Finally, it uses `flatMap` and `foldLeft` to iterate over the sentences and search words from a predefined list (`searchWords`).
  * At the end, we have a list of [FoundWord] containing all the sentences and words matched.
@@ -32,21 +32,21 @@ class FoundWord {
 const searchWords = ['that', 'and', 'for'];
 
 Iterable<FoundWord> collectFoundWords(
-  Iterable<Tuple2<String, String>> iterable,
+  Iterable<(String, String)> iterable,
 ) =>
     iterable.flatMapWithIndex(
       (tuple, index) => searchWords.foldLeftWithIndex<List<FoundWord>>(
         [],
         (acc, word, wordIndex) =>
-            tuple.second.toLowerCase().split(' ').contains(word)
+            tuple.$2.toLowerCase().split(' ').contains(word)
                 ? [
                     ...acc,
                     FoundWord(
                       index,
                       word,
                       wordIndex,
-                      tuple.second.replaceAll(word, '<\$>'),
-                      tuple.first,
+                      tuple.$2.replaceAll(word, '<\$>'),
+                      tuple.$1,
                     ),
                   ]
                 : acc,
@@ -55,9 +55,9 @@ Iterable<FoundWord> collectFoundWords(
 
 void main() async {
   final collectDoNotation = TaskEither<String, Iterable<FoundWord>>.Do(
-    ($) async {
-      final linesIta = await $(readFileAsync('./assets/source_ita.txt'));
-      final linesEng = await $(readFileAsync('./assets/source_eng.txt'));
+    (_) async {
+      final linesIta = await _(readFileAsync('./assets/source_ita.txt'));
+      final linesEng = await _(readFileAsync('./assets/source_eng.txt'));
       final linesZip = linesIta.zip(linesEng);
       return collectFoundWords(linesZip);
     },

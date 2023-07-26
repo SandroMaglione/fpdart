@@ -13,7 +13,7 @@ class Market {
       getRandomEither(randomInt(1, 10).run(), "Empty 💁🏼‍♂️");
 }
 
-Either<L, R> getRandomEither<L, R>(R right, L left) => randomBool()
+Either<L, R> getRandomEither<L, R>(R right, L left) => randomBool
     .map<Either<L, R>>(
       (isValid) => isValid ? Either.of(right) : Either.left(left),
     )
@@ -41,13 +41,13 @@ String goShopping() => goToShoppingCenter()
 
 // Combine all the instructions and go shopping! 🛒
 String goShoppingDo() => Either<String, String>.Do(
-      ($) {
-        final market = $(goToShoppingCenter().alt(goToLocalMarket));
-        final amount = $(market.buyAmount());
+      (_) {
+        final market = _(goToShoppingCenter().alt(goToLocalMarket));
+        final amount = _(market.buyAmount());
 
-        final banana = $(market.buyBanana());
-        final apple = $(market.buyApple());
-        final pear = $(market.buyPear());
+        final banana = _(market.buyBanana());
+        final apple = _(market.buyApple());
+        final pear = _(market.buyPear());
 
         return 'Shopping: $banana, $apple, $pear';
       },
@@ -59,10 +59,10 @@ String goShoppingDoFlatMap() => goToShoppingCenter()
     .flatMap(
       /// Not required types here, since [Left] inferred from chain,
       /// and [Right] from the return type of `Do`
-      (market) => Either.Do(($) {
-        final banana = $(market.buyBanana());
-        final apple = $(market.buyApple());
-        final pear = $(market.buyPear());
+      (market) => Either.Do((_) {
+        final banana = _(market.buyBanana());
+        final apple = _(market.buyApple());
+        final pear = _(market.buyPear());
         return 'Shopping: $banana, $apple, $pear';
       }),
     )

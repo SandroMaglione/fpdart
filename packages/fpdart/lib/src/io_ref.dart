@@ -1,6 +1,6 @@
-import 'function.dart';
 import 'io.dart';
 import 'typeclass/eq.dart';
+import 'typedef.dart';
 import 'unit.dart';
 
 /// Mutable reference in the [IO] monad.
@@ -13,7 +13,7 @@ import 'unit.dart';
 /// In most cases, the [State] monad should be used, and [IORef] must be
 /// viewed as a last resort, as it holds a mutable field inside itself that can
 /// be modified inside of the [IO] monad.
-class IORef<T> {
+final class IORef<T> {
   T _value;
 
   IORef._(this._value);

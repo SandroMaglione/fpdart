@@ -164,34 +164,6 @@ void main() {
       });
     });
 
-    group('getOrElse', () {
-      test('Some', () {
-        final option = Option.of(10);
-        final value = option.getOrElse(() => 0);
-        expect(value, 10);
-      });
-
-      test('None', () {
-        final option = Option<int>.none();
-        final value = option.getOrElse(() => 0);
-        expect(value, 0);
-      });
-    });
-
-    group('alt', () {
-      test('Some', () {
-        final option = Option.of(10);
-        final value = option.alt(() => Option.of(0));
-        value.matchTestSome((some) => expect(some, 10));
-      });
-
-      test('None', () {
-        final option = Option<int>.none();
-        final value = option.alt(() => Option.of(0));
-        value.matchTestSome((some) => expect(some, 0));
-      });
-    });
-
     group('extend', () {
       test('Some', () {
         final option = Option.of(10);
@@ -258,22 +230,22 @@ void main() {
       test('Some (true)', () {
         final option = Option.of(10);
         final value = option.partition((a) => a > 5);
-        expect(value.first, isA<None>());
-        value.second.matchTestSome((some) => expect(some, 10));
+        expect(value.$1, isA<None>());
+        value.$2.matchTestSome((some) => expect(some, 10));
       });
 
       test('Some (false)', () {
         final option = Option.of(10);
         final value = option.partition((a) => a < 5);
-        value.first.matchTestSome((some) => expect(some, 10));
-        expect(value.second, isA<None>());
+        value.$1.matchTestSome((some) => expect(some, 10));
+        expect(value.$2, isA<None>());
       });
 
       test('None', () {
         final option = Option<int>.none();
         final value = option.partition((a) => a > 5);
-        expect(value.first, isA<None>());
-        expect(value.second, isA<None>());
+        expect(value.$1, isA<None>());
+        expect(value.$2, isA<None>());
       });
     });
 
@@ -282,24 +254,24 @@ void main() {
         final option = Option.of(10);
         final value =
             option.partitionMap<String, double>((a) => Either.of(a / 2));
-        expect(value.first, isA<None>());
-        value.second.matchTestSome((some) => expect(some, 5.0));
+        expect(value.$1, isA<None>());
+        value.$2.matchTestSome((some) => expect(some, 5.0));
       });
 
       test('Some (left)', () {
         final option = Option.of(10);
         final value =
             option.partitionMap<String, double>((a) => Either.left('$a'));
-        value.first.matchTestSome((some) => expect(some, '10'));
-        expect(value.second, isA<None>());
+        value.$1.matchTestSome((some) => expect(some, '10'));
+        expect(value.$2, isA<None>());
       });
 
       test('None', () {
         final option = Option<int>.none();
         final value =
             option.partitionMap<String, double>((a) => Either.of(a / 2));
-        expect(value.first, isA<None>());
-        expect(value.second, isA<None>());
+        expect(value.$1, isA<None>());
+        expect(value.$2, isA<None>());
       });
     });
 
@@ -381,15 +353,15 @@ void main() {
     group('separate', () {
       test('Right', () {
         final option = Option.separate<String, int>(Option.of(Either.of(10)));
-        expect(option.first, isA<None>());
-        option.second.matchTestSome((some) => expect(some, 10));
+        expect(option.$1, isA<None>());
+        option.$2.matchTestSome((some) => expect(some, 10));
       });
 
       test('Left', () {
         final option =
             Option.separate<String, int>(Option.of(Either.left('none')));
-        option.first.matchTestSome((some) => expect(some, 'none'));
-        expect(option.second, isA<None>());
+        option.$1.matchTestSome((some) => expect(some, 'none'));
+        expect(option.$2, isA<None>());
       });
     });
 
@@ -507,15 +479,6 @@ void main() {
       final m2 = Option<int>.none();
       expect(m1.fold(() => 'none', (some) => 'some'), 'some');
       expect(m2.fold(() => 'none', (some) => 'some'), 'none');
-    });
-
-    test('elem', () {
-      final m1 = Option.of(10);
-      final m2 = Option<int>.none();
-      final eq = Eq.instance<int>((a1, a2) => a1 == a2);
-      expect(m1.elem(10, eq), true);
-      expect(m1.elem(9, eq), false);
-      expect(m2.elem(10, eq), false);
     });
 
     test('none()', () {
@@ -745,16 +708,16 @@ void main() {
 
   group('Do Notation', () {
     test('should return the correct value', () {
-      final doOption = Option.Do(($) => $(Option.of(10)));
+      final doOption = Option.Do((_) => _(Option.of(10)));
       doOption.matchTestSome((t) {
         expect(t, 10);
       });
     });
 
     test('should extract the correct values', () {
-      final doOption = Option.Do(($) {
-        final a = $(Option.of(10));
-        final b = $(Option.of(5));
+      final doOption = Option.Do((_) {
+        final a = _(Option.of(10));
+        final b = _(Option.of(5));
         return a + b;
       });
       doOption.matchTestSome((t) {
@@ -763,10 +726,10 @@ void main() {
     });
 
     test('should return None if any Option is None', () {
-      final doOption = Option.Do(($) {
-        final a = $(Option.of(10));
-        final b = $(Option.of(5));
-        final c = $(Option<int>.none());
+      final doOption = Option.Do((_) {
+        final a = _(Option.of(10));
+        final b = _(Option.of(5));
+        final c = _(Option<int>.none());
         return a + b + c;
       });
 
@@ -774,8 +737,8 @@ void main() {
     });
 
     test('should rethrow if throw is used inside Do', () {
-      final doOption = () => Option.Do(($) {
-            $(Option.of(10));
+      final doOption = () => Option.Do((_) {
+            _(Option.of(10));
             throw UnimplementedError();
           });
 
@@ -783,8 +746,8 @@ void main() {
     });
 
     test('should rethrow if None is thrown inside Do', () {
-      final doOption = () => Option.Do(($) {
-            $(Option.of(10));
+      final doOption = () => Option.Do((_) {
+            _(Option.of(10));
             throw None();
           });
 
@@ -792,8 +755,8 @@ void main() {
     });
 
     test('should throw if the error is not None', () {
-      final doOption = () => Option.Do(($) {
-            $(Option.of(10));
+      final doOption = () => Option.Do((_) {
+            _(Option.of(10));
             throw UnimplementedError();
           });
 
@@ -802,9 +765,9 @@ void main() {
 
     test('should no execute past the first None', () {
       var mutable = 10;
-      final doOptionNone = Option.Do(($) {
-        final a = $(Option.of(10));
-        final b = $(Option<int>.none());
+      final doOptionNone = Option.Do((_) {
+        final a = _(Option.of(10));
+        final b = _(Option<int>.none());
         mutable += 10;
         return a + b;
       });
@@ -812,8 +775,8 @@ void main() {
       expect(mutable, 10);
       expect(doOptionNone, isA<None>());
 
-      final doOptionSome = Option.Do(($) {
-        final a = $(Option.of(10));
+      final doOptionSome = Option.Do((_) {
+        final a = _(Option.of(10));
         mutable += 10;
         return a;
       });

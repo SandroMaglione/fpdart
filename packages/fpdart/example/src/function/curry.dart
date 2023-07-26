@@ -9,14 +9,14 @@ void main() {
   /// Convert a function with 2 parameters to a function that
   /// takes the first parameter and returns a function that takes
   /// the seconds parameter.
-  final sumCurry = curry2(sum);
+  final sumCurry = sum.curry;
   final sumBy2 = sumCurry(2);
   final sumBy10 = sumCurry(10);
   print(sumBy2(10));
   print(sumBy10(2));
 
   /// Same as above but with 4 parameters.
-  final sumMultiplyDivideCurry = curry4(sumMultiplyDivide);
+  final sumMultiplyDivideCurry = sumMultiplyDivide.curryAll;
   final sumBy5 = sumMultiplyDivideCurry(5);
   final multiplyBy2 = sumBy5(2);
   final divideBy3 = multiplyBy2(3);
@@ -29,6 +29,6 @@ void main() {
   print(sumBy2Extension(10));
   print(sumBy10Extension(2));
 
-  final fourParamsCurry = sumMultiplyDivide.curry;
+  final fourParamsCurry = sumMultiplyDivide.curryAll;
   final fourParamsUncurry = fourParamsCurry.uncurry;
 }

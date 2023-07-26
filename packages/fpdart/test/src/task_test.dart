@@ -285,15 +285,15 @@ void main() {
 
     group('Do Notation', () {
       test('should return the correct value', () async {
-        final doTask = Task.Do(($) => $(Task.of(10)));
+        final doTask = Task.Do((_) => _(Task.of(10)));
         final run = await doTask.run();
         expect(run, 10);
       });
 
       test('should extract the correct values', () async {
-        final doTask = Task.Do(($) async {
-          final a = await $(Task.of(10));
-          final b = await $(Task.of(5));
+        final doTask = Task.Do((_) async {
+          final a = await _(Task.of(10));
+          final b = await _(Task.of(5));
           return a + b;
         });
         final run = await doTask.run();
@@ -302,9 +302,9 @@ void main() {
 
       test('should not execute until run is called', () async {
         var mutable = 10;
-        final doTask = Task.Do(($) async {
-          final a = await $(Task.of(10));
-          final b = await $(Task.of(5));
+        final doTask = Task.Do((_) async {
+          final a = await _(Task.of(10));
+          final b = await _(Task.of(5));
           mutable += 10;
           return a + b;
         });

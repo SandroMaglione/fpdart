@@ -1098,8 +1098,8 @@ void main() {
       right<String, int>(3),
     ];
     final result = Either.partitionEithers(list);
-    expect(result.first, ['a', 'b']);
-    expect(result.second, [1, 2, 3]);
+    expect(result.$1, ['a', 'b']);
+    expect(result.$2, [1, 2, 3]);
   });
 
   group('safeCast', () {
@@ -1145,16 +1145,16 @@ void main() {
 
   group('Do Notation', () {
     test('should return the correct value', () {
-      final doEither = Either.Do(($) => $(Either.of(10)));
+      final doEither = Either.Do((_) => _(Either.of(10)));
       doEither.matchTestRight((t) {
         expect(t, 10);
       });
     });
 
     test('should extract the correct values', () {
-      final doEither = Either.Do(($) {
-        final a = $(Either.of(10));
-        final b = $(Either.of(5));
+      final doEither = Either.Do((_) {
+        final a = _(Either.of(10));
+        final b = _(Either.of(5));
         return a + b;
       });
       doEither.matchTestRight((t) {
@@ -1163,10 +1163,10 @@ void main() {
     });
 
     test('should return Left if any Either is Left', () {
-      final doEither = Either<String, int>.Do(($) {
-        final a = $(Either.of(10));
-        final b = $(Either.of(5));
-        final c = $(Either<String, int>.left('Error'));
+      final doEither = Either<String, int>.Do((_) {
+        final a = _(Either.of(10));
+        final b = _(Either.of(5));
+        final c = _(Either<String, int>.left('Error'));
         return a + b + c;
       });
       doEither.matchTestLeft((t) {
@@ -1175,8 +1175,8 @@ void main() {
     });
 
     test('should rethrow if throw is used inside Do', () {
-      final doEither = () => Either<String, int>.Do(($) {
-            $(Either.of(10));
+      final doEither = () => Either<String, int>.Do((_) {
+            _(Either.of(10));
             throw UnimplementedError();
           });
 
@@ -1184,8 +1184,8 @@ void main() {
     });
 
     test('should rethrow if Left is thrown inside Do', () {
-      final doEither = () => Either<String, int>.Do(($) {
-            $(Either.of(10));
+      final doEither = () => Either<String, int>.Do((_) {
+            _(Either.of(10));
             throw Left('Error');
           });
 
@@ -1194,9 +1194,9 @@ void main() {
 
     test('should no execute past the first Left', () {
       var mutable = 10;
-      final doEitherLeft = Either<String, int>.Do(($) {
-        final a = $(Either.of(10));
-        final b = $(Either<String, int>.left("Error"));
+      final doEitherLeft = Either<String, int>.Do((_) {
+        final a = _(Either.of(10));
+        final b = _(Either<String, int>.left("Error"));
         mutable += 10;
         return a + b;
       });
@@ -1206,8 +1206,8 @@ void main() {
         expect(l, "Error");
       });
 
-      final doEitherRight = Either<String, int>.Do(($) {
-        final a = $(Either.of(10));
+      final doEitherRight = Either<String, int>.Do((_) {
+        final a = _(Either.of(10));
         mutable += 10;
         return a;
       });

@@ -693,7 +693,7 @@ void main() {
 
   group('Do Notation', () {
     test('should return the correct value', () {
-      final doIOEither = IOEither<String, int>.Do(($) => $(IOEither.of(10)));
+      final doIOEither = IOEither<String, int>.Do((_) => _(IOEither.of(10)));
       final run = doIOEither.run();
       run.matchTestRight((t) {
         expect(t, 10);
@@ -701,9 +701,9 @@ void main() {
     });
 
     test('should extract the correct values', () {
-      final doIOEither = IOEither<String, int>.Do(($) {
-        final a = $(IOEither.of(10));
-        final b = $(IOEither.of(5));
+      final doIOEither = IOEither<String, int>.Do((_) {
+        final a = _(IOEither.of(10));
+        final b = _(IOEither.of(5));
         return a + b;
       });
       final run = doIOEither.run();
@@ -713,10 +713,10 @@ void main() {
     });
 
     test('should return Left if any Either is Left', () {
-      final doIOEither = IOEither<String, int>.Do(($) {
-        final a = $(IOEither.of(10));
-        final b = $(IOEither.of(5));
-        final c = $(IOEither<String, int>.left('Error'));
+      final doIOEither = IOEither<String, int>.Do((_) {
+        final a = _(IOEither.of(10));
+        final b = _(IOEither.of(5));
+        final c = _(IOEither<String, int>.left('Error'));
         return a + b + c;
       });
       final run = doIOEither.run();
@@ -726,8 +726,8 @@ void main() {
     });
 
     test('should rethrow if throw is used inside Do', () {
-      final doIOEither = IOEither<String, int>.Do(($) {
-        $(IOEither.of(10));
+      final doIOEither = IOEither<String, int>.Do((_) {
+        _(IOEither.of(10));
         throw UnimplementedError();
       });
 
@@ -735,8 +735,8 @@ void main() {
     });
 
     test('should rethrow if Left is thrown inside Do', () {
-      final doIOEither = IOEither<String, int>.Do(($) {
-        $(IOEither.of(10));
+      final doIOEither = IOEither<String, int>.Do((_) {
+        _(IOEither.of(10));
         throw Left('Error');
       });
 
@@ -745,9 +745,9 @@ void main() {
 
     test('should no execute past the first Left', () {
       var mutable = 10;
-      final doIOEitherLeft = IOEither<String, int>.Do(($) {
-        final a = $(IOEither.of(10));
-        final b = $(IOEither<String, int>.left("Error"));
+      final doIOEitherLeft = IOEither<String, int>.Do((_) {
+        final a = _(IOEither.of(10));
+        final b = _(IOEither<String, int>.left("Error"));
         mutable += 10;
         return a + b;
       });
@@ -758,8 +758,8 @@ void main() {
         expect(l, "Error");
       });
 
-      final doIOEitherRight = IOEither<String, int>.Do(($) {
-        final a = $(IOEither.of(10));
+      final doIOEitherRight = IOEither<String, int>.Do((_) {
+        final a = _(IOEither.of(10));
         mutable += 10;
         return a;
       });

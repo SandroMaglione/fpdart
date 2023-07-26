@@ -29,19 +29,19 @@ class OpenMeteoApiClientFpdart {
         ),
         LocationHttpRequestFpdartFailure.new,
       ).chainEither(
-        (response) => Either.Do(($) {
-          final body = $(
+        (response) => Either.Do((_) {
+          final body = _(
             _validResponseBody(response, LocationRequestFpdartFailure.new),
           );
 
-          final json = $(
+          final json = _(
             Either.tryCatch(
               () => jsonDecode(body),
               (_, __) => LocationInvalidJsonDecodeFpdartFailure(body),
             ),
           );
 
-          final data = $(
+          final data = _(
             Either<OpenMeteoApiFpdartLocationFailure,
                 Map<dynamic, dynamic>>.safeCast(
               json,
@@ -49,24 +49,24 @@ class OpenMeteoApiClientFpdart {
             ),
           );
 
-          final currentWeather = $(
+          final currentWeather = _(
             data
                 .lookup('results')
                 .toEither(LocationKeyNotFoundFpdartFailure.new),
           );
 
-          final results = $(
+          final results = _(
             Either<OpenMeteoApiFpdartLocationFailure, List<dynamic>>.safeCast(
               currentWeather,
               LocationInvalidListFpdartFailure.new,
             ),
           );
 
-          final weather = $(
+          final weather = _(
             results.head.toEither(LocationDataNotFoundFpdartFailure.new),
           );
 
-          return $(
+          return _(
             Either.tryCatch(
               () => Location.fromJson(weather as Map<String, dynamic>),
               LocationFormattingFpdartFailure.new,

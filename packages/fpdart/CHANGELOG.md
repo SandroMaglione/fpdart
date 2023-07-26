@@ -1,3 +1,274 @@
+## v1.0.0-beta.1 - 27 May 2023
+- Minimum environment dart sdk to `3.0.0` ⚠️ (Dart 3️⃣)
+```yaml
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+```
+- Added new `ReaderTaskEither` type
+  - `ReaderTaskEither` models a complete program using `Reader` for dependency injection, `Task` to perform asynchronous computation, and `Either` to handle errors 🎯
+- Added new `ReaderTask` type 
+- `Either` as `sealed` class (Dart 3️⃣)
+  - You can now use exhaustive pattern matching (`Left` or `Right`)
+```dart
+/// Pattern matching
+final match = right.match(
+  (l) => print('Left($l)'),
+  (r) => print('Right($r)'),
+);
+
+/// or use Dart's pattern matching as well 🤝
+final dartMatch = switch (right) {
+  Left(value: final l) => 'Left($l)',
+  Right(value: final r) => 'Right($r)',
+};
+```
+- `Option` as `sealed` class (Dart 3️⃣)
+  - You can now use exhaustive pattern matching (`None` or `Some`)
+```dart
+/// Pattern matching
+final match = option.match(
+  () => print('None'),
+  (a) => print('Some($a)'),
+);
+
+/// or use Dart's pattern matching as well 🤝
+final dartMatch = switch (option) {
+  None() => 'None',
+  Some(value: final a) => 'Some($a)',
+};
+```
+- Types marked as `final` (no `extends` nor `implements`) (Dart 3️⃣)
+  - `Unit`
+  - `Reader`
+  - `State`
+  - `StateAsync`
+  - `IO` 
+  - `IORef` 
+  - `IOOption` 
+  - `IOEither` 
+  - `Task` 
+  - `TaskOption` 
+  - `TaskEither` 
+  - `ReaderTask` 
+  - `ReaderTaskEither` 
+- Removed `Tuple2`, use Dart 3 Records instead (`Tuple2(a, b)` becomes simply `(a, b)` 🎯) ⚠️ (Dart 3️⃣)
+  - Updated all internal APIs to use records instead of `Tuple2` 
+- Major refactoring of `Iterable` and `List` extension methods
+  - Improved performance
+  - Correct return types (`Iterable` and `List`) ([#65](https://github.com/SandroMaglione/fpdart/issues/65))
+  - Added the following methods
+    - `prependAll` (`Iterable`)
+    - `intersperse` (`Iterable`)
+    - `difference` (`Iterable`)
+    - `filterWithIndex` (`Iterable`)
+  - Fixed the following methods ⚠️
+    - `takeWhileRight`: Resulting `List` now in reversed order as expected 
+    - `dropWhileRight`: Resulting `List` now in reversed order as expected 
+  - Updated the following methods ⚠️
+    - `foldRight`, `foldRightWithIndex` (`List`): Changed parameter order in `combine` function
+    - `zipWith` (`Iterable`): Changed parameters definition, no more curried
+  - Renamed the following methods ⚠️
+    - `plus` → `concat` (`Iterable`) 
+    - `concat` → `flatten` (on `Iterable<Iterable<T>>`)
+  - Removed the following methods ⚠️
+    - `concatMap` (use `flatMap` instead) 
+    - `bind` (use `flatMap` instead) 
+    - `bindWithIndex` (use `flatMapWithIndex` instead) 
+    - `concatMapWithIndex` (use `flatMapWithIndex` instead) 
+- Refactoring of `Map` extension methods 
+  - Improved performance
+  - Added the following methods
+    - `lookupEq`
+    - `lookupWithKeyEq`
+  - Removed the following methods ⚠️
+    - `member` (use `containsKey` instead)
+    - `elem` (use `containsValue` instead)
+    - `toIterable` (use `toSortedList` instead)
+  - Updated the following methods ⚠️
+    - `toIterable` renamed to `toSortedList` (return a `List` instead of `Iterable`)
+    - `modifyAt` changed parameter order and no more curried 
+    - `modifyAtIfPresent` changed parameter order and no more curried 
+    - `updateAt` no more curried 
+    - `updateAtIfPresent` no more curried 
+    - `deleteAt` no more curried 
+    - `upsertAt` no more curried 
+    - `pop` no more curried 
+    - `foldLeft` no more curried 
+    - `foldLeftWithKey` no more curried 
+    - `foldLeftWithIndex` no more curried 
+    - `foldLeftWithKeyAndIndex` no more curried 
+    - `foldRight` no more curried 
+    - `foldRightWithKey` no more curried 
+    - `foldRightWithIndex` no more curried 
+    - `foldRightWithKeyAndIndex` no more curried 
+    - `union` no more curried 
+    - `intersection` no more curried 
+    - `isSubmap` no more curried 
+    - `collect` no more curried 
+    - `difference` no more curried 
+- Added conversions helpers from `String` to `num`, `int`, `double`, and `bool` using `Option` and `Either` (both as extension methods on `String` and as functions) ([#80](https://github.com/SandroMaglione/fpdart/issues/80))
+  - `toNumOption` 
+  - `toIntOption` 
+  - `toDoubleOption` 
+  - `toBoolOption` 
+  - `toNumEither` 
+  - `toIntEither` 
+  - `toDoubleEither` 
+  - `toBoolEither` 
+```dart
+/// As extension on [String]
+final result = "10".toNumOption; /// `Some(10)`
+final result = "10.5".toNumOption; /// `Some(10.5)`
+final result = "0xFF".toIntOption; /// `Some(255)`
+final result = "10.5".toDoubleOption; /// `Some(10.5)`
+final result = "NO".toBoolEither(() => "left"); /// `Left("left")`
+
+/// As functions
+final result = toNumOption("10"); /// `Some(10)`
+final result = toNumOption("10.5"); /// `Some(10.5)`
+final result = toIntOption("0xFF"); /// `Some(255)`
+final result = toDoubleOption("10.5"); /// `Some(10.5)`
+final result = toBoolEither("NO", () => "left"); /// `Left("left")`
+```
+- Changed `dateNow`, `now`, `random`, and `randomBool` to getter functions
+```dart
+/// Before
+Option<T> getRandomOption<T>(T value) => randomBool()
+    .map((isValid) => isValid ? some(value) : none<T>())
+    .run();
+
+/// Now
+Option<T> getRandomOption<T>(T value) => randomBool
+    .map((isValid) => isValid ? some(value) : none<T>())
+    .run();
+```
+- Removed `Predicate` class and added extension methods in its place ⚠️
+```dart
+bool isEven(int n) => n % 2 == 0;
+bool isDivisibleBy3(int n) => n % 3 == 0;
+
+final isOdd = isEven.negate;
+final isEvenAndDivisibleBy3 = isEven.and(isDivisibleBy3);
+final isEvenOrDivisibleBy3 = isEven.or(isDivisibleBy3);
+final isStringWithEvenLength = isEven.contramap<String>((n) => n.length);
+```
+- Updated curry / uncarry extensions ⚠️
+  - Renamed `curry` to `curryAll` for functions with 3, 4, 5 parameters 
+  - Changed definition of `curry` to curry only the first parameter
+  - Changed `uncurry` and `curry` extension to getter function
+  - Removed `curry` and `uncurry` as functions (use extension method instead)
+  - Added `curryLast` (curry **last** parameter)
+```dart
+int Function(int) subtractCurried(int n1) => (n2) => n1 - n2;
+
+/// Before
+subtractCurried.uncurry()(10, 5);
+
+final addFunction = (int a, int b) => a + b;
+final add = curry2(addFunction);
+
+[1, 2, 3].map(add(1));  // returns [2, 3, 4]
+
+/// New
+subtractCurried.uncurry(10, 5);
+
+final addFunction = (int a, int b) => a + b;
+final add = addFunction.curry;
+
+[1, 2, 3].map(add(1)); // returns [2, 3, 4]
+[1, 2, 3].map(addFunction.curry(1)); // returns [2, 3, 4]
+``` 
+- Changed `Eq` static constructors to methods
+  - `or`
+  - `and` 
+- Added `xor` method to `Eq` 
+- Moved `DateTime` instances of `Eq` as `Eq` static members
+```dart
+/// Before
+final eq = dateEqYear; // Global
+
+/// Now
+final eq = Eq.dateEqYear;
+```
+- Added `Eq` instances for `num`, `int`, `double`, `String`, and `bool`
+```dart
+[1, 2, 3].difference(Eq.eqInt, [2, 3, 4]); /// `[1]`
+```
+- Added new method to `Eq`
+  - `contramap`
+```dart
+class Parent {
+  final int value1;
+  final double value2;
+  const Parent(this.value1, this.value2);
+}
+
+/// Equality for values of type [Parent] based on their `value1` ([int]).
+final eqParentInt = Eq.eqInt.contramap<Parent>(
+  (p) => p.value1,
+);
+
+/// Equality for of type [Parent] based on their `value2` ([double]).
+final eqParentDouble = Eq.eqDouble.contramap<Parent>(
+  (p) => p.value2,
+);
+``` 
+- Changed `reverse` in `Order` from static constructor to getter method
+```dart
+/// Before
+final reversed = Order.reverse(instance);
+
+/// Now
+final reversed = instance.reverse;
+```
+- Moved `DateTime` instances of `Order` as `Order` static members
+- Added `Order` instances for `num`, `int`, `double`
+- Added new methods to `Order`
+  - `between`
+  - `clamp` 
+  - `contramap` 
+```dart
+class Parent {
+  final int value1;
+  final double value2;
+  const Parent(this.value1, this.value2);
+}
+
+/// Order values of type [Parent] based on their `value1` ([int]).
+final orderParentInt = Order.orderInt.contramap<Parent>(
+  (p) => p.value1,
+);
+
+/// Order values of type [Parent] based on their `value2` ([double]).
+final orderParentDouble = Order.orderDouble.contramap<Parent>(
+  (p) => p.value2,
+);
+```
+- Removed `bool` extension (`match` and `fold`), use the ternary operator or pattern matching instead ⚠️
+```dart
+final boolValue = Random().nextBool();
+
+/// Before
+final result = boolValue.match<int>(() => -1, () => 1);
+final result = boolValue.fold<int>(() => -1, () => 1);
+
+/// Now
+final result = boolValue ? 1 : -1;
+final result = switch (boolValue) { true => 1, false => -1 };
+```
+- Removed global `id` and `idFuture`, use `identity` and `identityFuture` instead ⚠️
+- Removed global `idFirst` and `idSecond` functions ⚠️
+- Removed `Compose` class and extension methods ⚠️
+- Removed `Magma` typedef ⚠️
+- Removed extension methods on nullable types (`toOption`, `toEither`, `toTaskOption`, `toIOEither`, `toTaskEither`, `toTaskEitherAsync`) ⚠️
+- Organized all extensions inside internal `extension` folder
+- Updated [README](./README.md)
+  - [**Getting started with `fpdart` complete guide**](https://www.sandromaglione.com/techblog/getting-started-with-fpdart-v1-functional-programming)
+  - [**Full history of `fpdart` and functional programming in dart**](https://www.sandromaglione.com/techblog/the-history-of-fpdart-functional-programming-in-dart)
+
+***
+
+
 ## v0.6.0 - 6 May 2023
 - Do notation [#97](https://github.com/SandroMaglione/fpdart/pull/97) (Special thanks to [@tim-smart](https://github.com/tim-smart) 🎉)
   - All the main types now have a **`Do()` constructor** used to initialize a Do notation chain
@@ -25,13 +296,13 @@ String goShopping() => goToShoppingCenter()
 ```dart
 /// Using the Do notation
 String goShoppingDo() => Option.Do(
-      ($) {
-        final market = $(goToShoppingCenter().alt(goToLocalMarket));
-        final amount = $(market.buyAmount());
+      (_) {
+        final market = _(goToShoppingCenter().alt(goToLocalMarket));
+        final amount = _(market.buyAmount());
 
-        final banana = $(market.buyBanana());
-        final apple = $(market.buyApple());
-        final pear = $(market.buyPear());
+        final banana = _(market.buyBanana());
+        final apple = _(market.buyApple());
+        final pear = _(market.buyPear());
 
         return 'Shopping: $banana, $apple, $pear';
       },

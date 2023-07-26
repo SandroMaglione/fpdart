@@ -1,5 +1,4 @@
-import 'package:fpdart/src/date.dart';
-import 'package:fpdart/src/map_extension.dart';
+import 'package:fpdart/fpdart.dart';
 
 void main() {
   final d1 = DateTime(2001, 1, 1);
@@ -9,8 +8,17 @@ void main() {
   ///
   /// The first date `d1` will be overwritten by the second date `d2`,
   /// since the year is the same.
-  final map =
-      <DateTime, int>{}.upsertAt(dateEqYear)(d1, 1).upsertAt(dateEqYear)(d2, 2);
+  final map = <DateTime, int>{}
+      .upsertAt(
+        Eq.dateEqYear,
+        d1,
+        1,
+      )
+      .upsertAt(
+        Eq.dateEqYear,
+        d2,
+        2,
+      );
 
   print(map); // {2001-01-02 00:00:00.000: 2}
 }

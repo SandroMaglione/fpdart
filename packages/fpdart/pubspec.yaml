@@ -2,7 +2,7 @@ name: fpdart
 description: >
   Functional programming in Dart and Flutter.
   All the main functional programming types and patterns fully documented, tested, and with examples.
-version: 0.6.0
+version: 1.0.0
 homepage: https://www.sandromaglione.com/
 repository: https://github.com/SandroMaglione/fpdart
 author: Maglione Sandro <lass.maglio@gmail.com>
@@ -10,12 +10,13 @@ documentation: https://www.sandromaglione.com/course/fpdart-functional-programmi
 issue_tracker: https://github.com/SandroMaglione/fpdart/issues
 
 environment:
-  sdk: ">=2.17.0 <4.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dev_dependencies:
   lints: ^2.0.1
   test: ^1.23.1
   glados: ^1.1.6
+  collection: ^1.17.2
 
 screenshots:
   - description: "Basic usage of fpdart Option, Either, TaskEither types."

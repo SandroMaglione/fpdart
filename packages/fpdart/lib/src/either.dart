@@ -2,8 +2,8 @@ import 'function.dart';
 import 'io_either.dart';
 import 'option.dart';
 import 'task_either.dart';
-import 'tuple.dart';
 import 'typeclass/typeclass.export.dart';
+import 'typedef.dart';
 
 /// Return a `Right(r)`.
 ///
@@ -15,7 +15,7 @@ Either<L, R> right<L, R>(R r) => Right<L, R>(r);
 /// Shortcut for `Either.left(l)`.
 Either<L, R> left<L, R>(L l) => Left<L, R>(l);
 
-class _EitherThrow<L> {
+final class _EitherThrow<L> {
   final L value;
   const _EitherThrow(this.value);
 }
@@ -29,7 +29,7 @@ DoAdapterEither<L> _doAdapter<L>() =>
 typedef DoFunctionEither<L, R> = R Function(DoAdapterEither<L> $);
 
 /// Tag the [HKT2] interface for the actual [Either].
-abstract class _EitherHKT {}
+abstract final class _EitherHKT {}
 
 /// Represents a value of one of two possible types, [Left] or [Right].
 ///
@@ -37,7 +37,7 @@ abstract class _EitherHKT {}
 /// values when a computation may fail (such as `-1`, `null`, etc.), we return an instance
 /// of [Right] containing the correct result when a computation is successful, otherwise we return
 /// an instance of [Left] containing information about the kind of error that occurred.
-abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
+sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
     with
         Functor2<_EitherHKT, L, R>,
         Applicative2<_EitherHKT, L, R>,
@@ -77,19 +77,19 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// If this [Either] is [Left], return `b`.
   @override
   C foldRightWithIndex<C>(C c, C Function(int i, C acc, R b) f) =>
-      foldRight<Tuple2<C, int>>(
-        Tuple2(c, length() - 1),
-        (t, b) => Tuple2(f(t.second, t.first, b), t.second - 1),
-      ).first;
+      foldRight<(C, int)>(
+        (c, length() - 1),
+        (t, b) => (f(t.$2, t.$1, b), t.$2 - 1),
+      ).$1;
 
   /// Return the result of `f` called with `b` and the value of [Right].
   /// If this [Either] is [Left], return `b`.
   @override
   C foldLeftWithIndex<C>(C c, C Function(int i, C acc, R b) f) =>
-      foldLeft<Tuple2<C, int>>(
-        Tuple2(c, 0),
-        (t, b) => Tuple2(f(t.second, t.first, b), t.second + 1),
-      ).first;
+      foldLeft<(C, int)>(
+        (c, 0),
+        (t, b) => (f(t.$2, t.$1, b), t.$2 + 1),
+      ).$1;
 
   /// Returns `1` when [Either] is [Right], `0` otherwise.
   @override
@@ -366,10 +366,9 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
 
   /// {@template fpdart_partition_eithers_either}
   /// Extract all the [Left] and [Right] values from a `List<Either<E, A>>` and
-  /// return them in two partitioned [List] inside [Tuple2].
+  /// return them in two partitioned [List] inside a record.
   /// {@endtemplate}
-  static Tuple2<List<E>, List<A>> partitionEithers<E, A>(
-      List<Either<E, A>> list) {
+  static (List<E>, List<A>) partitionEithers<E, A>(List<Either<E, A>> list) {
     final resultListLefts = <E>[];
     final resultListRights = <A>[];
     for (var i = 0; i < list.length; i++) {
@@ -385,7 +384,7 @@ abstract class Either<L, R> extends HKT2<_EitherHKT, L, R>
       }
     }
 
-    return Tuple2(resultListLefts, resultListRights);
+    return (resultListLefts, resultListRights);
   }
 
   /// Flat a [Either] contained inside another [Either] to be a single [Either].

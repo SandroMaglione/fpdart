@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 
-import './utils/utils.dart';
+import '../utils/utils.dart';
 
 /// Used to test sorting with [DateTime] (`sortWithDate`)
 class SortDate {
@@ -16,13 +16,14 @@ void main() {
         (a, e, i) => e == b.elementAt(i),
       );
 
-  group('FpdartOnMutableIterable', () {
+  group('FpdartOnList', () {
     test('zipWith', () {
       final list1 = [1, 2];
       final list2 = ['a', 'b'];
-      final ap =
-          list1.zipWith<String, double>((t) => (i) => (t + i.length) / 2);
-      final result = ap(list2);
+      final result = list1.zipWith<String, double>(
+        (t, i) => (t + i.length) / 2,
+        list2,
+      );
 
       expect(eq(result, [1.0, 1.5]), true);
     });
@@ -32,7 +33,7 @@ void main() {
       final list2 = ['a', 'b'];
       final ap = list1.zip(list2);
 
-      expect(eq(ap, [const Tuple2(1, 'a'), const Tuple2(2, 'b')]), true);
+      expect(eq(ap, [(1, 'a'), (2, 'b')]), true);
     });
 
     test('filter', () {
@@ -42,9 +43,16 @@ void main() {
       expect(eq(ap, [4, 5, 6]), true);
     });
 
-    test('plus', () {
+    test('filterWithIndex', () {
+      final list1 = [0, 1, 2, 3, 4, 5, 6];
+      final ap = list1.filterWithIndex((t, index) => t > 3 && index < 6);
+
+      expect(eq(ap, [4, 5]), true);
+    });
+
+    test('concat', () {
       final list1 = [1, 2, 3, 4, 5, 6];
-      final ap = list1.plus([7, 8]);
+      final ap = list1.concat([7, 8]);
 
       expect(eq(ap, [1, 2, 3, 4, 5, 6, 7, 8]), true);
     });
@@ -63,6 +71,13 @@ void main() {
       expect(eq(ap, [0, 1, 2, 3, 4, 5, 6]), true);
     });
 
+    test('prependAll', () {
+      final list1 = [1, 2, 3, 4, 5, 6];
+      final ap = list1.prependAll([10, 11, 12]);
+
+      expect(eq(ap, [10, 11, 12, 1, 2, 3, 4, 5, 6]), true);
+    });
+
     test('insertBy', () {
       final list1 = [1, 2, 3, 4, 5, 6];
       final ap = list1.insertBy(Order.from((a1, a2) => a1.compareTo(a2)), 4);
@@ -79,7 +94,7 @@ void main() {
       ];
       final ap = list1.insertWith(
         (instance) => instance.date,
-        dateOrder,
+        Order.orderDate,
         SortDate(5, DateTime(2021)),
       );
 
@@ -101,7 +116,7 @@ void main() {
         SortDate(1, DateTime(2020)),
         SortDate(3, DateTime(2018)),
       ];
-      final ap = list1.sortWith((instance) => instance.date, dateOrder);
+      final ap = list1.sortWith((instance) => instance.date, Order.orderDate);
 
       expect(ap.elementAt(0).id, 4);
       expect(ap.elementAt(1).id, 3);
@@ -136,6 +151,22 @@ void main() {
       final ap = list1.intersect([1, 2, 3, 10, 11, 12]);
 
       expect(eq(ap, [1, 2, 3]), true);
+    });
+
+    test('difference', () {
+      final list1 = [1, 2, 3];
+      final ap = list1.difference(
+        Eq.instance<int>((a1, a2) => a1 == a2),
+        [2, 3, 4],
+      );
+
+      expect(eq(ap, [1]), true);
+    });
+
+    test('intersperse', () {
+      final ap = [1, 2, 3].intersperse(10);
+
+      expect(eq(ap, [1, 10, 2, 10, 3]), true);
     });
 
     group('head', () {
@@ -202,43 +233,47 @@ void main() {
       expect(eq(ap, [3, 4]), true);
     });
 
-    test('takeWhileRight', () {
-      final list1 = [1, 2, 3, 4];
-      final ap = list1.takeWhileRight((t) => t > 2);
-      expect(eq(ap, [3, 4]), true);
-    });
-
-    test('dropWhileRight', () {
-      final list1 = [1, 2, 3, 4];
-      final ap = list1.dropWhileRight((t) => t > 2);
-      expect(eq(ap, [1, 2]), true);
-    });
-
     test('span', () {
-      final list1 = [1, 2, 3, 4];
+      final list1 = [1, 5, 2, 3, 4];
       final ap = list1.span((t) => t < 3);
-      expect(eq(ap.first, [1, 2]), true);
-      expect(eq(ap.second, [3, 4]), true);
+      expect(ap.$1.length, 1);
+      expect(ap.$1.elementAt(0), 1);
+
+      expect(ap.$2.length, 4);
+      expect(ap.$2.elementAt(0), 5);
+      expect(ap.$2.elementAt(1), 2);
+      expect(ap.$2.elementAt(2), 3);
+      expect(ap.$2.elementAt(3), 4);
     });
 
     test('breakI', () {
-      final list1 = [1, 2, 3, 4];
-      final ap = list1.breakI((t) => t > 2);
-      expect(eq(ap.first, [1, 2]), true);
-      expect(eq(ap.second, [3, 4]), true);
+      final list1 = [4, 5, 1, 3, 4];
+      final ap = list1.breakI((t) => t < 3);
+
+      expect(ap.$1.length, 2);
+      expect(ap.$1.elementAt(0), 4);
+      expect(ap.$1.elementAt(1), 5);
+
+      expect(ap.$2.length, 3);
+      expect(ap.$2.elementAt(0), 1);
+      expect(ap.$2.elementAt(1), 3);
+      expect(ap.$2.elementAt(2), 4);
     });
 
     test('splitAt', () {
       final list1 = [1, 2, 3, 4];
       final ap = list1.splitAt(2);
-      expect(eq(ap.first, [1, 2]), true);
-      expect(eq(ap.second, [3, 4]), true);
+      expect(eq(ap.$1, [1, 2]), true);
+      expect(eq(ap.$2, [3, 4]), true);
     });
 
     test('delete', () {
-      final list1 = [1, 2, 3, 2, 4, 2];
+      final list1 = [1, 2, 3, 2];
       final ap = list1.delete(2);
-      expect(eq(ap, [1, 3, 2, 4, 2]), true);
+      expect(ap.length, 3);
+      expect(ap.elementAt(0), 1);
+      expect(ap.elementAt(1), 3);
+      expect(ap.elementAt(2), 2);
     });
 
     test('maximumBy', () {
@@ -271,34 +306,10 @@ void main() {
       expect(ap, -9);
     });
 
-    test('foldRight', () {
-      final list1 = [1, 2, 3];
-      final ap = list1.foldRight<int>(0, (b, t) => b - t);
-      expect(ap, 2);
-    });
-
-    test('foldRightWithIndex', () {
-      final list1 = [1, 2, 3];
-      final ap = list1.foldRightWithIndex<int>(0, (b, t, i) => b - t - i);
-      expect(ap, 1);
-    });
-
     test('mapWithIndex', () {
       final list1 = [1, 2, 3];
       final ap = list1.mapWithIndex<String>((t, index) => '$t$index');
       expect(eq(ap, ['10', '21', '32']), true);
-    });
-
-    test('concatMap', () {
-      final list1 = [1, 2, 3];
-      final ap = list1.concatMap((t) => [t, t + 1]);
-      expect(eq(ap, [1, 2, 2, 3, 3, 4]), true);
-    });
-
-    test('concatMapWithIndex', () {
-      final list1 = [1, 2, 3];
-      final ap = list1.concatMapWithIndex((t, i) => [t, t + i]);
-      expect(eq(ap, [1, 1, 2, 3, 3, 5]), true);
     });
 
     test('flatMap', () {
@@ -313,18 +324,6 @@ void main() {
       expect(eq(ap, [1, 1, 2, 3, 3, 5]), true);
     });
 
-    test('bind', () {
-      final list1 = [1, 2, 3];
-      final ap = list1.bind((t) => [t, t + 1]);
-      expect(eq(ap, [1, 2, 2, 3, 3, 4]), true);
-    });
-
-    test('bindWithIndex', () {
-      final list1 = [1, 2, 3];
-      final ap = list1.bindWithIndex((t, i) => [t, t + i]);
-      expect(eq(ap, [1, 1, 2, 3, 3, 5]), true);
-    });
-
     test('ap', () {
       final list1 = [1, 2, 3];
       final ap = list1.ap([(a) => a + 1, (a) => a + 2]);
@@ -334,8 +333,16 @@ void main() {
     test('partition', () {
       final list1 = [2, 4, 5, 6, 1, 3];
       final ap = list1.partition((t) => t > 2);
-      expect(eq(ap.first, [2, 1]), true);
-      expect(eq(ap.second, [4, 5, 6, 3]), true);
+
+      expect(ap.$1.length, 2);
+      expect(ap.$1.elementAt(0), 2);
+      expect(ap.$1.elementAt(1), 1);
+
+      expect(ap.$2.length, 4);
+      expect(ap.$2.elementAt(0), 4);
+      expect(ap.$2.elementAt(1), 5);
+      expect(ap.$2.elementAt(2), 6);
+      expect(ap.$2.elementAt(3), 3);
     });
 
     group('all', () {
@@ -412,7 +419,7 @@ void main() {
         [2, 3],
         [3, 4]
       ];
-      final ap = list1.concat;
+      final ap = list1.flatten;
 
       expect(eq(ap, [1, 2, 2, 3, 3, 4]), true);
     });
@@ -1236,8 +1243,8 @@ void main() {
         right<String, int>(3),
       ];
       final result = list.partitionEithersEither();
-      expect(result.first, ['a', 'b']);
-      expect(result.second, [1, 2, 3]);
+      expect(result.$1, ['a', 'b']);
+      expect(result.$2, [1, 2, 3]);
     });
   });
 

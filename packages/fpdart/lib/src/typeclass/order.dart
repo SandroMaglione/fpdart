@@ -36,6 +36,38 @@ abstract class Order<T> extends PartialOrder<T> {
   /// If `x > y`, return `x`, else return `y`.
   T max(T x, T y) => gt(x, y) ? x : y;
 
+  /// Test whether `value` is between `min` and `max` (**inclusive**).
+  bool between(T min, T max, T value) => gteqv(value, min) && lteqv(value, max);
+
+  /// Clamp `value` between `min` and `max`.
+  T clamp(T min, T max, T value) => this.max(this.min(value, max), min);
+
+  /// Return an [Order] instance based on a parameter of type `T` extracted from a class `A`.
+  /// ```dart
+  /// class Parent {
+  ///   final int value1;
+  ///   final double value2;
+  ///   const Parent(this.value1, this.value2);
+  /// }
+  ///
+  /// /// Order values of type [Parent] based on their `value1` ([int]).
+  /// final orderParentInt = Order.orderInt.contramap<Parent>(
+  ///   (p) => p.value1,
+  /// );
+  ///
+  /// /// Order values of type [Parent] based on their `value2` ([double]).
+  /// final orderParentDouble = Order.orderDouble.contramap<Parent>(
+  ///   (p) => p.value2,
+  /// );
+  /// ```
+  @override
+  Order<A> contramap<A>(T Function(A) map) => Order.from<A>(
+        (a1, a2) => compare(map(a1), map(a2)),
+      );
+
+  /// Return an [Order] reversed.
+  Order<T> get reverse => _Order((x, y) => compare(y, x));
+
   @override
   bool eqv(T x, T y) => compare(x, y) == 0;
 
@@ -55,10 +87,6 @@ abstract class Order<T> extends PartialOrder<T> {
   /// function `f`.
   static Order<A> by<A, B>(B Function(A a) f, Order<B> ord) =>
       _Order((x, y) => ord.compare(f(x), f(y)));
-
-  /// Defines an ordering on `A` from the given order such that all arrows switch direction.
-  static Order<A> reverse<A>(Order<A> ord) =>
-      _Order((x, y) => ord.compare(y, x));
 
   /// Returns a new `Order<A>` instance that first compares by the first
   /// `Order` instance and uses the second `Order` instance to "break ties".
@@ -85,6 +113,32 @@ abstract class Order<T> extends PartialOrder<T> {
   /// An `Order` instance that considers all `A` instances to be equal
   /// (`compare` always returns `0`).
   static Order<A> allEqual<A>() => _Order((x, y) => 0);
+
+  /// Instance of `Order` for `int`.
+  static Order<int> orderInt = _Order((x, y) => x == y
+      ? 0
+      : x > y
+          ? 1
+          : -1);
+
+  /// Instance of `Order` for `num`.
+  static Order<num> orderNum = _Order((x, y) => x == y
+      ? 0
+      : x > y
+          ? 1
+          : -1);
+
+  /// Instance of `Order` for `double`.
+  static Order<double> orderDouble = _Order((x, y) => x == y
+      ? 0
+      : x > y
+          ? 1
+          : -1);
+
+  /// Instance of `Order` for [DateTime].
+  static Order<DateTime> orderDate = _Order<DateTime>(
+    (a1, a2) => a1.compareTo(a2),
+  );
 }
 
 class _Order<T> extends Order<T> {

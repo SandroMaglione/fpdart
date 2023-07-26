@@ -669,7 +669,7 @@ void main() {
 
     group('Do Notation', () {
       test('should return the correct value', () async {
-        final doTaskOption = TaskOption<int>.Do(($) => $(TaskOption.of(10)));
+        final doTaskOption = TaskOption<int>.Do((_) => _(TaskOption.of(10)));
         final run = await doTaskOption.run();
         run.matchTestSome((t) {
           expect(t, 10);
@@ -677,9 +677,9 @@ void main() {
       });
 
       test('should extract the correct values', () async {
-        final doTaskOption = TaskOption<int>.Do(($) async {
-          final a = await $(TaskOption.of(10));
-          final b = await $(TaskOption.of(5));
+        final doTaskOption = TaskOption<int>.Do((_) async {
+          final a = await _(TaskOption.of(10));
+          final b = await _(TaskOption.of(5));
           return a + b;
         });
         final run = await doTaskOption.run();
@@ -689,10 +689,10 @@ void main() {
       });
 
       test('should return Left if any Either is Left', () async {
-        final doTaskOption = TaskOption<int>.Do(($) async {
-          final a = await $(TaskOption.of(10));
-          final b = await $(TaskOption.of(5));
-          final c = await $(TaskOption<int>.none());
+        final doTaskOption = TaskOption<int>.Do((_) async {
+          final a = await _(TaskOption.of(10));
+          final b = await _(TaskOption.of(5));
+          final c = await _(TaskOption<int>.none());
           return a + b + c;
         });
         final run = await doTaskOption.run();
@@ -700,8 +700,8 @@ void main() {
       });
 
       test('should rethrow if throw is used inside Do', () {
-        final doTaskOption = TaskOption<int>.Do(($) {
-          $(TaskOption.of(10));
+        final doTaskOption = TaskOption<int>.Do((_) {
+          _(TaskOption.of(10));
           throw UnimplementedError();
         });
 
@@ -710,8 +710,8 @@ void main() {
       });
 
       test('should rethrow if None is thrown inside Do', () {
-        final doTaskOption = TaskOption<int>.Do(($) {
-          $(TaskOption.of(10));
+        final doTaskOption = TaskOption<int>.Do((_) {
+          _(TaskOption.of(10));
           throw const None();
         });
 
@@ -720,9 +720,9 @@ void main() {
 
       test('should no execute past the first Left', () async {
         var mutable = 10;
-        final doTaskOptionNone = TaskOption<int>.Do(($) async {
-          final a = await $(TaskOption.of(10));
-          final b = await $(TaskOption<int>.none());
+        final doTaskOptionNone = TaskOption<int>.Do((_) async {
+          final a = await _(TaskOption.of(10));
+          final b = await _(TaskOption<int>.none());
           mutable += 10;
           return a + b;
         });
@@ -731,8 +731,8 @@ void main() {
         expect(mutable, 10);
         expect(runNone, isA<None>());
 
-        final doTaskOptionSome = TaskOption<int>.Do(($) async {
-          final a = await $(TaskOption.of(10));
+        final doTaskOptionSome = TaskOption<int>.Do((_) async {
+          final a = await _(TaskOption.of(10));
           mutable += 10;
           return a;
         });
