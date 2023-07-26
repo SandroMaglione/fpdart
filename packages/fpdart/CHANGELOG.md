@@ -262,6 +262,9 @@ final result = switch (boolValue) { true => 1, false => -1 };
 - Removed `Magma` typedef ⚠️
 - Removed extension methods on nullable types (`toOption`, `toEither`, `toTaskOption`, `toIOEither`, `toTaskEither`, `toTaskEitherAsync`) ⚠️
 - Organized all extensions inside internal `extension` folder
+- Updated [README](./README.md)
+  - [**Getting started with `fpdart` complete guide**](https://www.sandromaglione.com/techblog/getting-started-with-fpdart-v1-functional-programming)
+  - [**Full history of `fpdart` and functional programming in dart**](https://www.sandromaglione.com/techblog/the-history-of-fpdart-functional-programming-in-dart)
 
 ***
 
