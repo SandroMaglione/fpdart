@@ -500,7 +500,7 @@ void main() {
 
     group('Do Notation', () {
       test('should return the correct value', () {
-        final doIOOption = IOOption<int>.Do(($) => $(IOOption.of(10)));
+        final doIOOption = IOOption<int>.Do((_) => _(IOOption.of(10)));
         final run = doIOOption.run();
         run.matchTestSome((t) {
           expect(t, 10);
@@ -508,9 +508,9 @@ void main() {
       });
 
       test('should extract the correct values', () {
-        final doIOOption = IOOption<int>.Do(($) {
-          final a = $(IOOption.of(10));
-          final b = $(IOOption.of(5));
+        final doIOOption = IOOption<int>.Do((_) {
+          final a = _(IOOption.of(10));
+          final b = _(IOOption.of(5));
           return a + b;
         });
         final run = doIOOption.run();
@@ -520,10 +520,10 @@ void main() {
       });
 
       test('should return Left if any Either is Left', () {
-        final doIOOption = IOOption<int>.Do(($) {
-          final a = $(IOOption.of(10));
-          final b = $(IOOption.of(5));
-          final c = $(IOOption<int>.none());
+        final doIOOption = IOOption<int>.Do((_) {
+          final a = _(IOOption.of(10));
+          final b = _(IOOption.of(5));
+          final c = _(IOOption<int>.none());
           return a + b + c;
         });
         final run = doIOOption.run();
@@ -531,8 +531,8 @@ void main() {
       });
 
       test('should rethrow if throw is used inside Do', () {
-        final doIOOption = IOOption<int>.Do(($) {
-          $(IOOption.of(10));
+        final doIOOption = IOOption<int>.Do((_) {
+          _(IOOption.of(10));
           throw UnimplementedError();
         });
 
@@ -541,8 +541,8 @@ void main() {
       });
 
       test('should rethrow if None is thrown inside Do', () {
-        final doIOOption = IOOption<int>.Do(($) {
-          $(IOOption.of(10));
+        final doIOOption = IOOption<int>.Do((_) {
+          _(IOOption.of(10));
           throw const None();
         });
 
@@ -551,9 +551,9 @@ void main() {
 
       test('should no execute past the first Left', () {
         var mutable = 10;
-        final doIOOptionNone = IOOption<int>.Do(($) {
-          final a = $(IOOption.of(10));
-          final b = $(IOOption<int>.none());
+        final doIOOptionNone = IOOption<int>.Do((_) {
+          final a = _(IOOption.of(10));
+          final b = _(IOOption<int>.none());
           mutable += 10;
           return a + b;
         });
@@ -562,8 +562,8 @@ void main() {
         expect(mutable, 10);
         expect(runNone, isA<None>());
 
-        final doIOOptionSome = IOOption<int>.Do(($) {
-          final a = $(IOOption.of(10));
+        final doIOOptionSome = IOOption<int>.Do((_) {
+          final a = _(IOOption.of(10));
           mutable += 10;
           return a;
         });

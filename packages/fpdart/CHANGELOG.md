@@ -293,13 +293,13 @@ String goShopping() => goToShoppingCenter()
 ```dart
 /// Using the Do notation
 String goShoppingDo() => Option.Do(
-      ($) {
-        final market = $(goToShoppingCenter().alt(goToLocalMarket));
-        final amount = $(market.buyAmount());
+      (_) {
+        final market = _(goToShoppingCenter().alt(goToLocalMarket));
+        final amount = _(market.buyAmount());
 
-        final banana = $(market.buyBanana());
-        final apple = $(market.buyApple());
-        final pear = $(market.buyPear());
+        final banana = _(market.buyBanana());
+        final apple = _(market.buyApple());
+        final pear = _(market.buyPear());
 
         return 'Shopping: $banana, $apple, $pear';
       },

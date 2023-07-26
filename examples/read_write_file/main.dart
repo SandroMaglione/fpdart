@@ -55,9 +55,9 @@ Iterable<FoundWord> collectFoundWords(
 
 void main() async {
   final collectDoNotation = TaskEither<String, Iterable<FoundWord>>.Do(
-    ($) async {
-      final linesIta = await $(readFileAsync('./assets/source_ita.txt'));
-      final linesEng = await $(readFileAsync('./assets/source_eng.txt'));
+    (_) async {
+      final linesIta = await _(readFileAsync('./assets/source_ita.txt'));
+      final linesEng = await _(readFileAsync('./assets/source_eng.txt'));
       final linesZip = linesIta.zip(linesEng);
       return collectFoundWords(linesZip);
     },

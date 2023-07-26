@@ -189,7 +189,7 @@ void main() {
     group('Do Notation', () {
       test('should return the correct value', () async {
         final doTask = ReaderTask<String, int>.Do(
-          ($) => $(
+          (_) => _(
             ReaderTask.of(10),
           ),
         );
@@ -199,9 +199,9 @@ void main() {
       });
 
       test('should extract the correct values', () async {
-        final doTask = ReaderTask<String, int>.Do(($) async {
-          final a = await $(ReaderTask((env) async => env.length));
-          final b = await $(ReaderTask((env) async => env.length));
+        final doTask = ReaderTask<String, int>.Do((_) async {
+          final a = await _(ReaderTask((env) async => env.length));
+          final b = await _(ReaderTask((env) async => env.length));
           return a + b;
         });
 
@@ -211,9 +211,9 @@ void main() {
 
       test('should not execute until run is called', () async {
         var mutable = 10;
-        final doTask = ReaderTask<String, int>.Do(($) async {
-          final a = await $(ReaderTask.of(10));
-          final b = await $(ReaderTask.of(5));
+        final doTask = ReaderTask<String, int>.Do((_) async {
+          final a = await _(ReaderTask.of(10));
+          final b = await _(ReaderTask.of(5));
           mutable += 10;
           return a + b;
         });

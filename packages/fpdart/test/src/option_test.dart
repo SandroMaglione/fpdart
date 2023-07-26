@@ -708,16 +708,16 @@ void main() {
 
   group('Do Notation', () {
     test('should return the correct value', () {
-      final doOption = Option.Do(($) => $(Option.of(10)));
+      final doOption = Option.Do((_) => _(Option.of(10)));
       doOption.matchTestSome((t) {
         expect(t, 10);
       });
     });
 
     test('should extract the correct values', () {
-      final doOption = Option.Do(($) {
-        final a = $(Option.of(10));
-        final b = $(Option.of(5));
+      final doOption = Option.Do((_) {
+        final a = _(Option.of(10));
+        final b = _(Option.of(5));
         return a + b;
       });
       doOption.matchTestSome((t) {
@@ -726,10 +726,10 @@ void main() {
     });
 
     test('should return None if any Option is None', () {
-      final doOption = Option.Do(($) {
-        final a = $(Option.of(10));
-        final b = $(Option.of(5));
-        final c = $(Option<int>.none());
+      final doOption = Option.Do((_) {
+        final a = _(Option.of(10));
+        final b = _(Option.of(5));
+        final c = _(Option<int>.none());
         return a + b + c;
       });
 
@@ -737,8 +737,8 @@ void main() {
     });
 
     test('should rethrow if throw is used inside Do', () {
-      final doOption = () => Option.Do(($) {
-            $(Option.of(10));
+      final doOption = () => Option.Do((_) {
+            _(Option.of(10));
             throw UnimplementedError();
           });
 
@@ -746,8 +746,8 @@ void main() {
     });
 
     test('should rethrow if None is thrown inside Do', () {
-      final doOption = () => Option.Do(($) {
-            $(Option.of(10));
+      final doOption = () => Option.Do((_) {
+            _(Option.of(10));
             throw None();
           });
 
@@ -755,8 +755,8 @@ void main() {
     });
 
     test('should throw if the error is not None', () {
-      final doOption = () => Option.Do(($) {
-            $(Option.of(10));
+      final doOption = () => Option.Do((_) {
+            _(Option.of(10));
             throw UnimplementedError();
           });
 
@@ -765,9 +765,9 @@ void main() {
 
     test('should no execute past the first None', () {
       var mutable = 10;
-      final doOptionNone = Option.Do(($) {
-        final a = $(Option.of(10));
-        final b = $(Option<int>.none());
+      final doOptionNone = Option.Do((_) {
+        final a = _(Option.of(10));
+        final b = _(Option<int>.none());
         mutable += 10;
         return a + b;
       });
@@ -775,8 +775,8 @@ void main() {
       expect(mutable, 10);
       expect(doOptionNone, isA<None>());
 
-      final doOptionSome = Option.Do(($) {
-        final a = $(Option.of(10));
+      final doOptionSome = Option.Do((_) {
+        final a = _(Option.of(10));
         mutable += 10;
         return a;
       });

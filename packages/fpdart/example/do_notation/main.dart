@@ -29,11 +29,11 @@ TaskEither<String, bool> changePictureSizeFromId(int id) =>
 /// Do notation
 TaskEither<String, bool> changePictureSizeFromIdDo(int id) =>
     TaskEither<String, bool>.Do(
-      ($) async {
-        final username = await $(getUsernameFromId(id));
-        final image = await $(getProfilePicture(username));
+      (_) async {
+        final username = await _(getUsernameFromId(id));
+        final image = await _(getProfilePicture(username));
         final width = getPictureWidth(image);
-        return $(updatePictureWidth(width));
+        return _(updatePictureWidth(width));
       },
     );
 
@@ -49,8 +49,8 @@ Option<int> map() => Option.of(10)
       (c) => c - 4,
     );
 
-Option<int> mapDo() => Option.Do(($) {
-      final a = $(Option.of(10));
+Option<int> mapDo() => Option.Do((_) {
+      final a = _(Option.of(10));
       final b = a + 1;
       final c = b * 3;
       return c - 4;
@@ -68,16 +68,16 @@ Option<int> flatMap() => Option.of(10)
       (c) => Option.of(c - 4),
     );
 
-Option<int> flatMapDo() => Option.Do(($) {
-      final a = $(Option.of(10));
-      final b = $(Option.of(a + 1));
-      final c = $(Option.of(b * 3));
-      return $(Option.of(c - 4));
+Option<int> flatMapDo() => Option.Do((_) {
+      final a = _(Option.of(10));
+      final b = _(Option.of(a + 1));
+      final c = _(Option.of(b * 3));
+      return _(Option.of(c - 4));
     });
 
 /// [andThen]: Chain [Option] without storing its value
 Option<int> andThen() => Option.of(10).andThen(() => Option.of(20));
-Option<int> andThenDo() => Option.Do(($) {
-      $(Option.of(10)); // Chain Option, but do not store the result
+Option<int> andThenDo() => Option.Do((_) {
+      _(Option.of(10)); // Chain Option, but do not store the result
       return 20;
     });

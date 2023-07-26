@@ -834,7 +834,7 @@ void main() {
     group('Do Notation', () {
       test('should return the correct value', () async {
         final doTaskEither = ReaderTaskEither<double, String, int>.Do(
-          ($) => $(
+          (_) => _(
             ReaderTaskEither.asks((env) => env.toInt()),
           ),
         );
@@ -847,9 +847,9 @@ void main() {
 
       test('should extract the correct values', () async {
         final doTaskEither =
-            ReaderTaskEither<double, String, int>.Do(($) async {
-          final a = await $(ReaderTaskEither.of(10));
-          final b = await $(ReaderTaskEither.asks((env) => env.toInt()));
+            ReaderTaskEither<double, String, int>.Do((_) async {
+          final a = await _(ReaderTaskEither.of(10));
+          final b = await _(ReaderTaskEither.asks((env) => env.toInt()));
           return a + b;
         });
 
@@ -861,10 +861,10 @@ void main() {
 
       test('should return Left if any Either is Left', () async {
         final doTaskEither =
-            ReaderTaskEither<double, String, int>.Do(($) async {
-          final a = await $(ReaderTaskEither.of(10));
-          final b = await $(ReaderTaskEither.asks((env) => env.toInt()));
-          final c = await $(
+            ReaderTaskEither<double, String, int>.Do((_) async {
+          final a = await _(ReaderTaskEither.of(10));
+          final b = await _(ReaderTaskEither.asks((env) => env.toInt()));
+          final c = await _(
             ReaderTaskEither<double, String, int>.left('error'),
           );
 
@@ -878,8 +878,8 @@ void main() {
       });
 
       test('should rethrow if throw is used inside Do', () {
-        final doTaskEither = ReaderTaskEither<double, String, int>.Do(($) {
-          $(ReaderTaskEither.of(10));
+        final doTaskEither = ReaderTaskEither<double, String, int>.Do((_) {
+          _(ReaderTaskEither.of(10));
           throw UnimplementedError();
         });
 
@@ -892,8 +892,8 @@ void main() {
       });
 
       test('should rethrow if Left is thrown inside Do', () {
-        final doTaskEither = ReaderTaskEither<double, String, int>.Do(($) {
-          $(
+        final doTaskEither = ReaderTaskEither<double, String, int>.Do((_) {
+          _(
             ReaderTaskEither.of(10),
           );
           throw Left('error');
@@ -911,10 +911,10 @@ void main() {
         var mutable = 10;
 
         final doTaskEitherLeft =
-            ReaderTaskEither<double, String, int>.Do(($) async {
-          final a = await $(ReaderTaskEither.of(10));
+            ReaderTaskEither<double, String, int>.Do((_) async {
+          final a = await _(ReaderTaskEither.of(10));
           final b =
-              await $(ReaderTaskEither<double, String, int>.left("error"));
+              await _(ReaderTaskEither<double, String, int>.left("error"));
           mutable += 10;
           return a + b;
         });
@@ -926,8 +926,8 @@ void main() {
         });
 
         final doTaskEitherRight =
-            ReaderTaskEither<double, String, int>.Do(($) async {
-          final a = await $(ReaderTaskEither.asks((env) => env.toInt()));
+            ReaderTaskEither<double, String, int>.Do((_) async {
+          final a = await _(ReaderTaskEither.asks((env) => env.toInt()));
           mutable += 10;
           return a;
         });

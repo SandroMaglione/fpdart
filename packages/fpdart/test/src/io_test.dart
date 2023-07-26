@@ -189,15 +189,15 @@ void main() {
 
     group('Do Notation', () {
       test('should return the correct value', () {
-        final doIO = IO.Do(($) => $(IO.of(10)));
+        final doIO = IO.Do((_) => _(IO.of(10)));
         final run = doIO.run();
         expect(run, 10);
       });
 
       test('should extract the correct values', () {
-        final doIO = IO.Do(($) {
-          final a = $(IO.of(10));
-          final b = $(IO.of(5));
+        final doIO = IO.Do((_) {
+          final a = _(IO.of(10));
+          final b = _(IO.of(5));
           return a + b;
         });
         final run = doIO.run();
@@ -206,9 +206,9 @@ void main() {
 
       test('should not execute until run is called', () {
         var mutable = 10;
-        final doIO = IO.Do(($) {
-          final a = $(IO.of(10));
-          final b = $(IO.of(5));
+        final doIO = IO.Do((_) {
+          final a = _(IO.of(10));
+          final b = _(IO.of(5));
           mutable += 10;
           return a + b;
         });

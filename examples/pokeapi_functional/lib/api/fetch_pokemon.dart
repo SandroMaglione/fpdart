@@ -51,17 +51,17 @@ TaskEither<String, Pokemon> fetchPokemon(int pokemonId) => TaskEither.tryCatch(
 ///
 /// All the functions are simply chained together following the principle of composability.
 TaskEither<String, Pokemon> fetchPokemonFromUserInput(String pokemonId) =>
-    TaskEither.Do(($) async {
-      final validPokemonId = await $(_validateUserPokemonId(
+    TaskEither.Do((_) async {
+      final validPokemonId = await _(_validateUserPokemonId(
         pokemonId,
       ).toTaskEither());
-      return $(fetchPokemon(validPokemonId));
+      return _(fetchPokemon(validPokemonId));
     });
 
-TaskEither<String, Pokemon> fetchRandomPokemon = TaskEither.Do(($) async {
-  final pokemonId = await $(randomInt(
+TaskEither<String, Pokemon> fetchRandomPokemon = TaskEither.Do((_) async {
+  final pokemonId = await _(randomInt(
     Constants.minimumPokemonId,
     Constants.maximumPokemonId + 1,
   ).toTaskEither());
-  return $(fetchPokemon(pokemonId));
+  return _(fetchPokemon(pokemonId));
 });

@@ -41,13 +41,13 @@ String goShopping() => goToShoppingCenter()
 
 // Combine all the instructions and go shopping! 🛒
 String goShoppingDo() => Option.Do(
-      ($) {
-        final market = $(goToShoppingCenter().alt(goToLocalMarket));
-        final amount = $(market.buyAmount());
+      (_) {
+        final market = _(goToShoppingCenter().alt(goToLocalMarket));
+        final amount = _(market.buyAmount());
 
-        final banana = $(market.buyBanana());
-        final apple = $(market.buyApple());
-        final pear = $(market.buyPear());
+        final banana = _(market.buyBanana());
+        final apple = _(market.buyApple());
+        final pear = _(market.buyPear());
 
         return 'Shopping: $banana, $apple, $pear';
       },
@@ -59,10 +59,10 @@ String goShoppingDo() => Option.Do(
 String goShoppingDoFlatMap() => goToShoppingCenter()
     .alt(goToLocalMarket)
     .flatMap(
-      (market) => Option.Do(($) {
-        final banana = $(market.buyBanana());
-        final apple = $(market.buyApple());
-        final pear = $(market.buyPear());
+      (market) => Option.Do((_) {
+        final banana = _(market.buyBanana());
+        final apple = _(market.buyApple());
+        final pear = _(market.buyPear());
         return 'Shopping: $banana, $apple, $pear';
       }),
     )
