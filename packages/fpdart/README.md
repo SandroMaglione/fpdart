@@ -31,11 +31,9 @@ All the main functional programming types and patterns <strong>fully documented<
 
 ## Introduction
 
-> **Note**: This is a Beta release for `fpdart` v1.0.0. Please [provide feedback](https://github.com/SandroMaglione/fpdart/issues/108) and [report any issue](https://github.com/SandroMaglione/fpdart/issues) to help the development of the package 🙏🏼
+> **fpdart is fully documented. You do not need to have any previous experience with functional programming to start using `fpdart`. Give it a try!**
 
-> **Fpdart is fully documented. You do not need to have any previous experience with functional programming to start using `fpdart`. Give it a try!**
-
-Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://typelevel.org/cats/typeclasses.html#type-classes-in-cats), and [dartz](https://github.com/spebbe/dartz).
+fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://typelevel.org/cats/typeclasses.html#type-classes-in-cats), and [dartz](https://github.com/spebbe/dartz).
 
 > Follow my [**Twitter**](https://twitter.com/SandroMaglione) for updates, or [subscribe to the newsletter](https://www.sandromaglione.com/newsletter)
 
@@ -43,9 +41,11 @@ Fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 
 - [Introduction](#introduction)
 - [📖 Learn `functional programming` and `fpdart`](#-learn-functional-programming-and-fpdart)
-  - [👨‍💻 Blog posts and tutorials](#-blog-posts-and-tutorials)
+  - [✍️ Blog posts and tutorials](#️-blog-posts-and-tutorials)
+  - [🧑‍🏫 Getting started with functional programming](#-getting-started-with-functional-programming)
 - [💻 Installation](#-installation)
 - [✨ Examples](#-examples)
+  - [`fpdart` + `riverpod`](#fpdart--riverpod)
   - [Pokeapi](#pokeapi)
   - [Open Meteo API](#open-meteo-api)
   - [Read/Write local file](#readwrite-local-file)
@@ -79,25 +79,37 @@ Would you like to know more about functional programming, fpdart, and how to use
 
 📚 [**Collection of tutorials on fpdart**](https://www.sandromaglione.com/course/fpdart-functional-programming-dart-and-flutter)
 
-Check out also this series of articles about functional programming with `fpdart`:
+Are you new to `fpdart` and functional programming?
 
-1. [**Fpdart, Functional Programming in Dart and Flutter**](https://www.sandromaglione.com/fpdart-functional-programming-in-dart-and-flutter/)
-2. [**How to use fpdart Functional Programming in your Dart and Flutter app**](https://www.sandromaglione.com/how-to-use-fpdart-functional-programming-in-dart-and-flutter/)
-3. [**Pure Functional app in Flutter – Pokemon app using fpdart and Functional Programming**](https://www.sandromaglione.com/pure-functional-app-in-flutter-using-fpdart-functional-programming/)
-4. [**Functional Programming Option type – Introduction**](https://www.sandromaglione.com/functional-programming-option-type-tutorial/)
-5. [**Chain functions using Option type – Functional Programming**](https://www.sandromaglione.com/chain-functions-using-option-type-functional-programming/)
-6. [**Practical Functional Programming - Part 1**](https://www.sandromaglione.com/practical-functional-programming-step-by-step-haskell-typescript-dart-part-1/)
-7. [**Practical Functional Programming - Part 2**](https://www.sandromaglione.com/practical-functional-programming-pure-functions-part-2/)
-8. [**Practical Functional Programming - Part 3**](https://www.sandromaglione.com/immutability-practical-functional-programming-part-3/)
+👨‍💻 [**Getting started with `fpdart` complete guide**](https://www.sandromaglione.com/techblog/getting-started-with-fpdart-v1-functional-programming) 
 
-### 👨‍💻 Blog posts and tutorials
-- [How to make API requests with validation in fpdart](https://www.sandromaglione.com/techblog/fpdart-api-request-with-validation-functional-programming)
-- [How to use TaskEither in fpdart](https://www.sandromaglione.com/techblog/how-to-use-task-either-fpdart-functional-programming)
-- [How to map an Either to a Future in fpdart](https://blog.sandromaglione.com/techblog/from-sync-to-async-functional-programming)
+Interested in what `fpdart` is and how it came to be?
+
+🚶 [**Full history of `fpdart` and functional programming in dart**](https://www.sandromaglione.com/techblog/the-history-of-fpdart-functional-programming-in-dart)
+
+
+### ✍️ Blog posts and tutorials
 - [Option type and Null Safety in dart](https://www.sandromaglione.com/techblog/option_type_and_null_safety_dart)
 - [Either - Error Handling in Functional Programming](https://www.sandromaglione.com/techblog/either-error-handling-functional-programming)
 - [Future & Task: asynchronous Functional Programming](https://www.sandromaglione.com/techblog/async-requests-future-and-task-dart)
+- [How to use TaskEither in fpdart](https://www.sandromaglione.com/techblog/how-to-use-task-either-fpdart-functional-programming)
+- [How to make API requests with validation in fpdart](https://www.sandromaglione.com/techblog/fpdart-api-request-with-validation-functional-programming)
+- [How to map an Either to a Future in fpdart](https://blog.sandromaglione.com/techblog/from-sync-to-async-functional-programming)
 - [Flutter Supabase Functional Programming with fpdart](https://www.sandromaglione.com/techblog/flutter-dart-functional-programming-fpdart-supabase-app)
+- [fpdart, Functional Programming in Dart and Flutter](https://www.sandromaglione.com/techblog/fpdart-functional-programming-in-dart-and-flutter/)
+- [How to use fpdart Functional Programming in your Dart and Flutter app](https://www.sandromaglione.com/techblog/how-to-use-fpdart-functional-programming-in-dart-and-flutter/)
+- [Pure Functional app in Flutter – Pokemon app using fpdart and Functional Programming](https://www.sandromaglione.com/techblog/pure-functional-app-in-flutter-using-fpdart-functional-programming/)
+
+### 🧑‍🏫 Getting started with functional programming
+
+- [Functional Programming Option type – Introduction](https://www.sandromaglione.com/techblog/functional-programming-option-type-tutorial/)
+- [Chain functions using Option type – Functional Programming](https://www.sandromaglione.com/techblog/chain-functions-using-option-type-functional-programming/)
+- [Practical Functional Programming - Find repeated characters | Part 1](https://www.sandromaglione.com/techblog/practical-functional-programming-step-by-step-haskell-typescript-dart-part-1/)
+- [Pure Functions - Practical Functional Programming | Part 2](https://www.sandromaglione.com/techblog/practical-functional-programming-pure-functions-part-2/)
+- [Immutability – Practical Functional Programming | Part 3](https://www.sandromaglione.com/techblog/immutability-practical-functional-programming-part-3/)
+- [Loops using fold – Practical Functional Programming | Part 4](https://www.sandromaglione.com/techblog/loops-using-fold-practical-functional-programming)
+- [Maybe | Practical Functional Programming](https://www.sandromaglione.com/techblog/maybe-practical-functional-programming)
+- [5 Lessons from Functional Programming in Scala, By Paul Chiusano and Runar Bjarnason](https://www.sandromaglione.com/techblog/functional-programming-5-key-lessons-functional-programming-in-scala)
 
 
 ## 💻 Installation
@@ -105,10 +117,13 @@ Check out also this series of articles about functional programming with `fpdart
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^1.0.0-beta.1 # Check out the latest version
+  fpdart: ^1.0.0 # Check out the latest version
 ```
 
 ## ✨ Examples
+
+### [`fpdart` + `riverpod`](https://www.sandromaglione.com/course/fpdart-riverpod-develop-flutter-app)
+Step by step course on how to build a safe, maintainable, and testable Flutter app using `fpdart` and `riverpod`.
 
 ### [Pokeapi](/examples/pokeapi_functional/)
 Flutter app that lets you search and view your favorite Pokemon:
@@ -327,7 +342,7 @@ String goShoppingDo() => Option.Do(
 
 You initialize the Do notation using the **`Do()` constructor**.
 
-You have access to a `$` function, that you can use to extract and use the value inside each `Option`, without using `flatMap`.
+You have access to a `_` function, that you can use to extract and use the value inside each `Option`, without using `flatMap`.
 
 > **Note**: We recommend using the Do notation whenever possible to improve the legibility of your code 🤝
 
@@ -382,28 +397,34 @@ Many more examples are coming soon. Check out [**my website**](https://www.sandr
 - [x] `Option`
 - [x] `Either`
 - [x] `Unit`
-- [x] `Task`
-- [x] `TaskEither`
-- [x] `State`
-- [x] `StateAsync`
-- [x] `Reader`
-- [x] `Tuple`
 - [x] `IO`
 - [x] `IORef`
-- [x] `Iterable` (`List`) `extension`
-- [x] `Map` `extension`
-- [x] `IOEither`
-- [x] `TaskOption`
-- [x] `Predicate`
 - [x] `IOOption`
+- [x] `IOEither`
+- [x] `Task`
+- [x] `TaskOption`
+- [x] `TaskEither`
+- [x] `Reader`
 - [x] `ReaderTask`
 - [x] `ReaderTaskEither`
+- [x] `State`
+- [x] `StateAsync`
+- [x] `Iterable` (`List`) `extension`
+- [x] `Map` `extension`
+- [x] `Predicate`
+- [ ] `ReaderTaskOption`
+- [ ] `ReaderIO`
+- [ ] `ReaderIOEither`
+- [ ] `ReaderIOOption`
 - [ ] `ReaderEither`
+- [ ] `ReaderOption`
 - [ ] `StateReaderTaskEither`
 - [ ] `Lens`
 - [ ] `Writer`
 
 ## 💡 Motivation
+
+📚 [**Read the full story of the origin and motivation for `fpdart`**](https://www.sandromaglione.com/techblog/the-history-of-fpdart-functional-programming-in-dart)
 
 Functional programming is becoming more and more popular, and for good reasons.
 
@@ -413,7 +434,7 @@ Other functional programming features are coming to the language, like [higher-o
 
 Many packages are bringing functional patterns to dart, like the amazing [freezed](https://pub.dev/packages/freezed) for unions/pattern matching.
 
-Fpdart aims to provide all the main types found in functional languages to dart. Types like `Option` (handle missing values without `null`), `Either` (handle errors and error messages), `Task` (composable async computations), and more.
+fpdart aims to provide all the main types found in functional languages to dart. Types like `Option` (handle missing values without `null`), `Either` (handle errors and error messages), `Task` (composable async computations), and more.
 
 ### Goal
 
@@ -421,7 +442,7 @@ Differently from many other functional programming packages, `fpdart` aims to in
 
 > **You do not need to have any previous experience with functional programming to start using `fpdart`.**
 
-Fpdart also provides [real-world examples](https://github.com/SandroMaglione/fpdart/tree/main/examples/) of why a type is useful and how it can be used in your application. Check out [**my website**](https://www.sandromaglione.com/) for blog posts and articles.
+fpdart also provides [real-world examples](https://github.com/SandroMaglione/fpdart/tree/main/examples/) of why a type is useful and how it can be used in your application. Check out [**my website**](https://www.sandromaglione.com/) for blog posts and articles.
 
 ### Comparison with `dartz`
 
@@ -431,26 +452,24 @@ One of the major pain points of dartz has always been is [**lack of documentatio
 
 `dartz` is also missing some features and types (`Reader`, `TaskEither`, and others).
 
-Fpdart is a rewrite based on fp-ts and cats. The main differences are:
+`fpdart` is a rewrite based on fp-ts and cats. The main differences are:
 
-- Fpdart is fully documented.
-- Fpdart implements higher-kinded types using [defunctionalization](https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf).
-- Fpdart is based on **Dart 3**.
-- Fpdart is completely null-safe from the beginning.
-- Fpdart has a richer API.
-- Fpdart implements some missing types in dartz.
-- Fpdart (currently) does not provide implementation for immutable collections (`ISet`, `IMap`, `IHashMap`, `AVLTree`).
+- fpdart is fully documented.
+- fpdart implements higher-kinded types using [defunctionalization](https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf).
+- fpdart is based on **Dart 3**.
+- fpdart is completely null-safe from the beginning.
+- fpdart has a richer API.
+- fpdart implements some missing types in dartz.
+- fpdart does not provide implementation for immutable collections (`ISet`, `IMap`, `IHashMap`, `AVLTree`).
 
 ## 🤔 Roadmap
 
 Being documentation and stability important goals of the package, every type will go through an implementation-documentation-testing cycle before being considered as _'stable'_.
 
-The roadmap for types development is highlighted below (breaking changes to _'stable'_ types are to be expected in this early stages):
-
-1. `ReaderEither`
-2. `StateReaderTaskEither`
-3. `Writer`
-4. `Lens`
+The current work on `fpdart` aims to:
+- Expand the API to include more methods to work and convert between types easier (send [an issue](https://github.com/SandroMaglione/fpdart/issues) on the repository if you have a suggestion) 
+- Simplify the current API to make it easier to use and learn
+- Expand the documentation with more articles and [documentation comments](https://dart.dev/effective-dart/documentation#do-use--doc-comments-to-document-members-and-types)
 
 > **Note**: There is also an experimental research in progress to implement [`ZIO`](https://zio.dev/) in `fpdart`, stay tuned 🔜
 
@@ -464,7 +483,7 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
 
-- **v1.0.0-beta.1** - 27 May 2023
+- **v1.0.0** - 26 July 2023
 
 ***
 
@@ -492,9 +511,11 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 😀 Support
 
-Currently the best way to support me would be to follow me on my [**Twitter**](https://twitter.com/SandroMaglione).
+If you are interested in my work you can [subscribe to my newsletter](https://www.sandromaglione.com/newsletter). 
 
-I also have a newsletter, in which I share tutorials, guides, and code snippets about fpdart and functional programming: [**Subscribe to the Newsletter here** 📧](https://www.sandromaglione.com/newsletter)
+I share tutorials, guides, and code snippets about `fpdart` and functional programming: [**Subscribe to the Newsletter here** 📧](https://www.sandromaglione.com/newsletter)
+
+For more frequent updates you can also follow me on my [**Twitter**](https://twitter.com/SandroMaglione).
 
 ## 👀 License
 
