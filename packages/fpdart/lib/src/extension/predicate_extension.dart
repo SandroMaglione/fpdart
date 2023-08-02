@@ -37,11 +37,8 @@ extension FpdartOnPredicate1<P> on bool Function(P) {
       (p) => this(p) || predicate(p);
 
   /// Compose **xor** this function with `predicate`.
-  bool Function(P) xor(bool Function(P) predicate) => (p) {
-        final thisPredicate = this(p);
-        final otherPredicate = predicate(p);
-        return thisPredicate ? !otherPredicate : otherPredicate;
-      };
+  bool Function(P) xor(bool Function(P) predicate) =>
+      (p) => this(p) ^ predicate(p);
 
   /// Apply `map` to the value of the parameter `P` and return a new `bool Function(A)`.
   ///

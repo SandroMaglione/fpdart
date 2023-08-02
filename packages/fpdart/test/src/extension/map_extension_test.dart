@@ -146,6 +146,22 @@ void main() {
       });
     });
 
+    group('lookupKeyEq', () {
+      test('Some', () {
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          value.lookupKeyEq(Eq.eqString, 'b').matchTestSome((t) {
+            expect(t, 'b');
+          });
+        });
+      });
+
+      test('None', () {
+        testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {
+          expect(value.lookupKeyEq(Eq.eqString, 'e'), isA<None>());
+        });
+      });
+    });
+
     group('extract', () {
       test('valid', () {
         testImmutableMap({'a': 1, 'b': 2, 'c': 3, 'd': 4}, (value) {

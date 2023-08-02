@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import '../function.dart';
 import '../option.dart';
 import '../typeclass/eq.dart';
@@ -14,7 +16,11 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// {@macro fpdart_iterable_extension_head}
   ///
   /// Same as `firstOption`.
-  Option<T> get head => isEmpty ? const None() : some(first);
+  Option<T> get head {
+    var it = iterator;
+    if (it.moveNext()) return some(it.current);
+    return const None();
+  }
 
   /// {@macro fpdart_iterable_extension_head}
   ///
@@ -30,12 +36,69 @@ extension FpdartOnIterable<T> on Iterable<T> {
 
   /// Return all the elements of a [Iterable] except the first one.
   /// If the [Iterable] is empty, return [None].
+  ///
+  /// **Notice**: This operation checks whether the iterable is empty
+  /// at the time when the [Option] is returned.
+  /// The length of a non-empty iterable may change before the returned
+  /// iterable is iterated. If this original iterable has become empty
+  /// at that point, the returned iterable will also be empty, same
+  /// as if this iterable has only one element.
   Option<Iterable<T>> get tail => isEmpty ? const None() : some(skip(1));
 
   /// Return all the elements of a [Iterable] except the last one.
   /// If the [Iterable] is empty, return [None].
-  Option<Iterable<T>> get init =>
-      isEmpty ? const None() : some(take(length - 1));
+  ///
+  /// **Notice**: This operation checks whether the iterable is empty
+  /// at the time when the [Option] is returned.
+  /// The length of a non-empty iterable may change before the returned
+  /// iterable is iterated. If this original iterable has become empty
+  /// at that point, the returned iterable will also be empty, same
+  /// as if this iterable has only one element.
+  Option<Iterable<T>> get init {
+    if (isEmpty) return const None();
+    return some(this.dropRight(1));
+  }
+
+  /// Drops the last [count] element of this iterable.
+  ///
+  /// If this iterable contains fewer than [count] elements,
+  /// the returned iterable is empty.
+  ///
+  /// The [count] must be non-negative.
+  Iterable<T> dropRight([int count = 1]) {
+    if (count < 0) throw RangeError.range(count, 0, null, "count");
+    if (count == 0) return this;
+    if (count == 1) return _dropLastHelper(this);
+    return _dropRightHelper(this, count);
+  }
+
+  // Simpler version of [_dropRightHelper] for single element drop.
+  static Iterable<E> _dropLastHelper<E>(Iterable<E> elements) sync* {
+    var it = elements.iterator;
+    if (!it.moveNext()) return;
+    var last = it.current;
+    while (it.moveNext()) {
+      var element = last;
+      last = it.current;
+      yield element;
+    }
+  }
+
+  static Iterable<E> _dropRightHelper<E>(
+      Iterable<E> elements, int count) sync* {
+    var it = elements.iterator;
+    var queue = Queue<E>();
+    for (var i = 0; i < count; i++) {
+      if (!it.moveNext()) return;
+      queue.add(it.current);
+    }
+    while (it.moveNext()) {
+      var element = queue.removeFirst();
+      queue.add(it.current);
+      yield element;
+    }
+    queue.clear();
+  }
 
   /// Returns the list of those elements that satisfy `test`.
   ///
@@ -105,10 +168,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
   }
 
   /// Insert all the elements inside `other` at the beginning of the [Iterable].
-  Iterable<T> prependAll(Iterable<T> other) sync* {
-    yield* other;
-    yield* this;
-  }
+  Iterable<T> prependAll(Iterable<T> other) => other.followedBy(this);
 
   /// Insert `element` at the end of the [Iterable].
   Iterable<T> append(T element) sync* {
@@ -123,6 +183,16 @@ extension FpdartOnIterable<T> on Iterable<T> {
 
   /// Check if `element` is **not** contained inside this [Iterable].
   bool notElem(T element) => !elem(element);
+
+  /// Get first element equal to [element] in this [Iterable].
+  ///
+  /// Returns `None` if no such element.
+  Option<T> lookupEq(Eq<T> eq, T element) {
+    for (var e in this) {
+      if (eq.eqv(e, element)) return some(e);
+    }
+    return const None();
+  }
 
   /// Fold this [Iterable] into a single value by aggregating each element of the list
   /// **from the first to the last**.
@@ -162,12 +232,10 @@ extension FpdartOnIterable<T> on Iterable<T> {
     C Function(T t, B b) combine,
     Iterable<B> iterable,
   ) sync* {
-    if (isNotEmpty && iterable.isNotEmpty) {
-      yield combine(first, iterable.first);
-      yield* skip(1).zipWith(
-        combine,
-        iterable.skip(1),
-      );
+    var it = iterator;
+    var otherIt = iterable.iterator;
+    while (it.moveNext() && otherIt.moveNext()) {
+      yield combine(it.current, otherIt.current);
     }
   }
 
@@ -187,17 +255,19 @@ extension FpdartOnIterable<T> on Iterable<T> {
   ///
   /// Note: The element is added **before** an equal element already in the [Iterable].
   Iterable<T> insertBy(Order<T> order, T element) sync* {
-    if (isEmpty) {
-      yield element;
-    } else {
-      if (order.compare(element, first) > 0) {
-        yield first;
-        yield* skip(1).insertBy(order, element);
-      } else {
-        yield element;
-        yield* this;
+    var it = iterator;
+    while (it.moveNext()) {
+      if (order.compare(it.current, element) < 0) {
+        yield it.current;
+        continue;
       }
+      yield element;
+      do {
+        yield it.current;
+      } while (it.moveNext());
+      return;
     }
+    yield element;
   }
 
   /// Insert `element` into the [Iterable] at the first position where
@@ -213,27 +283,30 @@ extension FpdartOnIterable<T> on Iterable<T> {
     Order<A> order,
     T element,
   ) sync* {
-    if (isEmpty) {
-      yield element;
-    } else {
-      if (order.compare(extract(element), extract(first)) > 0) {
-        yield first;
-        yield* skip(1).insertWith(extract, order, element);
-      } else {
-        yield element;
-        yield* this;
+    var it = iterator;
+    var elementValue = extract(element);
+    while (it.moveNext()) {
+      if (order.compare(extract(it.current), elementValue) < 0) {
+        yield it.current;
+        continue;
       }
+      yield element;
+      do {
+        yield it.current;
+      } while (it.moveNext());
+      return;
     }
+    yield element;
   }
 
   /// Remove the **first occurrence** of `element` from this [Iterable].
   Iterable<T> delete(T element) sync* {
-    if (isNotEmpty) {
-      if (first != element) {
-        yield first;
-        yield* skip(1).delete(element);
+    var deleted = false;
+    for (var current in this) {
+      if (deleted || current != element) {
+        yield current;
       } else {
-        yield* skip(1);
+        deleted = true;
       }
     }
   }
@@ -264,50 +337,54 @@ extension FpdartOnIterable<T> on Iterable<T> {
   ///
   /// If the list is empty, return [None].
   Option<T> maximumBy(Order<T> order) {
-    if (isEmpty) return const None();
-
-    var max = first;
-    for (var element in skip(1)) {
-      if (order.compare(element, max) > 0) {
-        max = element;
+    var it = iterator;
+    if (it.moveNext()) {
+      T min = it.current;
+      while (it.moveNext()) {
+        if (order.compare(it.current, min) > 0) {
+          min = it.current;
+        }
       }
+      return some(min);
     }
-
-    return some(max);
+    return const None();
   }
 
   /// The least element of this [Iterable] based on `order`.
   ///
   /// If the list is empty, return [None].
   Option<T> minimumBy(Order<T> order) {
-    if (isEmpty) return const None();
-
-    var min = first;
-    for (var element in skip(1)) {
-      if (order.compare(element, min) < 0) {
-        min = element;
+    var it = iterator;
+    if (it.moveNext()) {
+      T min = it.current;
+      while (it.moveNext()) {
+        if (order.compare(it.current, min) < 0) {
+          min = it.current;
+        }
       }
+      return some(min);
     }
-
-    return some(min);
+    return const None();
   }
 
   /// Apply all the functions inside `iterable` to this [Iterable].
   Iterable<B> ap<B>(Iterable<B Function(T)> iterable) => iterable.flatMap(map);
 
   /// Return the intersection of two [Iterable] (all the elements that both [Iterable] have in common).
+  ///
+  /// If an element occurs twice in this iterable, it occurs twice in the
+  /// result, but if it occurs twice in [iterable], only the first value
+  /// is used.
   Iterable<T> intersect(Iterable<T> iterable) sync* {
+    // If it's not important that [iterable] can change between
+    // `element`s, consider creating a set from it first,
+    // for faster `contains`.
     for (var element in this) {
-      try {
-        final e = iterable.firstWhere((e) => e == element);
-        yield e;
-      } catch (_) {
-        continue;
-      }
+      if (iterable.contains(element)) yield element;
     }
   }
 
-  /// Returns an [Iterable] containing the values of this [Iterable] not included
+  /// Return an [Iterable] containing the values of this [Iterable] not included
   /// in `other` based on `eq`.
   Iterable<T> difference(Eq<T> eq, Iterable<T> other) sync* {
     for (var element in this) {
@@ -319,18 +396,12 @@ extension FpdartOnIterable<T> on Iterable<T> {
 
   /// Return an [Iterable] placing an `middle` in between elements of the this [Iterable].
   Iterable<T> intersperse(T middle) sync* {
-    if (isNotEmpty) {
-      try {
-        // Check not last element
-        elementAt(1);
-
-        yield first;
-        yield middle;
-        yield* skip(1).intersperse(middle);
-      } catch (_) {
-        // No element at 1, this is the last of the list
-        yield first;
-      }
+    var it = iterator;
+    if (!it.moveNext()) return;
+    yield it.current;
+    while (it.moveNext()) {
+      yield middle;
+      yield it.current;
     }
   }
 

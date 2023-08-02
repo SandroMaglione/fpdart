@@ -1,3 +1,9 @@
+## v1.1.0-dev
+
+- Added `lookupEq` and `dropRight` on `Iterable`.
+- Added `lookupKeyEq` on `Map`.
+- Some optimization.
+
 ## v1.0.0-beta.1 - 27 May 2023
 - Minimum environment dart sdk to `3.0.0` ⚠️ (Dart 3️⃣)
 ```yaml
