@@ -294,6 +294,29 @@ void main() {
       expect(eq(ap, [3, 4, 5]), true);
     });
 
+    group('dropRight', () {
+      test('none', () {
+        expect([].dropRight(0), isEmpty);
+        expect([].dropRight(1), isEmpty);
+        expect([].dropRight(2), isEmpty);
+        expect([1].dropRight(1), isEmpty);
+        expect([1, 2].dropRight(2), isEmpty);
+        expect([1, 2].dropRight(3), isEmpty);
+      });
+
+      test('some', () {
+        expect([1, 2, 3, 4].dropRight(0), [1, 2, 3, 4]);
+        expect([1, 2, 3, 4].dropRight(1), [1, 2, 3]);
+        expect([1, 2, 3, 4].dropRight(2), [1, 2]);
+        expect([1, 2, 3, 4].dropRight(3), [1]);
+        // Is lazy.
+        var list = [1, 2, 3];
+        var dropList = list.dropRight(5);
+        list.addAll([4, 5, 6]);
+        expect(dropList, [1]);
+      });
+    });
+
     test('foldLeft', () {
       final list1 = [1, 2, 3];
       final ap = list1.foldLeft<int>(0, (b, t) => b - t);
@@ -408,6 +431,29 @@ void main() {
         expect(ap2, true);
         expect(ap3, true);
         expect(ap4, true);
+      });
+    });
+
+    group('lookupEq', () {
+      test('none', () {
+        expect([].lookupEq(Eq.eqInt, 5), isA<None>());
+      });
+
+      test('none found', () {
+        expect([1, 2, 3, 4].lookupEq(Eq.eqInt, 5), isA<None>());
+      });
+
+      test('found', () {
+        var find3 = [1, 2, 3, 4].lookupEq(Eq.eqInt, 3);
+        expect(find3, isA<Some>());
+        expect(find3.getOrElse(() => throw "not"), 3);
+      });
+
+      test('found first', () {
+        var findMod3 =
+            [1, 6, 4, 3, 2].lookupEq(Eq.by((int n) => n % 3, Eq.eqInt), 0);
+        expect(findMod3, isA<Some>());
+        expect(findMod3.getOrElse(() => throw "not"), 6);
       });
     });
   });
