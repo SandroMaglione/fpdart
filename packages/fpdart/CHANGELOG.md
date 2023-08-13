@@ -1,10 +1,25 @@
-## v1.1.0-dev
+## v1.1.0 - 13 August 2023
 
-- Added `lookupEq` and `dropRight` on `Iterable`.
-- Added `lookupKeyEq` on `Map`.
-- Some optimization.
+- Improved performance of some iterable based functions in `Iterable` and `Map` extension (thanks to [lrhn](https://github.com/lrhn) 🎉)
 
-## v1.0.0-beta.1 - 27 May 2023
+- Added `lookupEq` and `dropRight` on `Iterable` extension
+```dart
+[].lookupEq(Eq.eqInt, 5) // None()
+[1, 2, 3, 4].lookupEq(Eq.eqInt, 5) // None()
+[1, 2, 3, 4].lookupEq(Eq.eqInt, 3) // Some(3)
+[1, 6, 4, 3, 2].lookupEq(Eq.by((n) => n % 3, Eq.eqInt), 0) // Some(6)
+
+[1, 2].dropRight(3) // []
+[1, 2, 3, 4].dropRight(1) // [1, 2, 3]
+```
+
+- Added `lookupKeyEq` on `Map` extension
+```dart
+<String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4}.lookupKeyEq(Eq.eqString, 'b'); // Some('b')
+<String, int>{'a': 1, 'b': 2, 'c': 3, 'd': 4}.lookupKeyEq(Eq.eqString, 'e'); // None()
+```
+
+## v1.0.0 - 27 May 2023
 - Minimum environment dart sdk to `3.0.0` ⚠️ (Dart 3️⃣)
 ```yaml
 environment:

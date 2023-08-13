@@ -451,7 +451,7 @@ void main() {
 
       test('found first', () {
         var findMod3 =
-            [1, 6, 4, 3, 2].lookupEq(Eq.by((int n) => n % 3, Eq.eqInt), 0);
+            [1, 6, 4, 3, 2].lookupEq(Eq.by((n) => n % 3, Eq.eqInt), 0);
         expect(findMod3, isA<Some>());
         expect(findMod3.getOrElse(() => throw "not"), 6);
       });
