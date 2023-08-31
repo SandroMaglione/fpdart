@@ -13,6 +13,12 @@
 All the main functional programming types and patterns <strong>fully documented</strong>, tested, and with examples
 </p>
 
+<h3 align="center">
+  <a href="https://docs.flutter.dev/packages-and-plugins/favorites">
+    <img src="https://raw.githubusercontent.com/SandroMaglione/fpdart/main/resources/screenshots/flutter_favorite.png" width="300" />
+  </a>
+</h3>
+
 
 <p align="center">
   <a href="https://github.com/SandroMaglione/fpdart">
