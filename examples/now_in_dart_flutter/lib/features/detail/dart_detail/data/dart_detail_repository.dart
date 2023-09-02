@@ -31,7 +31,7 @@ class DartDetailRepository {
             final dto = await _(_localService.getDartDetail(id).toTaskEither());
             return Fresh.no(entity: dto?.toDomain() ?? Detail.empty);
           },
-          unmodifed: () async {
+          unmodified: () async {
             final cachedData = await _(
               _localService.getDartDetail(id).toTaskEither(),
             );

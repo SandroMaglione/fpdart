@@ -42,7 +42,7 @@ class FlutterDetailRepository {
             );
             return Fresh.no(entity: dto?.toDomain() ?? Detail.empty);
           },
-          unmodifed: () async {
+          unmodified: () async {
             final cachedData = await _(
               _localService.getFlutterDetail(id).toTaskEither(),
             );

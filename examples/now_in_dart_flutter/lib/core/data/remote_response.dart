@@ -19,12 +19,12 @@ class ModifiedRemoteResponse<T> extends RemoteResponse<T> {
 extension RemoteResponseExt<T> on RemoteResponse<T> {
   A when<A>({
     required A Function() noConnection,
-    required A Function() unmodifed,
+    required A Function() unmodified,
     required A Function(T data) modified,
   }) {
     return switch (this) {
       NoConnectionRemoteResponse() => noConnection(),
-      UnModifiedRemoteResponse() => unmodifed(),
+      UnModifiedRemoteResponse() => unmodified(),
       ModifiedRemoteResponse(:final data) => modified(data),
     };
   }
