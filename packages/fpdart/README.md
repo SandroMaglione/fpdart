@@ -331,13 +331,13 @@ Everything looks more **linear and simple** by using the Do notation:
 ```dart
 /// Using the Do notation
 String goShoppingDo() => Option.Do(
-      (_) {
-        final market = _(goToShoppingCenter().alt(goToLocalMarket));
-        final amount = _(market.buyAmount());
+      ($) {
+        final market = $(goToShoppingCenter().alt(goToLocalMarket));
+        final amount = $(market.buyAmount());
 
-        final banana = _(market.buyBanana());
-        final apple = _(market.buyApple());
-        final pear = _(market.buyPear());
+        final banana = $(market.buyBanana());
+        final apple = $(market.buyApple());
+        final pear = $(market.buyPear());
 
         return 'Shopping: $banana, $apple, $pear';
       },
@@ -348,7 +348,7 @@ String goShoppingDo() => Option.Do(
 
 You initialize the Do notation using the **`Do()` constructor**.
 
-You have access to a `_` function, that you can use to extract and use the value inside each `Option`, without using `flatMap`.
+You have access to a `$` function, that you can use to extract and use the value inside each `Option`, without using `flatMap`.
 
 > **Note**: We recommend using the Do notation whenever possible to improve the legibility of your code 🤝
 
