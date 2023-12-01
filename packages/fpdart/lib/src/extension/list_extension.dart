@@ -3,6 +3,7 @@ import '../io.dart';
 import '../io_either.dart';
 import '../io_option.dart';
 import '../option.dart';
+import '../state.dart';
 import '../task.dart';
 import '../task_either.dart';
 import '../task_option.dart';
@@ -178,6 +179,18 @@ extension FpdartTraversableIterable<T> on Iterable<T> {
     IOEither<E, B> Function(T a) f,
   ) =>
       IOEither.traverseList(toList(), f);
+
+  /// {@macro fpdart_traverse_list_state}
+  State<S, List<B>> traverseStateWithIndex<S, B>(
+    State<S, B> Function(T a, int i) f,
+  ) =>
+      State.traverseListWithIndex(toList(), f);
+
+  /// {@macro fpdart_traverse_list_state}
+  State<S, List<B>> traverseState<S, B>(
+    State<S, B> Function(T a) f,
+  ) =>
+      State.traverseList(toList(), f);
 }
 
 extension FpdartSequenceIterableOption<T> on Iterable<Option<T>> {
@@ -240,4 +253,9 @@ extension FpdartSequenceIterableTaskEither<E, T> on Iterable<TaskEither<E, T>> {
 extension FpdartSequenceIterableIOEither<E, T> on Iterable<IOEither<E, T>> {
   /// {@macro fpdart_sequence_list_io_either}
   IOEither<E, List<T>> sequenceIOEither() => IOEither.sequenceList(toList());
+}
+
+/// {@macro fpdart_sequence_list_state}
+extension FpdartSequenceIterableState<S, A> on Iterable<State<S, A>> {
+  State<S, Iterable<A>> sequenceState() => State.sequenceList(toList());
 }

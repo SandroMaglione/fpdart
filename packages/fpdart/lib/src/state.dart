@@ -118,6 +118,39 @@ final class State<S, A> extends HKT2<_StateHKT, S, A>
   /// To extract only the state `S` use `execute`.
   (A, S) run(S state) => _run(state);
 
+  /// {@template fpdart_traverse_list_state}
+  /// Map each element in the list to a [State] using the function `f`,
+  /// and collect the result in a `State<S, List<B>>`.
+  /// {@endtemplate}
+  ///
+  /// Same as `State.traverseList` but passing `index` in the map function.
+  static State<S, List<B>> traverseListWithIndex<S, A, B>(
+      List<A> list, State<S, B> Function(A a, int i) f) {
+    return State((state) {
+      final resultList = <B>[];
+      var out = state;
+      for (var i = 0; i < list.length; i++) {
+        final (b, s) = f(list[i], i).run(out);
+        resultList.add(b);
+        out = s;
+      }
+      return (resultList, out);
+    });
+  }
+
+  /// {@macro fpdart_traverse_list_state}
+  ///
+  /// Same as `State.traverseListWithIndex` but without `index` in the map function.
+  static State<S, List<B>> traverseList<S, A, B>(
+          List<A> list, State<S, B> Function(A a) f) =>
+      traverseListWithIndex<S, A, B>(list, (a, _) => f(a));
+
+  /// {@template fpdart_sequence_list_state}
+  /// Convert a `List<State<S, A>>` to a single `State<S, List<A>>`.
+  /// {@endtemplate}
+  static State<S, List<A>> sequenceList<S, A>(List<State<S, A>> list) =>
+      traverseList(list, identity);
+
   @override
   bool operator ==(Object other) => (other is State) && other._run == _run;
 

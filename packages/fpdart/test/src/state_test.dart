@@ -210,4 +210,57 @@ void main() {
     expect(result.$2, 'zabca');
     expect(sideEffect, 100);
   });
+
+  test('traverseListWithIndex', () {
+    var sideEffect = 0;
+    final list = ['a', 'b'];
+
+    final traverse = State.traverseListWithIndex(
+        list,
+        (a, i) => State((state) {
+              sideEffect++;
+              return (a + i.toString(), state);
+            }));
+    expect(sideEffect, 0);
+    final (resultList, resultState) = traverse.run(1);
+    expect(resultList, ['a0', 'b1']);
+    expect(resultState, 1);
+    expect(sideEffect, list.length);
+  });
+
+  test('traverseList', () {
+    var sideEffect = 0;
+    final list = ['a', 'b'];
+    final traverse = State.traverseList(
+        list,
+        (a) => State((state) {
+              sideEffect++;
+              return (a, state);
+            }));
+    expect(sideEffect, 0);
+    final (resultList, resultState) = traverse.run(1);
+    expect(resultList, ['a', 'b']);
+    expect(resultState, 1);
+    expect(sideEffect, list.length);
+  });
+
+  test('sequenceList', () {
+    var sideEffect = 0;
+    final list = [
+      State((int state) {
+        sideEffect++;
+        return ('a', state);
+      }),
+      State((String state) {
+        sideEffect++;
+        return ('b', state);
+      })
+    ];
+    final sequence = State.sequenceList(list);
+    expect(sideEffect, 0);
+    final (resultList, resultState) = sequence.run(1);
+    expect(resultList, ['a', 'b']);
+    expect(resultState, 1);
+    expect(sideEffect, list.length);
+  });
 }
