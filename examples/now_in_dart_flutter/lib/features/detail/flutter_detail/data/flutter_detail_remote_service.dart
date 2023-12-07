@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:now_in_dart_flutter/core/data/remote_response.dart';
 import 'package:now_in_dart_flutter/core/domain/failure.dart';
+import 'package:now_in_dart_flutter/features/detail/core/data/constants.dart';
 import 'package:now_in_dart_flutter/features/detail/core/data/detail_remote_service.dart';
 
 typedef _FlutterDetail = TaskEither<Failure, RemoteResponse<String>>;
@@ -12,14 +13,10 @@ class FlutterDetailRemoteService extends DetailRemoteService {
   });
 
   _FlutterDetail getWhatsNewFlutterDetail(int id) {
-    const fullPathToMarkdownFile =
-        'repos/flutter/website/contents/src/release/whats-new.md';
-    return super.getDetail(id, fullPathToMarkdownFile);
+    return super.getDetail(id, flutterWhatsNewPath);
   }
 
   _FlutterDetail getFlutterReleaseNotesDetail(int id) {
-    const fullPathToMarkdownFile =
-        'repos/flutter/website/contents/src/release/release-notes/index.md';
-    return super.getDetail(id, fullPathToMarkdownFile);
+    return super.getDetail(id, flutterReleaseNotesPath);
   }
 }

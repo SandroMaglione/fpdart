@@ -14,6 +14,7 @@ abstract class DetailLocalService {
   Isar get _isar => _isarDb.instance;
 
   @protected
+  @visibleForTesting
   Task<Unit> upsertDetail(DetailDTO detailDTO) {
     final txn = _isar.writeTxn<Unit>(
       () async {
@@ -27,6 +28,7 @@ abstract class DetailLocalService {
   }
 
   @protected
+  @visibleForTesting
   Task<DetailDTO?> getDetail(int id) {
     return Task(() => _isar.detailDTOs.get(id));
   }

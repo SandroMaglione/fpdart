@@ -17,6 +17,7 @@ abstract class DetailRemoteService {
   final HeaderCache _headerCache;
 
   @protected
+  @visibleForTesting
   _FailureOrRemoteResponse getDetail(
     int id,
     String fullPathToMarkdownFile,
@@ -24,7 +25,7 @@ abstract class DetailRemoteService {
     return TaskEither.Do(
       (_) async {
         final requestUri = await _(
-          _uriParser(fullPathToMarkdownFile).toTaskEither(),
+          uriParser(fullPathToMarkdownFile).toTaskEither(),
         );
 
         final cachedHeader = await _(
@@ -82,15 +83,4 @@ abstract class DetailRemoteService {
       },
     );
   }
-}
-
-IOEither<Failure, Uri> _uriParser(String uri) {
-  return IOEither.tryCatch(
-    () => Uri.parse(uri),
-    (e, stackTrace) => UriParserFailure(
-      'Invalid Uri string',
-      errorObject: e,
-      stackTrace: stackTrace,
-    ),
-  );
 }

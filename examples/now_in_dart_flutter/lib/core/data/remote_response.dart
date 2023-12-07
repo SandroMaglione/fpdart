@@ -1,5 +1,10 @@
-sealed class RemoteResponse<T> {
+import 'package:equatable/equatable.dart';
+
+sealed class RemoteResponse<T> extends Equatable {
   const RemoteResponse();
+
+  @override
+  List<Object?> get props => [];
 }
 
 class NoConnectionRemoteResponse<T> extends RemoteResponse<T> {
@@ -14,6 +19,9 @@ class ModifiedRemoteResponse<T> extends RemoteResponse<T> {
   const ModifiedRemoteResponse(this.data);
 
   final T data;
+
+  @override
+  List<Object?> get props => [data];
 }
 
 extension RemoteResponseExt<T> on RemoteResponse<T> {
