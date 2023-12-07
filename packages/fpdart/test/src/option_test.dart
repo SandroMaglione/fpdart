@@ -707,6 +707,27 @@ void main() {
   });
 
   group('Do Notation', () {
+    test('should traverse over a list', () async {
+      const testOption = const Option<List<String?>>.of(
+        ['/', '/test', null],
+      );
+
+      Option<List<Uri>> doNotation = Option.Do(
+        ($) {
+          List<String?> optionList = $(testOption);
+          return $(optionList.traverseOption(
+            (stringValue) => optionOf(stringValue).flatMap(
+              (uri) => optionOf(
+                Uri.tryParse(uri),
+              ),
+            ),
+          ));
+        },
+      );
+
+      expect(doNotation, equals(const Option<Uri>.none()));
+    });
+
     test('should return the correct value', () {
       final doOption = Option.Do((_) => _(Option.of(10)));
       doOption.matchTestSome((t) {
