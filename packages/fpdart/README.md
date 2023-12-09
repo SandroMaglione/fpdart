@@ -360,6 +360,7 @@ You have access to a `$` function, that you can use to extract and use the value
 > - Do not call the `$` function inside another callback in the **`Do()`** constructor
 >
 > Using the **Do notation** in these cases may fail at runtime or may produce unexpected behavior. For more information take a look at [the `Do Notation` discussion](https://github.com/SandroMaglione/fpdart/issues/26) or at this [issue](https://github.com/SandroMaglione/fpdart/issues/139).
+> Examples for each of the pitfalls can be viewed here: [do-constructor-pitfalls](https://github.com/SandroMaglione/fpdart/tree/main/examples/do_constructor_pitfalls)
 
 ### 📦 Immutable Collections
 
