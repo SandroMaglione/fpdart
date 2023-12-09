@@ -346,19 +346,20 @@ String goShoppingDo() => Option.Do(
     );
 ```
 
-> **Warning** The **Do notation** has some limitations that need to be considered. Do **not** use it when:
-> - using a `throw` inside the **`Do()`** constructor would be necessary
-> - you need to `await` without executing the `$` function
-> - you would need to use a nested **`Do()`** constructor inside another one
-> - calling a callback function inside the **`Do()`** constructor and calling the `$` function inside the callback
->
-> Using the **Do notation** in these cases may fail at runtime or may produce unexpected behaviour. For more information take a look at [the `Do Notation` discussion](https://github.com/SandroMaglione/fpdart/issues/26) or at this [issue](https://github.com/SandroMaglione/fpdart/issues/139).
 
 You initialize the Do notation using the **`Do()` constructor**.
 
 You have access to a `$` function, that you can use to extract and use the value inside each `Option`, without using `flatMap`.
 
 > **Note**: We recommend using the Do notation whenever possible to improve the legibility of your code 🤝
+
+> ⚠️ **Warning**: Pay attention to avoid the following mistakes when using the **Do notation**:
+> - Do not `throw` inside the **`Do()`** constructor
+> - Do not `await` without executing the `$` function
+> - Do not use a nested **`Do()`** constructor inside another one
+> - Do not call the `$` function inside another callback in the **`Do()`** constructor
+>
+> Using the **Do notation** in these cases may fail at runtime or may produce unexpected behavior. For more information take a look at [the `Do Notation` discussion](https://github.com/SandroMaglione/fpdart/issues/26) or at this [issue](https://github.com/SandroMaglione/fpdart/issues/139).
 
 ### 📦 Immutable Collections
 
