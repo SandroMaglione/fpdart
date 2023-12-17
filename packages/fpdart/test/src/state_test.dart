@@ -217,9 +217,9 @@ void main() {
 
     final traverse = State.traverseListWithIndex(
         list,
-        (a, i) => State((state) {
+        (a, i) => State<int, String>((s) {
               sideEffect++;
-              return (a + i.toString(), state);
+              return (a + i.toString(), s);
             }));
     expect(sideEffect, 0);
     final (resultList, resultState) = traverse.run(1);
@@ -233,9 +233,9 @@ void main() {
     final list = ['a', 'b'];
     final traverse = State.traverseList(
         list,
-        (a) => State((state) {
+        (a) => State<int, String>((s) {
               sideEffect++;
-              return (a, state);
+              return (a, s);
             }));
     expect(sideEffect, 0);
     final (resultList, resultState) = traverse.run(1);
@@ -247,13 +247,13 @@ void main() {
   test('sequenceList', () {
     var sideEffect = 0;
     final list = [
-      State((int state) {
+      State<int, String>((s) {
         sideEffect++;
-        return ('a', state);
+        return ('a', s);
       }),
-      State((String state) {
+      State<int, String>((s) {
         sideEffect++;
-        return ('b', state);
+        return ('b', s);
       })
     ];
     final sequence = State.sequenceList(list);
