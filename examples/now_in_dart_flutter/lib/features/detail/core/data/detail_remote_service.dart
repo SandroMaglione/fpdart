@@ -62,7 +62,7 @@ abstract class DetailRemoteService {
 
                     await _(_headerCache.saveHeader(header).toTaskEither());
 
-                    final html = response.data!;
+                    final html = response.data ?? '';
                     return right(ModifiedRemoteResponse(html));
                   }
 
