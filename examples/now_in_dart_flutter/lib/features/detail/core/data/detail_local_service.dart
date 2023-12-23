@@ -16,15 +16,17 @@ abstract class DetailLocalService {
   @protected
   @visibleForTesting
   Task<Unit> upsertDetail(DetailDTO detailDTO) {
-    final txn = _isar.writeTxn<Unit>(
-      () async {
-        await _isar.detailDTOs.put(detailDTO);
-        return unit;
+    return Task(
+      () {
+        return _isar.writeTxn<Unit>(
+          () async {
+            await _isar.detailDTOs.put(detailDTO);
+            return unit;
+          },
+          silent: true,
+        );
       },
-      silent: true,
     );
-
-    return Task(() => txn);
   }
 
   @protected
