@@ -335,13 +335,13 @@ Everything looks more **linear and simple** by using the Do notation:
 ```dart
 /// Using the Do notation
 String goShoppingDo() => Option.Do(
-      (_) {
-        final market = _(goToShoppingCenter().alt(goToLocalMarket));
-        final amount = _(market.buyAmount());
+      ($) {
+        final market = $(goToShoppingCenter().alt(goToLocalMarket));
+        final amount = $(market.buyAmount());
 
-        final banana = _(market.buyBanana());
-        final apple = _(market.buyApple());
-        final pear = _(market.buyPear());
+        final banana = $(market.buyBanana());
+        final apple = $(market.buyApple());
+        final pear = $(market.buyPear());
 
         return 'Shopping: $banana, $apple, $pear';
       },
@@ -350,11 +350,21 @@ String goShoppingDo() => Option.Do(
     );
 ```
 
+
 You initialize the Do notation using the **`Do()` constructor**.
 
-You have access to a `_` function, that you can use to extract and use the value inside each `Option`, without using `flatMap`.
+You have access to a `$` function, that you can use to extract and use the value inside each `Option`, without using `flatMap`.
 
 > **Note**: We recommend using the Do notation whenever possible to improve the legibility of your code 🤝
+
+> ⚠️ **Warning**: Pay attention to avoid the following mistakes when using the **Do notation**:
+> - Do not `throw` inside the **`Do()`** constructor
+> - Do not `await` without executing the `$` function
+> - Do not use a nested **`Do()`** constructor inside another one
+> - Do not call the `$` function inside another callback in the **`Do()`** constructor
+>
+> Using the **Do notation** in these cases may fail at runtime or may produce unexpected behavior. For more information take a look at [the `Do Notation` discussion](https://github.com/SandroMaglione/fpdart/issues/26) or at this [issue](https://github.com/SandroMaglione/fpdart/issues/139).
+> Examples for each of the pitfalls can be viewed here: [do-constructor-pitfalls](https://github.com/SandroMaglione/fpdart/tree/main/examples/do_constructor_pitfalls)
 
 ### 📦 Immutable Collections
 
