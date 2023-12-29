@@ -1,0 +1,7 @@
+.dart_tool/
+.packages
+pubspec.lock
+
+# Generated files
+**.g.dart
+.idea/
