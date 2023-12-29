@@ -9,7 +9,10 @@ documentation: https://www.sandromaglione.com/course/fpdart-functional-programmi
 issue_tracker: https://github.com/SandroMaglione/fpdart/issues
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">3.0.0 <4.0.0"
+
+dependencies:
+  fpdart: ^1.1.0
 
 dev_dependencies:
   lints: ^2.0.1
