@@ -12,4 +12,4 @@ _DoAdapter<R, E> _doAdapter<R, E>(R env) =>
           (either) => either.getOrElse((l) => throw _DoThrow(l)),
         );
 
-typedef DoFunction<E, L, A> = Future<A> Function(_DoAdapter<E, L> _);
+typedef DoFunction<R, E, A> = Future<A> Function(_DoAdapter<R, E> _);

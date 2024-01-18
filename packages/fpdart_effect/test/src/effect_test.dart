@@ -20,5 +20,13 @@ void main() {
         });
       });
     });
+
+    group('Do', () {
+      test('should return a success value', () {
+        final effect = Effect.Do((_) {
+          return _(Effect.succeed(10));
+        });
+      });
+    });
   });
 }

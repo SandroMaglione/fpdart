@@ -58,6 +58,8 @@ final class Effect<R, E, A> {
             return Either.of(await run(_doAdapter<R, E>(env)));
           } on _DoThrow<E> catch (e) {
             return Either.left(cause.Failure(e.value));
+          } finally {
+            throw Exception();
           }
         },
       );
