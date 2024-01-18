@@ -51,6 +51,7 @@ fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
   - [🧑‍🏫 Getting started with functional programming](#-getting-started-with-functional-programming)
 - [💻 Installation](#-installation)
 - [✨ Examples](#-examples)
+  - [`now_in_dart_flutter`](#now_in_dart_flutter)
   - [`fpdart` + `riverpod`](#fpdart--riverpod)
   - [Pokeapi](#pokeapi)
   - [Open Meteo API](#open-meteo-api)
@@ -127,6 +128,9 @@ dependencies:
 ```
 
 ## ✨ Examples
+
+### [`now_in_dart_flutter`](https://github.com/Biplab-Dutta/now-in-dart-flutter/tree/master/lib)
+A simple app that uses WebView under the hood to display all the news and updates regarding Dart and Flutter. The information is retrieved using GitHub's API and the github repository used as source is that of Flutter and Dart's. The project heavily relies on `fpdart` and its latest APIs (Either, Do, Task, IO, flatmap, etc). It uses `flutter_bloc` for state management.
 
 ### [`fpdart` + `riverpod`](https://www.sandromaglione.com/course/fpdart-riverpod-develop-flutter-app)
 Step by step course on how to build a safe, maintainable, and testable Flutter app using `fpdart` and `riverpod`.
