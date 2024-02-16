@@ -26,6 +26,6 @@ void main() async {
 
   print(doing);
 
-  final run = await doing.runEffect(null);
+  final run = await doing(null);
   print(run);
 }

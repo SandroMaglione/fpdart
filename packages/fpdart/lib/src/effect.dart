@@ -1,18 +1,23 @@
 import 'dart:async';
 
 import 'package:fpdart/fpdart.dart';
+import 'package:meta/meta.dart';
 
 import 'either.dart';
+
+part 'async_either.dart';
+part 'sync.dart';
+part 'sync_either.dart';
 
 final class _EffectThrow<L> {
   final L value;
   const _EffectThrow(this.value);
 }
 
-typedef DoAdapterEffect<E, L> = Future<A> Function<A>(Effect<E, L, A>);
+typedef DoAdapterEffect<E, L> = Future<A> Function<A>(IEffect<E, L, A>);
 
 DoAdapterEffect<E, L> _doAdapter<E, L>(E env) =>
-    <A>(effect) => effect.runEffect(env).then(
+    <A>(effect) => effect._runEffect(env).then(
           (either) => either.getOrElse((l) => throw _EffectThrow(l)),
         );
 
@@ -20,10 +25,33 @@ typedef DoFunctionEffect<E, L, A> = Future<A> Function(DoAdapterEffect<E, L> _);
 
 typedef UnsafeRun<E, L, R> = FutureOr<Either<L, R>> Function(E env);
 
-final class Effect<E, L, R> {
+abstract interface class IEffect<E, L, R> {
   final UnsafeRun<E, L, R> _unsafeRun;
+  const IEffect._(this._unsafeRun);
 
-  const Effect._(this._unsafeRun);
+  Future<Either<L, R>> _runEffect(E env) async => _unsafeRun(env);
+
+  @mustBeOverridden
+  IEffect<E, L, C> flatMap<C>(
+    IEffect<E, L, C> Function(R r) f,
+  ) =>
+      Effect._(
+        (env) => _runEffect(env).then(
+          (either) async => either.match(
+            left,
+            (r) => f(r)._runEffect(env),
+          ),
+        ),
+      );
+
+  @override
+  String toString() {
+    return "Effect(${_unsafeRun.runtimeType})";
+  }
+}
+
+final class Effect<E, L, R> extends IEffect<E, L, R> {
+  const Effect._(UnsafeRun<E, L, R> run) : super._(run);
 
   factory Effect.tryFuture(
     FutureOr<R> Function() execute,
@@ -39,81 +67,16 @@ final class Effect<E, L, R> {
         },
       );
 
-  Future<Either<L, R>> runEffect(E env) async => _unsafeRun(env);
-
-  Effect<E, L, C> flatMap<C>(
-    Effect<E, L, C> Function(R r) f,
-  ) =>
-      Effect._(
-        (env) => runEffect(env).then(
-          (either) async => either.match(
-            left,
-            (r) => f(r).runEffect(env),
-          ),
-        ),
-      );
+  Future<Either<L, R>> call(E env) => _runEffect(env);
 
   @override
   String toString() {
     return "Effect(${_unsafeRun.runtimeType})";
   }
-}
-
-final class AsyncEither<L, R> extends Effect<void, L, R> {
-  const AsyncEither._(UnsafeRun<void, L, R> run) : super._(run);
-
-  factory AsyncEither._fromEffect(Effect<void, L, R> effect) =>
-      AsyncEither._(effect.runEffect);
-
-  factory AsyncEither.tryFuture(
-    FutureOr<R> Function() execute,
-    L Function(Object error, StackTrace stackTrace) onError,
-  ) =>
-      AsyncEither._fromEffect(
-        Effect<void, L, R>.tryFuture(execute, onError),
-      );
-}
-
-final class SyncEither<L, R> extends Effect<void, L, R> {
-  const SyncEither._(UnsafeRun<void, L, R> run) : super._(run);
-
-  factory SyncEither._fromEffect(Effect<void, L, R> effect) =>
-      SyncEither._(effect.runEffect);
-
-  factory SyncEither.trySync(
-    R Function() execute,
-    L Function(Object error, StackTrace stackTrace) onError,
-  ) =>
-      SyncEither._fromEffect(
-        Effect<void, L, R>.tryFuture(execute, onError),
-      );
-}
-
-final class Sync<R> extends Effect<void, Never, R> {
-  const Sync._(UnsafeRun<void, Never, R> run) : super._(run);
-
-  factory Sync._fromEffect(Effect<void, Never, R> effect) =>
-      Sync._(effect.runEffect);
-
-  factory Sync.make(
-    R Function() execute,
-  ) =>
-      Sync._fromEffect(
-        Effect<void, Never, R>.tryFuture(
-          execute,
-          (_, __) => throw Exception(
-            "Error when building Sync.make",
-          ),
-        ),
-      );
-
-  factory Sync.value(R value) => Sync._(
-        (_) => Either.right(value),
-      );
 
   @override
-  Sync<C> flatMap<C>(covariant Sync<C> Function(R r) f) {
-    return Sync._fromEffect(super.flatMap(f));
+  Effect<E, L, C> flatMap<C>(covariant Effect<E, L, C> Function(R r) f) {
+    return Effect._(super.flatMap(f)._unsafeRun);
   }
 }
 
