@@ -19,7 +19,7 @@ final class Sync<R> extends IEffect<void, Never, R> {
       );
 
   factory Sync.value(R value) => Sync._(
-        (_) => Either.right(value),
+        (_) => Exit.success(value),
       );
 
   @override
@@ -33,9 +33,9 @@ final class Sync<R> extends IEffect<void, Never, R> {
       throw Exception("Error running an async Sync");
     }
 
-    return run.match(
-      (_) => throw Exception("Invalid Sync Left result"),
-      (r) => r,
-    );
+    return switch (run) {
+      Failure() => throw Exception("Invalid Sync Left result"),
+      Success(value: final value) => value,
+    };
   }
 }

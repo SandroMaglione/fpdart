@@ -20,7 +20,8 @@ void main() async {
       final asyncEV = await _(asyncEither);
       final syncEV = await _(syncEither);
       final syncV = await _(syncC);
-      return asyncEV + syncEV + syncV;
+      final eitherV = await _(NRight(10));
+      return asyncEV + syncEV + syncV + eitherV;
     },
   );
 

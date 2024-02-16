@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:fpdart/fpdart.dart';
 import 'package:meta/meta.dart';
 
-import 'either.dart';
+import 'exit.dart';
 
 part 'async_either.dart';
+part 'n_either.dart';
 part 'sync.dart';
 part 'sync_either.dart';
 
@@ -18,18 +18,21 @@ typedef DoAdapterEffect<E, L> = Future<A> Function<A>(IEffect<E, L, A>);
 
 DoAdapterEffect<E, L> _doAdapter<E, L>(E env) =>
     <A>(effect) => effect._runEffect(env).then(
-          (either) => either.getOrElse((l) => throw _EffectThrow(l)),
+          (exit) => switch (exit) {
+            Failure(value: final value) => throw _EffectThrow(value),
+            Success(value: final value) => value,
+          },
         );
 
 typedef DoFunctionEffect<E, L, A> = Future<A> Function(DoAdapterEffect<E, L> _);
 
-typedef UnsafeRun<E, L, R> = FutureOr<Either<L, R>> Function(E env);
+typedef UnsafeRun<E, L, R> = FutureOr<Exit<L, R>> Function(E env);
 
 abstract interface class IEffect<E, L, R> {
   final UnsafeRun<E, L, R> _unsafeRun;
   const IEffect._(this._unsafeRun);
 
-  Future<Either<L, R>> _runEffect(E env) async => _unsafeRun(env);
+  Future<Exit<L, R>> _runEffect(E env) async => _unsafeRun(env);
 
   @mustBeOverridden
   IEffect<E, L, C> flatMap<C>(
@@ -37,10 +40,10 @@ abstract interface class IEffect<E, L, R> {
   ) =>
       Effect._(
         (env) => _runEffect(env).then(
-          (either) async => either.match(
-            left,
-            (r) => f(r)._runEffect(env),
-          ),
+          (exit) async => switch (exit) {
+            Failure(value: final value) => Future.value(Exit.failure(value)),
+            Success(value: final value) => f(value)._runEffect(env),
+          },
         ),
       );
 
@@ -60,14 +63,14 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       Effect._(
         (env) async {
           try {
-            return Either.right(await execute());
+            return Exit.success(await execute());
           } catch (e, s) {
-            return Either.left(onError(e, s));
+            return Exit.failure(onError(e, s));
           }
         },
       );
 
-  Future<Either<L, R>> call(E env) => _runEffect(env);
+  Future<Exit<L, R>> call(E env) => _runEffect(env);
 
   @override
   String toString() {
@@ -84,9 +87,9 @@ Effect<E, L, R> doEffect<E, L, R>(DoFunctionEffect<E, L, R> f) =>
     Effect<E, L, R>._(
       (env) async {
         try {
-          return Either.of(await f(_doAdapter<E, L>(env)));
+          return Exit.success(await f(_doAdapter<E, L>(env)));
         } on _EffectThrow<L> catch (e) {
-          return Either.left(e.value);
+          return Exit.failure(e.value);
         }
       },
     );
