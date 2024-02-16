@@ -1,9 +1,9 @@
 part of 'effect.dart';
 
-final class AsyncEither<L, R> extends Effect<void, L, R> {
+final class AsyncEither<L, R> extends IEffect<void, L, R> {
   const AsyncEither._(UnsafeRun<void, L, R> run) : super._(run);
 
-  factory AsyncEither._fromEffect(Effect<void, L, R> effect) =>
+  factory AsyncEither._fromEffect(IEffect<void, L, R> effect) =>
       AsyncEither._(effect._runEffect);
 
   factory AsyncEither.tryFuture(
@@ -15,7 +15,9 @@ final class AsyncEither<L, R> extends Effect<void, L, R> {
       );
 
   @override
-  AsyncEither<L, C> flatMap<C>(AsyncEither<L, C> Function(R r) f) {
+  AsyncEither<L, C> flatMap<C>(covariant AsyncEither<L, C> Function(R r) f) {
     return AsyncEither._fromEffect(super.flatMap(f));
   }
+
+  Future<Exit<L, R>> call() async => _unsafeRun(null);
 }
