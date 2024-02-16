@@ -4,6 +4,7 @@ import 'package:meta/meta.dart';
 
 import 'exit.dart';
 
+part 'async.dart';
 part 'async_either.dart';
 part 'n_either.dart';
 part 'sync.dart';
