@@ -30,6 +30,11 @@ sealed class NEither<L, R> extends IEffect<dynamic, L, R> {
           NRight(value: final value) => Exit.success(value),
         },
       );
+
+  NEither<C, R> mapLeft<C>(C Function(L l) f) => switch (this) {
+        NLeft(value: final value) => NLeft(f(value)),
+        NRight(value: final value) => NRight(value),
+      };
 }
 
 // ignore: missing_override_of_must_be_overridden

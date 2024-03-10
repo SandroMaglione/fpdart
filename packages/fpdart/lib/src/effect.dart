@@ -63,7 +63,7 @@ abstract interface class IEffect<E, L, R> {
 final class Effect<E, L, R> extends IEffect<E, L, R> {
   const Effect._(UnsafeRun<E, L, R> run) : super._(run);
 
-  static Effect<dynamic, L, R> tryFuture<L, R>(
+  factory Effect.tryCatch(
     FutureOr<R> Function() execute,
     L Function(Object error, StackTrace stackTrace) onError,
   ) =>
@@ -77,6 +77,9 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         },
       );
 
+  factory Effect.function(FutureOr<R> Function() f) =>
+      Effect._((_) async => Exit.success(await f()));
+  factory Effect.fail(L value) => Effect._((_) async => Exit.failure(value));
   factory Effect.succeed(R value) => Effect._((_) async => Exit.success(value));
 
   Effect<V, L, R> withEnv<V>(E Function(V env) f) => Effect._(
@@ -110,6 +113,13 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 
   @override
   Effect<E, L, V> map<V>(V Function(R r) f) => ap(Effect.succeed(f));
+
+  Effect<E, C, R> mapLeft<C>(C Function(L l) f) => Effect._(
+        (env) async => switch ((await _runEffect(env))) {
+          Failure(value: final value) => Exit.failure(f(value)),
+          Success(value: final value) => Exit.success(value),
+        },
+      );
 }
 
 Effect<E, L, R> doEffect<E, L, R>(DoFunctionEffect<E, L, R> f) =>
