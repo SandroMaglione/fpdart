@@ -1,6 +1,6 @@
 part of "effect.dart";
 
-sealed class NEither<L, R> extends IEffect<void, L, R> {
+sealed class NEither<L, R> extends IEffect<dynamic, L, R> {
   const NEither._(UnsafeRun<void, L, R> run) : super._(run);
 
   @override
@@ -10,6 +10,26 @@ sealed class NEither<L, R> extends IEffect<void, L, R> {
       NRight(value: final value) => f(value),
     };
   }
+
+  @override
+  NEither<L, V> ap<V>(
+    covariant NEither<L, V Function(R r)> f,
+  ) =>
+      f.flatMap(
+        (f) => flatMap(
+          (v) => NRight(f(v)),
+        ),
+      );
+
+  @override
+  NEither<L, V> map<V>(V Function(R r) f) => ap(NRight(f));
+
+  Effect<V, L, R> withEnv<V>() => Effect._(
+        (env) => switch (this) {
+          NLeft(value: final value) => Exit.failure(value),
+          NRight(value: final value) => Exit.success(value),
+        },
+      );
 }
 
 // ignore: missing_override_of_must_be_overridden
