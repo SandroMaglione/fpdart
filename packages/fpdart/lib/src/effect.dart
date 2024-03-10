@@ -4,11 +4,7 @@ import 'package:meta/meta.dart';
 
 import 'exit.dart';
 
-part 'async.dart';
-part 'async_either.dart';
 part 'n_either.dart';
-part 'sync.dart';
-part 'sync_either.dart';
 
 final class _EffectThrow<L> {
   final L value;
@@ -57,11 +53,11 @@ abstract interface class IEffect<E, L, R> {
 final class Effect<E, L, R> extends IEffect<E, L, R> {
   const Effect._(UnsafeRun<E, L, R> run) : super._(run);
 
-  factory Effect.tryFuture(
+  static Effect<void, L, R> tryFuture<L, R>(
     FutureOr<R> Function() execute,
     L Function(Object error, StackTrace stackTrace) onError,
   ) =>
-      Effect._(
+      Effect<void, L, R>._(
         (env) async {
           try {
             return Exit.success(await execute());
