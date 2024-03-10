@@ -1,7 +1,7 @@
 part of "effect.dart";
 
 sealed class NEither<L, R> extends IEffect<dynamic, L, R> {
-  const NEither._(UnsafeRun<void, L, R> run) : super._(run);
+  const NEither._(UnsafeRun<dynamic, L, R> run) : super._(run);
 
   @override
   NEither<L, C> flatMap<C>(covariant NEither<L, C> Function(R r) f) {

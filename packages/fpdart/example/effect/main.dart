@@ -12,7 +12,8 @@ void main() async {
       final beforeEnv = await _(effect.withEnv(identity));
       final mapped = await _(effect.map((r) => r + 10).withEnv(identity));
       final asEither = await _(NRight<String, int>(10).withEnv<int>());
-      return beforeEnv + mapped + asEither;
+      final asOption = await _(NSome<int>(10).withEnv(() => "Some"));
+      return beforeEnv + mapped + asEither + asOption;
     },
   );
 
