@@ -38,13 +38,27 @@ sealed class NEither<L, R> extends IEffect<dynamic, L, R> {
 }
 
 // ignore: missing_override_of_must_be_overridden
-class NRight<L, R> extends NEither<L, R> {
+final class NRight<L, R> extends NEither<L, R> {
   final R value;
   NRight(this.value) : super._((_) => Exit.success(value));
+
+  @override
+  NEither<L, C> andThen<C>(covariant NEither<L, C> Function() then) => then();
+
+  @override
+  NEither<C, R> orElse<C>(covariant NEither<C, R> Function(L l) orElse) =>
+      NRight(value);
 }
 
 // ignore: missing_override_of_must_be_overridden
-class NLeft<L, R> extends NEither<L, R> {
+final class NLeft<L, R> extends NEither<L, R> {
   final L value;
   NLeft(this.value) : super._((_) => Exit.failure(value));
+
+  @override
+  NEither<L, C> andThen<C>(covariant NEither<L, C> Function() then) =>
+      NLeft(value);
+
+  NEither<C, R> orElse<C>(covariant NEither<C, R> Function(L l) orElse) =>
+      orElse(value);
 }

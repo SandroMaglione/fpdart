@@ -33,12 +33,18 @@ sealed class NOption<R> extends IEffect<dynamic, dynamic, R> {
 }
 
 // ignore: missing_override_of_must_be_overridden
-class NSome<R> extends NOption<R> {
+final class NSome<R> extends NOption<R> {
   final R value;
   NSome(this.value) : super._((_) => Exit.success(value));
+
+  @override
+  NOption<C> andThen<C>(covariant NOption<C> Function() then) => then();
 }
 
 // ignore: missing_override_of_must_be_overridden
-class NNone<R> extends NOption<Never> {
+final class NNone<R> extends NOption<Never> {
   NNone() : super._((_) => Exit.failure(null));
+
+  @override
+  NOption<C> andThen<C>(covariant NOption<C> Function() then) => this;
 }

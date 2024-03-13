@@ -34,6 +34,10 @@ abstract interface class IEffect<E, L, R> {
   Future<Exit<L, R>> _runEffect(E env) async => _unsafeRun(env);
 
   @mustBeOverridden
+  IEffect<E, L, C> andThen<C>(IEffect<E, L, C> Function() then) =>
+      flatMap((_) => then());
+
+  @mustBeOverridden
   IEffect<E, L, C> flatMap<C>(
     IEffect<E, L, C> Function(R r) f,
   ) =>
@@ -47,9 +51,7 @@ abstract interface class IEffect<E, L, R> {
       );
 
   @mustBeOverridden
-  IEffect<E, L, V> ap<V>(
-    IEffect<E, L, V Function(R r)> f,
-  );
+  IEffect<E, L, V> ap<V>(IEffect<E, L, V Function(R r)> f);
 
   @mustBeOverridden
   IEffect<E, L, V> map<V>(V Function(R r) f);
@@ -114,10 +116,25 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   @override
   Effect<E, L, V> map<V>(V Function(R r) f) => ap(Effect.succeed(f));
 
+  @override
+  Effect<E, L, C> andThen<C>(covariant Effect<E, L, C> Function() then) =>
+      Effect._(super.andThen(then)._unsafeRun);
+
   Effect<E, C, R> mapLeft<C>(C Function(L l) f) => Effect._(
         (env) async => switch ((await _runEffect(env))) {
           Failure(value: final value) => Exit.failure(f(value)),
           Success(value: final value) => Exit.success(value),
+        },
+      );
+
+  Effect<E, C, R> orElse<C>(
+    covariant Effect<E, C, R> Function(L l) orElse,
+  ) =>
+      Effect._(
+        (env) async => switch ((await _unsafeRun(env))) {
+          Failure(value: final value) => orElse(value)._unsafeRun(env),
+          Success(value: final value) =>
+            Effect<E, C, R>.succeed(value)._unsafeRun(env),
         },
       );
 }
