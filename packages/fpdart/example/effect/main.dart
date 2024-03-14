@@ -8,11 +8,11 @@ void main() async {
 
   final effect1 = Effect.function(() => 10);
 
-  final doing = doEffect<int, String, int>(
+  final doing = Effect<int, String, int>.gen(
     (_) async {
       final env = await _(Effect.ask());
       final beforeEnv = await _(effect.withEnv(identity));
-      final e1 = await _(effect1.mapLeft((l) => "null").withEnv(identity));
+      final e1 = await _(effect1.mapError((l) => "null").withEnv(identity));
 
       final mapped = await _(effect.map((r) => r + 10).withEnv(identity));
       final asEither = await _(NRight<String, int>(10).withEnv<int>());
