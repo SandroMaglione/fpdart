@@ -1,9 +1,8 @@
 part of "effect.dart";
 
 sealed class NEither<L, R> extends IEffect<dynamic, L, R> {
-  const NEither._(UnsafeRun<dynamic, L, R> run) : super._(run);
+  const NEither();
 
-  @override
   NEither<L, C> flatMap<C>(covariant NEither<L, C> Function(R r) f) {
     return switch (this) {
       NLeft(value: final value) => NLeft(value),
@@ -11,7 +10,6 @@ sealed class NEither<L, R> extends IEffect<dynamic, L, R> {
     };
   }
 
-  @override
   NEither<L, V> ap<V>(
     covariant NEither<L, V Function(R r)> f,
   ) =>
@@ -21,7 +19,6 @@ sealed class NEither<L, R> extends IEffect<dynamic, L, R> {
         ),
       );
 
-  @override
   NEither<L, V> map<V>(V Function(R r) f) => ap(NRight(f));
 
   Effect<V, L, R> withEnv<V>() => Effect._(
@@ -37,25 +34,26 @@ sealed class NEither<L, R> extends IEffect<dynamic, L, R> {
       };
 }
 
-// ignore: missing_override_of_must_be_overridden
 final class NRight<L, R> extends NEither<L, R> {
   final R value;
-  NRight(this.value) : super._((_) => Exit.success(value));
+  const NRight(this.value);
 
   @override
+  Effect<dynamic, L, R> get asEffect => Effect.succeed(value);
+
   NEither<L, C> andThen<C>(covariant NEither<L, C> Function() then) => then();
 
-  @override
   NEither<C, R> orElse<C>(covariant NEither<C, R> Function(L l) orElse) =>
       NRight(value);
 }
 
-// ignore: missing_override_of_must_be_overridden
 final class NLeft<L, R> extends NEither<L, R> {
   final L value;
-  NLeft(this.value) : super._((_) => Exit.failure(value));
+  const NLeft(this.value);
 
   @override
+  Effect<dynamic, L, R> get asEffect => Effect.fail(value);
+
   NEither<L, C> andThen<C>(covariant NEither<L, C> Function() then) =>
       NLeft(value);
 

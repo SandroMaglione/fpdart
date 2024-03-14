@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:meta/meta.dart';
-
 import 'exit.dart';
 
 part 'n_either.dart';
@@ -15,7 +13,7 @@ final class _EffectThrow<L> {
 typedef DoAdapterEffect<E, L> = Future<A> Function<A>(IEffect<E, L, A>);
 
 DoAdapterEffect<E, L> _doAdapter<E, L>(E env) => <A>(effect) => Future.sync(
-      () => effect._runEffect(env).then(
+      () => effect.asEffect._runEffect(env).then(
             (exit) => switch (exit) {
               Failure(value: final value) => throw _EffectThrow(value),
               Success(value: final value) => value,
@@ -25,45 +23,27 @@ DoAdapterEffect<E, L> _doAdapter<E, L>(E env) => <A>(effect) => Future.sync(
 
 typedef DoFunctionEffect<E, L, A> = Future<A> Function(DoAdapterEffect<E, L> _);
 
-typedef UnsafeRun<E, L, R> = FutureOr<Exit<L, R>> Function(E env);
-
 abstract interface class IEffect<E, L, R> {
-  final UnsafeRun<E, L, R> _unsafeRun;
-  const IEffect._(this._unsafeRun);
+  const IEffect();
+  Effect<E, L, R> get asEffect;
+}
+
+final class Effect<E, L, R> extends IEffect<E, L, R> {
+  final FutureOr<Exit<L, R>> Function(E env) _unsafeRun;
+
+  const Effect._(this._unsafeRun);
+
+  @override
+  Effect<E, L, R> get asEffect => this;
 
   Future<Exit<L, R>> _runEffect(E env) async => _unsafeRun(env);
 
-  @mustBeOverridden
-  IEffect<E, L, C> andThen<C>(IEffect<E, L, C> Function() then) =>
-      flatMap((_) => then());
-
-  @mustBeOverridden
-  IEffect<E, L, C> flatMap<C>(
-    IEffect<E, L, C> Function(R r) f,
-  ) =>
-      Effect._(
-        (env) => _runEffect(env).then(
-          (exit) async => switch (exit) {
-            Failure(value: final value) => Future.value(Exit.failure(value)),
-            Success(value: final value) => f(value)._runEffect(env),
-          },
-        ),
-      );
-
-  @mustBeOverridden
-  IEffect<E, L, V> ap<V>(IEffect<E, L, V Function(R r)> f);
-
-  @mustBeOverridden
-  IEffect<E, L, V> map<V>(V Function(R r) f);
+  Future<Exit<L, R>> call(E env) => _runEffect(env);
 
   @override
   String toString() {
     return "Effect(${_unsafeRun.runtimeType})";
   }
-}
-
-final class Effect<E, L, R> extends IEffect<E, L, R> {
-  const Effect._(UnsafeRun<E, L, R> run) : super._(run);
 
   factory Effect.tryCatch(
     FutureOr<R> Function() execute,
@@ -92,18 +72,16 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         (env) async => Exit.success(env),
       );
 
-  Future<Exit<L, R>> call(E env) => _runEffect(env);
-
-  @override
-  String toString() {
-    return "Effect(${_unsafeRun.runtimeType})";
-  }
-
-  @override
   Effect<E, L, C> flatMap<C>(covariant Effect<E, L, C> Function(R r) f) =>
-      Effect._(super.flatMap(f)._unsafeRun);
+      Effect._(
+        (env) => _runEffect(env).then(
+          (exit) async => switch (exit) {
+            Failure(value: final value) => Future.value(Exit.failure(value)),
+            Success(value: final value) => f(value)._runEffect(env),
+          },
+        ),
+      );
 
-  @override
   Effect<E, L, V> ap<V>(
     covariant Effect<E, L, V Function(R r)> f,
   ) =>
@@ -113,12 +91,10 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         ),
       );
 
-  @override
   Effect<E, L, V> map<V>(V Function(R r) f) => ap(Effect.succeed(f));
 
-  @override
   Effect<E, L, C> andThen<C>(covariant Effect<E, L, C> Function() then) =>
-      Effect._(super.andThen(then)._unsafeRun);
+      flatMap((_) => then());
 
   Effect<E, C, R> mapLeft<C>(C Function(L l) f) => Effect._(
         (env) async => switch ((await _runEffect(env))) {
