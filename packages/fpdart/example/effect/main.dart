@@ -10,7 +10,7 @@ void main() async {
 
   final doing = Effect<int, String, int>.gen(
     (_) async {
-      final env = await _(Effect.ask());
+      final env = await _(Effect.env());
       final beforeEnv = await _(effect.withEnv(identity));
       final e1 = await _(effect1.mapError((l) => "null").withEnv(identity));
 

@@ -117,7 +117,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category do_notation}
-  static Effect<E, L, E> ask<E, L>() => Effect._(
+  static Effect<E, L, E> env<E, L>() => Effect._(
         (env) async => Exit.success(env),
       );
 
@@ -195,14 +195,14 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category error_handling}
-  Effect<E, dynamic, R> catchAll(
-    Effect<E, dynamic, R> Function(L error) f,
+  Effect<E, Never, R> catchAll(
+    Effect<E, Never, R> Function(L error) f,
   ) =>
       Effect._(
         (env) async => switch ((await _unsafeRun(env))) {
           Failure(value: final value) => f(value)._unsafeRun(env),
           Success(value: final value) =>
-            Effect<dynamic, dynamic, R>.succeed(value)._unsafeRun(env),
+            Effect<E, Never, R>.succeed(value)._unsafeRun(env),
         },
       );
 }
