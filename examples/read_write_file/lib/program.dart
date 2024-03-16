@@ -19,14 +19,12 @@ class _FoundWord {
   );
 }
 
-/// Word to search in each sentence
-const _searchWords = ['that', 'and', 'for'];
-
 Iterable<_FoundWord> _collectFoundWords(
+  List<String> searchWords,
   Iterable<(String, String)> iterable,
 ) =>
     iterable.flatMapWithIndex(
-      (tuple, index) => _searchWords.foldLeftWithIndex<List<_FoundWord>>(
+      (tuple, index) => searchWords.foldLeftWithIndex<List<_FoundWord>>(
         [],
         (acc, word, wordIndex) =>
             tuple.$2.toLowerCase().split(' ').contains(word)
@@ -44,42 +42,30 @@ Iterable<_FoundWord> _collectFoundWords(
       ),
     );
 
-typedef Env = ({FileSystem fileSystem, File sourceIta, File sourceEng});
+typedef Env = ({
+  FileSystem fileSystem,
+  File sourceIta,
+  File sourceEng,
+  List<String> searchWords,
+});
 
 final program = Effect<Env, FileSystemError, Iterable<_FoundWord>>.gen(
   (_) async {
     final env = await _(Effect.env());
 
     final linesIta = await _(
-      env.fileSystem.readAsLines().withEnv(
+      env.fileSystem.readAsLines().provide(
             (env) => env.sourceIta,
           ),
     );
 
     final linesEng = await _(
-      env.fileSystem.readAsLines().withEnv(
+      env.fileSystem.readAsLines().provide(
             (env) => env.sourceEng,
           ),
     );
 
     final linesZip = linesIta.zip(linesEng);
-    return _collectFoundWords(linesZip);
+    return _collectFoundWords(env.searchWords, linesZip);
   },
-)
-    .flatMap(
-      (list) => Effect.function(
-        () {
-          list.forEach(
-            (e) => print(
-                '${e.index}, ${e.word}(${e.wordIndex}): ${e.english}_${e.italian}\n'),
-          );
-        },
-      ),
-    )
-    .catchAll(
-      (error) => Effect.function(
-        () {
-          print(error);
-        },
-      ),
-    );
+);

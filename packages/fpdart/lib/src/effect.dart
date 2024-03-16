@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:meta/meta.dart';
+
 import 'exit.dart';
 
 part 'n_either.dart';
@@ -107,12 +109,14 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   factory Effect.succeed(R value) => Effect._((_) async => Exit.success(value));
 
   /// {@category constructors}
-  static Effect<dynamic, dynamic, void> unit() => Effect._(
+  static Effect<Never, Never, void> unit() => Effect._(
         (_) async => Exit.success(null),
       );
 
+  /// Extract the required dependency from the complete environment.
+  ///
   /// {@category do_notation}
-  Effect<V, L, R> withEnv<V>(E Function(V env) f) => Effect._(
+  Effect<V, L, R> provide<V>(E Function(V env) f) => Effect._(
         (env) => _unsafeRun(f(env)),
       );
 

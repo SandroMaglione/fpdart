@@ -1,11 +1,11 @@
 part of "effect.dart";
 
-sealed class NOption<R> extends IEffect<dynamic, dynamic, R> {
+sealed class NOption<R> extends IEffect<Never, Never, R> {
   const NOption();
 
   NOption<C> flatMap<C>(covariant NOption<C> Function(R r) f) {
     return switch (this) {
-      NNone() => NNone<dynamic>(),
+      NNone() => NNone<Never>(),
       NSome(value: final value) => f(value),
     };
   }
@@ -21,7 +21,7 @@ sealed class NOption<R> extends IEffect<dynamic, dynamic, R> {
 
   NOption<V> map<V>(V Function(R r) f) => ap(NSome(f));
 
-  Effect<V, L, R> withEnv<L, V>(L Function() onNone) => Effect._(
+  Effect<V, L, R> provide<L, V>(L Function() onNone) => Effect._(
         (env) => switch (this) {
           NNone() => Exit.failure(onNone()),
           NSome(value: final value) => Exit.success(value),
@@ -34,7 +34,7 @@ final class NSome<R> extends NOption<R> {
   const NSome(this.value);
 
   @override
-  Effect<dynamic, dynamic, R> get asEffect => Effect.succeed(value);
+  Effect<Never, Never, R> get asEffect => Effect.succeed(value);
 
   NOption<C> andThen<C>(covariant NOption<C> Function() then) => then();
 }
@@ -43,7 +43,11 @@ final class NNone<R> extends NOption<Never> {
   const NNone();
 
   @override
-  Effect<dynamic, dynamic, Never> get asEffect => Effect.fail(null);
+  @internal
+
+  /// **This will always throw, don't use it!**
+  // ignore: cast_from_null_always_fails
+  Effect<Never, Never, Never> get asEffect => Effect.fail(null as Never);
 
   NOption<C> andThen<C>(covariant NOption<C> Function() then) => this;
 }

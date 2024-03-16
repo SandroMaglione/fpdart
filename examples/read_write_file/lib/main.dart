@@ -13,8 +13,28 @@ import 'program.dart';
  */
 
 void main() async {
-  await program.runFuture(
+  final main = program
+      .flatMap(
+        (list) => Effect.function(
+          () {
+            list.forEach(
+              (e) => print(
+                  '${e.index}, ${e.word}(${e.wordIndex}): ${e.english}_${e.italian}\n'),
+            );
+          },
+        ),
+      )
+      .catchAll(
+        (error) => Effect.function(
+          () {
+            print(error);
+          },
+        ),
+      );
+
+  await main.runFuture(
     (
+      searchWords: const ['that', 'and', 'for'],
       fileSystem: FileSystemLive(),
       sourceEng: File('./assets/source_eng.txt'),
       sourceIta: File('./assets/source_ita.txt'),

@@ -1,6 +1,6 @@
 part of "effect.dart";
 
-sealed class NEither<L, R> extends IEffect<dynamic, L, R> {
+sealed class NEither<L, R> extends IEffect<Never, L, R> {
   const NEither();
 
   NEither<L, C> flatMap<C>(covariant NEither<L, C> Function(R r) f) {
@@ -21,7 +21,7 @@ sealed class NEither<L, R> extends IEffect<dynamic, L, R> {
 
   NEither<L, V> map<V>(V Function(R r) f) => ap(NRight(f));
 
-  Effect<V, L, R> withEnv<V>() => Effect._(
+  Effect<V, L, R> provide<V>() => Effect._(
         (env) => switch (this) {
           NLeft(value: final value) => Exit.failure(value),
           NRight(value: final value) => Exit.success(value),
@@ -39,7 +39,7 @@ final class NRight<L, R> extends NEither<L, R> {
   const NRight(this.value);
 
   @override
-  Effect<dynamic, L, R> get asEffect => Effect.succeed(value);
+  Effect<Never, L, R> get asEffect => Effect.succeed(value);
 
   NEither<L, C> andThen<C>(covariant NEither<L, C> Function() then) => then();
 
@@ -52,7 +52,7 @@ final class NLeft<L, R> extends NEither<L, R> {
   const NLeft(this.value);
 
   @override
-  Effect<dynamic, L, R> get asEffect => Effect.fail(value);
+  Effect<Never, L, R> get asEffect => Effect.fail(value);
 
   NEither<L, C> andThen<C>(covariant NEither<L, C> Function() then) =>
       NLeft(value);
