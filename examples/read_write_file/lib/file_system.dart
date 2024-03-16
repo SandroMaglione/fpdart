@@ -11,7 +11,13 @@ class ReadFileError extends FileSystemError {
   const ReadFileError();
 }
 
-final class FileSystem {
+abstract interface class FileSystem {
+  Effect<File, FileSystemError, List<String>> readAsLines({
+    Encoding encoding = utf8,
+  });
+}
+
+final class FileSystemLive extends FileSystem {
   Effect<File, FileSystemError, List<String>> readAsLines({
     Encoding encoding = utf8,
   }) =>
