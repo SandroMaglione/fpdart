@@ -30,11 +30,10 @@ sealed class Option<R> extends IEffect<Never, Never, R> {
   }
 
   R? toNullable();
-
-  Option<C> flatMap<C>(covariant Option<C> Function(R r) f);
+  Option<C> flatMap<C>(Option<C> Function(R r) f);
 
   Option<V> ap<V>(
-    covariant Option<V Function(R r)> f,
+    Option<V Function(R r)> f,
   ) =>
       f.flatMap(
         (f) => flatMap(
@@ -64,10 +63,10 @@ final class Some<R> extends Option<R> {
   @override
   Effect<Never, Never, R> get asEffect => Effect.succeed(value);
 
-  Option<C> andThen<C>(covariant Option<C> Function() then) => then();
+  Option<C> andThen<C>(Option<C> Function() then) => then();
 
   @override
-  Option<C> flatMap<C>(covariant Option<C> Function(R r) f) => f(value);
+  Option<C> flatMap<C>(Option<C> Function(R r) f) => f(value);
 
   @override
   Effect<V, L, R> provide<L, V>(L Function() onNone) => Effect.succeed(value);
@@ -101,10 +100,10 @@ final class None extends Option<Never> {
   // ignore: cast_from_null_always_fails
   Effect<Never, Never, Never> get asEffect => Effect.fail(null as Never);
 
-  Option<C> andThen<C>(covariant Option<C> Function() then) => this;
+  Option<C> andThen<C>(Option<C> Function() then) => this;
 
   @override
-  Option<C> flatMap<C>(covariant Option<C> Function(Never r) f) => this;
+  Option<C> flatMap<C>(Option<C> Function(Never r) f) => this;
 
   @override
   Null toNullable() => null;
