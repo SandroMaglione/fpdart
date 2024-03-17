@@ -4,7 +4,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:fpdart/src/extension/future_or_extension.dart';
 import 'package:meta/meta.dart';
 
-import 'unit.dart' as FUnit;
+import 'unit.dart' as f_unit;
 
 part 'either.dart';
 part 'option.dart';
@@ -124,8 +124,8 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   factory Effect.succeed(R value) => Effect._((_) => Exit.success(value));
 
   /// {@category constructors}
-  static Effect<Never, Never, FUnit.Unit> unit() => Effect._(
-        (_) => Exit.success(FUnit.unit),
+  static Effect<Never, Never, f_unit.Unit> unit() => Effect._(
+        (_) => Exit.success(f_unit.unit),
       );
 
   /// Extract the required dependency from the complete environment.
