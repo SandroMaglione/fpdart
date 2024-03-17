@@ -9,6 +9,12 @@ class Success<L, R> extends Exit<L, R> {
   const Success(this.value);
 
   @override
+  bool operator ==(Object other) => (other is Success) && other.value == value;
+
+  @override
+  int get hashCode => value.hashCode;
+
+  @override
   String toString() {
     return "Exit.Success($value)";
   }
@@ -17,6 +23,12 @@ class Success<L, R> extends Exit<L, R> {
 class Failure<L, R> extends Exit<L, R> {
   final L value;
   const Failure(this.value);
+
+  @override
+  bool operator ==(Object other) => (other is Failure) && other.value == value;
+
+  @override
+  int get hashCode => value.hashCode;
 
   @override
   String toString() {

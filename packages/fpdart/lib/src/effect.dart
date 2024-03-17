@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:fpdart/fpdart.dart';
+import 'package:fpdart/src/extension/future_or_extension.dart';
 import 'package:meta/meta.dart';
 
-import 'exit.dart';
+import 'unit.dart' as FUnit;
 
 part 'either.dart';
 part 'option.dart';
@@ -50,9 +52,6 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   Future<Exit<L, R>> _runEffect(E? env) async => _unsafeRun(env);
 
   /// {@category execution}
-  Future<Exit<L, R>> call(E env) => _runEffect(env);
-
-  /// {@category execution}
   R runSync(E env) {
     final result = _unsafeRun(env);
     if (result is Future) {
@@ -66,6 +65,15 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   }
 
   /// {@category execution}
+  Exit<L, R> runSyncExit(E env) {
+    final result = _unsafeRun(env);
+    if (result is Future) {
+      throw Exception("Cannot use runSync for an async Effect");
+    }
+    return result;
+  }
+
+  /// {@category execution}
   Future<R> runFuture(E env) async {
     final result = await _unsafeRun(env);
     return switch (result) {
@@ -73,6 +81,9 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       Success<L, R>(value: final value) => value,
     };
   }
+
+  /// {@category execution}
+  Future<Exit<L, R>> runFutureExit(E env) async => _runEffect(env);
 
   /// {@category constructors}
   // ignore: non_constant_identifier_names
@@ -107,14 +118,14 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category constructors}
-  factory Effect.fail(L value) => Effect._((_) async => Exit.failure(value));
+  factory Effect.fail(L value) => Effect._((_) => Exit.failure(value));
 
   /// {@category constructors}
-  factory Effect.succeed(R value) => Effect._((_) async => Exit.success(value));
+  factory Effect.succeed(R value) => Effect._((_) => Exit.success(value));
 
   /// {@category constructors}
-  static Effect<Never, Never, void> unit() => Effect._(
-        (_) async => Exit.success(null),
+  static Effect<Never, Never, FUnit.Unit> unit() => Effect._(
+        (_) => Exit.success(FUnit.unit),
       );
 
   /// Extract the required dependency from the complete environment.
@@ -136,6 +147,16 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       f.flatMap(
         (f) => flatMap(
           (v) => Effect.succeed(f(v)),
+        ),
+      );
+
+  /// {@category mapping}
+  Effect<E, R, L> get flip => Effect._(
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
+            Failure(value: final value) => Exit.success(value),
+            Success(value: final value) => Exit.failure(value),
+          },
         ),
       );
 

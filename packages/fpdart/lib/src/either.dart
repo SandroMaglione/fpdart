@@ -3,6 +3,9 @@ part of "effect.dart";
 sealed class Either<L, R> extends IEffect<Never, L, R> {
   const Either();
 
+  R? toNullable();
+  Option<R> toOption();
+
   Either<L, C> flatMap<C>(covariant Either<L, C> Function(R r) f) {
     return switch (this) {
       Left(value: final value) => Left(value),
@@ -45,6 +48,21 @@ final class Right<L, R> extends Either<L, R> {
 
   Either<C, R> orElse<C>(covariant Either<C, R> Function(L l) orElse) =>
       Right(value);
+
+  @override
+  R toNullable() => value;
+
+  @override
+  Option<R> toOption() => Some(value);
+
+  @override
+  bool operator ==(Object other) => (other is Right) && other.value == value;
+
+  @override
+  int get hashCode => value.hashCode;
+
+  @override
+  String toString() => 'Right($value)';
 }
 
 final class Left<L, R> extends Either<L, R> {
@@ -59,4 +77,19 @@ final class Left<L, R> extends Either<L, R> {
 
   Either<C, R> orElse<C>(covariant Either<C, R> Function(L l) orElse) =>
       orElse(value);
+
+  @override
+  R? toNullable() => null;
+
+  @override
+  Option<R> toOption() => None();
+
+  @override
+  bool operator ==(Object other) => (other is Left) && other.value == value;
+
+  @override
+  int get hashCode => value.hashCode;
+
+  @override
+  String toString() => 'Left($value)';
 }

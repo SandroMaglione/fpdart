@@ -3,6 +3,13 @@ part of "effect.dart";
 sealed class Option<R> extends IEffect<Never, Never, R> {
   const Option();
 
+  R? toNullable();
+
+  Either<L, R> toEither<L>(L Function() onLeft) => switch (this) {
+        Some(value: final value) => Right(value),
+        None() => Left(onLeft()),
+      };
+
   Option<C> flatMap<C>(covariant Option<C> Function(R r) f) {
     return switch (this) {
       None() => None(),
@@ -37,6 +44,21 @@ final class Some<R> extends Option<R> {
   Effect<Never, Never, R> get asEffect => Effect.succeed(value);
 
   Option<C> andThen<C>(covariant Option<C> Function() then) => then();
+
+  @override
+  R toNullable() => value;
+
+  @override
+  Either<L, R> toEither<L>(L Function() onLeft) => Right(value);
+
+  @override
+  bool operator ==(Object other) => (other is Some) && other.value == value;
+
+  @override
+  int get hashCode => value.hashCode;
+
+  @override
+  String toString() => 'Some($value)';
 }
 
 final class None extends Option<Never> {
@@ -50,4 +72,16 @@ final class None extends Option<Never> {
   Effect<Never, Never, Never> get asEffect => Effect.fail(null as Never);
 
   Option<C> andThen<C>(covariant Option<C> Function() then) => this;
+
+  @override
+  Null toNullable() => null;
+
+  @override
+  bool operator ==(Object other) => other is None;
+
+  @override
+  int get hashCode => 0;
+
+  @override
+  String toString() => 'None';
 }

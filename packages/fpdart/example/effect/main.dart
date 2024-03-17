@@ -23,6 +23,6 @@ void main() async {
 
   print(main);
 
-  final run = await main(10);
+  final run = await main.runFutureExit(10);
   print(run);
 }
