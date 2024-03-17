@@ -127,7 +127,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category collecting}
-  static Effect<E, L, List<R>> allIterable<E, L, R, A>(
+  static Effect<E, L, Iterable<R>> allIterable<E, L, R, A>(
     Iterable<A> iterable,
     Effect<E, L, R> Function(A _) f,
   ) =>
@@ -146,18 +146,12 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
                   (list, r) => list.append(r),
                 ),
               )
-              ._unsafeRun(env)
-              .then(
-                (exit) => switch (exit) {
-                  Failure(value: final value) => Exit.failure(value),
-                  Success(value: final value) => Exit.success(value.toList()),
-                },
-              );
+              ._unsafeRun(env);
         },
       );
 
   /// {@category collecting}
-  static Effect<E, L, List<R>> all<E, L, R>(
+  static Effect<E, L, Iterable<R>> all<E, L, R>(
     Iterable<Effect<E, L, R>> iterable,
   ) =>
       Effect.allIterable(
