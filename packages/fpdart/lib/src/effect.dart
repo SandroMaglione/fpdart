@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:fpdart/fpdart.dart';
 import 'package:fpdart/src/extension/future_or_extension.dart';
+import 'package:fpdart/src/extension/iterable_extension.dart';
 import 'package:meta/meta.dart';
 
 import 'unit.dart' as f_unit;
@@ -17,7 +18,7 @@ final class _EffectThrow<L> {
 typedef DoAdapterEffect<E, L> = Future<A> Function<A>(IEffect<E, L, A>);
 
 DoAdapterEffect<E, L> _doAdapter<E, L>(E? env) => <A>(effect) => Future.sync(
-      () => effect.asEffect._runEffect(env).then(
+      () => effect.asEffect._unsafeRun(env).then(
             (exit) => switch (exit) {
               Failure(value: final value) => throw _EffectThrow(value),
               Success(value: final value) => value,
@@ -47,9 +48,6 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   String toString() {
     return "Effect(${_unsafeRun.runtimeType})";
   }
-
-  /// {@category execution}
-  Future<Exit<L, R>> _runEffect(E? env) async => _unsafeRun(env);
 
   /// {@category execution}
   R runSync(E env) {
@@ -83,7 +81,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   }
 
   /// {@category execution}
-  Future<Exit<L, R>> runFutureExit(E env) async => _runEffect(env);
+  Future<Exit<L, R>> runFutureExit(E env) async => _unsafeRun(env);
 
   /// {@category constructors}
   // ignore: non_constant_identifier_names
@@ -103,9 +101,9 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
     L Function(Object error, StackTrace stackTrace) onError,
   ) =>
       Effect._(
-        (env) async {
+        (env) {
           try {
-            return Exit.success(await execute());
+            return execute().then(Exit.success);
           } catch (e, s) {
             return Exit.failure(onError(e, s));
           }
@@ -114,7 +112,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 
   /// {@category constructors}
   factory Effect.function(FutureOr<R> Function() f) => Effect._(
-        (_) async => Exit.success(await f()),
+        (_) => f().then(Exit.success),
       );
 
   /// {@category constructors}
@@ -128,6 +126,56 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         (_) => Exit.success(f_unit.unit),
       );
 
+  /// {@category collecting}
+  static Effect<E, L, List<R>> allIterable<E, L, R, A>(
+    Iterable<A> iterable,
+    Effect<E, L, R> Function(A _) f,
+  ) =>
+      Effect._(
+        (env) {
+          if (iterable.isEmpty) {
+            return Exit.success([]);
+          }
+
+          return iterable
+              .map(f)
+              .fold<Effect<E, L, Iterable<R>>>(
+                Effect.succeed(Iterable.empty()),
+                (acc, effect) => acc.zipWith(
+                  effect,
+                  (list, r) => list.append(r),
+                ),
+              )
+              ._unsafeRun(env)
+              .then(
+                (exit) => switch (exit) {
+                  Failure(value: final value) => Exit.failure(value),
+                  Success(value: final value) => Exit.success(value.toList()),
+                },
+              );
+        },
+      );
+
+  /// {@category collecting}
+  static Effect<E, L, List<R>> all<E, L, R>(
+    Iterable<Effect<E, L, R>> iterable,
+  ) =>
+      Effect.allIterable(
+        iterable,
+        identity,
+      );
+
+  /// {@category zipping}
+  Effect<E, L, C> zipWith<B, C>(
+    Effect<E, L, B> effect,
+    C Function(R r, B b) f,
+  ) =>
+      flatMap(
+        (r) => effect.map(
+          (b) => f(r, b),
+        ),
+      );
+
   /// Extract the required dependency from the complete environment.
   ///
   /// {@category do_notation}
@@ -137,7 +185,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 
   /// {@category do_notation}
   static Effect<E, L, E> env<E, L>() => Effect._(
-        (env) async => Exit.success(env!),
+        (env) => Exit.success(env!),
       );
 
   /// {@category combining}
@@ -165,27 +213,31 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 
   /// {@category mapping}
   Effect<E, C, R> mapError<C>(C Function(L l) f) => Effect._(
-        (env) async => switch ((await _runEffect(env))) {
-          Failure(value: final value) => Exit.failure(f(value)),
-          Success(value: final value) => Exit.success(value),
-        },
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
+            Failure(value: final value) => Exit.failure(f(value)),
+            Success(value: final value) => Exit.success(value),
+          },
+        ),
       );
 
   /// {@category mapping}
   Effect<E, C, D> mapBoth<C, D>(C Function(L l) fl, D Function(R r) fr) =>
       Effect._(
-        (env) async => switch ((await _runEffect(env))) {
-          Failure(value: final value) => Exit.failure(fl(value)),
-          Success(value: final value) => Exit.success(fr(value)),
-        },
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
+            Failure(value: final value) => Exit.failure(fl(value)),
+            Success(value: final value) => Exit.success(fr(value)),
+          },
+        ),
       );
 
   /// {@category sequencing}
   Effect<E, L, C> flatMap<C>(Effect<E, L, C> Function(R r) f) => Effect._(
-        (env) => _runEffect(env).then(
-          (exit) async => switch (exit) {
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
             Failure(value: final value) => Future.value(Exit.failure(value)),
-            Success(value: final value) => f(value)._runEffect(env),
+            Success(value: final value) => f(value)._unsafeRun(env),
           },
         ),
       );
@@ -196,15 +248,13 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 
   /// {@category sequencing}
   Effect<E, L, R> tapError<C>(Effect<E, C, R> Function(L l) f) => Effect._(
-        (env) async {
-          switch ((await _runEffect(env))) {
-            case Failure(value: final value):
-              await f(value)._unsafeRun(env);
-              return Exit<L, R>.failure(value);
-            case Success(value: final value):
-              return Exit.success(value);
-          }
-        },
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
+            Failure(value: final value) =>
+              f(value)._unsafeRun(env).then((_) => Exit.failure(value)),
+            Success(value: final value) => Exit.success(value),
+          },
+        ),
       );
 
   /// {@category sequencing}
@@ -216,11 +266,13 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
     Effect<E, C, R> Function(L l) orElse,
   ) =>
       Effect._(
-        (env) async => switch ((await _unsafeRun(env))) {
-          Failure(value: final value) => orElse(value)._unsafeRun(env),
-          Success(value: final value) =>
-            Effect<E, C, R>.succeed(value)._unsafeRun(env),
-        },
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
+            Failure(value: final value) => orElse(value)._unsafeRun(env),
+            Success(value: final value) =>
+              Effect<E, C, R>.succeed(value)._unsafeRun(env),
+          },
+        ),
       );
 
   /// {@category error_handling}
@@ -228,11 +280,13 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
     Effect<E, Never, R> Function(L error) f,
   ) =>
       Effect._(
-        (env) async => switch ((await _unsafeRun(env))) {
-          Failure(value: final value) => f(value)._unsafeRun(env),
-          Success(value: final value) =>
-            Effect<E, Never, R>.succeed(value)._unsafeRun(env),
-        },
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
+            Failure(value: final value) => f(value)._unsafeRun(env),
+            Success(value: final value) =>
+              Effect<E, Never, R>.succeed(value)._unsafeRun(env),
+          },
+        ),
       );
 }
 
