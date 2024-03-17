@@ -5,7 +5,7 @@ import 'package:fpdart/src/extension/future_or_extension.dart';
 import 'package:fpdart/src/extension/iterable_extension.dart';
 import 'package:meta/meta.dart';
 
-import 'unit.dart' as f_unit;
+import 'unit.dart' as fpdart_unit;
 
 part 'either.dart';
 part 'option.dart';
@@ -111,6 +111,11 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category constructors}
+  factory Effect.fromNullable(R? value, L Function() onNull) => Effect._(
+        (_) => value == null ? Exit.failure(onNull()) : Exit.success(value),
+      );
+
+  /// {@category constructors}
   factory Effect.function(FutureOr<R> Function() f) => Effect._(
         (_) => f().then(Exit.success),
       );
@@ -122,8 +127,8 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   factory Effect.succeed(R value) => Effect._((_) => Exit.success(value));
 
   /// {@category constructors}
-  static Effect<Never, Never, f_unit.Unit> unit() => Effect._(
-        (_) => Exit.success(f_unit.unit),
+  static Effect<Never, Never, fpdart_unit.Unit> unit() => Effect._(
+        (_) => Exit.success(fpdart_unit.unit),
       );
 
   /// {@category collecting}
