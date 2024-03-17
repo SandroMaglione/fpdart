@@ -15,8 +15,8 @@ void main() async {
       final e1 = await _(effect1.mapError((l) => "null").provide(identity));
 
       final mapped = await _(effect.map((r) => r + 10).provide(identity));
-      final asEither = await _(NRight<String, int>(10).provide<int>());
-      final asOption = await _(NSome<int>(10).provide(() => "Some"));
+      final asEither = await _(Right<String, int>(10).provide<int>());
+      final asOption = await _(Some<int>(10).provide(() => "Some"));
       return beforeEnv + mapped + asEither + asOption + e1;
     },
   );

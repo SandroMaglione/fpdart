@@ -1,8 +1,6 @@
-import '../option.dart';
-import '../typeclass/eq.dart';
-import '../typeclass/order.dart';
+import '../effect.dart';
+import '../order.dart';
 import 'iterable_extension.dart';
-import 'option_extension.dart';
 
 /// Functional programming functions on a mutable dart [Map] using `fpdart`.
 extension FpdartOnMap<K, V> on Map<K, V> {
@@ -55,35 +53,16 @@ extension FpdartOnMap<K, V> on Map<K, V> {
   /// Get the value at given `key` if present, otherwise return [None].
   Option<V> lookup(K key) {
     var value = this[key];
-    if (value != null) return some(value);
-    if (containsKey(key)) return some(value as V);
+    if (value != null) return Some(value);
+    if (containsKey(key)) return Some(value as V);
     return const None();
   }
-
-  /// Get the key equal to `key` if present, otherwise return [None].
-  Option<K> lookupKeyEq(Eq<K> eq, K key) => keys.lookupEq(eq, key);
 
   /// Get the value and key at given `key` if present, otherwise return [None].
   Option<(K, V)> lookupWithKey(K key) {
     final value = this[key];
-    if (value != null) return some((key, value));
-    if (containsKey(key)) return some((key, value as V));
-    return const None();
-  }
-
-  /// Get the value at given `key` if present using `eq`, otherwise return [None].
-  Option<V> lookupEq(Eq<K> eq, K key) {
-    for (var entry in entries) {
-      if (eq.eqv(entry.key, key)) return some(entry.value);
-    }
-    return const None();
-  }
-
-  /// Get the value and key at given `key` if present using `eq`, otherwise return [None].
-  Option<(K, V)> lookupWithKeyEq(Eq<K> eq, K key) {
-    for (var entry in entries) {
-      if (eq.eqv(entry.key, key)) return some((entry.key, entry.value));
-    }
+    if (value != null) return Some((key, value));
+    if (containsKey(key)) return Some((key, value as V));
     return const None();
   }
 
@@ -98,7 +77,8 @@ extension FpdartOnMap<K, V> on Map<K, V> {
   /// ```
   Option<T> extract<T>(K key) {
     final value = this[key];
-    return value is T ? some(value) : const None();
+    if (value is T) return Some(value);
+    return const None();
   }
 
   /// Return an [Option] that conditionally accesses map keys if they contain a value
@@ -112,78 +92,10 @@ extension FpdartOnMap<K, V> on Map<K, V> {
   /// ```
   Option<Map<K, dynamic>> extractMap(K key) => extract<Map<K, dynamic>>(key);
 
-  /// If the given `key` is present in the [Map], then modify its value
-  /// using `update` and return the [Map].
-  ///
-  /// If multiple keys equal to [key] exist in the map, all of them are updated.
-  ///
-  /// Otherwise, return [None].
-  Option<Map<K, V>> modifyAt(
-    Eq<K> eq,
-    V Function(V value) update,
-    K key,
-  ) {
-    for (var entryKey in keys) {
-      if (eq.eqv(entryKey, key)) {
-        // At least one equal key exists in map.
-        return some({
-          for (var entry in entries)
-            entry.key:
-                eq.eqv(entry.key, key) ? update(entry.value) : entry.value
-        });
-      }
-    }
-    return const None();
-  }
-
-  /// If the given `key` is present in the [Map], then modify its value
-  /// using `update` and return a the new [Map].
-  ///
-  /// Otherwise, return a copy of the original unmodified [Map].
-  Map<K, V> modifyAtIfPresent(
-    Eq<K> eq,
-    V Function(V value) update,
-    K key,
-  ) =>
-      modifyAt(eq, update, key).getOrElse(() => {...this});
-
-  /// If the given `key` is present in the [Map], then update its value to `value`.
-  ///
-  /// Otherwise, return [None].
-  Option<Map<K, V>> updateAt(Eq<K> eq, K key, V value) =>
-      modifyAt(eq, (_) => value, key);
-
-  /// If the given `key` is present in the [Map], then update its value to `value`.
-  /// Otherwise, return a copy of the original unmodified [Map].
-  Map<K, V> updateAtIfPresent(
-    Eq<K> eq,
-    K key,
-    V value,
-  ) =>
-      updateAt(eq, key, value).getOrElse(
-        () => {...this},
-      );
-
   /// Delete entry at given `key` if present in the [Map] and return updated [Map].
   ///
   /// See also `pop`.
-  Map<K, V> deleteAt(Eq<K> eq, K key) =>
-      filterWithKey((k, v) => !eq.eqv(k, key));
-
-  /// Insert or replace a key/value pair in a [Map].
-  Map<K, V> upsertAt(Eq<K> eq, K key, V value) =>
-      modifyAt(eq, (_) => value, key).getOrElse(
-        () => {...this, key: value},
-      );
-
-  /// Delete a `key` and value from a this [Map], returning the deleted value as well as the updated [Map].
-  ///
-  /// If `key` is not present, then return [None].
-  ///
-  /// See also `deleteAt`.
-  Option<(V, Map<K, V>)> pop(Eq<K> eq, K key) => lookupEq(eq, key).map(
-        (v) => (v, deleteAt(eq, key)),
-      );
+  Map<K, V> deleteAt(K key) => filterWithKey((k, v) => k != key);
 
   /// Apply `compose` to all the values of this [Map] sorted based on `order` on their key,
   /// and return the result of combining all the intermediate values.
@@ -313,56 +225,11 @@ extension FpdartOnMap<K, V> on Map<K, V> {
     return result;
   }
 
-  /// Combine the key/value of this [Map] and `map` using `combine` where the key is the same.
-  Map<K, V> union(
-    Eq<K> eq,
-    V Function(V x, V y) combine,
-    Map<K, V> map,
-  ) {
-    var result = {...this};
-    for (var entry in map.entries) {
-      if (lookupKeyEq(eq, entry.key) case Some(value: var key)) {
-        result.update(key, (v) => combine(entry.value, v));
-      } else {
-        result[entry.key] = entry.value;
-      }
-    }
-    return result;
-  }
-
-  /// Intersect the key/value of two [Map] using `combine` where the key is the same.
-  Map<K, V> intersection(
-    Eq<K> eq,
-    V Function(V x, V y) combine,
-    Map<K, V> map,
-  ) =>
-      {
-        for (var entry in map.entries)
-          if (lookupEq(eq, entry.key) case Some(:var value))
-            entry.key: combine(value, entry.value)
-      };
-
   /// Remove from this [Map] all the elements that have **key** contained in the given `map`.
-  Map<K, V> difference(Eq<K> eq, Map<K, V> map) => filterWithKey(
+  Map<K, V> difference(Map<K, V> map) => filterWithKey(
         (key, value) => !map.keys.any(
-          (element) => eq.eqv(element, key),
+          (element) => element == key,
         ),
-      );
-
-  /// Test whether or not the given `map` contains all of the keys and values contained in this [Map].
-  bool isSubmap(
-    Eq<K> eqK,
-    Eq<V> eqV,
-    Map<K, V> map,
-  ) =>
-      foldLeftWithKey<bool>(
-        Order.allEqual(),
-        true,
-        (b, k, v) =>
-            b &&
-            map.entries.any(
-              (e) => eqK.eqv(e.key, k) && eqV.eqv(e.value, v),
-            ),
       );
 
   /// Collect all the entries in this [Map] into an [Iterable] using `compose`,

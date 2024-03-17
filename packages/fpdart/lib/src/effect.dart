@@ -4,8 +4,8 @@ import 'package:meta/meta.dart';
 
 import 'exit.dart';
 
-part 'n_either.dart';
-part 'n_option.dart';
+part 'either.dart';
+part 'option.dart';
 
 final class _EffectThrow<L> {
   final L value;
