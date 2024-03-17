@@ -14,7 +14,7 @@ final class _EffectThrow<L> {
 
 typedef DoAdapterEffect<E, L> = Future<A> Function<A>(IEffect<E, L, A>);
 
-DoAdapterEffect<E, L> _doAdapter<E, L>(E env) => <A>(effect) => Future.sync(
+DoAdapterEffect<E, L> _doAdapter<E, L>(E? env) => <A>(effect) => Future.sync(
       () => effect.asEffect._runEffect(env).then(
             (exit) => switch (exit) {
               Failure(value: final value) => throw _EffectThrow(value),
@@ -31,7 +31,11 @@ abstract interface class IEffect<E, L, R> {
 }
 
 final class Effect<E, L, R> extends IEffect<E, L, R> {
-  final FutureOr<Exit<L, R>> Function(E env) _unsafeRun;
+  /// `E?` is optional to allow [Never] to work (`provideNever`).
+  ///
+  /// In practice a user of the library should never be allowed to pass `null` as [E].
+  final FutureOr<Exit<L, R>> Function(E? env) _unsafeRun;
+
   const Effect._(this._unsafeRun);
 
   @override
@@ -43,7 +47,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   }
 
   /// {@category execution}
-  Future<Exit<L, R>> _runEffect(E env) async => _unsafeRun(env);
+  Future<Exit<L, R>> _runEffect(E? env) async => _unsafeRun(env);
 
   /// {@category execution}
   Future<Exit<L, R>> call(E env) => _runEffect(env);
@@ -117,12 +121,12 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   ///
   /// {@category do_notation}
   Effect<V, L, R> provide<V>(E Function(V env) f) => Effect._(
-        (env) => _unsafeRun(f(env)),
+        (env) => _unsafeRun(f(env!)),
       );
 
   /// {@category do_notation}
   static Effect<E, L, E> env<E, L>() => Effect._(
-        (env) async => Exit.success(env),
+        (env) async => Exit.success(env!),
       );
 
   /// {@category combining}
@@ -208,5 +212,14 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
           Success(value: final value) =>
             Effect<E, Never, R>.succeed(value)._unsafeRun(env),
         },
+      );
+}
+
+extension ProvideNever<L, R> on Effect<Never, L, R> {
+  /// Add a required dependency instead of [Never].
+  ///
+  /// {@category do_notation}
+  Effect<V, L, R> withEnv<V>() => Effect._(
+        (env) => _unsafeRun(null),
       );
 }
