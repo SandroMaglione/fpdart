@@ -24,7 +24,7 @@ void main() async {
           },
         ),
       )
-      .catchAll(
+      .catchError(
         (error) => Effect.function(
           () {
             print(error);

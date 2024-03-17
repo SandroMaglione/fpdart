@@ -199,7 +199,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category error_handling}
-  Effect<E, Never, R> catchAll(
+  Effect<E, Never, R> catchError(
     Effect<E, Never, R> Function(L error) f,
   ) =>
       Effect._(
