@@ -3,19 +3,35 @@ part of "effect.dart";
 sealed class Option<R> extends IEffect<Never, Never, R> {
   const Option();
 
+  factory Option.safeCast(dynamic value) =>
+      Option.safeCastStrict<R, dynamic>(value);
+
+  static Option<R> safeCastStrict<R, V>(V value) {
+    if (value is R) return Some(value);
+    return None();
+  }
+
+  factory Option.fromPredicate(R value, bool Function(R r) predicate) {
+    if (predicate(value)) return Some(value);
+    return None();
+  }
+
+  factory Option.fromNullable(R? value) {
+    if (value != null) return Some(value);
+    return None();
+  }
+
+  factory Option.tryCatch(R Function() f) {
+    try {
+      return Some(f());
+    } catch (_) {
+      return None();
+    }
+  }
+
   R? toNullable();
 
-  Either<L, R> toEither<L>(L Function() onLeft) => switch (this) {
-        Some(value: final value) => Right(value),
-        None() => Left(onLeft()),
-      };
-
-  Option<C> flatMap<C>(covariant Option<C> Function(R r) f) {
-    return switch (this) {
-      None() => None(),
-      Some(value: final value) => f(value),
-    };
-  }
+  Option<C> flatMap<C>(covariant Option<C> Function(R r) f);
 
   Option<V> ap<V>(
     covariant Option<V Function(R r)> f,
@@ -25,6 +41,11 @@ sealed class Option<R> extends IEffect<Never, Never, R> {
           (v) => Some(f(v)),
         ),
       );
+
+  Either<L, R> toEither<L>(L Function() onLeft) => switch (this) {
+        Some(value: final value) => Right(value),
+        None() => Left(onLeft()),
+      };
 
   Option<V> map<V>(V Function(R r) f) => ap(Some(f));
 
@@ -46,6 +67,12 @@ final class Some<R> extends Option<R> {
   Option<C> andThen<C>(covariant Option<C> Function() then) => then();
 
   @override
+  Option<C> flatMap<C>(covariant Option<C> Function(R r) f) => f(value);
+
+  @override
+  Effect<V, L, R> provide<L, V>(L Function() onNone) => Effect.succeed(value);
+
+  @override
   R toNullable() => value;
 
   @override
@@ -62,7 +89,10 @@ final class Some<R> extends Option<R> {
 }
 
 final class None extends Option<Never> {
-  const None();
+  static const None _none = None._instance();
+  const None._instance();
+
+  factory None() => _none;
 
   @override
   @internal
@@ -74,13 +104,10 @@ final class None extends Option<Never> {
   Option<C> andThen<C>(covariant Option<C> Function() then) => this;
 
   @override
+  Option<C> flatMap<C>(covariant Option<C> Function(Never r) f) => this;
+
+  @override
   Null toNullable() => null;
-
-  @override
-  bool operator ==(Object other) => other is None;
-
-  @override
-  int get hashCode => 0;
 
   @override
   String toString() => 'None';

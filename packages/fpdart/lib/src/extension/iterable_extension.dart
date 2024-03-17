@@ -19,7 +19,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
   Option<T> get head {
     var it = iterator;
     if (it.moveNext()) return Some(it.current);
-    return const None();
+    return None();
   }
 
   /// {@macro fpdart_iterable_extension_head}
@@ -33,7 +33,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// **Note**: Because accessing the last element of an [Iterable] requires
   /// stepping through all the other elements, `lastOption` **can be slow**.
   Option<T> get lastOption {
-    if (isEmpty) return const None();
+    if (isEmpty) return None();
     return Some(last);
   }
 
@@ -47,7 +47,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// at that point, the returned iterable will also be empty, same
   /// as if this iterable has only one element.
   Option<Iterable<T>> get tail {
-    if (isEmpty) return const None();
+    if (isEmpty) return None();
     return Some(skip(1));
   }
 
@@ -61,7 +61,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// at that point, the returned iterable will also be empty, same
   /// as if this iterable has only one element.
   Option<Iterable<T>> get init {
-    if (isEmpty) return const None();
+    if (isEmpty) return None();
     return Some(this.dropRight(1));
   }
 
@@ -332,7 +332,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
       }
       return Some(min);
     }
-    return const None();
+    return None();
   }
 
   /// The least element of this [Iterable] based on `order`.
@@ -349,7 +349,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
       }
       return Some(min);
     }
-    return const None();
+    return None();
   }
 
   /// Apply all the functions inside `iterable` to this [Iterable].
