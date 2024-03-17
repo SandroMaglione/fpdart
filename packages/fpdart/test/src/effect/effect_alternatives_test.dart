@@ -16,7 +16,7 @@ void main() {
 
         test('fail', () {
           final main = Effect.fail(10).orDie;
-          expect(() => main.runSync(null), throwsException);
+          expect(() => main.runSync(null), throwsA(isA<Die>()));
         });
       });
 
@@ -29,7 +29,7 @@ void main() {
 
         test('fail', () {
           final main = Effect.fail(10).orDieWith((_) => CustomError());
-          expect(() => main.runSync(null), throwsA(isA<CustomError>()));
+          expect(() => main.runSync(null), throwsA(isA<Die>()));
         });
       });
     },

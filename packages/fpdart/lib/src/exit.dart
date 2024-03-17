@@ -1,37 +1,105 @@
-sealed class Exit<L, R> {
-  const Exit();
-  factory Exit.success(R value) => Success(value);
-  factory Exit.failure(L value) => Failure(value);
+import 'effect.dart';
+
+typedef Exit<L, R> = Either<Cause<L>, R>;
+
+sealed class Cause<L> {
+  const Cause();
+
+  StackTrace? get stackTrace;
+
+  Cause<L> withTrace(StackTrace stack);
 }
 
-class Success<L, R> extends Exit<L, R> {
-  final R value;
-  const Success(this.value);
+/// Represents a lack of errors
+final class Empty extends Cause<Never> {
+  @override
+  final StackTrace? stackTrace;
+
+  const Empty([this.stackTrace]);
 
   @override
-  bool operator ==(Object other) => (other is Success) && other.value == value;
-
-  @override
-  int get hashCode => value.hashCode;
+  Empty withTrace(StackTrace stack) => stackTrace == null ? Empty(stack) : this;
 
   @override
   String toString() {
-    return "Exit.Success($value)";
+    return "Cause.Empty()";
   }
 }
 
-class Failure<L, R> extends Exit<L, R> {
-  final L value;
-  const Failure(this.value);
+final class Interrupt extends Cause<Never> {
+  @override
+  final StackTrace? stackTrace;
+
+  const Interrupt([this.stackTrace]);
 
   @override
-  bool operator ==(Object other) => (other is Failure) && other.value == value;
+  Interrupt withTrace(StackTrace stack) =>
+      stackTrace == null ? Interrupt(stack) : this;
 
   @override
-  int get hashCode => value.hashCode;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Interrupt && runtimeType == other.runtimeType;
+
+  @override
+  int get hashCode => 0;
 
   @override
   String toString() {
-    return "Exit.Failure($value)";
+    return "Cause.Interrupt()";
+  }
+}
+
+/// Failed as a result of a defect (unexpected error)
+final class Die extends Cause<Never> {
+  final dynamic error;
+  final StackTrace defectStackTrace;
+
+  @override
+  final StackTrace? stackTrace;
+
+  const Die(this.error, this.defectStackTrace, [this.stackTrace]);
+
+  factory Die.current(dynamic error, [StackTrace? stackTrace]) =>
+      Die(error, StackTrace.current, stackTrace);
+
+  @override
+  Die withTrace(StackTrace stack) =>
+      stackTrace == null ? Die(error, defectStackTrace, stack) : this;
+
+  @override
+  bool operator ==(Object other) => (other is Fail) && other.error == error;
+
+  @override
+  int get hashCode => error.hashCode;
+
+  @override
+  String toString() {
+    return "Cause.Die($error)";
+  }
+}
+
+/// Failed with an expected error
+final class Fail<L> extends Cause<L> {
+  final L error;
+
+  @override
+  final StackTrace? stackTrace;
+
+  const Fail(this.error, [this.stackTrace]);
+
+  @override
+  Fail<L> withTrace(StackTrace stack) =>
+      stackTrace == null ? Fail(error, stack) : this;
+
+  @override
+  bool operator ==(Object other) => (other is Fail) && other.error == error;
+
+  @override
+  int get hashCode => error.hashCode;
+
+  @override
+  String toString() {
+    return "Cause.Fail($error)";
   }
 }

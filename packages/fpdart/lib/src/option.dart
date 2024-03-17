@@ -50,8 +50,8 @@ sealed class Option<R> extends IEffect<Never, Never, R> {
 
   Effect<V, L, R> provide<L, V>(L Function() onNone) => Effect._(
         (env) => switch (this) {
-          None() => Exit.failure(onNone()),
-          Some(value: final value) => Exit.success(value),
+          None() => Left(Fail(onNone())),
+          Some(value: final value) => Right(value),
         },
       );
 }
