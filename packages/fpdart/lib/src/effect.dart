@@ -274,6 +274,30 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         ),
       );
 
+  /// {@category alternatives}
+  Effect<E, Never, R> get orDie => Effect._(
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
+            Failure(value: final value) =>
+              throw Exception("orDie effect ($value)"),
+            Success(value: final value) =>
+              Effect<E, Never, R>.succeed(value)._unsafeRun(env),
+          },
+        ),
+      );
+
+  /// {@category alternatives}
+  Effect<E, Never, R> orDieWith<T extends Object>(T Function(L l) onError) =>
+      Effect._(
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
+            Failure(value: final value) => throw onError(value),
+            Success(value: final value) =>
+              Effect<E, Never, R>.succeed(value)._unsafeRun(env),
+          },
+        ),
+      );
+
   /// {@category error_handling}
   Effect<E, Never, R> catchError(
     Effect<E, Never, R> Function(L error) f,
