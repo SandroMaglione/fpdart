@@ -2,8 +2,8 @@ import 'package:fpdart/fpdart.dart';
 
 void main() async {
   final effect = Effect<Never, String, int>.tryCatch(
-    () => Future.value(10),
-    (error, stackTrace) => "10",
+    execute: () => Future.value(10),
+    onError: (error, stackTrace) => "10",
   );
 
   final effect1 = Effect<Never, String, int>.function(() => 10);

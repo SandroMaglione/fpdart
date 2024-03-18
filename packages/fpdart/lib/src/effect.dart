@@ -102,10 +102,11 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category constructors}
-  factory Effect.tryCatch(
-    FutureOr<R> Function() execute,
-    L Function(Object error, StackTrace stackTrace) onError,
-  ) =>
+  factory Effect.tryCatch({
+    required FutureOr<R> Function() execute,
+    required L Function(Object error, StackTrace stackTrace) onError,
+    FutureOr<dynamic> Function()? onCancel,
+  }) =>
       Effect._(
         (env) {
           try {
