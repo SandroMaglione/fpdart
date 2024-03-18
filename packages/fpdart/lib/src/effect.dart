@@ -365,4 +365,38 @@ extension ProvideNever<L, R> on Effect<Never, L, R> {
   Effect<V, L, R> withEnv<V>() => Effect._(
         (env) => _unsafeRun(null),
       );
+
+  /// {@category execution}
+  R runSyncNoEnv() {
+    final result = _unsafeRun(null);
+    if (result is Future) {
+      throw Die.current(result, stackTrace);
+    }
+
+    return switch (result) {
+      Left(value: final cause) => throw cause,
+      Right(value: final value) => value,
+    };
+  }
+
+  /// {@category execution}
+  Exit<L, R> runSyncExitNoEnv() {
+    final result = _unsafeRun(null);
+    if (result is Future) {
+      return Left(Die.current(""));
+    }
+    return result;
+  }
+
+  /// {@category execution}
+  Future<R> runFutureNoEnv() async {
+    final result = await _unsafeRun(null);
+    return switch (result) {
+      Left(value: final cause) => throw cause,
+      Right(value: final value) => value,
+    };
+  }
+
+  /// {@category execution}
+  Future<Exit<L, R>> runFutureExitNoEnv() async => _unsafeRun(null);
 }
