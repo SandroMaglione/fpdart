@@ -26,30 +26,6 @@ final class Empty extends Cause<Never> {
   }
 }
 
-final class Interrupt extends Cause<Never> {
-  @override
-  final StackTrace? stackTrace;
-
-  const Interrupt([this.stackTrace]);
-
-  @override
-  Interrupt withTrace(StackTrace stack) =>
-      stackTrace == null ? Interrupt(stack) : this;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Interrupt && runtimeType == other.runtimeType;
-
-  @override
-  int get hashCode => 0;
-
-  @override
-  String toString() {
-    return "Cause.Interrupt()";
-  }
-}
-
 /// Failed as a result of a defect (unexpected error)
 final class Die extends Cause<Never> {
   final dynamic error;
