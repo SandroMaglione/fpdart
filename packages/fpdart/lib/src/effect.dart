@@ -139,9 +139,9 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category collecting}
-  static Effect<E, L, Iterable<R>> allIterable<E, L, R, A>(
+  static Effect<E, L, Iterable<R>> forEach<E, L, R, A>(
     Iterable<A> iterable,
-    Effect<E, L, R> Function(A _) f,
+    Effect<E, L, R> Function(A a, int index) f,
   ) =>
       Effect._(
         (env) {
@@ -150,7 +150,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
           }
 
           return iterable
-              .map(f)
+              .mapWithIndex(f)
               .fold<Effect<E, L, Iterable<R>>>(
                 Effect.succeed(Iterable.empty()),
                 (acc, effect) => acc.zipWith(
@@ -166,10 +166,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   static Effect<E, L, Iterable<R>> all<E, L, R>(
     Iterable<Effect<E, L, R>> iterable,
   ) =>
-      Effect.allIterable(
-        iterable,
-        identity,
-      );
+      Effect.forEach(iterable, (a, _) => a);
 
   /// {@category zipping}
   Effect<E, L, C> zipWith<B, C>(
