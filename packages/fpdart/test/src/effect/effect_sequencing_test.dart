@@ -5,8 +5,14 @@ void main() {
   group(
     "Effect constructors",
     () {
-      test('andThen', () {
-        final main = Effect.succeed(10).andThen(() => Effect.succeed("10"));
+      test('zipLeft', () {
+        final main = Effect.succeed(10).zipLeft(Effect.succeed("10"));
+        final result = main.runSync(null);
+        expect(result, 10);
+      });
+
+      test('zipRight', () {
+        final main = Effect.succeed(10).zipRight(Effect.succeed("10"));
         final result = main.runSync(null);
         expect(result, "10");
       });

@@ -182,6 +182,22 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         ),
       );
 
+  /// {@category zipping}
+  Effect<E, L, R> zipLeft<C>(
+    Effect<E, L, C> effect,
+  ) =>
+      flatMap(
+        (r) => effect.map(
+          (_) => r,
+        ),
+      );
+
+  /// {@category zipping}
+  Effect<E, L, C> zipRight<C>(
+    Effect<E, L, C> effect,
+  ) =>
+      flatMap((_) => effect);
+
   /// Extract the required dependency from the complete environment.
   ///
   /// {@category do_notation}
@@ -279,10 +295,6 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
           },
         ),
       );
-
-  /// {@category sequencing}
-  Effect<E, L, C> andThen<C>(Effect<E, L, C> Function() then) =>
-      flatMap((_) => then());
 
   /// {@category alternatives}
   Effect<E, C, R> orElse<C>(
