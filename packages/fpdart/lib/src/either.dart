@@ -15,12 +15,12 @@ sealed class Either<L, R> extends IEffect<Never, L, R> {
   factory Either.fromNullable(R? r, L Function() onNull) =>
       r != null ? Right(r) : Left(onNull());
 
-  factory Either.tryCatch(
-    R Function() run,
-    L Function(Object o, StackTrace s) onError,
-  ) {
+  factory Either.tryCatch({
+    required R Function() execute,
+    required L Function(Object o, StackTrace s) onError,
+  }) {
     try {
-      return Right(run());
+      return Right(execute());
     } catch (e, s) {
       return Left(onError(e, s));
     }
