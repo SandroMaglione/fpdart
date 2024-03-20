@@ -12,17 +12,17 @@ Effect<http.Client, HttpError, http.Response> get(
     /// 2️⃣ Use the Do notation with the `gen` constructor
     Effect.gen((_) async {
       /// 3️⃣ Extract the dependency using `env` (environment)
-      final client = await _(Effect.env());
+      final client = _.sync(Effect.env());
 
       /// 4️⃣ Perform a request, catch errors, extract the response
-      final response = await _(Effect.tryCatch(
+      final response = await _.async(Effect.tryCatch(
         execute: () => client.get(url, headers: headers),
         onError: (_, __) => const RequestError(),
       ));
 
       /// 5️⃣ Use plain dart code to check for valid status
       if (response.statusCode != 200) {
-        return await _(Effect.fail(const ResponseError()));
+        return _.sync(Effect.fail(const ResponseError()));
       }
 
       /// 6️⃣ Return extracted/valid response

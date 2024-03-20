@@ -13,9 +13,9 @@ Effect<(HttpClient, JsonCodec), PokemonError, Pokemon> program(
   String pokemonId,
 ) =>
     Effect.gen(($) async {
-      final (client, json) = await $(Effect.env());
+      final (client, json) = $.sync(Effect.env());
 
-      final id = await $(
+      final id = $.sync(
         Either.fromNullable(
           int.tryParse(pokemonId),
           PokemonIdNotInt.new,
@@ -23,28 +23,28 @@ Effect<(HttpClient, JsonCodec), PokemonError, Pokemon> program(
       );
 
       if (id < Constants.minimumPokemonId && id > Constants.maximumPokemonId) {
-        return await $(Effect.fail(const InvalidPokemonIdRange()));
+        return $.sync(Effect.fail(const InvalidPokemonIdRange()));
       }
 
       final uri = Uri.parse(Constants.requestAPIUrl(id));
-      final body = await $(Effect.tryCatch(
+      final body = await $.async(Effect.tryCatch(
         execute: () => client.get(uri),
         onError: (_, __) => const GetPokemonRequestError(),
       ));
 
-      final bodyJson = await $(Either.tryCatch(
+      final bodyJson = $.sync(Either.tryCatch(
         execute: () => json.decode(body),
         onError: (_, __) => const PokemonJsonDecodeError(),
       ));
 
-      final bodyJsonMap = await $<Map<String, dynamic>>(
+      final bodyJsonMap = $.sync<Map<String, dynamic>>(
         Either.safeCastStrict(
           bodyJson,
           (value) => const PokemonJsonInvalidMap(),
         ),
       );
 
-      return $(Effect.tryCatch(
+      return $.sync(Effect.tryCatch(
         execute: () => Pokemon.fromJson(bodyJsonMap),
         onError: (_, __) => const PokemonInvalidJsonModel(),
       ));

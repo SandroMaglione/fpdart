@@ -10,23 +10,48 @@ import 'unit.dart' as fpdart_unit;
 part 'either.dart';
 part 'option.dart';
 
+typedef EffectGen<E, L> = ({
+  FutureOr<A> Function<A>(IEffect<E, L, A>) async,
+  A Function<A>(IEffect<E, L, A>) sync,
+});
+
 final class _EffectThrow<L> {
   final Cause<L> cause;
   const _EffectThrow(this.cause);
+
+  @override
+  String toString() {
+    return "Effect.gen error: $cause";
+  }
 }
 
-typedef DoAdapterEffect<E, L> = Future<A> Function<A>(IEffect<E, L, A>);
-
-DoAdapterEffect<E, L> _doAdapter<E, L>(E? env) => <A>(effect) => Future.sync(
-      () => effect.asEffect._unsafeRun(env).then(
-            (exit) => switch (exit) {
-              Left(value: final cause) => throw _EffectThrow(cause),
-              Right(value: final value) => value,
-            },
+EffectGen<E, L> _effectGen<E, L>(E? env) => (
+      async: <A>(effect) => Future.sync(
+            () => effect.asEffect._unsafeRun(env).then(
+                  (exit) => switch (exit) {
+                    Left(value: final cause) => throw _EffectThrow(cause),
+                    Right(value: final value) => value,
+                  },
+                ),
           ),
+      sync: <A>(effect) {
+        final run = effect.asEffect._unsafeRun(env);
+        if (run is Future) {
+          throw _EffectThrow<L>(
+            Die.current("Cannot execute a Future using sync"),
+          );
+        }
+
+        return switch (run) {
+          Left(value: final cause) => throw _EffectThrow(cause),
+          Right(value: final value) => value,
+        };
+      },
     );
 
-typedef DoFunctionEffect<E, L, A> = Future<A> Function(DoAdapterEffect<E, L> _);
+typedef DoFunctionEffect<E, L, A> = FutureOr<A> Function(
+  EffectGen<E, L> $,
+);
 
 abstract interface class IEffect<E, L, R> {
   const IEffect();
@@ -92,9 +117,9 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   /// {@category constructors}
   // ignore: non_constant_identifier_names
   factory Effect.gen(DoFunctionEffect<E, L, R> f) => Effect<E, L, R>._(
-        (env) async {
+        (env) {
           try {
-            return Right(await f(_doAdapter<E, L>(env)));
+            return f(_effectGen<E, L>(env)).then(Right.new);
           } on _EffectThrow<L> catch (err) {
             return Left(err.cause);
           }
