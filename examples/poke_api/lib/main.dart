@@ -35,7 +35,7 @@ Effect<Env, PokemonError, Pokemon> program(
       final id = $.sync(Either.fromNullable(
         int.tryParse(pokemonId),
         PokemonIdNotInt.new,
-      ).provide());
+      ));
 
       if (id < Constants.minimumPokemonId && id > Constants.maximumPokemonId) {
         return $.sync(Effect.fail(const InvalidPokemonIdRange()));
@@ -48,14 +48,14 @@ Effect<Env, PokemonError, Pokemon> program(
         Either.tryCatch(
           execute: () => json.decode(body),
           onError: (_, __) => const PokemonJsonDecodeError(),
-        ).provide(),
+        ),
       );
 
       final bodyJsonMap = $.sync<Map<String, dynamic>>(
         Either.safeCastStrict<PokemonError, Map<String, dynamic>, dynamic>(
           bodyJson,
           (value) => const PokemonJsonInvalidMap(),
-        ).provide(),
+        ),
       );
 
       return $.sync(Effect.tryCatch(
