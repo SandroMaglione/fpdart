@@ -61,7 +61,7 @@ final class Some<R> extends Option<R> {
   const Some(this.value);
 
   @override
-  Effect<Never, Never, R> get asEffect => Effect.succeed(value);
+  Effect<Never, Never, R> get asEffect => Effect._((_) => Right(value));
 
   @override
   Effect<V, L, R> provide<L, V>(L Function() onNone) => Effect.succeed(value);
@@ -94,11 +94,9 @@ final class None extends Option<Never> {
   factory None() => _none;
 
   @override
-  @internal
-
-  /// **This will always throw, don't use it!**
-  // ignore: cast_from_null_always_fails
-  Effect<Never, Never, Never> get asEffect => Effect.fail(null as Never);
+  Effect<Never, Never, Never> get asEffect =>
+      // ignore: cast_from_null_always_fails
+      Effect._((_) => Left(Fail(null as Never)));
 
   Option<C> andThen<C>(Option<C> Function() then) => this;
 

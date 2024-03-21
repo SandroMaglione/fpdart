@@ -7,12 +7,12 @@ import 'package:poke_api/pokemon.dart';
 import 'package:poke_api/pokemon_error.dart';
 
 abstract interface class HttpClient {
-  Effect<Never, PokemonError, String> get(Uri uri);
+  Effect<E, PokemonError, String> get<E>(Uri uri);
 }
 
 class Http implements HttpClient {
   @override
-  Effect<Never, PokemonError, String> get(Uri uri) => Effect.gen(
+  Effect<E, PokemonError, String> get<E>(Uri uri) => Effect.gen(
         ($) async {
           final response = await $.async(Effect.tryCatch(
             execute: () => http.get(uri),
