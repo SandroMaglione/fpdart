@@ -127,7 +127,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category constructors}
-  factory Effect.tryCatch({
+  static Effect<void, L, R> tryCatch<L, R>({
     required FutureOr<R> Function() execute,
     required L Function(Object error, StackTrace stackTrace) onError,
     FutureOr<dynamic> Function()? onCancel,
@@ -143,20 +143,24 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category constructors}
-  factory Effect.fromNullable(R? value, L Function() onNull) => Effect._(
+  static Effect<void, L, R> fromNullable<L, R>(R? value, L Function() onNull) =>
+      Effect._(
         (_) => value == null ? Left(Fail(onNull())) : Right(value),
       );
 
   /// {@category constructors}
-  factory Effect.function(FutureOr<R> Function() f) => Effect._(
+  static Effect<void, void, R> function<R>(FutureOr<R> Function() f) =>
+      Effect._(
         (_) => f().then(Right.new),
       );
 
   /// {@category constructors}
-  factory Effect.fail(L value) => Effect._((_) => Left(Fail(value)));
+  static Effect<void, L, Never> fail<L>(L value) =>
+      Effect._((_) => Left(Fail(value)));
 
   /// {@category constructors}
-  factory Effect.succeed(R value) => Effect._((_) => Right(value));
+  static Effect<void, void, R> succeed<R>(R value) =>
+      Effect._((_) => Right(value));
 
   /// {@category constructors}
   static Effect<Never, Never, fpdart_unit.Unit> unit() => Effect._(

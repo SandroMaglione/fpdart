@@ -1,6 +1,6 @@
 part of "effect.dart";
 
-sealed class Either<L, R> extends IEffect<Null, L, R> {
+sealed class Either<L, R> extends IEffect<void, L, R> {
   const Either();
 
   /// If calling `predicate` with `r` returns `true`, then return `Right(r)`.
@@ -67,7 +67,7 @@ final class Right<L, R> extends Either<L, R> {
   const Right(this.value);
 
   @override
-  Effect<Never, L, R> get asEffect => Effect.succeed(value);
+  Effect<void, L, R> get asEffect => Effect.succeed(value);
 
   Either<L, C> andThen<C>(Either<L, C> Function() then) => then();
 
@@ -115,7 +115,7 @@ final class Left<L, R> extends Either<L, R> {
   const Left(this.value);
 
   @override
-  Effect<Never, L, R> get asEffect => Effect.fail(value);
+  Effect<void, L, R> get asEffect => Effect.fail(value);
 
   Either<L, C> andThen<C>(Either<L, C> Function() then) => Left(value);
 

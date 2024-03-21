@@ -1,6 +1,6 @@
 part of "effect.dart";
 
-sealed class Option<R> extends IEffect<Never, Never, R> {
+sealed class Option<R> extends IEffect<void, Never, R> {
   const Option();
 
   factory Option.safeCast(dynamic value) =>
@@ -61,15 +61,15 @@ final class Some<R> extends Option<R> {
   const Some(this.value);
 
   @override
-  Effect<Never, Never, R> get asEffect => Effect.succeed(value);
+  Effect<void, Never, R> get asEffect => Effect.succeed(value).orDie;
+
+  @override
+  Effect<V, L, R> provide<L, V>(L Function() onNone) => Effect.succeed(value);
 
   Option<C> andThen<C>(Option<C> Function() then) => then();
 
   @override
   Option<C> flatMap<C>(Option<C> Function(R r) f) => f(value);
-
-  @override
-  Effect<V, L, R> provide<L, V>(L Function() onNone) => Effect.succeed(value);
 
   @override
   R toNullable() => value;
@@ -98,7 +98,7 @@ final class None extends Option<Never> {
 
   /// **This will always throw, don't use it!**
   // ignore: cast_from_null_always_fails
-  Effect<Never, Never, Never> get asEffect => Effect.fail(null as Never);
+  Effect<void, Never, Never> get asEffect => Effect.fail(null as Never);
 
   Option<C> andThen<C>(Option<C> Function() then) => this;
 

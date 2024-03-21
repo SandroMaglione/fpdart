@@ -44,10 +44,12 @@ Effect<Env, PokemonError, Pokemon> program(
       final uri = Uri.parse(Constants.requestAPIUrl(id));
       final body = await $.async(client.get(uri).provideVoid());
 
-      final bodyJson = $.sync(Either.tryCatch(
-        execute: () => json.decode(body),
-        onError: (_, __) => const PokemonJsonDecodeError(),
-      ).provide());
+      final bodyJson = $.sync(
+        Either.tryCatch(
+          execute: () => json.decode(body),
+          onError: (_, __) => const PokemonJsonDecodeError(),
+        ).provide(),
+      );
 
       final bodyJsonMap = $.sync<Map<String, dynamic>>(
         Either.safeCastStrict<PokemonError, Map<String, dynamic>, dynamic>(
