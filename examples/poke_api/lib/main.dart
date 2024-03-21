@@ -65,12 +65,14 @@ Effect<Env, PokemonError, Pokemon> program(
     });
 
 void main() async {
-  await program("721")
+  final exit = await program("72jj1")
       .map((pokemon) => print(pokemon))
       .catchError(
         (error) => Effect.function(
           () => print("No pokemon: $error"),
         ),
       )
-      .runFuture((Http(), JsonCodec()));
+      .runFutureExit((Http(), JsonCodec()));
+
+  print(exit);
 }

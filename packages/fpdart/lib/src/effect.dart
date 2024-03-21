@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:fpdart/fpdart.dart';
 import 'package:fpdart/src/extension/future_or_extension.dart';
 import 'package:fpdart/src/extension/iterable_extension.dart';
-import 'package:meta/meta.dart';
 
 import 'unit.dart' as fpdart_unit;
 
@@ -15,7 +14,7 @@ typedef EffectGen<E, L> = ({
   A Function<A>(IEffect<E, L, A>) sync,
 });
 
-final class _EffectThrow<L> {
+final class _EffectThrow<L> implements Exception {
   final Cause<L> cause;
   const _EffectThrow(this.cause);
 
@@ -29,7 +28,7 @@ EffectGen<E, L> _effectGen<E, L>(E? env) => (
       async: <A>(effect) => Future.sync(
             () => effect.asEffect._unsafeRun(env).then(
                   (exit) => switch (exit) {
-                    Left(value: final cause) => throw _EffectThrow(cause),
+                    Left(value: final cause) => throw _EffectThrow<L>(cause),
                     Right(value: final value) => value,
                   },
                 ),
@@ -43,7 +42,7 @@ EffectGen<E, L> _effectGen<E, L>(E? env) => (
         }
 
         return switch (run) {
-          Left(value: final cause) => throw _EffectThrow(cause),
+          Left(value: final cause) => throw _EffectThrow<L>(cause),
           Right(value: final value) => value,
         };
       },
@@ -115,14 +114,16 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   Future<Exit<L, R>> runFutureExit(E env) async => _unsafeRun(env);
 
   /// {@category constructors}
-  // ignore: non_constant_identifier_names
   factory Effect.gen(DoFunctionEffect<E, L, R> f) => Effect<E, L, R>._(
         (env) {
-          try {
-            return f(_effectGen<E, L>(env)).then(Right.new);
-          } on _EffectThrow<L> catch (err) {
-            return Left(err.cause);
-          }
+          return f(_effectGen<E, L>(env)).then(
+            Right.new,
+            onError: (dynamic error, dynamic stackTrack) {
+              if (error is _EffectThrow<L>) {
+                return Left<Cause<L>, R>(error.cause);
+              }
+            },
+          );
         },
       );
 

@@ -2,11 +2,8 @@ import 'effect.dart';
 
 typedef Exit<L, R> = Either<Cause<L>, R>;
 
-sealed class Cause<L> {
+sealed class Cause<L> implements Error {
   const Cause();
-
-  StackTrace? get stackTrace;
-
   Cause<L> withTrace(StackTrace stack);
 }
 
