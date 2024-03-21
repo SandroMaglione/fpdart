@@ -17,4 +17,9 @@ class Pokemon {
         height: json['height'] as int,
         weight: json['weight'] as int,
       );
+
+  @override
+  String toString() {
+    return "Pokemon(id:$id, name:$name, height:$height, weight:$weight)";
+  }
 }

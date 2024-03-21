@@ -1,6 +1,6 @@
 part of "effect.dart";
 
-sealed class Either<L, R> extends IEffect<Never, L, R> {
+sealed class Either<L, R> extends IEffect<Null, L, R> {
   const Either();
 
   /// If calling `predicate` with `r` returns `true`, then return `Right(r)`.

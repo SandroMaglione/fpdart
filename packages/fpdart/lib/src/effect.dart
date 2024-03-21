@@ -425,3 +425,8 @@ extension ProvideNever<L, R> on Effect<Never, L, R> {
   /// {@category execution}
   Future<Exit<L, R>> runFutureExitNoEnv() async => _unsafeRun(null);
 }
+
+extension ProvideVoid<L, R> on Effect<void, L, R> {
+  /// {@category execution}
+  Effect<V, L, R> provideVoid<V>() => provide((env) {});
+}
