@@ -37,7 +37,7 @@ Effect<Env, PokemonError, Pokemon> program(
         PokemonIdNotInt.new,
       ));
 
-      if (id < Constants.minimumPokemonId && id > Constants.maximumPokemonId) {
+      if (id < Constants.minimumPokemonId || id > Constants.maximumPokemonId) {
         return $.sync(Effect.fail(const InvalidPokemonIdRange()));
       }
 
@@ -65,9 +65,9 @@ Effect<Env, PokemonError, Pokemon> program(
     });
 
 void main() async {
-  final exit = await program("72jj1")
+  final exit = await program("9722")
       .map((pokemon) => print(pokemon))
-      .catchError(
+      .catchError<void>(
         (error) => Effect.function(
           () => print("No pokemon: $error"),
         ),

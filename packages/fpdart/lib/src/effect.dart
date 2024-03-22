@@ -103,15 +103,29 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 
   /// {@category execution}
   Future<R> runFuture(E env) async {
-    final result = await _unsafeRun(env);
-    return switch (result) {
+    final result = _unsafeRun(env);
+    if (result is! Future) {
+      print(
+        "You can use runSync instead of runFuture since the Effect is synchronous",
+      );
+    }
+
+    return switch (await result) {
       Left(value: final cause) => throw cause,
       Right(value: final value) => value,
     };
   }
 
   /// {@category execution}
-  Future<Exit<L, R>> runFutureExit(E env) async => _unsafeRun(env);
+  Future<Exit<L, R>> runFutureExit(E env) async {
+    final result = _unsafeRun(env);
+    if (result is! Future) {
+      print(
+        "You can use runSyncExit instead of runFutureExit since the Effect is synchronous",
+      );
+    }
+    return result;
+  }
 
   /// {@category constructors}
   factory Effect.gen(DoFunctionEffect<E, L, R> f) => Effect<E, L, R>._(
@@ -366,8 +380,8 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category error_handling}
-  Effect<E, Never, R> catchError(
-    Effect<E, Never, R> Function(L error) f,
+  Effect<E, C, R> catchError<C>(
+    Effect<E, C, R> Function(L error) f,
   ) =>
       Effect._(
         (env) => _unsafeRun(env).then(
@@ -380,6 +394,20 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
             Right(value: final value) =>
               Effect<E, Never, R>.succeed(value)._unsafeRun(env),
           },
+        ),
+      );
+
+  /// {@category error_handling}
+  Effect<E, C, R> catchCause<C>(
+    Effect<E, C, R> Function(Cause<L> cause) f,
+  ) =>
+      Effect._(
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
+            Left(value: final cause) => f(cause),
+            Right(value: final value) => Effect<E, C, R>.succeed(value),
+          }
+              ._unsafeRun(env),
         ),
       );
 }
