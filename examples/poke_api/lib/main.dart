@@ -68,7 +68,7 @@ void main() async {
   final exit = await program("9722")
       .map((pokemon) => print(pokemon))
       .catchError<void>(
-        (error) => Effect.function(
+        (error) => Effect.functionSucceed(
           () => print("No pokemon: $error"),
         ),
       )

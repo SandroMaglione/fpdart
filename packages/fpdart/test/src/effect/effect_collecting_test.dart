@@ -20,7 +20,7 @@ void main() {
           final main = Effect.all<dynamic, String, int>([
             Effect.succeed(10),
             Effect.fail("10"),
-            Effect.function(() => mutable += 1),
+            Effect.functionSucceed(() => mutable += 1),
             Effect.fail("0"),
           ]);
           final result = main.flip.runSync(null);

@@ -8,7 +8,7 @@ void main() async {
     Uri.https("pokeapi.co", "/api/v2/pokemon/10"),
   )
       .tap(
-        (response) => Effect.function(
+        (response) => Effect.functionSucceed(
           () => print(response.body),
         ),
       )

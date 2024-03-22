@@ -62,14 +62,8 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   ///
   /// In practice a user of the library should never be allowed to pass `null` as [E].
   final FutureOr<Exit<L, R>> Function(E? env) _unsafeRun;
-  final StackTrace? stackTrace;
 
-  static bool debugTracing = false;
-
-  const Effect._(
-    this._unsafeRun, {
-    this.stackTrace,
-  });
+  const Effect._(this._unsafeRun);
 
   @override
   Effect<E, L, R> get asEffect => this;
@@ -83,7 +77,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   R runSync(E env) {
     final result = _unsafeRun(env);
     if (result is Future) {
-      throw Die.current(result, stackTrace);
+      throw Die.current(result);
     }
 
     return switch (result) {
@@ -163,7 +157,12 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category constructors}
-  factory Effect.function(FutureOr<R> Function() f) => Effect._(
+  factory Effect.functionFail(FutureOr<Cause<L>> Function() f) => Effect._(
+        (_) => f().then(Left.new),
+      );
+
+  /// {@category constructors}
+  factory Effect.functionSucceed(FutureOr<R> Function() f) => Effect._(
         (_) => f().then(Right.new),
       );
 
@@ -174,9 +173,9 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   factory Effect.succeed(R value) => Effect._((_) => Right(value));
 
   /// {@category constructors}
-  static Effect<Never, Never, fpdart_unit.Unit> unit() => Effect._(
-        (_) => Right(fpdart_unit.unit),
-      );
+  static Effect<Never, Never, fpdart_unit.Unit> unit = Effect._(
+    (_) => const Right(fpdart_unit.unit),
+  );
 
   /// {@category collecting}
   static Effect<E, L, Iterable<R>> forEach<E, L, R, A>(
@@ -186,13 +185,13 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       Effect._(
         (env) {
           if (iterable.isEmpty) {
-            return Right([]);
+            return const Right([]);
           }
 
           return iterable
               .mapWithIndex(f)
               .fold<Effect<E, L, Iterable<R>>>(
-                Effect.succeed(Iterable.empty()),
+                Effect.succeed(const Iterable.empty()),
                 (acc, effect) => acc.zipWith(
                   effect,
                   (list, r) => list.append(r),
@@ -355,7 +354,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   Effect<E, Never, R> get orDie => Effect._(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
-            Left(value: final cause) => Left(Die.current(cause, stackTrace)),
+            Left(value: final cause) => Left(Die.current(cause)),
             Right(value: final value) =>
               Effect<E, Never, R>.succeed(value)._unsafeRun(env),
           },
@@ -424,7 +423,7 @@ extension ProvideNever<L, R> on Effect<Never, L, R> {
   R runSyncNoEnv() {
     final result = _unsafeRun(null);
     if (result is Future) {
-      throw Die.current(result, stackTrace);
+      throw Die.current(result);
     }
 
     return switch (result) {
@@ -445,6 +444,11 @@ extension ProvideNever<L, R> on Effect<Never, L, R> {
   /// {@category execution}
   Future<R> runFutureNoEnv() async {
     final result = await _unsafeRun(null);
+    if (result is! Future) {
+      print(
+        "You can use runSync instead of runFuture since the Effect is synchronous",
+      );
+    }
     return switch (result) {
       Left(value: final cause) => throw cause,
       Right(value: final value) => value,
@@ -452,5 +456,13 @@ extension ProvideNever<L, R> on Effect<Never, L, R> {
   }
 
   /// {@category execution}
-  Future<Exit<L, R>> runFutureExitNoEnv() async => _unsafeRun(null);
+  Future<Exit<L, R>> runFutureExitNoEnv() async {
+    final result = _unsafeRun(null);
+    if (result is! Future) {
+      print(
+        "You can use runSync instead of runFuture since the Effect is synchronous",
+      );
+    }
+    return result;
+  }
 }

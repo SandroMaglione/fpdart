@@ -20,7 +20,7 @@ void main() {
       test('tap', () {
         var mutable = 0;
         final main = Effect.succeed(10).tap(
-          (_) => Effect.function(() {
+          (_) => Effect.functionSucceed(() {
             mutable += 1;
           }),
         );
