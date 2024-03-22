@@ -13,7 +13,7 @@ void main() {
 
       test('fail', () {
         final main = Effect.fail(10);
-        final result = main.flip.runSync(null);
+        final result = main.flip().runSync(null);
         expect(result, 10);
       });
 
@@ -62,11 +62,11 @@ void main() {
 
           test('sync fail', () {
             final main = Effect<Never, String, int>.gen(($) {
-              final value = $.sync(Effect.fail("10"));
+              final value = $.sync(Effect.fail("abc"));
               return value;
             });
-            final result = main.flip.runSyncNoEnv();
-            expect(result, "10");
+            final result = main.flip().runSyncNoEnv();
+            expect(result, "abc");
           });
 
           test('async succeed', () async {

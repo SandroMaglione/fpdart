@@ -23,7 +23,7 @@ void main() {
             Effect.functionSucceed(() => mutable += 1),
             Effect.fail("0"),
           ]);
-          final result = main.flip.runSync(null);
+          final result = main.flip().runSync(null);
           expect(mutable, 0);
           expect(result, "10");
         });

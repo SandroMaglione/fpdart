@@ -60,7 +60,7 @@ abstract interface class IEffect<E, L, R> {
 }
 
 final class Effect<E, L, R> extends IEffect<E, L, R> {
-  /// `E?` is optional to allow [Never] to work (`provideNever`).
+  /// `E?` is optional to allow [Never] to work.
   ///
   /// In practice a user of the library should never be allowed to pass `null` as [E].
   final FutureOr<Exit<L, R>> Function(E? env) _unsafeRun;
@@ -153,14 +153,18 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   /// {@category constructors}
   factory Effect.gen(DoFunctionEffect<E, L, R> f) => Effect<E, L, R>._(
         (env) {
-          return f(_effectGen<E, L>(env)).then(
-            Right.new,
-            onError: (dynamic error, dynamic stackTrack) {
-              if (error is _EffectThrow<L>) {
-                return Left<Cause<L>, R>(error.cause);
-              }
-            },
-          );
+          try {
+            return f(_effectGen<E, L>(env)).then(
+              Right.new,
+              onError: (dynamic error) {
+                if (error is _EffectThrow<L>) {
+                  return Left<Cause<L>, R>(error.cause);
+                }
+              },
+            );
+          } on _EffectThrow<L> catch (genError) {
+            return Left(genError.cause);
+          }
         },
       );
 
@@ -297,7 +301,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category mapping}
-  Effect<E, R, L> get flip => Effect._(
+  Effect<E, R, L> flip() => Effect._(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
