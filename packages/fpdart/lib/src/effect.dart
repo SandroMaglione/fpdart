@@ -37,7 +37,9 @@ EffectGen<E, L> _effectGen<E, L>(E? env) => (
         final run = effect.asEffect._unsafeRun(env);
         if (run is Future) {
           throw _EffectThrow<L>(
-            Die.current("Cannot execute a Future using sync"),
+            Die.current(
+              Exception("gen.sync cannot execute async Effect"),
+            ),
           );
         }
 
@@ -75,50 +77,77 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 
   /// {@category execution}
   R runSync(E env) {
-    final result = _unsafeRun(env);
-    if (result is Future) {
-      throw Die.current(result);
-    }
+    try {
+      final result = _unsafeRun(env);
+      if (result is Future) {
+        throw Die.current(
+          Exception("runSync cannot execute async Effect"),
+        );
+      }
 
-    return switch (result) {
-      Left(value: final cause) => throw cause,
-      Right(value: final value) => value,
-    };
+      return switch (result) {
+        Left(value: final cause) => throw cause,
+        Right(value: final value) => value,
+      };
+    } on Cause<L> {
+      rethrow;
+    } catch (error, stackTrace) {
+      throw Die(error, stackTrace);
+    }
   }
 
   /// {@category execution}
   Exit<L, R> runSyncExit(E env) {
-    final result = _unsafeRun(env);
-    if (result is Future) {
-      return Left(Die.current(""));
+    try {
+      final result = _unsafeRun(env);
+      if (result is Future) {
+        return Left(Die.current(
+          Exception("runSyncExit cannot execute async Effect"),
+        ));
+      }
+      return result;
+    } on Cause<L> catch (cause) {
+      return Left(cause);
+    } catch (error, stackTrace) {
+      return Left(Die(error, stackTrace));
     }
-    return result;
   }
 
   /// {@category execution}
   Future<R> runFuture(E env) async {
-    final result = _unsafeRun(env);
-    if (result is! Future) {
-      print(
-        "You can use runSync instead of runFuture since the Effect is synchronous",
-      );
-    }
+    try {
+      final result = _unsafeRun(env);
+      if (result is! Future) {
+        return switch (result) {
+          Left(value: final cause) => throw cause,
+          Right(value: final value) => value,
+        };
+      }
 
-    return switch (await result) {
-      Left(value: final cause) => throw cause,
-      Right(value: final value) => value,
-    };
+      return switch (await result) {
+        Left(value: final cause) => throw cause,
+        Right(value: final value) => value,
+      };
+    } on Cause<L> {
+      rethrow;
+    } catch (error, stackTrace) {
+      throw Die(error, stackTrace);
+    }
   }
 
   /// {@category execution}
   Future<Exit<L, R>> runFutureExit(E env) async {
-    final result = _unsafeRun(env);
-    if (result is! Future) {
-      print(
-        "You can use runSyncExit instead of runFutureExit since the Effect is synchronous",
-      );
+    try {
+      final result = _unsafeRun(env);
+      if (result is! Future) {
+        return result;
+      }
+      return result;
+    } on Cause<L> catch (cause) {
+      return Left(cause);
+    } catch (error, stackTrace) {
+      return Left(Die(error, stackTrace));
     }
-    return result;
   }
 
   /// {@category constructors}
@@ -171,6 +200,17 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 
   /// {@category constructors}
   factory Effect.succeed(R value) => Effect._((_) => Right(value));
+
+  /// {@category constructors}
+  static Effect<E, Never, Never> die<E>(dynamic defect) => Effect._(
+        (_) => Left(Die.current(defect)),
+      );
+
+  /// {@category constructors}
+  static Effect<E, Never, Never> functionDie<E>(dynamic Function() run) =>
+      Effect._(
+        (_) => Left(Die.current(run())),
+      );
 
   /// {@category constructors}
   static Effect<Never, Never, fpdart_unit.Unit> unit = Effect._(
@@ -420,49 +460,22 @@ extension ProvideNever<L, R> on Effect<Never, L, R> {
       );
 
   /// {@category execution}
-  R runSyncNoEnv() {
-    final result = _unsafeRun(null);
-    if (result is Future) {
-      throw Die.current(result);
-    }
-
-    return switch (result) {
-      Left(value: final cause) => throw cause,
-      Right(value: final value) => value,
-    };
-  }
+  R runSyncNoEnv() => Effect<void, L, R>._(
+        (_) => _unsafeRun(null),
+      ).runSync(null);
 
   /// {@category execution}
-  Exit<L, R> runSyncExitNoEnv() {
-    final result = _unsafeRun(null);
-    if (result is Future) {
-      return Left(Die.current(""));
-    }
-    return result;
-  }
+  Exit<L, R> runSyncExitNoEnv() => Effect<void, L, R>._(
+        (_) => _unsafeRun(null),
+      ).runSyncExit(null);
 
   /// {@category execution}
-  Future<R> runFutureNoEnv() async {
-    final result = await _unsafeRun(null);
-    if (result is! Future) {
-      print(
-        "You can use runSync instead of runFuture since the Effect is synchronous",
-      );
-    }
-    return switch (result) {
-      Left(value: final cause) => throw cause,
-      Right(value: final value) => value,
-    };
-  }
+  Future<R> runFutureNoEnv() async => Effect<void, L, R>._(
+        (_) => _unsafeRun(null),
+      ).runFuture(null);
 
   /// {@category execution}
-  Future<Exit<L, R>> runFutureExitNoEnv() async {
-    final result = _unsafeRun(null);
-    if (result is! Future) {
-      print(
-        "You can use runSync instead of runFuture since the Effect is synchronous",
-      );
-    }
-    return result;
-  }
+  Future<Exit<L, R>> runFutureExitNoEnv() async => Effect<void, L, R>._(
+        (_) => _unsafeRun(null),
+      ).runFutureExit(null);
 }
