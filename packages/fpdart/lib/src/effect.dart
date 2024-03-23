@@ -282,11 +282,13 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   ///
   /// {@category do_notation}
   Effect<V, L, R> provide<V>(E Function(V env) f) => Effect._(
+        // ignore: null_check_on_nullable_type_parameter
         (env) => _unsafeRun(f(env!)),
       );
 
   /// {@category do_notation}
   static Effect<E, L, E> env<E, L>() => Effect._(
+        // ignore: null_check_on_nullable_type_parameter
         (env) => Right(env!),
       );
 

@@ -16,9 +16,9 @@ dependencies:
   meta: ^1.12.0
 
 dev_dependencies:
-  lints: ^2.0.1
-  test: ^1.23.1
-  collection: ^1.17.2
+  lints: ^3.0.0
+  test: ^1.25.2
+  collection: ^1.18.0
 
 screenshots:
   - description: "Basic usage of fpdart Option, Either, TaskEither types."

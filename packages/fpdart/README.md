@@ -6,11 +6,11 @@
 
 
 <p align="center">
-<strong>Functional programming in Dart and Flutter</strong>
+<strong>Functional Effect System in Dart and Flutter (v2)</strong>
 </p>
 
 <p align="center">
-All the main functional programming types and patterns <strong>fully documented</strong>, tested, and with examples
+Functional Effect System <strong>fully documented</strong>, tested, and with examples, to write complex type-safe dart applications
 </p>
 
 <h3 align="center">
@@ -35,11 +35,13 @@ All the main functional programming types and patterns <strong>fully documented<
   </a>
 </p>
 
+> 🏗️ Pre-release version of `fpdart v2`
+
 ## Introduction
 
-> **fpdart is fully documented. You do not need to have any previous experience with functional programming to start using `fpdart`. Give it a try!**
+> **fpdart is fully documented. You do not need to have any previous experience with functional effect systems to start using `fpdart`. Give it a try!**
 
-fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://typelevel.org/cats/typeclasses.html#type-classes-in-cats), and [dartz](https://github.com/spebbe/dartz).
+fpdart is inspired by [effect](https://www.effect.website/) and [dartz](https://github.com/spebbe/dartz).
 
 > Follow my [**Twitter**](https://twitter.com/SandroMaglione) for updates, or [subscribe to the newsletter](https://www.sandromaglione.com/newsletter)
 
@@ -120,10 +122,8 @@ Interested in what `fpdart` is and how it came to be?
 
 ## 💻 Installation
 
-```yaml
-# pubspec.yaml
-dependencies:
-  fpdart: ^1.1.0
+```shell
+dart pub add fpdart:'^2.0.0'
 ```
 
 ## ✨ Examples
@@ -498,6 +498,10 @@ A well explained documentation is the key for the long-term success of the proje
 In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
+
+- v2.0.0-dev.1 - 23 March 2024
+
+***
 
 - v1.1.0 - 13 August 2023
 - **v1.0.0** - 26 July 2023
