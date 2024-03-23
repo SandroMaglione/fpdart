@@ -185,7 +185,8 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category constructors}
-  factory Effect.fromNullable(R? value, L Function() onNull) => Effect._(
+  factory Effect.fromNullable(R? value, {required L Function() onNull}) =>
+      Effect._(
         (_) => value == null ? Left(Fail(onNull())) : Right(value),
       );
 
@@ -217,9 +218,9 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category constructors}
-  static Effect<Never, Never, fpdart_unit.Unit> unit = Effect._(
-    (_) => const Right(fpdart_unit.unit),
-  );
+  static Effect<E, L, fpdart_unit.Unit> unit<E, L>() => Effect._(
+        (_) => const Right(fpdart_unit.unit),
+      );
 
   /// {@category collecting}
   static Effect<E, L, Iterable<R>> forEach<E, L, R, A>(
@@ -300,6 +301,101 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         ),
       );
 
+  /// {@category conversions}
+  Effect<E, Never, Either<L, R>> either() => Effect._(
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
+            Left(value: final cause) => switch (cause) {
+                Fail<L>(error: final error) => Right(Left(error)),
+                Die() => Left(cause),
+              },
+            Right(value: final value) => Right(Right(value)),
+          },
+        ),
+      );
+
+  /// {@category conversions}
+  Effect<E, Never, Option<R>> option() => Effect._(
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
+            Left(value: final cause) => switch (cause) {
+                Fail<L>() => Right(None()),
+                Die() => Left(cause),
+              },
+            Right(value: final value) => Right(Some(value)),
+          },
+        ),
+      );
+
+  /// {@category conversions}
+  Effect<E, Never, Exit<L, R>> exit() => Effect._(
+        (env) => _unsafeRun(env).then(
+          (exit) => Right(exit),
+        ),
+      );
+
+  /// {@category folding}
+  Effect<E, Never, C> match<C>({
+    required C Function(L l) onFailure,
+    required C Function(R r) onSuccess,
+  }) =>
+      Effect._(
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
+            Left(value: final cause) => switch (cause) {
+                Fail<L>(error: final error) => Right(onFailure(error)),
+                Die() => Left(cause),
+              },
+            Right(value: final value) => Right(onSuccess(value)),
+          },
+        ),
+      );
+
+  /// {@category folding}
+  Effect<E, Never, C> matchCause<C>({
+    required C Function(Cause<L> l) onFailure,
+    required C Function(R r) onSuccess,
+  }) =>
+      Effect._(
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
+            Left(value: final cause) => Right(onFailure(cause)),
+            Right(value: final value) => Right(onSuccess(value)),
+          },
+        ),
+      );
+
+  /// {@category folding}
+  Effect<E, C, D> matchEffect<C, D>({
+    required Effect<E, C, D> Function(L l) onFailure,
+    required Effect<E, C, D> Function(R r) onSuccess,
+  }) =>
+      Effect._(
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
+            Left(value: final cause) => switch (cause) {
+                Fail<L>(error: final error) => onFailure(error)._unsafeRun(env),
+                Die() => Left(cause),
+              },
+            Right(value: final value) => onSuccess(value)._unsafeRun(env),
+          },
+        ),
+      );
+
+  /// {@category folding}
+  Effect<E, C, D> matchCauseEffect<C, D>({
+    required Effect<E, C, D> Function(Cause<L> l) onFailure,
+    required Effect<E, C, D> Function(R r) onSuccess,
+  }) =>
+      Effect._(
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
+            Left(value: final cause) => onFailure(cause)._unsafeRun(env),
+            Right(value: final value) => onSuccess(value)._unsafeRun(env),
+          },
+        ),
+      );
+
   /// {@category mapping}
   Effect<E, R, L> flip() => Effect._(
         (env) => _unsafeRun(env).then(
@@ -324,6 +420,16 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
                 Fail<L>(error: final error) => Left(Fail(f(error))),
                 Die() => Left(cause),
               },
+            Right(value: final value) => Right(value),
+          },
+        ),
+      );
+
+  /// {@category mapping}
+  Effect<E, C, R> mapErrorCause<C>(C Function(Cause<L> l) f) => Effect._(
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
+            Left(value: final cause) => Left(Fail(f(cause))),
             Right(value: final value) => Right(value),
           },
         ),
