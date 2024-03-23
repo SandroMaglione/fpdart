@@ -1,9 +1,8 @@
 import 'dart:async';
 
-import 'package:fpdart/fpdart.dart';
-import 'package:fpdart/src/extension/future_or_extension.dart';
-import 'package:fpdart/src/extension/iterable_extension.dart';
-
+import './extension/future_or_extension.dart';
+import './extension/iterable_extension.dart';
+import 'exit.dart';
 import 'unit.dart' as fpdart_unit;
 
 part 'either.dart';
