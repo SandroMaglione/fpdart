@@ -49,46 +49,46 @@ void main() {
           final result = main.runSync(null);
           expect(result, 10);
         });
+      });
 
-        group('gen', () {
-          test('sync succeed', () {
-            final main = Effect.gen(($) {
-              final value = $.sync(Effect.succeed(10));
-              return value;
-            });
-            final result = main.runSyncNoEnv();
-            expect(result, 10);
+      group('gen', () {
+        test('sync succeed', () {
+          final main = Effect<void, Never, int>.gen(($) {
+            final value = $.sync(Effect.succeed(10));
+            return value;
+          });
+          final result = main.runSync(null);
+          expect(result, 10);
+        });
+
+        test('sync fail', () {
+          final main = Effect<void, String, int>.gen(($) {
+            final value = $.sync(Effect.fail("abc"));
+            return value;
+          });
+          final result = main.flip().runSync(null);
+          expect(result, "abc");
+        });
+
+        test('async succeed', () async {
+          final main = Effect<void, Never, int>.gen(($) async {
+            final value =
+                await $.async(Effect.functionSucceed(() => Future.value(10)));
+            return value;
+          });
+          final result = await main.runFuture(null);
+          expect(result, 10);
+        });
+
+        test('fail when running async as sync', () async {
+          final main = Effect<void, Never, int>.gen(($) {
+            final value = $.sync(Effect.functionSucceed(
+              () async => Future.value(10),
+            ));
+            return value;
           });
 
-          test('sync fail', () {
-            final main = Effect<Never, String, int>.gen(($) {
-              final value = $.sync(Effect.fail("abc"));
-              return value;
-            });
-            final result = main.flip().runSyncNoEnv();
-            expect(result, "abc");
-          });
-
-          test('async succeed', () async {
-            final main = Effect.gen(($) async {
-              final value =
-                  await $.async(Effect.functionSucceed(() => Future.value(10)));
-              return value;
-            });
-            final result = await main.runFutureNoEnv();
-            expect(result, 10);
-          });
-
-          test('fail when running async as sync', () async {
-            final main = Effect.gen(($) {
-              final value = $.sync(Effect.functionSucceed(
-                () async => Future.value(10),
-              ));
-              return value;
-            });
-
-            expect(() => main.runSyncNoEnv(), throwsA(isA<Die>()));
-          });
+          expect(() => main.runSync(null), throwsA(isA<Die>()));
         });
       });
     },

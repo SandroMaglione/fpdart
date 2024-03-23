@@ -23,7 +23,7 @@ final class _EffectThrow<L> implements Exception {
   }
 }
 
-EffectGen<E, L> _effectGen<E, L>(E? env) => (
+EffectGen<E, L> _effectGen<E, L>(E env) => (
       async: <A>(effect) => Future.sync(
             () => effect.asEffect._unsafeRun(env).then(
                   (exit) => switch (exit) {
@@ -59,11 +59,7 @@ abstract interface class IEffect<E, L, R> {
 }
 
 final class Effect<E, L, R> extends IEffect<E, L, R> {
-  /// `E?` is optional to allow [Never] to work.
-  ///
-  /// In practice a user of the library should never be allowed to pass `null` as [E].
-  final FutureOr<Exit<L, R>> Function(E? env) _unsafeRun;
-
+  final FutureOr<Exit<L, R>> Function(E env) _unsafeRun;
   const Effect._(this._unsafeRun);
 
   @override
@@ -155,10 +151,12 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
           try {
             return f(_effectGen<E, L>(env)).then(
               Right.new,
-              onError: (dynamic error) {
+              onError: (error) {
                 if (error is _EffectThrow<L>) {
                   return Left<Cause<L>, R>(error.cause);
                 }
+
+                return Left<Cause<L>, R>(Die.current(error));
               },
             );
           } on _EffectThrow<L> catch (genError) {
@@ -282,14 +280,12 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   ///
   /// {@category do_notation}
   Effect<V, L, R> provide<V>(E Function(V env) f) => Effect._(
-        // ignore: null_check_on_nullable_type_parameter
-        (env) => _unsafeRun(f(env!)),
+        (env) => _unsafeRun(f(env)),
       );
 
   /// {@category do_notation}
   static Effect<E, L, E> env<E, L>() => Effect._(
-        // ignore: null_check_on_nullable_type_parameter
-        (env) => Right(env!),
+        (env) => Right(env),
       );
 
   /// {@category combining}
@@ -555,31 +551,11 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 }
 
-extension ProvideNever<L, R> on Effect<Never, L, R> {
-  /// Add a required dependency instead of [Never].
+extension ProvideVoid<L, R> on Effect<void, L, R> {
+  /// Add a required dependency instead of [void].
   ///
   /// {@category do_notation}
   Effect<V, L, R> withEnv<V>() => Effect._(
         (env) => _unsafeRun(null),
       );
-
-  /// {@category execution}
-  R runSyncNoEnv() => Effect<void, L, R>._(
-        (_) => _unsafeRun(null),
-      ).runSync(null);
-
-  /// {@category execution}
-  Exit<L, R> runSyncExitNoEnv() => Effect<void, L, R>._(
-        (_) => _unsafeRun(null),
-      ).runSyncExit(null);
-
-  /// {@category execution}
-  Future<R> runFutureNoEnv() async => Effect<void, L, R>._(
-        (_) => _unsafeRun(null),
-      ).runFuture(null);
-
-  /// {@category execution}
-  Future<Exit<L, R>> runFutureExitNoEnv() async => Effect<void, L, R>._(
-        (_) => _unsafeRun(null),
-      ).runFutureExit(null);
 }
