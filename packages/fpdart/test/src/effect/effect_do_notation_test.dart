@@ -25,7 +25,8 @@ void main() {
             return env + 1;
           });
 
-          final program = main.provideEffect<Null>(Effect.succeed(10));
+          final program =
+              main.provideEffect(Effect<Null, String, int>.succeed(10));
           final result = program.runSyncVoid();
           expect(result, 11);
         });
@@ -36,7 +37,8 @@ void main() {
             return env + 1;
           });
 
-          final program = main.provideEffect<Null>(Effect.fail("error"));
+          final program =
+              main.provideEffect(Effect<Null, String, int>.fail("error"));
           final result = program.flip().runSyncVoid();
           expect(result, "error");
         });
