@@ -54,8 +54,7 @@ sealed class Either<L, R> extends IEffect<Never, L, R> {
     }
   }
 
-  R? toNullable();
-  Option<R> toOption();
+  R? getOrNull();
   Either<L, C> flatMap<C>(Either<L, C> Function(R r) f);
   Either<C, R> mapLeft<C>(C Function(L l) f);
   Effect<V, L, R> provide<V>();
@@ -63,8 +62,17 @@ sealed class Either<L, R> extends IEffect<Never, L, R> {
     required D Function(L l) onLeft,
     required C Function(R r) onRight,
   });
-  Either<R, L> get flip;
+  Either<R, L> flip();
   R getOrElse(R Function(L l) orElse);
+  Either<L, C> andThen<C>(C Function(R r) f);
+  Either<C, R> orElse<C>(Either<C, R> Function(L l) orElse);
+  Either<L, R> tap<C>(Either<L, C> Function(R r) f);
+  Either<L, R> filterOrLeft<C>({
+    required bool Function(R r) predicate,
+    required L Function(R r) orLeftWith,
+  });
+  Option<L> getLeft();
+  Option<R> getRight();
 
   Either<L, V> ap<V>(
     Either<L, V Function(R r)> f,
@@ -85,15 +93,17 @@ final class Right<L, R> extends Either<L, R> {
   @override
   Effect<Never, L, R> get asEffect => Effect._((_) => Right(value));
 
-  Either<L, C> andThen<C>(Either<L, C> Function() then) => then();
+  @override
+  Either<L, C> andThen<C>(C Function(R value) f) => Right(f(value));
 
+  @override
   Either<C, R> orElse<C>(Either<C, R> Function(L l) orElse) => Right(value);
 
   @override
   R getOrElse(R Function(L l) orElse) => value;
 
   @override
-  Either<R, L> get flip => Left(value);
+  Either<R, L> flip() => Left(value);
 
   @override
   Either<D, C> mapBoth<C, D>(
@@ -111,10 +121,10 @@ final class Right<L, R> extends Either<L, R> {
   Effect<V, L, R> provide<V>() => Effect.succeed(value);
 
   @override
-  R toNullable() => value;
+  R getOrNull() => value;
 
   @override
-  Option<R> toOption() => Some(value);
+  Option<R> getRight() => Some(value);
 
   @override
   bool operator ==(Object other) => (other is Right) && other.value == value;
@@ -124,6 +134,20 @@ final class Right<L, R> extends Either<L, R> {
 
   @override
   String toString() => 'Right($value)';
+
+  @override
+  Either<L, R> filterOrLeft<C>({
+    required bool Function(R r) predicate,
+    required L Function(R r) orLeftWith,
+  }) =>
+      predicate(value) ? Right(value) : Left(orLeftWith(value));
+
+  @override
+  Option<L> getLeft() => None();
+
+  @override
+  Either<L, R> tap<C>(Either<L, C> Function(R r) f) =>
+      f(value).map((_) => value);
 }
 
 final class Left<L, R> extends Either<L, R> {
@@ -133,15 +157,17 @@ final class Left<L, R> extends Either<L, R> {
   @override
   Effect<Never, L, R> get asEffect => Effect._((_) => Left(Fail(value)));
 
-  Either<L, C> andThen<C>(Either<L, C> Function() then) => Left(value);
+  @override
+  Either<L, C> andThen<C>(C Function(R value) f) => Left(value);
 
+  @override
   Either<C, R> orElse<C>(Either<C, R> Function(L l) orElse) => orElse(value);
 
   @override
   R getOrElse(R Function(L l) orElse) => orElse(value);
 
   @override
-  Either<R, L> get flip => Right(value);
+  Either<R, L> flip() => Right(value);
 
   @override
   Either<D, C> mapBoth<C, D>(
@@ -159,10 +185,10 @@ final class Left<L, R> extends Either<L, R> {
   Effect<V, L, R> provide<V>() => Effect.fail(value);
 
   @override
-  R? toNullable() => null;
+  R? getOrNull() => null;
 
   @override
-  Option<R> toOption() => None();
+  Option<R> getRight() => None();
 
   @override
   bool operator ==(Object other) => (other is Left) && other.value == value;
@@ -172,4 +198,17 @@ final class Left<L, R> extends Either<L, R> {
 
   @override
   String toString() => 'Left($value)';
+
+  @override
+  Either<L, R> filterOrLeft<C>({
+    required bool Function(R r) predicate,
+    required L Function(R r) orLeftWith,
+  }) =>
+      Left(value);
+
+  @override
+  Option<L> getLeft() => Some(value);
+
+  @override
+  Either<L, R> tap<C>(Either<L, C> Function(R r) f) => Left(value);
 }

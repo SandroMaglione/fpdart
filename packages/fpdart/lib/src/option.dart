@@ -44,7 +44,7 @@ sealed class Option<R> extends IEffect<Never, Never, R> {
   }
 
   Object? toJson(Object? Function(R value) toJson);
-  R? toNullable();
+  R? getOrNull();
   Option<C> flatMap<C>(Option<C> Function(R r) f);
   Option<C> andThen<C>(C Function(R r) f);
   Option<R> tap<C>(Option<C> Function(R r) f);
@@ -89,7 +89,7 @@ final class Some<R> extends Option<R> {
   Option<C> flatMap<C>(Option<C> Function(R r) f) => f(value);
 
   @override
-  R toNullable() => value;
+  R getOrNull() => value;
 
   @override
   Option<C> andThen<C>(C Function(R r) f) => Some(f(value));
@@ -140,7 +140,7 @@ final class None extends Option<Never> {
   Option<C> flatMap<C>(Option<C> Function(Never r) f) => this;
 
   @override
-  Null toNullable() => null;
+  Null getOrNull() => null;
 
   @override
   Object? toJson(Object? Function(Never value) toJson) => None();
