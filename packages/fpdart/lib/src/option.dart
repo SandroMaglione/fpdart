@@ -29,6 +29,12 @@ sealed class Option<R> extends IEffect<Never, Never, R> {
     }
   }
 
+  factory Option.fromJson(
+    dynamic json,
+    R Function(dynamic json) fromJson,
+  ) =>
+      json != null ? Option.tryCatch(() => fromJson(json)) : None();
+
   static Iterable<R> getSomes<R>(Iterable<Option<R>> iterable) sync* {
     for (var option in iterable) {
       if (option is Some<R>) {
@@ -37,8 +43,13 @@ sealed class Option<R> extends IEffect<Never, Never, R> {
     }
   }
 
+  Object? toJson(Object? Function(R value) toJson);
   R? toNullable();
   Option<C> flatMap<C>(Option<C> Function(R r) f);
+  Option<C> andThen<C>(C Function(R r) f);
+  Option<R> tap<C>(Option<C> Function(R r) f);
+  Option<R> filter(bool Function(R r) f);
+  Option<C> filterMap<C>(Option<C> Function(R r) f);
 
   Option<V> ap<V>(
     Option<V Function(R r)> f,
@@ -74,8 +85,6 @@ final class Some<R> extends Option<R> {
   @override
   Effect<V, L, R> provide<L, V>(L Function() onNone) => Effect.succeed(value);
 
-  Option<C> andThen<C>(Option<C> Function() then) => then();
-
   @override
   Option<C> flatMap<C>(Option<C> Function(R r) f) => f(value);
 
@@ -83,7 +92,13 @@ final class Some<R> extends Option<R> {
   R toNullable() => value;
 
   @override
+  Option<C> andThen<C>(C Function(R r) f) => Some(f(value));
+
+  @override
   Either<L, R> toEither<L>(L Function() onLeft) => Right(value);
+
+  @override
+  Object? toJson(Object? Function(R value) toJson) => toJson(value);
 
   @override
   bool operator ==(Object other) => (other is Some) && other.value == value;
@@ -93,6 +108,21 @@ final class Some<R> extends Option<R> {
 
   @override
   String toString() => 'Some($value)';
+
+  @override
+  Option<R> tap<C>(Option<C> Function(R r) f) => f(value).map((_) => value);
+
+  @override
+  Option<R> filter(bool Function(R r) f) {
+    if (f(value)) return Some(value);
+    return None();
+  }
+
+  @override
+  Option<C> filterMap<C>(Option<C> Function(R r) f) {
+    if (f(value) case Some(value: final value)) return Some(value);
+    return None();
+  }
 }
 
 final class None extends Option<Never> {
@@ -106,8 +136,6 @@ final class None extends Option<Never> {
       // ignore: cast_from_null_always_fails
       Effect._((_) => Left(Fail(null as Never)));
 
-  Option<C> andThen<C>(Option<C> Function() then) => this;
-
   @override
   Option<C> flatMap<C>(Option<C> Function(Never r) f) => this;
 
@@ -115,5 +143,20 @@ final class None extends Option<Never> {
   Null toNullable() => null;
 
   @override
+  Object? toJson(Object? Function(Never value) toJson) => None();
+
+  @override
   String toString() => 'None';
+
+  @override
+  Option<C> andThen<C>(C Function(Never r) f) => None();
+
+  @override
+  Option<Never> tap<C>(Option<C> Function(Never r) f) => None();
+
+  @override
+  Option<Never> filter(bool Function(Never r) f) => None();
+
+  @override
+  Option<C> filterMap<C>(Option<C> Function(Never r) f) => None();
 }
