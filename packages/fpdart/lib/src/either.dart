@@ -38,6 +38,22 @@ sealed class Either<L, R> extends IEffect<Never, L, R> {
   ) =>
       value is R ? Right(value) : Left(onError(value));
 
+  static Iterable<R> getRights<L, R>(Iterable<Either<L, R>> iterable) sync* {
+    for (var either in iterable) {
+      if (either is Right<L, R>) {
+        yield either.value;
+      }
+    }
+  }
+
+  static Iterable<L> getLefts<L, R>(Iterable<Either<L, R>> iterable) sync* {
+    for (var either in iterable) {
+      if (either is Left<L, R>) {
+        yield either.value;
+      }
+    }
+  }
+
   R? toNullable();
   Option<R> toOption();
   Either<L, C> flatMap<C>(Either<L, C> Function(R r) f);

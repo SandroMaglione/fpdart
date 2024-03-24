@@ -29,6 +29,14 @@ sealed class Option<R> extends IEffect<Never, Never, R> {
     }
   }
 
+  static Iterable<R> getSomes<R>(Iterable<Option<R>> iterable) sync* {
+    for (var option in iterable) {
+      if (option is Some<R>) {
+        yield option.value;
+      }
+    }
+  }
+
   R? toNullable();
   Option<C> flatMap<C>(Option<C> Function(R r) f);
 

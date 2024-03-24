@@ -11,7 +11,6 @@ import '../order.dart';
 /// If the [Iterable] is empty, return [None].
 /// {@endtemplate}
 
-/// Functional programming functions on a mutable dart [Iterable] using `fpdart`.
 extension FpdartOnIterable<T> on Iterable<T> {
   /// {@macro fpdart_iterable_extension_head}
   ///
@@ -407,8 +406,16 @@ extension FpdartOnIterable<T> on Iterable<T> {
       );
 }
 
-/// Functional programming functions on `Iterable<Iterable<T>>` using `fpdart`.
 extension FpdartOnIterableOfIterable<T> on Iterable<Iterable<T>> {
   /// From a `Iterable<Iterable<T>>` return a `Iterable<T>` of their concatenation.
   Iterable<T> get flatten => expand(identity);
+}
+
+extension FpdartSequenceIterableOption<R> on Iterable<Option<R>> {
+  Iterable<R> get getSomes => Option.getSomes(this);
+}
+
+extension FpdartSequenceIterableEither<L, R> on Iterable<Either<L, R>> {
+  Iterable<R> get getRights => Either.getRights(this);
+  Iterable<L> get getLefts => Either.getLefts(this);
 }
