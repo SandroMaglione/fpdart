@@ -294,6 +294,16 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   Effect<Null, L, R> provide(E env) => Effect._((_) => _unsafeRun(env));
 
   /// {@category do_notation}
+  Effect<V, L, R> provideEffect<V>(Effect<V, L, E> effect) => Effect._(
+        (env) => effect._unsafeRun(env).then(
+              (exit) => switch (exit) {
+                Left(value: final cause) => Left(cause),
+                Right(value: final value) => _unsafeRun(value),
+              },
+            ),
+      );
+
+  /// {@category do_notation}
   static Effect<E, L, E> env<E, L>() => Effect._(
         (env) => Right(env),
       );

@@ -18,6 +18,30 @@ void main() {
         });
       });
 
+      group('provideEffect', () {
+        test('valid dependency', () {
+          final main = Effect<int, String, int>.gen(($) {
+            final env = $.sync(Effect.env());
+            return env + 1;
+          });
+
+          final program = main.provideEffect<Null>(Effect.succeed(10));
+          final result = program.runSyncVoid();
+          expect(result, 11);
+        });
+
+        test('invalid dependency', () {
+          final main = Effect<int, String, int>.gen(($) {
+            final env = $.sync(Effect.env());
+            return env + 1;
+          });
+
+          final program = main.provideEffect<Null>(Effect.fail("error"));
+          final result = program.flip().runSyncVoid();
+          expect(result, "error");
+        });
+      });
+
       group('mapEnv', () {
         test('adapt dependency from another program', () {
           final subMain =
