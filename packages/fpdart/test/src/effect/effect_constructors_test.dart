@@ -53,7 +53,7 @@ void main() {
 
       group('gen', () {
         test('sync succeed', () {
-          final main = Effect<void, Never, int>.gen(($) {
+          final main = Effect<Null, Never, int>.gen(($) {
             final value = $.sync(Effect.succeed(10));
             return value;
           });
@@ -62,7 +62,7 @@ void main() {
         });
 
         test('sync fail', () {
-          final main = Effect<void, String, int>.gen(($) {
+          final main = Effect<Null, String, int>.gen(($) {
             final value = $.sync(Effect.fail("abc"));
             return value;
           });
@@ -71,7 +71,7 @@ void main() {
         });
 
         test('async succeed', () async {
-          final main = Effect<void, Never, int>.gen(($) async {
+          final main = Effect<Null, Never, int>.gen(($) async {
             final value =
                 await $.async(Effect.functionSucceed(() => Future.value(10)));
             return value;
@@ -81,7 +81,7 @@ void main() {
         });
 
         test('fail when running async as sync', () async {
-          final main = Effect<void, Never, int>.gen(($) {
+          final main = Effect<Null, Never, int>.gen(($) {
             final value = $.sync(Effect.functionSucceed(
               () async => Future.value(10),
             ));

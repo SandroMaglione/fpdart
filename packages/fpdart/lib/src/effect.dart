@@ -204,6 +204,9 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category constructors}
+  factory Effect.from(Exit<L, R> Function(E env) f) => Effect._(f);
+
+  /// {@category constructors}
   factory Effect.fail(L value) => Effect._((_) => Left(Failure(value)));
 
   /// {@category constructors}
@@ -282,12 +285,13 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   ) =>
       flatMap((_) => effect);
 
-  /// Extract the required dependency from the complete environment.
-  ///
   /// {@category do_notation}
-  Effect<V, L, R> provide<V>(E Function(V env) f) => Effect._(
+  Effect<V, L, R> mapEnv<V>(E Function(V env) f) => Effect._(
         (env) => _unsafeRun(f(env)),
       );
+
+  /// {@category do_notation}
+  Effect<Null, L, R> provide(E env) => Effect._((_) => _unsafeRun(env));
 
   /// {@category do_notation}
   static Effect<E, L, E> env<E, L>() => Effect._(
@@ -589,11 +593,21 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 }
 
-extension ProvideVoid<L, R> on Effect<void, L, R> {
-  /// Add a required dependency instead of [void].
-  ///
+extension ProvideNull<L, R> on Effect<Null, L, R> {
   /// {@category do_notation}
   Effect<V, L, R> withEnv<V>() => Effect._(
         (env) => _unsafeRun(null),
       );
+
+  /// {@category execution}
+  R runSyncVoid() => runSync(null);
+
+  /// {@category execution}
+  Future<R> runFutureVoid() => runFuture(null);
+
+  /// {@category execution}
+  Either<Cause<L>, R> runSyncExitVoid() => runSyncExit(null);
+
+  /// {@category execution}
+  Future<Either<Cause<L>, R>> runFutureExitVoid() => runFutureExit(null);
 }
