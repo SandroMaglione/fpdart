@@ -1,8 +1,9 @@
 import 'dart:async';
 
+import 'package:fpdart/fpdart.dart';
+
 import './extension/future_or_extension.dart';
 import './extension/iterable_extension.dart';
-import 'exit.dart';
 import 'unit.dart' as fpdart_unit;
 
 part 'either.dart';
@@ -151,12 +152,12 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
           try {
             return f(_effectGen<E, L>(env)).then(
               Right.new,
-              onError: (error) {
+              onError: (error, stackTrace) {
                 if (error is _EffectThrow<L>) {
                   return Left<Cause<L>, R>(error.cause);
                 }
 
-                return Left<Cause<L>, R>(Die.current(error));
+                return Left<Cause<L>, R>(Die(error, stackTrace));
               },
             );
           } on _EffectThrow<L> catch (genError) {
@@ -174,7 +175,12 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       Effect._(
         (env) {
           try {
-            return execute().then(Right.new);
+            return execute().then(
+              Right.new,
+              onError: (error, stackTrace) => Left(
+                Failure(onError(error, stackTrace), stackTrace),
+              ),
+            );
           } catch (err, stack) {
             return Left(Failure(onError(err, stack), stack));
           }
