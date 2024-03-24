@@ -20,7 +20,7 @@ final class Die extends Cause<Never> {
       Die(error, StackTrace.current, stackTrace);
 
   @override
-  bool operator ==(Object other) => (other is Fail) && other.error == error;
+  bool operator ==(Object other) => (other is Failure) && other.error == error;
 
   @override
   int get hashCode => error.hashCode;
@@ -32,16 +32,16 @@ final class Die extends Cause<Never> {
 }
 
 /// Failed with an expected error
-final class Fail<L> extends Cause<L> {
+final class Failure<L> extends Cause<L> {
   final L error;
 
   @override
   final StackTrace? stackTrace;
 
-  const Fail(this.error, [this.stackTrace]);
+  const Failure(this.error, [this.stackTrace]);
 
   @override
-  bool operator ==(Object other) => (other is Fail) && other.error == error;
+  bool operator ==(Object other) => (other is Failure) && other.error == error;
 
   @override
   int get hashCode => error.hashCode;

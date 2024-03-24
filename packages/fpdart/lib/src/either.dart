@@ -155,7 +155,7 @@ final class Left<L, R> extends Either<L, R> {
   const Left(this.value);
 
   @override
-  Effect<Never, L, R> get asEffect => Effect._((_) => Left(Fail(value)));
+  Effect<Never, L, R> get asEffect => Effect._((_) => Left(Failure(value)));
 
   @override
   Either<L, C> andThen<C>(C Function(R value) f) => Left(value);

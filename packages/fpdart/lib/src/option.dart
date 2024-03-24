@@ -69,7 +69,7 @@ sealed class Option<R> extends IEffect<Never, Never, R> {
 
   Effect<V, L, R> provide<L, V>(L Function() onNone) => Effect._(
         (env) => switch (this) {
-          None() => Left(Fail(onNone())),
+          None() => Left(Failure(onNone())),
           Some(value: final value) => Right(value),
         },
       );
@@ -134,7 +134,7 @@ final class None extends Option<Never> {
   @override
   Effect<Never, Never, Never> get asEffect =>
       // ignore: cast_from_null_always_fails
-      Effect._((_) => Left(Fail(null as Never)));
+      Effect._((_) => Left(Failure(null as Never)));
 
   @override
   Option<C> flatMap<C>(Option<C> Function(Never r) f) => this;

@@ -176,7 +176,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
           try {
             return execute().then(Right.new);
           } catch (err, stack) {
-            return Left(Fail(onError(err, stack), stack));
+            return Left(Failure(onError(err, stack), stack));
           }
         },
       );
@@ -184,7 +184,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   /// {@category constructors}
   factory Effect.fromNullable(R? value, {required L Function() onNull}) =>
       Effect._(
-        (_) => value == null ? Left(Fail(onNull())) : Right(value),
+        (_) => value == null ? Left(Failure(onNull())) : Right(value),
       );
 
   /// {@category constructors}
@@ -198,7 +198,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category constructors}
-  factory Effect.fail(L value) => Effect._((_) => Left(Fail(value)));
+  factory Effect.fail(L value) => Effect._((_) => Left(Failure(value)));
 
   /// {@category constructors}
   factory Effect.succeed(R value) => Effect._((_) => Right(value));
@@ -303,7 +303,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
-                Fail<L>(error: final error) => Right(Left(error)),
+                Failure<L>(error: final error) => Right(Left(error)),
                 Die() => Left(cause),
               },
             Right(value: final value) => Right(Right(value)),
@@ -316,7 +316,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
-                Fail<L>() => Right(None()),
+                Failure<L>() => Right(None()),
                 Die() => Left(cause),
               },
             Right(value: final value) => Right(Some(value)),
@@ -340,7 +340,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
-                Fail<L>(error: final error) => Right(onFailure(error)),
+                Failure<L>(error: final error) => Right(onFailure(error)),
                 Die() => Left(cause),
               },
             Right(value: final value) => Right(onSuccess(value)),
@@ -371,7 +371,8 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
-                Fail<L>(error: final error) => onFailure(error)._unsafeRun(env),
+                Failure<L>(error: final error) =>
+                  onFailure(error)._unsafeRun(env),
                 Die() => Left(cause),
               },
             Right(value: final value) => onSuccess(value)._unsafeRun(env),
@@ -398,10 +399,10 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
-                Fail<L>(error: final error) => Right(error),
+                Failure<L>(error: final error) => Right(error),
                 Die() => Left(cause),
               },
-            Right(value: final value) => Left(Fail(value)),
+            Right(value: final value) => Left(Failure(value)),
           },
         ),
       );
@@ -414,7 +415,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
-                Fail<L>(error: final error) => Left(Fail(f(error))),
+                Failure<L>(error: final error) => Left(Failure(f(error))),
                 Die() => Left(cause),
               },
             Right(value: final value) => Right(value),
@@ -426,7 +427,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   Effect<E, C, R> mapErrorCause<C>(C Function(Cause<L> l) f) => Effect._(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
-            Left(value: final cause) => Left(Fail(f(cause))),
+            Left(value: final cause) => Left(Failure(f(cause))),
             Right(value: final value) => Right(value),
           },
         ),
@@ -438,7 +439,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
-                Fail<L>(error: final error) => Left(Fail(fl(error))),
+                Failure<L>(error: final error) => Left(Failure(fl(error))),
                 Die() => Left(cause),
               },
             Right(value: final value) => Right(fr(value)),
@@ -465,8 +466,8 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
-                Fail<L>(error: final error) => f(error)._unsafeRun(env).then(
-                      (_) => Left(Fail(error)),
+                Failure<L>(error: final error) => f(error)._unsafeRun(env).then(
+                      (_) => Left(Failure(error)),
                     ),
                 Die() => Left(cause),
               },
@@ -483,7 +484,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
-                Fail<L>(error: final error) => orElse(error)._unsafeRun(env),
+                Failure<L>(error: final error) => orElse(error)._unsafeRun(env),
                 Die() => Left(cause),
               },
             Right(value: final value) =>
@@ -509,7 +510,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
-                Fail<L>(error: final error) =>
+                Failure<L>(error: final error) =>
                   Left(Die.current(onError(error))),
                 Die() => Left(cause),
               },
@@ -527,7 +528,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
-                Fail<L>(error: final error) => f(error)._unsafeRun(env),
+                Failure<L>(error: final error) => f(error)._unsafeRun(env),
                 Die() => Left(cause),
               },
             Right(value: final value) =>
