@@ -549,6 +549,37 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
               ._unsafeRun(env),
         ),
       );
+
+  /// {@category filtering}
+  Effect<E, L, R> filterOrDie<C>({
+    required bool Function(R r) predicate,
+    required C Function(R r) orDieWith,
+  }) =>
+      Effect._(
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
+            Left(value: final cause) => Left(cause),
+            Right(value: final value) => predicate(value)
+                ? Right(value)
+                : Left(Die.current(orDieWith(value))),
+          },
+        ),
+      );
+
+  /// {@category filtering}
+  Effect<E, L, R> filterOrElse({
+    required bool Function(R r) predicate,
+    required Effect<E, L, R> Function(R r) orElse,
+  }) =>
+      Effect._(
+        (env) => _unsafeRun(env).then(
+          (exit) => switch (exit) {
+            Left(value: final cause) => Left(cause),
+            Right(value: final value) =>
+              predicate(value) ? Right(value) : orElse(value)._unsafeRun(env),
+          },
+        ),
+      );
 }
 
 extension ProvideVoid<L, R> on Effect<void, L, R> {
