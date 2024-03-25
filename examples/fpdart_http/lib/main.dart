@@ -12,7 +12,8 @@ void main() async {
           () => print(response.body),
         ),
       )
-      .runFuture(
+      .provide(
         http.Client(),
-      );
+      )
+      .runFuture();
 }
