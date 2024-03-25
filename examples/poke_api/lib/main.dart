@@ -72,7 +72,7 @@ void main() async {
           () => print("No pokemon: $error"),
         ),
       )
-      .runFutureExit((Http(), JsonCodec()));
+      .provide((Http(), JsonCodec())).runFutureExit();
 
   print(exit);
 }
