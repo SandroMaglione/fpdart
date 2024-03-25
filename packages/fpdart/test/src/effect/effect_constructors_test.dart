@@ -6,21 +6,21 @@ void main() {
     "Effect constructors",
     () {
       test('succeed', () {
-        final main = Effect.succeed(10);
-        final result = main.runSync(null);
+        final main = Effect<Null, String, int>.succeed(10);
+        final result = main.runSync();
         expect(result, 10);
       });
 
       test('fail', () {
-        final main = Effect.fail(10);
-        final result = main.flip().runSync(null);
-        expect(result, 10);
+        final main = Effect<Null, String, int>.fail("error");
+        final result = main.flip().runSync();
+        expect(result, "error");
       });
 
       group('tryCatch', () {
         test('executes once', () {
           var mutable = 0;
-          final main = Effect.tryCatch(
+          final main = Effect<Null, void, int>.tryCatch(
             execute: () {
               mutable += 1;
               return 10;
@@ -28,25 +28,25 @@ void main() {
             onError: (error, stackTrace) {},
           );
 
-          main.runSync(null);
+          main.runSync();
           expect(mutable, 1);
         });
 
         test('async', () async {
-          final main = Effect.tryCatch(
+          final main = Effect<Null, void, int>.tryCatch(
             execute: () async => 10,
             onError: (error, stackTrace) {},
           );
-          final result = await main.runFuture(null);
+          final result = await main.runFuture();
           expect(result, 10);
         });
 
         test('sync', () {
-          final main = Effect.tryCatch(
+          final main = Effect<Null, void, int>.tryCatch(
             execute: () => 10,
             onError: (error, stackTrace) {},
           );
-          final result = main.runSync(null);
+          final result = main.runSync();
           expect(result, 10);
         });
       });
@@ -57,7 +57,7 @@ void main() {
             final value = $.sync(Effect.succeed(10));
             return value;
           });
-          final result = main.runSync(null);
+          final result = main.runSync();
           expect(result, 10);
         });
 
@@ -66,7 +66,7 @@ void main() {
             final value = $.sync(Effect.fail("abc"));
             return value;
           });
-          final result = main.flip().runSync(null);
+          final result = main.flip().runSync();
           expect(result, "abc");
         });
 
@@ -76,7 +76,7 @@ void main() {
                 await $.async(Effect.functionSucceed(() => Future.value(10)));
             return value;
           });
-          final result = await main.runFuture(null);
+          final result = await main.runFuture();
           expect(result, 10);
         });
 
@@ -88,7 +88,7 @@ void main() {
             return value;
           });
 
-          expect(() => main.runSync(null), throwsA(isA<Die>()));
+          expect(() => main.runSync(), throwsA(isA<Die>()));
         });
       });
     },

@@ -13,7 +13,7 @@ void main() {
           });
 
           final program = main.provide("abc");
-          final result = program.runSyncVoid();
+          final result = program.runSync();
           expect(result, 3);
         });
       });
@@ -27,7 +27,7 @@ void main() {
 
           final program =
               main.provideEffect(Effect<Null, String, int>.succeed(10));
-          final result = program.runSyncVoid();
+          final result = program.runSync();
           expect(result, 11);
         });
 
@@ -39,7 +39,7 @@ void main() {
 
           final program =
               main.provideEffect(Effect<Null, String, int>.fail("error"));
-          final result = program.flip().runSyncVoid();
+          final result = program.flip().runSync();
           expect(result, "error");
         });
       });
@@ -53,7 +53,7 @@ void main() {
             return value;
           });
 
-          final result = main.runSync("abc");
+          final result = main.provide("abc").runSync();
           expect(result, 4);
         });
       });

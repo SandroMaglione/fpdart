@@ -9,27 +9,29 @@ void main() {
     () {
       group('orDie', () {
         test('succeed', () {
-          final main = Effect.succeed(10).orDie;
-          final result = main.runSync(null);
+          final main = Effect<Null, String, int>.succeed(10).orDie;
+          final result = main.runSync();
           expect(result, 10);
         });
 
         test('fail', () {
-          final main = Effect.fail(10).orDie;
-          expect(() => main.runSync(null), throwsA(isA<Die>()));
+          final main = Effect<Null, String, int>.fail("error").orDie;
+          expect(() => main.runSync(), throwsA(isA<Die>()));
         });
       });
 
       group('orDieWith', () {
         test('succeed', () {
-          final main = Effect.succeed(10).orDieWith((_) => CustomError());
-          final result = main.runSync(null);
+          final main = Effect<Null, String, int>.succeed(10)
+              .orDieWith((_) => CustomError());
+          final result = main.runSync();
           expect(result, 10);
         });
 
         test('fail', () {
-          final main = Effect.fail(10).orDieWith((_) => CustomError());
-          expect(() => main.runSync(null), throwsA(isA<Die>()));
+          final main = Effect<Null, String, int>.fail("error")
+              .orDieWith((_) => CustomError());
+          expect(() => main.runSync(), throwsA(isA<Die>()));
         });
       });
     },

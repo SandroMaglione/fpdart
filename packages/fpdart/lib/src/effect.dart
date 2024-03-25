@@ -71,81 +71,6 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
     return "Effect(${_unsafeRun.runtimeType})";
   }
 
-  /// {@category execution}
-  R runSync(E env) {
-    try {
-      final result = _unsafeRun(env);
-      if (result is Future) {
-        throw Die.current(
-          Exception("runSync cannot execute async Effect"),
-        );
-      }
-
-      return switch (result) {
-        Left(value: final cause) => throw cause,
-        Right(value: final value) => value,
-      };
-    } on Cause<L> {
-      rethrow;
-    } catch (error, stackTrace) {
-      throw Die(error, stackTrace);
-    }
-  }
-
-  /// {@category execution}
-  Exit<L, R> runSyncExit(E env) {
-    try {
-      final result = _unsafeRun(env);
-      if (result is Future) {
-        return Left(Die.current(
-          Exception("runSyncExit cannot execute async Effect"),
-        ));
-      }
-      return result;
-    } on Cause<L> catch (cause) {
-      return Left(cause);
-    } catch (error, stackTrace) {
-      return Left(Die(error, stackTrace));
-    }
-  }
-
-  /// {@category execution}
-  Future<R> runFuture(E env) async {
-    try {
-      final result = _unsafeRun(env);
-      if (result is! Future) {
-        return switch (result) {
-          Left(value: final cause) => throw cause,
-          Right(value: final value) => value,
-        };
-      }
-
-      return switch (await result) {
-        Left(value: final cause) => throw cause,
-        Right(value: final value) => value,
-      };
-    } on Cause<L> {
-      rethrow;
-    } catch (error, stackTrace) {
-      throw Die(error, stackTrace);
-    }
-  }
-
-  /// {@category execution}
-  Future<Exit<L, R>> runFutureExit(E env) async {
-    try {
-      final result = _unsafeRun(env);
-      if (result is! Future) {
-        return result;
-      }
-      return result;
-    } on Cause<L> catch (cause) {
-      return Left(cause);
-    } catch (error, stackTrace) {
-      return Left(Die(error, stackTrace));
-    }
-  }
-
   /// {@category constructors}
   factory Effect.gen(DoFunctionEffect<E, L, R> f) => Effect<E, L, R>._(
         (env) {
@@ -610,14 +535,77 @@ extension ProvideNull<L, R> on Effect<Null, L, R> {
       );
 
   /// {@category execution}
-  R runSyncVoid() => runSync(null);
+  R runSync() {
+    try {
+      final result = _unsafeRun(null);
+      if (result is Future) {
+        throw Die.current(
+          Exception("runSync cannot execute async Effect"),
+        );
+      }
+
+      return switch (result) {
+        Left(value: final cause) => throw cause,
+        Right(value: final value) => value,
+      };
+    } on Cause<L> {
+      rethrow;
+    } catch (error, stackTrace) {
+      throw Die(error, stackTrace);
+    }
+  }
 
   /// {@category execution}
-  Future<R> runFutureVoid() => runFuture(null);
+  Exit<L, R> runSyncExit() {
+    try {
+      final result = _unsafeRun(null);
+      if (result is Future) {
+        return Left(Die.current(
+          Exception("runSyncExit cannot execute async Effect"),
+        ));
+      }
+      return result;
+    } on Cause<L> catch (cause) {
+      return Left(cause);
+    } catch (error, stackTrace) {
+      return Left(Die(error, stackTrace));
+    }
+  }
 
   /// {@category execution}
-  Either<Cause<L>, R> runSyncExitVoid() => runSyncExit(null);
+  Future<R> runFuture() async {
+    try {
+      final result = _unsafeRun(null);
+      if (result is! Future) {
+        return switch (result) {
+          Left(value: final cause) => throw cause,
+          Right(value: final value) => value,
+        };
+      }
+
+      return switch (await result) {
+        Left(value: final cause) => throw cause,
+        Right(value: final value) => value,
+      };
+    } on Cause<L> {
+      rethrow;
+    } catch (error, stackTrace) {
+      throw Die(error, stackTrace);
+    }
+  }
 
   /// {@category execution}
-  Future<Either<Cause<L>, R>> runFutureExitVoid() => runFutureExit(null);
+  Future<Exit<L, R>> runFutureExit() async {
+    try {
+      final result = _unsafeRun(null);
+      if (result is! Future) {
+        return result;
+      }
+      return result;
+    } on Cause<L> catch (cause) {
+      return Left(cause);
+    } catch (error, stackTrace) {
+      return Left(Die(error, stackTrace));
+    }
+  }
 }
