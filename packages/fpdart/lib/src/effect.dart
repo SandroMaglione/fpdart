@@ -54,7 +54,7 @@ typedef DoFunctionEffect<E, L, A> = FutureOr<A> Function(
   EffectGen<E, L> $,
 );
 
-abstract interface class IEffect<E, L, R> {
+abstract class IEffect<E, L, R> {
   const IEffect();
   Effect<E, L, R> get asEffect;
 }
