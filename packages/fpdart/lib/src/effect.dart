@@ -164,6 +164,9 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   factory Effect.fail(L value) => Effect.from((_) => Left(Failure(value)));
 
   /// {@category constructors}
+  factory Effect.failCause(Cause<L> cause) => Effect.from((_) => Left(cause));
+
+  /// {@category constructors}
   factory Effect.succeed(R value) => Effect.from((_) => Right(value));
 
   /// {@category constructors}
@@ -191,7 +194,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       });
 
   /// {@category constructors}
-  static Effect<E, Never, void> sleep<E>(Duration duration) => Effect.from(
+  static Effect<E, L, void> sleep<E, L>(Duration duration) => Effect.from(
         (_) => Future.delayed(
           duration,
           () => const Right(null),
@@ -607,6 +610,14 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
           },
         ),
       );
+
+  /// {@category delay}
+  Effect<E, L, R> delay(Duration duration) =>
+      Effect.sleep<E, L>(duration).zipRight(this);
+
+  /// {@category delay}
+  Effect<E, L, R> timeout(Duration duration) =>
+      race(Effect<E, L, R>.failCause(const Interrupted()).delay(duration));
 }
 
 extension ProvideNull<L, R> on Effect<Null, L, R> {
