@@ -1,10 +1,10 @@
-/// {@template fpdart_curry_extension}
-/// Extract first parameter from this function to allow curring.
-/// {@endtemplate}
-///
-/// {@template fpdart_curry_last_extension}
-/// Extract **last** parameter from this function to allow curring.
-/// {@endtemplate}
+// {@template fpdart_curry_extension}
+// Extract first parameter from this function to allow curring.
+// {@endtemplate}
+
+// {@template fpdart_curry_last_extension}
+// Extract **last** parameter from this function to allow curring.
+// {@endtemplate}
 
 extension CurryExtension2<Input1, Input2, Output> on Output Function(
     Input1, Input2) {

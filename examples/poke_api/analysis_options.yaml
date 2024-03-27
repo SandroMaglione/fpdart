@@ -3,13 +3,10 @@ include: package:lints/recommended.yaml
 linter:
   rules:
     annotate_overrides: true
-    prefer_const_constructors: true
+    prefer_void_to_null: false
 
 analyzer:
   language:
     strict-casts: true
     strict-inference: true
     strict-raw-types: true
-  errors:
-    annotate_overrides: error
-    deprecated_field: ignore
