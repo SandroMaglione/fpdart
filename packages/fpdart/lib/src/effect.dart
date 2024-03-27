@@ -618,6 +618,9 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   /// {@category delay}
   Effect<E, L, R> timeout(Duration duration) =>
       race(Effect<E, L, R>.failCause(const Interrupted()).delay(duration));
+
+  /// {@category interruption}
+  Effect<E, Never, R> interrupt() => Effect.failCause(const Interrupted());
 }
 
 extension ProvideNull<L, R> on Effect<Null, L, R> {

@@ -1,6 +1,6 @@
 part of 'effect.dart';
 
-final class Deferred<L, R> extends IEffect<Null, L, R> {
+final class Deferred<L, R> extends IEffect<Never, L, Option<R>> {
   Option<Exit<L, R>> _value = None();
 
   Completer<Exit<L, R>>? __completer;
@@ -17,8 +17,14 @@ final class Deferred<L, R> extends IEffect<Null, L, R> {
   bool get unsafeCompleted => _value is Some<Exit<L, R>>;
 
   @override
-  Effect<Null, L, R> get asEffect => Effect.from(
-        (_) => await<Null>()._unsafeRun(Context.env(null)),
+  Effect<Never, L, Option<R>> get asEffect => Effect.from(
+        (_) => switch (_value) {
+          None() => Right(None()),
+          Some(value: final exit) => switch (exit) {
+              Left() => Right(None()),
+              Right(value: final value) => Right(Some(value)),
+            },
+        },
       );
 
   Effect<E, L, R> await<E>() => Effect.from(
