@@ -10,6 +10,7 @@ extension FutureOrThenExtension<A> on FutureOr<A> {
         return self.then(f).catchError(
           (Object error, StackTrace stackTrace) {
             if (onError != null) onError(error, stackTrace);
+            throw error;
           },
         );
       case A self:
