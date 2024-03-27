@@ -191,6 +191,14 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       });
 
   /// {@category constructors}
+  static Effect<E, Never, void> sleep<E>(Duration duration) => Effect.from(
+        (_) => Future.delayed(
+          duration,
+          () => const Right(null),
+        ),
+      );
+
+  /// {@category constructors}
   static Effect<E, Never, Never> die<E>(dynamic defect) => Effect.from(
         (_) => Left(Die.current(defect)),
       );
@@ -453,6 +461,10 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
           },
         ),
       );
+
+  /// {@category sequencing}
+  Effect<E, L, R> race(Effect<E, L, R> effect) =>
+      Effect.raceAll([this, effect]);
 
   /// {@category sequencing}
   Effect<E, L, C> flatMap<C>(Effect<E, L, C> Function(R r) f) => Effect.from(
