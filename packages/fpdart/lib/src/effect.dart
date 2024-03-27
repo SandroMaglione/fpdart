@@ -72,6 +72,18 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   }
 
   /// {@category constructors}
+  factory Effect.from(FutureOr<Exit<L, R>> Function(E env) run) =>
+      Effect._((env) {
+        try {
+          return run(env);
+        } on Cause<L> catch (cause) {
+          return Left(cause);
+        } catch (error, stackTrace) {
+          return Left(Die(error, stackTrace));
+        }
+      });
+
+  /// {@category constructors}
   factory Effect.gen(DoFunctionEffect<E, L, R> f) => Effect<E, L, R>._(
         (env) {
           try {
@@ -97,7 +109,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
     required L Function(Object error, StackTrace stackTrace) onError,
     FutureOr<dynamic> Function()? onCancel,
   }) =>
-      Effect._(
+      Effect.from(
         (env) {
           try {
             return execute().then(
@@ -114,42 +126,39 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 
   /// {@category constructors}
   factory Effect.fromNullable(R? value, {required L Function() onNull}) =>
-      Effect._(
+      Effect.from(
         (_) => value == null ? Left(Failure(onNull())) : Right(value),
       );
 
   /// {@category constructors}
-  factory Effect.functionFail(FutureOr<Cause<L>> Function() f) => Effect._(
+  factory Effect.functionFail(FutureOr<Cause<L>> Function() f) => Effect.from(
         (_) => f().then(Left.new),
       );
 
   /// {@category constructors}
-  factory Effect.functionSucceed(FutureOr<R> Function() f) => Effect._(
+  factory Effect.functionSucceed(FutureOr<R> Function() f) => Effect.from(
         (_) => f().then(Right.new),
       );
 
   /// {@category constructors}
-  factory Effect.from(Exit<L, R> Function(E env) f) => Effect._(f);
+  factory Effect.fail(L value) => Effect.from((_) => Left(Failure(value)));
 
   /// {@category constructors}
-  factory Effect.fail(L value) => Effect._((_) => Left(Failure(value)));
+  factory Effect.succeed(R value) => Effect.from((_) => Right(value));
 
   /// {@category constructors}
-  factory Effect.succeed(R value) => Effect._((_) => Right(value));
-
-  /// {@category constructors}
-  static Effect<E, Never, Never> die<E>(dynamic defect) => Effect._(
+  static Effect<E, Never, Never> die<E>(dynamic defect) => Effect.from(
         (_) => Left(Die.current(defect)),
       );
 
   /// {@category constructors}
   static Effect<E, Never, Never> functionDie<E>(dynamic Function() run) =>
-      Effect._(
+      Effect.from(
         (_) => Left(Die.current(run())),
       );
 
   /// {@category constructors}
-  static Effect<E, L, fpdart_unit.Unit> unit<E, L>() => Effect._(
+  static Effect<E, L, fpdart_unit.Unit> unit<E, L>() => Effect.from(
         (_) => const Right(fpdart_unit.unit),
       );
 
@@ -158,7 +167,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
     Iterable<A> iterable,
     Effect<E, L, R> Function(A a, int index) f,
   ) =>
-      Effect._(
+      Effect.from(
         (env) {
           if (iterable.isEmpty) {
             return const Right([]);
@@ -211,15 +220,15 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       flatMap((_) => effect);
 
   /// {@category do_notation}
-  Effect<V, L, R> mapEnv<V>(E Function(V env) f) => Effect._(
+  Effect<V, L, R> mapEnv<V>(E Function(V env) f) => Effect.from(
         (env) => _unsafeRun(f(env)),
       );
 
   /// {@category do_notation}
-  Effect<Null, L, R> provide(E env) => Effect._((_) => _unsafeRun(env));
+  Effect<Null, L, R> provide(E env) => Effect.from((_) => _unsafeRun(env));
 
   /// {@category do_notation}
-  Effect<V, L, R> provideEffect<V>(Effect<V, L, E> effect) => Effect._(
+  Effect<V, L, R> provideEffect<V>(Effect<V, L, E> effect) => Effect.from(
         (env) => effect._unsafeRun(env).then(
               (exit) => switch (exit) {
                 Left(value: final cause) => Left(cause),
@@ -229,7 +238,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category do_notation}
-  static Effect<E, L, E> env<E, L>() => Effect._(
+  static Effect<E, L, E> env<E, L>() => Effect.from(
         (env) => Right(env),
       );
 
@@ -244,7 +253,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category conversions}
-  Effect<E, Never, Either<L, R>> either() => Effect._(
+  Effect<E, Never, Either<L, R>> either() => Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
@@ -257,7 +266,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category conversions}
-  Effect<E, Never, Option<R>> option() => Effect._(
+  Effect<E, Never, Option<R>> option() => Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
@@ -270,7 +279,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category conversions}
-  Effect<E, Never, Exit<L, R>> exit() => Effect._(
+  Effect<E, Never, Exit<L, R>> exit() => Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => Right(exit),
         ),
@@ -281,7 +290,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
     required C Function(L l) onFailure,
     required C Function(R r) onSuccess,
   }) =>
-      Effect._(
+      Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
@@ -298,7 +307,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
     required C Function(Cause<L> l) onFailure,
     required C Function(R r) onSuccess,
   }) =>
-      Effect._(
+      Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => Right(onFailure(cause)),
@@ -312,7 +321,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
     required Effect<E, C, D> Function(L l) onFailure,
     required Effect<E, C, D> Function(R r) onSuccess,
   }) =>
-      Effect._(
+      Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
@@ -330,7 +339,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
     required Effect<E, C, D> Function(Cause<L> l) onFailure,
     required Effect<E, C, D> Function(R r) onSuccess,
   }) =>
-      Effect._(
+      Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => onFailure(cause)._unsafeRun(env),
@@ -340,7 +349,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category mapping}
-  Effect<E, R, L> flip() => Effect._(
+  Effect<E, R, L> flip() => Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
@@ -356,7 +365,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   Effect<E, L, V> map<V>(V Function(R r) f) => ap(Effect.succeed(f));
 
   /// {@category mapping}
-  Effect<E, C, R> mapError<C>(C Function(L l) f) => Effect._(
+  Effect<E, C, R> mapError<C>(C Function(L l) f) => Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
@@ -369,7 +378,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category mapping}
-  Effect<E, C, R> mapErrorCause<C>(C Function(Cause<L> l) f) => Effect._(
+  Effect<E, C, R> mapErrorCause<C>(C Function(Cause<L> l) f) => Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => Left(Failure(f(cause))),
@@ -380,7 +389,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 
   /// {@category mapping}
   Effect<E, C, D> mapBoth<C, D>(C Function(L l) fl, D Function(R r) fr) =>
-      Effect._(
+      Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
@@ -393,7 +402,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category sequencing}
-  Effect<E, L, C> flatMap<C>(Effect<E, L, C> Function(R r) f) => Effect._(
+  Effect<E, L, C> flatMap<C>(Effect<E, L, C> Function(R r) f) => Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => Left(cause),
@@ -407,7 +416,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       flatMap((r) => f(r).map((_) => r));
 
   /// {@category sequencing}
-  Effect<E, L, R> tapError<C>(Effect<E, C, R> Function(L l) f) => Effect._(
+  Effect<E, L, R> tapError<C>(Effect<E, C, R> Function(L l) f) => Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
@@ -425,7 +434,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   Effect<E, C, R> orElse<C>(
     Effect<E, C, R> Function(L l) orElse,
   ) =>
-      Effect._(
+      Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
@@ -439,7 +448,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category alternatives}
-  Effect<E, Never, R> get orDie => Effect._(
+  Effect<E, Never, R> get orDie => Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => Left(Die.current(cause)),
@@ -451,7 +460,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 
   /// {@category alternatives}
   Effect<E, Never, R> orDieWith<T extends Object>(T Function(L l) onError) =>
-      Effect._(
+      Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
@@ -469,7 +478,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   Effect<E, C, R> catchError<C>(
     Effect<E, C, R> Function(L error) f,
   ) =>
-      Effect._(
+      Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
@@ -486,7 +495,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   Effect<E, C, R> catchCause<C>(
     Effect<E, C, R> Function(Cause<L> cause) f,
   ) =>
-      Effect._(
+      Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => f(cause),
@@ -501,7 +510,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
     required bool Function(R r) predicate,
     required C Function(R r) orDieWith,
   }) =>
-      Effect._(
+      Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => Left(cause),
@@ -517,7 +526,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
     required bool Function(R r) predicate,
     required Effect<E, L, R> Function(R r) orElse,
   }) =>
-      Effect._(
+      Effect.from(
         (env) => _unsafeRun(env).then(
           (exit) => switch (exit) {
             Left(value: final cause) => Left(cause),
@@ -530,7 +539,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 
 extension ProvideNull<L, R> on Effect<Null, L, R> {
   /// {@category do_notation}
-  Effect<V, L, R> withEnv<V>() => Effect._(
+  Effect<V, L, R> withEnv<V>() => Effect.from(
         (env) => _unsafeRun(null),
       );
 
