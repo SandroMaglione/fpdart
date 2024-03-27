@@ -51,3 +51,21 @@ final class Failure<L> extends Cause<L> {
     return "Cause.Fail($error)";
   }
 }
+
+final class Interrupted extends Cause<Never> {
+  @override
+  final StackTrace? stackTrace;
+
+  const Interrupted([this.stackTrace]);
+
+  @override
+  bool operator ==(Object other) => (other is Interrupted);
+
+  @override
+  int get hashCode => 0;
+
+  @override
+  String toString() {
+    return "Cause.Interrupted()";
+  }
+}

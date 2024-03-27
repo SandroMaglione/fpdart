@@ -3,6 +3,7 @@ include: package:lints/recommended.yaml
 linter:
   rules:
     annotate_overrides: true
+    prefer_void_to_null: false
 
 analyzer:
   language:

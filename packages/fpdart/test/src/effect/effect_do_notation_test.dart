@@ -46,10 +46,11 @@ void main() {
 
       group('mapEnv', () {
         test('adapt dependency from another program', () {
-          final subMain =
-              Effect<int, String, int>.from((env) => Right(env + 1));
+          final subMain = Effect<int, String, int>.from(
+              (context) => Right(context.env + 1));
           final main = Effect<String, String, int>.gen(($) {
-            final value = $.sync(subMain.mapEnv((env) => env.length));
+            final value = $.sync(
+                subMain.mapEnv((context) => Context.env(context.env.length)));
             return value;
           });
 
