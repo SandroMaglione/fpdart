@@ -11,6 +11,6 @@ final effect = Effect<Env, Error, Success>.gen(($) async {
   final eitherValue = $.sync(either);
   final optionValue = $.sync(option);
   final deferred = $.sync(Deferred.make<Error, Success>().withEnv());
-  final value = await $.async(deferred.future());
+  final value = await $.async(deferred.wait());
   return eitherValue + optionValue;
 });

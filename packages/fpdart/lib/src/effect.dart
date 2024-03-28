@@ -185,7 +185,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
           }
         }
 
-        return deferred.future<E>().__unsafeRun(context).then(
+        return deferred.wait<E>().__unsafeRun(context).then(
               (exit) => signal
                   .failCause<E, L>(const Interrupted())
                   .__unsafeRun(context.withoutSignal)
@@ -274,17 +274,28 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   ) =>
       flatMap((_) => effect);
 
-  /// {@category do_notation}
-  Effect<V, L, R> mapEnv<V>(Context<E> Function(Context<V> context) f) =>
+  /// {@category context}
+  Effect<V, L, R> mapContext<V>(Context<E> Function(Context<V> context) f) =>
       Effect.from(
         (context) => _unsafeRun(f(context)),
       );
 
-  /// {@category do_notation}
-  Effect<Null, L, R> provide(E env) =>
+  /// {@category context}
+  Effect<V, L, R> mapEnv<V>(E Function(V env) f) => Effect.from(
+        (context) => _unsafeRun(
+          Context(env: f(context.env), signal: context.signal),
+        ),
+      );
+
+  /// {@category context}
+  Effect<Null, L, R> provide(Context<E> context) =>
+      Effect.from((_) => _unsafeRun(context));
+
+  /// {@category context}
+  Effect<Null, L, R> provideEnv(E env) =>
       Effect.from((_) => _unsafeRun(Context.env(env)));
 
-  /// {@category do_notation}
+  /// {@category context}
   Effect<V, L, R> provideEffect<V>(Effect<V, L, E> effect) => Effect.from(
         (context) => effect._unsafeRun(context).then(
               (exit) => switch (exit) {
@@ -294,7 +305,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
             ),
       );
 
-  /// {@category do_notation}
+  /// {@category context}
   static Effect<E, L, E> env<E, L>() => Effect.from(
         (context) => Right(context.env),
       );
@@ -624,7 +635,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 }
 
 extension ProvideNull<L, R> on Effect<Null, L, R> {
-  /// {@category do_notation}
+  /// {@category context}
   Effect<V, L, R> withEnv<V>() => Effect.from(
         (context) => _unsafeRun(Context.env(null)),
       );

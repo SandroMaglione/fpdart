@@ -14,7 +14,7 @@ void main() {
                 .zipRight(deferred.completeExit(Right(2))),
           ]));
 
-          final value = await $.async(deferred.future());
+          final value = await $.async(deferred.wait());
           return value;
         });
 

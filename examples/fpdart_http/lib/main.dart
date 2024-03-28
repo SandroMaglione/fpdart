@@ -7,12 +7,13 @@ void main() async {
   await get(
     Uri.https("pokeapi.co", "/api/v2/pokemon/10"),
   )
+      .timeout(Duration(milliseconds: 1300))
       .tap(
         (response) => Effect.functionSucceed(
           () => print(response.body),
         ),
       )
-      .provide(
+      .provideEnv(
         http.Client(),
       )
       .runFuture();

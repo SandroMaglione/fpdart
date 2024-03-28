@@ -19,7 +19,7 @@ final class Deferred<L, R> {
 
   bool get unsafeCompleted => _state is Some<Exit<L, R>>;
 
-  Effect<E, L, R> future<E>() => Effect.from(
+  Effect<E, L, R> wait<E>() => Effect.from(
         (ctx) async => switch (_state) {
           None() => await _completer.future,
           Some(value: final value) => value,

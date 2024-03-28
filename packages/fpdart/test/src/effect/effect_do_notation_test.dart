@@ -12,7 +12,7 @@ void main() {
             return env.length;
           });
 
-          final program = main.provide("abc");
+          final program = main.provideEnv("abc");
           final result = program.runSync();
           expect(result, 3);
         });
@@ -49,12 +49,12 @@ void main() {
           final subMain = Effect<int, String, int>.from(
               (context) => Right(context.env + 1));
           final main = Effect<String, String, int>.gen(($) {
-            final value = $.sync(
-                subMain.mapEnv((context) => Context.env(context.env.length)));
+            final value = $.sync(subMain
+                .mapContext((context) => Context.env(context.env.length)));
             return value;
           });
 
-          final result = main.provide("abc").runSync();
+          final result = main.provideEnv("abc").runSync();
           expect(result, 4);
         });
       });
