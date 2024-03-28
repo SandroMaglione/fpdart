@@ -172,8 +172,8 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   /// {@category constructors}
   factory Effect.raceAll(Iterable<Effect<E, L, R>> iterable) =>
       Effect.from((context) {
-        final signal = Deferred<Never, Never>();
-        final deferred = Deferred<L, R>();
+        final signal = Deferred<Never, Never>.unsafeMake();
+        final deferred = Deferred<L, R>.unsafeMake();
 
         for (final effect in iterable) {
           effect
@@ -185,7 +185,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
           }
         }
 
-        return deferred.await<E>().__unsafeRun(context).then(
+        return deferred.future<E>().__unsafeRun(context).then(
               (exit) => signal
                   .failCause<E, L>(const Interrupted())
                   .__unsafeRun(context.withoutSignal)

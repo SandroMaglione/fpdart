@@ -12,11 +12,12 @@ final class Context<E> {
   }) =>
       Context._(env: env, signal: signal);
 
-  factory Context.env(E env) => Context._(env: env, signal: Deferred());
+  factory Context.env(E env) =>
+      Context._(env: env, signal: Deferred.unsafeMake());
 
   Context<C> withEnv<C>(C env) => Context._(env: env, signal: signal);
 
-  Context<E> get withoutSignal => withSignal(Deferred());
+  Context<E> get withoutSignal => withSignal(Deferred.unsafeMake());
   Context<E> withSignal(Deferred<Never, Never> signal) =>
       copyWith(signal: signal);
 
