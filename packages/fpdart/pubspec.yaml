@@ -1,8 +1,8 @@
 name: fpdart
 description: >
-  Functional programming in Dart and Flutter.
-  All the main functional programming types and patterns fully documented, tested, and with examples.
-version: 2.0.0-dev.1
+  Functional Effect System in Dart and Flutter.
+  Build composable, type safe, maintainable and testable apps with an extensive API fully tested and documented.
+version: 2.0.0-dev.2
 homepage: https://www.sandromaglione.com/
 repository: https://github.com/SandroMaglione/fpdart
 author: Maglione Sandro <lass.maglio@gmail.com>
@@ -21,5 +21,5 @@ dev_dependencies:
   collection: ^1.18.0
 
 screenshots:
-  - description: "Basic usage of fpdart Option, Either, TaskEither types."
+  - description: "Basic usage of fpdart Effect type."
     path: example/screenshot_fpdart.png

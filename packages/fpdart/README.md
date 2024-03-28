@@ -123,7 +123,7 @@ Interested in what `fpdart` is and how it came to be?
 ## 💻 Installation
 
 ```shell
-dart pub add fpdart:'^2.0.0'
+dart pub add fpdart:'v2.0.0-dev.2'
 ```
 
 ## ✨ Examples
@@ -499,6 +499,7 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
 
+- v2.0.0-dev.2 - 29 March 2024
 - v2.0.0-dev.1 - 23 March 2024
 
 ***

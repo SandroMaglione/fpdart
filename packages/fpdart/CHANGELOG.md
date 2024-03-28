@@ -1,3 +1,12 @@
+## v2.0.0-dev.2 - 29 March 2024
+- Complete `Option` and `Either` API
+- Execute `Effect` using `provide` (with `Null` as dependency)
+- Fixed implementation of running `Effect` and catching `Cause`
+- Added interruption (`Cause.Interrupted`)
+  - `Deferred`
+  - `Context`
+  - New methods (`raceAll`, `race`, `delay`, `sleep`, `timeout`)
+
 ## v2.0.0-dev.1 - 23 March 2024
 - Initial preview release of `fpdart` v2
   - Refactoring to use `Effect` class
