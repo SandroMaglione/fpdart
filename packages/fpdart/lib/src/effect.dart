@@ -10,6 +10,7 @@ part 'context.dart';
 part 'deferred.dart';
 part 'either.dart';
 part 'option.dart';
+part 'scope.dart';
 
 typedef EffectGen<E, L> = ({
   FutureOr<A> Function<A>(IEffect<E, L, A>) async,
@@ -159,6 +160,10 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   factory Effect.functionSucceed(FutureOr<R> Function() f) => Effect.from(
         (_) => f().then(Right.new),
       );
+
+  /// {@category constructors}
+  factory Effect.lazy(Effect<E, L, R> Function() effect) =>
+      Effect.from((context) => effect().__unsafeRun(context));
 
   /// {@category constructors}
   factory Effect.fail(L value) => Effect.from((_) => Left(Failure(value)));
@@ -481,6 +486,15 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       Effect.raceAll([this, effect]);
 
   /// {@category sequencing}
+  Effect<E, L, R> alwaysIgnore<C>(Effect<E, L, C> effect) => Effect.from(
+        (context) => race(context.signal.wait()).__unsafeRun(context).then(
+              (exit) => effect.__unsafeRun(context.withoutSignal).then(
+                    (_) => exit,
+                  ),
+            ),
+      );
+
+  /// {@category sequencing}
   Effect<E, L, C> flatMap<C>(Effect<E, L, C> Function(R r) f) => Effect.from(
         (context) => _unsafeRun(context).then(
           (exit) => switch (exit) {
@@ -632,6 +646,20 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 
   /// {@category interruption}
   Effect<E, Never, R> interrupt() => Effect.failCause(const Interrupted());
+
+  /// {@category scoping}
+  Effect<Scope<E>, L, R> get scopedEnv => Effect.from(
+        (context) => __unsafeRun(context.withEnv(context.env.env)),
+      );
+}
+
+extension EffectWithScope<E, L, R> on Effect<Scope<E>, L, R> {
+  Effect<E, L, R> get scoped => Effect.from((context) {
+        final scope = Scope.withEnv(context.env);
+        return alwaysIgnore(scope.closeScope()).__unsafeRun(
+          context.withEnv(scope),
+        );
+      });
 }
 
 extension ProvideNull<L, R> on Effect<Null, L, R> {

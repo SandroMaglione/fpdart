@@ -411,6 +411,10 @@ extension FpdartOnIterableOfIterable<T> on Iterable<Iterable<T>> {
   Iterable<T> get flatten => expand(identity);
 }
 
+extension IterableEffect<E, L, R> on Iterable<Effect<E, L, R>> {
+  Effect<E, L, Iterable<R>> get all => Effect.all(this);
+}
+
 extension FpdartSequenceIterableOption<R> on Iterable<Option<R>> {
   Iterable<R> get getSomes => Option.getSomes(this);
 }
