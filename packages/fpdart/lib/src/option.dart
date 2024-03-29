@@ -8,24 +8,24 @@ sealed class Option<R> extends IEffect<Never, Never, R> {
 
   static Option<R> safeCastStrict<R, V>(V value) {
     if (value is R) return Some(value);
-    return None();
+    return const None();
   }
 
   factory Option.fromPredicate(R value, bool Function(R r) predicate) {
     if (predicate(value)) return Some(value);
-    return None();
+    return const None();
   }
 
   factory Option.fromNullable(R? value) {
     if (value != null) return Some(value);
-    return None();
+    return const None();
   }
 
   factory Option.tryCatch(R Function() f) {
     try {
       return Some(f());
     } catch (_) {
-      return None();
+      return const None();
     }
   }
 
@@ -33,7 +33,7 @@ sealed class Option<R> extends IEffect<Never, Never, R> {
     dynamic json,
     R Function(dynamic json) fromJson,
   ) =>
-      json != null ? Option.tryCatch(() => fromJson(json)) : None();
+      json != null ? Option.tryCatch(() => fromJson(json)) : const None();
 
   static Iterable<R> getSomes<R>(Iterable<Option<R>> iterable) sync* {
     for (var option in iterable) {
@@ -115,21 +115,18 @@ final class Some<R> extends Option<R> {
   @override
   Option<R> filter(bool Function(R r) f) {
     if (f(value)) return Some(value);
-    return None();
+    return const None();
   }
 
   @override
   Option<C> filterMap<C>(Option<C> Function(R r) f) {
     if (f(value) case Some(value: final value)) return Some(value);
-    return None();
+    return const None();
   }
 }
 
 final class None extends Option<Never> {
-  static const None _none = None._instance();
-  const None._instance();
-
-  factory None() => _none;
+  const None();
 
   @override
   Effect<Never, Never, Never> get asEffect =>
@@ -143,20 +140,20 @@ final class None extends Option<Never> {
   Null getOrNull() => null;
 
   @override
-  Object? toJson(Object? Function(Never value) toJson) => None();
+  Object? toJson(Object? Function(Never value) toJson) => const None();
 
   @override
   String toString() => 'None';
 
   @override
-  Option<C> andThen<C>(C Function(Never r) f) => None();
+  Option<C> andThen<C>(C Function(Never r) f) => const None();
 
   @override
-  Option<Never> tap<C>(Option<C> Function(Never r) f) => None();
+  Option<Never> tap<C>(Option<C> Function(Never r) f) => const None();
 
   @override
-  Option<Never> filter(bool Function(Never r) f) => None();
+  Option<Never> filter(bool Function(Never r) f) => const None();
 
   @override
-  Option<C> filterMap<C>(Option<C> Function(Never r) f) => None();
+  Option<C> filterMap<C>(Option<C> Function(Never r) f) => const None();
 }

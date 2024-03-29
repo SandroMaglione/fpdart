@@ -1,7 +1,7 @@
 part of 'effect.dart';
 
 final class Deferred<L, R> {
-  Option<Exit<L, R>> _state = None();
+  Option<Exit<L, R>> _state = const None();
   Completer<Exit<L, R>>? __completer;
 
   Deferred._();

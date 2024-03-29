@@ -143,7 +143,7 @@ final class Right<L, R> extends Either<L, R> {
       predicate(value) ? Right(value) : Left(orLeftWith(value));
 
   @override
-  Option<L> getLeft() => None();
+  Option<L> getLeft() => const None();
 
   @override
   Either<L, R> tap<C>(Either<L, C> Function(R r) f) =>
@@ -188,7 +188,7 @@ final class Left<L, R> extends Either<L, R> {
   R? getOrNull() => null;
 
   @override
-  Option<R> getRight() => None();
+  Option<R> getRight() => const None();
 
   @override
   bool operator ==(Object other) => (other is Left) && other.value == value;

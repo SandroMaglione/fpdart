@@ -55,7 +55,7 @@ extension FpdartOnMap<K, V> on Map<K, V> {
     var value = this[key];
     if (value != null) return Some(value);
     if (containsKey(key)) return Some(value as V);
-    return None();
+    return const None();
   }
 
   /// Get the value and key at given `key` if present, otherwise return [None].
@@ -63,7 +63,7 @@ extension FpdartOnMap<K, V> on Map<K, V> {
     final value = this[key];
     if (value != null) return Some((key, value));
     if (containsKey(key)) return Some((key, value as V));
-    return None();
+    return const None();
   }
 
   /// Return an [Option] that conditionally accesses map keys, only if they match the
@@ -78,7 +78,7 @@ extension FpdartOnMap<K, V> on Map<K, V> {
   Option<T> extract<T>(K key) {
     final value = this[key];
     if (value is T) return Some(value);
-    return None();
+    return const None();
   }
 
   /// Return an [Option] that conditionally accesses map keys if they contain a value

@@ -339,7 +339,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         (context) => _unsafeRun(context).then(
           (exit) => switch (exit) {
             Left(value: final cause) => switch (cause) {
-                Failure<L>() => Right(None()),
+                Failure() => Right<Cause<Never>, Option<R>>(const None()),
                 Die() => Left(cause),
                 Interrupted() => Left(cause),
               },
