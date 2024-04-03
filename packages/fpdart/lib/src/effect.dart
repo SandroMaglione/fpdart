@@ -293,12 +293,21 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category context}
-  Effect<Null, L, R> provide(Context<E> context) =>
-      Effect.from((_) => _unsafeRun(context));
+  Effect<Null, L, R> provide(Context<E> context) {
+    final env = context.env;
+    final effect = env is ScopeMixin && !env.scopeClosable
+        ? alwaysIgnore(env.closeScope())
+        : this;
+    return Effect.from((_) => effect._unsafeRun(context));
+  }
 
   /// {@category context}
-  Effect<Null, L, R> provideEnv(E env) =>
-      Effect.from((_) => _unsafeRun(Context.env(env)));
+  Effect<Null, L, R> provideEnv(E env) {
+    final effect = env is ScopeMixin && !env.scopeClosable
+        ? alwaysIgnore(env.closeScope())
+        : this;
+    return Effect.from((_) => effect._unsafeRun(Context.env(env)));
+  }
 
   /// {@category context}
   Effect<V, L, R> provideEffect<V>(Effect<V, L, E> effect) => Effect.from(
@@ -505,8 +514,28 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category sequencing}
+  Effect<E, L, C> flatMapEnv<C>(Effect<E, L, C> Function(R r, E env) f) =>
+      Effect.from(
+        (context) => _unsafeRun(context).then(
+          (exit) => switch (exit) {
+            Left(value: final cause) => Left(cause),
+            Right(value: final value) =>
+              f(value, context.env)._unsafeRun(context),
+          },
+        ),
+      );
+
+  /// {@category sequencing}
   Effect<E, L, R> tap<C>(Effect<E, L, C> Function(R r) f) =>
       flatMap((r) => f(r).map((_) => r));
+
+  /// {@category sequencing}
+  Effect<E, L, R> tapEnv<C>(
+    Effect<E, L, C> Function(R r, E env) f,
+  ) =>
+      flatMapEnv(
+        (r, env) => f(r, env).map((_) => r),
+      );
 
   /// {@category sequencing}
   Effect<E, L, R> tapError<C>(Effect<E, C, R> Function(L l) f) => Effect.from(
@@ -646,15 +675,45 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 
   /// {@category interruption}
   Effect<E, Never, R> interrupt() => Effect.failCause(const Interrupted());
+}
+
+extension EffectWithScopeFinalizer<E extends ScopeMixin, L, R>
+    on Effect<E, L, R> {
+  /// {@category scoping}
+  Effect<E, L, R> addFinalizer(Effect<Null, Never, Unit> release) =>
+      tapEnv((_, env) => env.addScopeFinalizer(release));
 
   /// {@category scoping}
-  Effect<Scope<E>, L, R> get scopedEnv => Effect.from(
-        (context) => __unsafeRun(context.withEnv(context.env.env)),
+  Effect<E, L, R> acquireRelease(
+    Effect<Null, Never, Unit> Function(R r) release,
+  ) =>
+      tap((r) => addFinalizer(release(r)));
+}
+
+extension EffectNoScopeFinalizer<E, L, R> on Effect<E, L, R> {
+  /// {@category scoping}
+  Effect<Scope<E>, L, R> get withScope => Effect<Scope<E>, L, R>.from(
+        (ctx) => _unsafeRun(ctx.withEnv(ctx.env.env)),
+      );
+
+  /// {@category scoping}
+  Effect<Scope<E>, L, R> addFinalizer(Effect<Null, Never, Unit> release) =>
+      withScope.tapEnv(
+        (_, env) => env.addScopeFinalizer(release),
+      );
+
+  /// {@category scoping}
+  Effect<Scope<E>, L, R> acquireRelease(
+    Effect<Null, Never, Unit> Function(R r) release,
+  ) =>
+      withScope.tapEnv(
+        (r, _) => _.addScopeFinalizer(release(r)),
       );
 }
 
 extension EffectWithScope<E, L, R> on Effect<Scope<E>, L, R> {
-  Effect<E, L, R> get scoped => Effect.from((context) {
+  /// {@category scoping}
+  Effect<E, L, R> get provideScope => Effect.from((context) {
         final scope = Scope.withEnv(context.env);
         return alwaysIgnore(scope.closeScope()).__unsafeRun(
           context.withEnv(scope),
