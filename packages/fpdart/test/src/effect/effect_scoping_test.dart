@@ -21,6 +21,23 @@ void main() {
         expect(mutable, 1);
       });
 
+      test('closable Scope', () async {
+        final scope = Scope.withEnv(true, closable: true);
+        var mutable = 0;
+        final main =
+            Effect<bool, String, int>.succeed(10).withScope.addFinalizer(
+          Effect.functionSucceed(() {
+            mutable += 1;
+            return unit;
+          }),
+        );
+
+        await main.provide(Context.env(scope)).runFuture();
+        expect(mutable, 0);
+        scope.closeScope<Null, Never>().runSync();
+        expect(mutable, 1);
+      });
+
       group('acquireRelease', () {
         test('release when successful', () async {
           var mutable = 0;

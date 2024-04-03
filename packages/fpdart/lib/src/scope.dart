@@ -36,7 +36,7 @@ class Scope<R> with ScopeMixin {
   final R env;
   Scope._(this.env, this._closable);
 
-  factory Scope.withEnv(R env, [bool closable = false]) =>
+  factory Scope.withEnv(R env, {bool closable = false}) =>
       Scope._(env, closable);
 
   @override
