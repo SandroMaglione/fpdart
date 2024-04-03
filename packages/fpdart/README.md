@@ -123,7 +123,7 @@ Interested in what `fpdart` is and how it came to be?
 ## 💻 Installation
 
 ```shell
-dart pub add fpdart:'v2.0.0-dev.2'
+dart pub add fpdart:'v2.0.0-dev.3'
 ```
 
 ## ✨ Examples

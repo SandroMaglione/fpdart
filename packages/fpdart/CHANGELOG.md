@@ -1,3 +1,7 @@
+## v2.0.0-dev.3 - 4 April 2024
+- Added `Scope`
+- `const` constructor for `None`
+
 ## v2.0.0-dev.2 - 29 March 2024
 - Complete `Option` and `Either` API
 - Execute `Effect` using `provide` (with `Null` as dependency)

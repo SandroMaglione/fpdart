@@ -2,7 +2,7 @@ name: fpdart
 description: >
   Functional Effect System in Dart and Flutter.
   Build composable, type safe, maintainable and testable apps with an extensive API fully tested and documented.
-version: 2.0.0-dev.2
+version: 2.0.0-dev.3
 homepage: https://www.sandromaglione.com/
 repository: https://github.com/SandroMaglione/fpdart
 author: Maglione Sandro <lass.maglio@gmail.com>
