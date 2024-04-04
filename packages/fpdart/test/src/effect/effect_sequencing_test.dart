@@ -22,7 +22,7 @@ void main() {
       test('tap', () {
         var mutable = 0;
         final main = Effect<Null, String, int>.succeed(10).tap(
-          (_) => Effect.functionSucceed(() {
+          (_) => Effect.succeedLazy(() {
             mutable += 1;
           }),
         );

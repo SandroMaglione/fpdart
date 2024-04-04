@@ -8,7 +8,7 @@ mixin ScopeMixin {
   Effect<E, L, Unit> addScopeFinalizer<E, L>(
     Effect<Null, Never, Unit> finalizer,
   ) =>
-      Effect.functionSucceed(() {
+      Effect.succeedLazy(() {
         scopeFinalizers.add(finalizer);
         return unit;
       });
@@ -16,13 +16,13 @@ mixin ScopeMixin {
   Effect<E, L, Unit> removeScopeFinalizer<L, E>(
     Effect<Null, Never, Unit> finalizer,
   ) =>
-      Effect.functionSucceed(() {
+      Effect.succeedLazy(() {
         scopeFinalizers.remove(finalizer);
         return unit;
       });
 
   Effect<E, L, Unit> closeScope<E, L>() => Effect.lazy(
-        () => scopeFinalizers.reversed.all.zipRight(Effect.functionSucceed(
+        () => scopeFinalizers.reversed.all.zipRight(Effect.succeedLazy(
           () {
             scopeFinalizers.clear();
             return unit;

@@ -73,7 +73,7 @@ void main() {
         test('async succeed', () async {
           final main = Effect<Null, Never, int>.gen(($) async {
             final value =
-                await $.async(Effect.functionSucceed(() => Future.value(10)));
+                await $.async(Effect.succeedLazy(() => Future.value(10)));
             return value;
           });
           final result = await main.runFuture();
@@ -82,7 +82,7 @@ void main() {
 
         test('fail when running async as sync', () async {
           final main = Effect<Null, Never, int>.gen(($) {
-            final value = $.sync(Effect.functionSucceed(
+            final value = $.sync(Effect.succeedLazy(
               () async => Future.value(10),
             ));
             return value;

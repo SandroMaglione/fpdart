@@ -7,7 +7,7 @@ void main() {
     () {
       group('catchCause', () {
         test('recover from throw', () {
-          final result = Effect<Null, Never, String>.functionSucceed(() {
+          final result = Effect<Null, Never, String>.succeedLazy(() {
             throw "fail";
           })
               .catchCause(

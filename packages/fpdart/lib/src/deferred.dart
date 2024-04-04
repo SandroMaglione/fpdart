@@ -34,7 +34,7 @@ final class Deferred<L, R> {
   }
 
   Effect<E, C, Unit> completeExit<E, C>(Exit<L, R> exit) =>
-      Effect.functionSucceed(() {
+      Effect.succeedLazy(() {
         switch (_state) {
           case None():
             unsafeCompleteExit(exit);

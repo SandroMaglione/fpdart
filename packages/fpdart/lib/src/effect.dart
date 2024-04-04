@@ -143,12 +143,12 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category constructors}
-  factory Effect.functionFail(FutureOr<Cause<L>> Function() f) => Effect.from(
+  factory Effect.failLazy(FutureOr<Cause<L>> Function() f) => Effect.from(
         (_) => f().then(Left.new),
       );
 
   /// {@category constructors}
-  factory Effect.functionSucceed(FutureOr<R> Function() f) => Effect.from(
+  factory Effect.succeedLazy(FutureOr<R> Function() f) => Effect.from(
         (_) => f().then(Right.new),
       );
 

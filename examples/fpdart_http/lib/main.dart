@@ -9,7 +9,7 @@ void main() async {
   )
       .timeout(Duration(milliseconds: 1300))
       .tap(
-        (response) => Effect.functionSucceed(
+        (response) => Effect.succeedLazy(
           () => print(response.body),
         ),
       )

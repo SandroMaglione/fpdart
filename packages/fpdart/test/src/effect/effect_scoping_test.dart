@@ -11,7 +11,7 @@ void main() {
         var mutable = 0;
         final main =
             Effect<Null, String, int>.succeed(10).withScope.addFinalizer(
-          Effect.functionSucceed(() {
+          Effect.succeedLazy(() {
             mutable += 1;
             return unit;
           }),
@@ -26,7 +26,7 @@ void main() {
         var mutable = 0;
         final main =
             Effect<bool, String, int>.succeed(10).withScope.addFinalizer(
-          Effect.functionSucceed(() {
+          Effect.succeedLazy(() {
             mutable += 1;
             return unit;
           }),
@@ -43,7 +43,7 @@ void main() {
           var mutable = 0;
           final main = Effect<Null, String, int>.succeed(10)
               .acquireRelease(
-                (r) => Effect.functionSucceed(() {
+                (r) => Effect.succeedLazy(() {
                   mutable = r;
                   return unit;
                 }),
@@ -58,7 +58,7 @@ void main() {
           var mutable = 0;
           final main = Effect<Null, String, int>.fail("error")
               .acquireRelease(
-                (r) => Effect.functionSucceed(() {
+                (r) => Effect.succeedLazy(() {
                   mutable = r;
                   return unit;
                 }),
