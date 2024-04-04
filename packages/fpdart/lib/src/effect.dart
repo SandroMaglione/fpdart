@@ -241,7 +241,10 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   static Effect<E, L, Iterable<R>> all<E, L, R>(
     Iterable<Effect<E, L, R>> iterable,
   ) =>
-      Effect.forEach(iterable, (a, _) => a);
+      Effect.forEach(
+        iterable,
+        (effect, _) => effect,
+      );
 
   /// {@category zipping}
   Effect<E, L, C> zipWith<B, C>(
@@ -283,22 +286,33 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
         ),
       );
 
-  /// {@category context}
-  Effect<Null, L, R> provide(Context<E> context) {
-    final env = context.env;
-    final effect = env is ScopeMixin && !env.scopeClosable
-        ? alwaysIgnore(env.closeScope())
-        : this;
-    return Effect.from((_) => effect._unsafeRun(context));
-  }
+  Effect<E, L, R> _provideEnvCloseScope(E env) =>
+      env is ScopeMixin && !env.scopeClosable
+          ? Effect<E, L, R>.from(
+              (context) => _unsafeRun(context).then(
+                (exit) => switch (exit) {
+                  Left(value: final value) => Left(value),
+                  Right(value: final value) =>
+                    env.closeScope<E, L>()._unsafeRun(context).then(
+                          (exit) => switch (exit) {
+                            Left(value: final value) => Left(value),
+                            Right() => Right(value),
+                          },
+                        ),
+                },
+              ),
+            )
+          : this;
 
   /// {@category context}
-  Effect<Null, L, R> provideEnv(E env) {
-    final effect = env is ScopeMixin && !env.scopeClosable
-        ? alwaysIgnore(env.closeScope())
-        : this;
-    return Effect.from((_) => effect._unsafeRun(Context.env(env)));
-  }
+  Effect<Null, L, R> provide(Context<E> context) => Effect.from(
+        (_) => _provideEnvCloseScope(context.env)._unsafeRun(context),
+      );
+
+  /// {@category context}
+  Effect<Null, L, R> provideEnv(E env) => Effect.from(
+        (_) => _provideEnvCloseScope(env)._unsafeRun(Context.env(env)),
+      );
 
   /// {@category context}
   Effect<V, L, R> provideEffect<V>(Effect<V, L, E> effect) => Effect.from(
@@ -683,13 +697,10 @@ extension EffectWithScopeFinalizer<E extends ScopeMixin, L, R>
 
 extension EffectNoScopeFinalizer<E, L, R> on Effect<E, L, R> {
   /// {@category scoping}
-  Effect<Scope<E>, L, R> get withScope => Effect<Scope<E>, L, R>.from(
-        (ctx) => _unsafeRun(ctx.withEnv(ctx.env.env)),
-      );
-
-  /// {@category scoping}
   Effect<Scope<E>, L, R> addFinalizer(Effect<Null, Never, Unit> release) =>
-      withScope.tapEnv(
+      Effect<Scope<E>, L, R>.from(
+        (context) => _unsafeRun(context.withEnv(context.env.env)),
+      ).tapEnv(
         (_, env) => env.addScopeFinalizer(release),
       );
 
@@ -697,18 +708,20 @@ extension EffectNoScopeFinalizer<E, L, R> on Effect<E, L, R> {
   Effect<Scope<E>, L, R> acquireRelease(
     Effect<Null, Never, Unit> Function(R r) release,
   ) =>
-      withScope.tapEnv(
-        (r, _) => _.addScopeFinalizer(release(r)),
+      Effect<Scope<E>, L, R>.from(
+        (context) => _unsafeRun(context.withEnv(context.env.env)),
+      ).tapEnv(
+        (r, env) => env.addScopeFinalizer(
+          release(r),
+        ),
       );
 }
 
 extension EffectWithScope<E, L, R> on Effect<Scope<E>, L, R> {
-  /// {@category scoping}
+  /// {@category context}
   Effect<E, L, R> get provideScope => Effect.from((context) {
         final scope = Scope.withEnv(context.env);
-        return alwaysIgnore(scope.closeScope())._unsafeRun(
-          context.withEnv(scope),
-        );
+        return _provideEnvCloseScope(scope)._unsafeRun(context.withEnv(scope));
       });
 }
 

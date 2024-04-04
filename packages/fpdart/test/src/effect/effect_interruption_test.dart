@@ -1,6 +1,8 @@
 import "package:fpdart/fpdart.dart";
 import "package:test/test.dart";
 
+import "../test_extension.dart";
+
 void main() {
   group(
     "Effect interruption",
@@ -12,12 +14,10 @@ void main() {
               );
 
           final result = main.runSyncExit();
-          switch (result) {
-            case Right():
-              fail("Either expected to be Left: $result");
-            case Left(value: final value):
-              expect(value, isA<Interrupted>());
-          }
+
+          result.expectLeft((value) {
+            expect(value, isA<Interrupted>());
+          });
         });
       });
     },
