@@ -120,7 +120,6 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
   factory Effect.tryCatch({
     required FutureOr<R> Function() execute,
     required L Function(Object error, StackTrace stackTrace) onError,
-    FutureOr<dynamic> Function()? onCancel,
   }) =>
       Effect.from(
         (env) {
