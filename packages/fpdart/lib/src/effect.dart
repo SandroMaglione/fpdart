@@ -74,29 +74,21 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
     return "Effect(${_unsafeRun.runtimeType})";
   }
 
-  FutureOr<Exit<L, R>> __unsafeRun(Context<E> context) {
-    if (context.signal.unsafeCompleted) {
-      return const Left(Interrupted());
-    }
-
-    try {
-      return _unsafeRun(context).then((exit) {
-        if (context.signal.unsafeCompleted) {
-          return const Left(Interrupted());
-        }
-
-        return exit;
-      });
-    } catch (err, stackTrace) {
-      return Left(Die(err, stackTrace));
-    }
-  }
-
   /// {@category constructors}
   factory Effect.from(FutureOr<Exit<L, R>> Function(Context<E> context) run) =>
       Effect._((context) {
         try {
-          return run(context);
+          if (context.signal.unsafeCompleted) {
+            return const Left(Interrupted());
+          }
+
+          return run(context).then((exit) {
+            if (context.signal.unsafeCompleted) {
+              return const Left(Interrupted());
+            }
+
+            return exit;
+          });
         } on Cause<L> catch (cause) {
           return Left(cause);
         } catch (error, stackTrace) {
@@ -163,7 +155,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 
   /// {@category constructors}
   factory Effect.lazy(Effect<E, L, R> Function() effect) =>
-      Effect.from((context) => effect().__unsafeRun(context));
+      Effect.from((context) => effect()._unsafeRun(context));
 
   /// {@category constructors}
   factory Effect.fail(L value) => Effect.from((_) => Left(Failure(value)));
@@ -182,7 +174,7 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 
         for (final effect in iterable) {
           effect
-              .__unsafeRun(context.withSignal(signal))
+              ._unsafeRun(context.withSignal(signal))
               .then(deferred.unsafeCompleteExit);
 
           if (deferred.unsafeCompleted) {
@@ -190,10 +182,10 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
           }
         }
 
-        return deferred.wait<E>().__unsafeRun(context).then(
+        return deferred.wait<E>()._unsafeRun(context).then(
               (exit) => signal
                   .failCause<E, L>(const Interrupted())
-                  .__unsafeRun(context.withoutSignal)
+                  ._unsafeRun(context.withoutSignal)
                   .then((_) => exit),
             );
       });
@@ -496,8 +488,8 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 
   /// {@category sequencing}
   Effect<E, L, R> alwaysIgnore<C>(Effect<E, L, C> effect) => Effect.from(
-        (context) => race(context.signal.wait()).__unsafeRun(context).then(
-              (exit) => effect.__unsafeRun(context.withoutSignal).then(
+        (context) => race(context.signal.wait())._unsafeRun(context).then(
+              (exit) => effect._unsafeRun(context.withoutSignal).then(
                     (_) => exit,
                   ),
             ),
@@ -715,7 +707,7 @@ extension EffectWithScope<E, L, R> on Effect<Scope<E>, L, R> {
   /// {@category scoping}
   Effect<E, L, R> get provideScope => Effect.from((context) {
         final scope = Scope.withEnv(context.env);
-        return alwaysIgnore(scope.closeScope()).__unsafeRun(
+        return alwaysIgnore(scope.closeScope())._unsafeRun(
           context.withEnv(scope),
         );
       });
