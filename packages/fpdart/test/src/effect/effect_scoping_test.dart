@@ -9,8 +9,7 @@ void main() {
     () {
       test('add and release Scope finalizer', () async {
         var mutable = 0;
-        final main =
-            Effect<Null, String, int>.succeed(10).withScope.addFinalizer(
+        final main = Effect<Null, String, int>.succeed(10).addFinalizer(
           Effect.succeedLazy(() {
             mutable += 1;
             return unit;
@@ -24,8 +23,7 @@ void main() {
       test('closable Scope', () async {
         final scope = Scope.withEnv(true, closable: true);
         var mutable = 0;
-        final main =
-            Effect<bool, String, int>.succeed(10).withScope.addFinalizer(
+        final main = Effect<bool, String, int>.succeed(10).addFinalizer(
           Effect.succeedLazy(() {
             mutable += 1;
             return unit;
