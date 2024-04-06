@@ -6,6 +6,7 @@ import './extension/future_or_extension.dart';
 import './extension/iterable_extension.dart';
 import 'unit.dart' as fpdart_unit;
 
+part 'async_context.dart';
 part 'context.dart';
 part 'deferred.dart';
 part 'either.dart';
@@ -153,10 +154,6 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
       );
 
   /// {@category constructors}
-  factory Effect.lazy(Effect<E, L, R> Function() effect) =>
-      Effect.from((context) => effect()._unsafeRun(context));
-
-  /// {@category constructors}
   factory Effect.fail(L value) => Effect.from((_) => Left(Failure(value)));
 
   /// {@category constructors}
@@ -164,6 +161,62 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
 
   /// {@category constructors}
   factory Effect.succeed(R value) => Effect.from((_) => Right(value));
+
+  /// {@category constructors}
+  factory Effect.lazy(Effect<E, L, R> Function() effect) =>
+      Effect.from((context) => effect()._unsafeRun(context));
+
+  /// {@category constructors}
+  factory Effect.async(void Function(AsyncContext<L, R> resume) callback) =>
+      Effect.from(
+        (context) {
+          final asyncContext = AsyncContext<L, R>();
+          callback(asyncContext);
+          return asyncContext._deferred.wait<E>()._unsafeRun(context);
+        },
+      );
+
+  /// {@category constructors}
+  factory Effect.asyncInterrupt(
+    Effect<Null, Never, Unit> Function(AsyncContext<L, R> resume) callback,
+  ) =>
+      Effect.from((context) {
+        final asyncContext = AsyncContext<L, R>();
+
+        final finalizer = callback(asyncContext);
+        if (asyncContext._deferred.unsafeCompleted) {
+          return asyncContext._deferred.wait<E>()._unsafeRun(context);
+        }
+
+        final interruption = context.signal.wait<E>().alwaysIgnore(
+              finalizer.withEnv<E>(),
+            );
+
+        return asyncContext._deferred
+            .wait<E>()
+            .race(interruption)
+            ._unsafeRun(context.withoutSignal);
+      });
+
+  /// {@category constructors}
+  static Effect<E, L, void> sleep<E, L>(Duration duration) =>
+      Effect.asyncInterrupt(
+        (resume) {
+          final timer = Timer(duration, () {
+            resume.succeed(null);
+          });
+
+          if (resume._deferred.unsafeCompleted) {
+            timer.cancel();
+            return resume._deferred.wait<Null>().match(
+                  onFailure: (_) => fpdart_unit.unit,
+                  onSuccess: (_) => fpdart_unit.unit,
+                );
+          }
+
+          return Effect.unit();
+        },
+      );
 
   /// {@category constructors}
   factory Effect.raceAll(Iterable<Effect<E, L, R>> iterable) =>
@@ -188,14 +241,6 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
                   .then((_) => exit),
             );
       });
-
-  /// {@category constructors}
-  static Effect<E, L, void> sleep<E, L>(Duration duration) => Effect.from(
-        (_) => Future.delayed(
-          duration,
-          () => const Right(null),
-        ),
-      );
 
   /// {@category constructors}
   static Effect<E, Never, Never> die<E>(dynamic defect) => Effect.from(

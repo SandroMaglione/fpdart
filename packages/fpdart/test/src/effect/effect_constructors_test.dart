@@ -17,6 +17,44 @@ void main() {
         expect(result, "error");
       });
 
+      group('async', () {
+        test('succeed callback', () async {
+          final main = Effect<Null, String, int>.async(
+            (resume) => resume.succeed(10),
+          );
+          final result = await main.runFuture();
+          expect(result, 10);
+        });
+
+        test('fail callback', () async {
+          final main = Effect<Null, String, int>.async(
+            (resume) => resume.fail("error"),
+          );
+          final result = await main.flip().runFuture();
+          expect(result, "error");
+        });
+
+        test('succeed async callback', () async {
+          final main = Effect<Null, String, int>.async(
+            (resume) => Future.delayed(Duration(milliseconds: 100)).then(
+              (_) => resume.succeed(10),
+            ),
+          );
+          final result = await main.runFuture();
+          expect(result, 10);
+        });
+
+        test('fail async callback', () async {
+          final main = Effect<Null, String, int>.async(
+            (resume) => Future.delayed(Duration(milliseconds: 100)).then(
+              (_) => resume.fail("error"),
+            ),
+          );
+          final result = await main.flip().runFuture();
+          expect(result, "error");
+        });
+      });
+
       group('tryCatch', () {
         test('executes once', () {
           var mutable = 0;
