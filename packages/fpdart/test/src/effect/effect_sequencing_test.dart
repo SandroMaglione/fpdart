@@ -8,14 +8,14 @@ void main() {
       test('zipLeft', () {
         final main =
             Effect<Null, String, int>.succeed(10).zipLeft(Effect.succeed("10"));
-        final result = main.runSync();
+        final result = main.runSyncOrThrow();
         expect(result, 10);
       });
 
       test('zipRight', () {
         final main = Effect<Null, String, int>.succeed(10)
             .zipRight(Effect.succeed("10"));
-        final result = main.runSync();
+        final result = main.runSyncOrThrow();
         expect(result, "10");
       });
 
@@ -28,7 +28,7 @@ void main() {
         );
 
         expect(mutable, 0);
-        final result = main.runSync();
+        final result = main.runSyncOrThrow();
         expect(result, 10);
         expect(mutable, 1);
       });
@@ -40,7 +40,7 @@ void main() {
           final second = Effect.sleep<Null, String>(Duration(milliseconds: 100))
               .map((_) => 2);
 
-          final result = await first.race(second).runFuture();
+          final result = await first.race(second).runFutureOrThrow();
           expect(result, 1);
         });
 
@@ -50,7 +50,7 @@ void main() {
           final second = Effect.sleep<Null, String>(Duration(milliseconds: 50))
               .map((_) => 2);
 
-          final result = await first.race(second).runFuture();
+          final result = await first.race(second).runFutureOrThrow();
           expect(result, 2);
         });
       });

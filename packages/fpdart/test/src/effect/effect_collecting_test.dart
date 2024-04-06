@@ -11,7 +11,7 @@ void main() {
             Effect.succeed(10),
             Effect.succeed(20),
           ]);
-          final result = main.runSync();
+          final result = main.runSyncOrThrow();
           expect(result, [10, 20]);
         });
 
@@ -23,7 +23,7 @@ void main() {
             Effect.succeedLazy(() => mutable += 1),
             Effect.fail("0"),
           ]);
-          final result = main.flip().runSync();
+          final result = main.flip().runSyncOrThrow();
           expect(mutable, 0);
           expect(result, "10");
         });

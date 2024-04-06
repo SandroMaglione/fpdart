@@ -7,13 +7,13 @@ void main() {
     () {
       test('succeed', () {
         final main = Effect<Null, String, int>.succeed(10);
-        final result = main.runSync();
+        final result = main.runSyncOrThrow();
         expect(result, 10);
       });
 
       test('fail', () {
         final main = Effect<Null, String, int>.fail("error");
-        final result = main.flip().runSync();
+        final result = main.flip().runSyncOrThrow();
         expect(result, "error");
       });
 
@@ -22,7 +22,7 @@ void main() {
           final main = Effect<Null, String, int>.async(
             (resume) => resume.succeed(10),
           );
-          final result = await main.runFuture();
+          final result = await main.runFutureOrThrow();
           expect(result, 10);
         });
 
@@ -30,7 +30,7 @@ void main() {
           final main = Effect<Null, String, int>.async(
             (resume) => resume.fail("error"),
           );
-          final result = await main.flip().runFuture();
+          final result = await main.flip().runFutureOrThrow();
           expect(result, "error");
         });
 
@@ -40,7 +40,7 @@ void main() {
               (_) => resume.succeed(10),
             ),
           );
-          final result = await main.runFuture();
+          final result = await main.runFutureOrThrow();
           expect(result, 10);
         });
 
@@ -50,7 +50,7 @@ void main() {
               (_) => resume.fail("error"),
             ),
           );
-          final result = await main.flip().runFuture();
+          final result = await main.flip().runFutureOrThrow();
           expect(result, "error");
         });
       });
@@ -66,7 +66,7 @@ void main() {
             onError: (error, stackTrace) {},
           );
 
-          main.runSync();
+          main.runSyncOrThrow();
           expect(mutable, 1);
         });
 
@@ -75,7 +75,7 @@ void main() {
             execute: () async => 10,
             onError: (error, stackTrace) {},
           );
-          final result = await main.runFuture();
+          final result = await main.runFutureOrThrow();
           expect(result, 10);
         });
 
@@ -84,7 +84,7 @@ void main() {
             execute: () => 10,
             onError: (error, stackTrace) {},
           );
-          final result = main.runSync();
+          final result = main.runSyncOrThrow();
           expect(result, 10);
         });
       });
@@ -95,7 +95,7 @@ void main() {
             final value = $.sync(Effect.succeed(10));
             return value;
           });
-          final result = main.runSync();
+          final result = main.runSyncOrThrow();
           expect(result, 10);
         });
 
@@ -104,7 +104,7 @@ void main() {
             final value = $.sync(Effect.fail("abc"));
             return value;
           });
-          final result = main.flip().runSync();
+          final result = main.flip().runSyncOrThrow();
           expect(result, "abc");
         });
 
@@ -114,7 +114,7 @@ void main() {
                 await $.async(Effect.succeedLazy(() => Future.value(10)));
             return value;
           });
-          final result = await main.runFuture();
+          final result = await main.runFutureOrThrow();
           expect(result, 10);
         });
 
@@ -126,7 +126,7 @@ void main() {
             return value;
           });
 
-          expect(() => main.runSync(), throwsA(isA<Die>()));
+          expect(() => main.runSyncOrThrow(), throwsA(isA<Die>()));
         });
       });
     },

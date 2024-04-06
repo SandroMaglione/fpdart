@@ -13,7 +13,7 @@ void main() {
               .catchCause(
                 (cause) => Effect.succeed("abc"),
               )
-              .runSync();
+              .runSyncOrThrow();
 
           expect(result, "abc");
         });

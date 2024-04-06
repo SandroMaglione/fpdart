@@ -18,7 +18,7 @@ void main() {
           return value;
         });
 
-        final result = await main.runFuture();
+        final result = await main.runFutureOrThrow();
         expect(result, 1);
       });
     });

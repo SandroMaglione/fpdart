@@ -777,7 +777,7 @@ extension ProvideNull<L, R> on Effect<Null, L, R> {
       );
 
   /// {@category execution}
-  R runSync() {
+  R runSyncOrThrow() {
     try {
       final result = _unsafeRun(Context.env(null));
       if (result is Future) {
@@ -815,7 +815,7 @@ extension ProvideNull<L, R> on Effect<Null, L, R> {
   }
 
   /// {@category execution}
-  Future<R> runFuture() async {
+  Future<R> runFutureOrThrow() async {
     try {
       final result = _unsafeRun(Context.env(null));
       if (result is! Future) {

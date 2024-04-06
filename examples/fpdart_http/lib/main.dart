@@ -16,5 +16,5 @@ void main() async {
       .provideEnv(
         http.Client(),
       )
-      .runFuture();
+      .runFutureOrThrow();
 }

@@ -16,7 +16,7 @@ void main() {
           }),
         ).provideScope;
 
-        await main.runFuture();
+        await main.runFutureOrThrow();
         expect(mutable, 1);
       });
 
@@ -30,9 +30,9 @@ void main() {
           }),
         );
 
-        await main.provide(Context.env(scope)).runFuture();
+        await main.provide(Context.env(scope)).runFutureOrThrow();
         expect(mutable, 0);
-        scope.closeScope<Null, Never>().runSync();
+        scope.closeScope<Null, Never>().runSyncOrThrow();
         expect(mutable, 1);
       });
 
@@ -48,7 +48,7 @@ void main() {
               )
               .provideScope;
 
-          await main.runFuture();
+          await main.runFutureOrThrow();
           expect(mutable, 10);
         });
 
@@ -63,7 +63,7 @@ void main() {
               )
               .provideScope;
 
-          await main.flip().runFuture();
+          await main.flip().runFutureOrThrow();
           expect(mutable, 0);
         });
       });
