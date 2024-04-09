@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:fpdart/fpdart.dart';
 
 import './extension/future_or_extension.dart';
-import './extension/iterable_extension.dart';
 import 'unit.dart' as fpdart_unit;
 
 part 'async_context.dart';
@@ -206,15 +205,10 @@ final class Effect<E, L, R> extends IEffect<E, L, R> {
             resume.succeed(null);
           });
 
-          if (resume._deferred.unsafeCompleted) {
+          return Effect.succeedLazy(() {
             timer.cancel();
-            return resume._deferred.wait<Null>().match(
-                  onFailure: (_) => fpdart_unit.unit,
-                  onSuccess: (_) => fpdart_unit.unit,
-                );
-          }
-
-          return Effect.unit();
+            return fpdart_unit.unit;
+          });
         },
       );
 
