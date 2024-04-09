@@ -1,24 +1,23 @@
 import 'dart:collection';
 
+import 'package:fpdart/src/ordering.dart';
+
+import '../effect.dart';
 import '../function.dart';
-import '../option.dart';
-import '../typeclass/eq.dart';
-import '../typeclass/order.dart';
-import 'predicate_extension.dart';
+import '../order.dart';
 
 /// {@template fpdart_iterable_extension_head}
 /// Get the first element of the [Iterable].
 /// If the [Iterable] is empty, return [None].
 /// {@endtemplate}
 
-/// Functional programming functions on a mutable dart [Iterable] using `fpdart`.
 extension FpdartOnIterable<T> on Iterable<T> {
   /// {@macro fpdart_iterable_extension_head}
   ///
   /// Same as `firstOption`.
   Option<T> get head {
     var it = iterator;
-    if (it.moveNext()) return some(it.current);
+    if (it.moveNext()) return Some(it.current);
     return const None();
   }
 
@@ -32,7 +31,10 @@ extension FpdartOnIterable<T> on Iterable<T> {
   ///
   /// **Note**: Because accessing the last element of an [Iterable] requires
   /// stepping through all the other elements, `lastOption` **can be slow**.
-  Option<T> get lastOption => isEmpty ? const None() : some(last);
+  Option<T> get lastOption {
+    if (isEmpty) return const None();
+    return Some(last);
+  }
 
   /// Return all the elements of a [Iterable] except the first one.
   /// If the [Iterable] is empty, return [None].
@@ -43,7 +45,10 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// iterable is iterated. If this original iterable has become empty
   /// at that point, the returned iterable will also be empty, same
   /// as if this iterable has only one element.
-  Option<Iterable<T>> get tail => isEmpty ? const None() : some(skip(1));
+  Option<Iterable<T>> get tail {
+    if (isEmpty) return const None();
+    return Some(skip(1));
+  }
 
   /// Return all the elements of a [Iterable] except the last one.
   /// If the [Iterable] is empty, return [None].
@@ -56,7 +61,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// as if this iterable has only one element.
   Option<Iterable<T>> get init {
     if (isEmpty) return const None();
-    return some(this.dropRight(1));
+    return Some(this.dropRight(1));
   }
 
   /// Drops the last [count] element of this iterable.
@@ -131,17 +136,6 @@ extension FpdartOnIterable<T> on Iterable<T> {
   (Iterable<T>, Iterable<T>) span(bool Function(T t) test) =>
       (takeWhile(test), skipWhile(test));
 
-  /// Return a record where first element is longest prefix (possibly empty) of this [Iterable]
-  /// with elements that **do not satisfy** `test` and second element is the remainder of the [Iterable].
-  (Iterable<T>, Iterable<T>) breakI(bool Function(T t) test) =>
-      (takeWhile(test.negate), skipWhile(test.negate));
-
-  /// Return a record containing the values of this [Iterable]
-  /// for which `test` is `false` in the first element,
-  /// and the values for which it is `true` in the second element.
-  (Iterable<T>, Iterable<T>) partition(bool Function(T t) test) =>
-      (where(test.negate), where(test));
-
   /// Return a record where first element is an [Iterable] with the first `n` elements of this [Iterable],
   /// and the second element contains the rest of the [Iterable].
   (Iterable<T>, Iterable<T>) splitAt(int n) => (take(n), skip(n));
@@ -183,16 +177,6 @@ extension FpdartOnIterable<T> on Iterable<T> {
 
   /// Check if `element` is **not** contained inside this [Iterable].
   bool notElem(T element) => !elem(element);
-
-  /// Get first element equal to [element] in this [Iterable].
-  ///
-  /// Returns `None` if no such element.
-  Option<T> lookupEq(Eq<T> eq, T element) {
-    for (var e in this) {
-      if (eq.eqv(e, element)) return some(e);
-    }
-    return const None();
-  }
 
   /// Fold this [Iterable] into a single value by aggregating each element of the list
   /// **from the first to the last**.
@@ -257,7 +241,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
   Iterable<T> insertBy(Order<T> order, T element) sync* {
     var it = iterator;
     while (it.moveNext()) {
-      if (order.compare(it.current, element) < 0) {
+      if (order.compare(it.current, element) == Ordering.equal) {
         yield it.current;
         continue;
       }
@@ -286,7 +270,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
     var it = iterator;
     var elementValue = extract(element);
     while (it.moveNext()) {
-      if (order.compare(extract(it.current), elementValue) < 0) {
+      if (order.compare(extract(it.current), elementValue).isLessThan) {
         yield it.current;
         continue;
       }
@@ -341,11 +325,11 @@ extension FpdartOnIterable<T> on Iterable<T> {
     if (it.moveNext()) {
       T min = it.current;
       while (it.moveNext()) {
-        if (order.compare(it.current, min) > 0) {
+        if (order.compare(it.current, min).isGreaterThan) {
           min = it.current;
         }
       }
-      return some(min);
+      return Some(min);
     }
     return const None();
   }
@@ -358,11 +342,11 @@ extension FpdartOnIterable<T> on Iterable<T> {
     if (it.moveNext()) {
       T min = it.current;
       while (it.moveNext()) {
-        if (order.compare(it.current, min) < 0) {
+        if (order.compare(it.current, min).isLessThan) {
           min = it.current;
         }
       }
-      return some(min);
+      return Some(min);
     }
     return const None();
   }
@@ -386,9 +370,9 @@ extension FpdartOnIterable<T> on Iterable<T> {
 
   /// Return an [Iterable] containing the values of this [Iterable] not included
   /// in `other` based on `eq`.
-  Iterable<T> difference(Eq<T> eq, Iterable<T> other) sync* {
+  Iterable<T> difference(Iterable<T> other) sync* {
     for (var element in this) {
-      if (!other.any((e) => eq.eqv(e, element))) {
+      if (!other.any((e) => e == element)) {
         yield element;
       }
     }
@@ -406,21 +390,36 @@ extension FpdartOnIterable<T> on Iterable<T> {
   }
 
   /// Sort this [List] based on `order` ([Order]).
-  List<T> sortBy(Order<T> order) => [...this]..sort(order.compare);
+  List<T> sortBy(Order<T> order) =>
+      [...this]..sort((a, b) => order.compare(a, b).order);
 
   /// Sort this [Iterable] based on `order` of an object of type `A` extracted from `T` using `extract`.
-  List<T> sortWith<A>(A Function(T t) extract, Order<A> order) =>
-      [...this]..sort((e1, e2) => order.compare(extract(e1), extract(e2)));
+  List<T> sortWith<A>(A Function(T t) extract, Order<A> order) => [...this]
+    ..sort((e1, e2) => order.compare(extract(e1), extract(e2)).order);
 
   /// Sort this [Iterable] based on [DateTime] extracted from type `T` using `getDate`.
   ///
   /// Sorting [DateTime] in **ascending** order (older dates first).
-  List<T> sortWithDate(DateTime Function(T instance) getDate) =>
-      sortWith(getDate, Order.orderDate);
+  List<T> sortWithDate(DateTime Function(T instance) getDate) => sortWith(
+        getDate,
+        Order.comparable<DateTime>(),
+      );
 }
 
-/// Functional programming functions on `Iterable<Iterable<T>>` using `fpdart`.
 extension FpdartOnIterableOfIterable<T> on Iterable<Iterable<T>> {
   /// From a `Iterable<Iterable<T>>` return a `Iterable<T>` of their concatenation.
   Iterable<T> get flatten => expand(identity);
+}
+
+extension IterableEffect<E, L, R> on Iterable<Effect<E, L, R>> {
+  Effect<E, L, Iterable<R>> get all => Effect.all(this);
+}
+
+extension FpdartSequenceIterableOption<R> on Iterable<Option<R>> {
+  Iterable<R> get getSomes => Option.getSomes(this);
+}
+
+extension FpdartSequenceIterableEither<L, R> on Iterable<Either<L, R>> {
+  Iterable<R> get getRights => Either.getRights(this);
+  Iterable<L> get getLefts => Either.getLefts(this);
 }

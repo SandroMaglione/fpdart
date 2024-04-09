@@ -1,3 +1,20 @@
+## v2.0.0-dev.3 - 4 April 2024
+- Added `Scope`
+- `const` constructor for `None`
+
+## v2.0.0-dev.2 - 29 March 2024
+- Complete `Option` and `Either` API
+- Execute `Effect` using `provide` (with `Null` as dependency)
+- Fixed implementation of running `Effect` and catching `Cause`
+- Added interruption (`Cause.Interrupted`)
+  - `Deferred`
+  - `Context`
+  - New methods (`raceAll`, `race`, `delay`, `sleep`, `timeout`)
+
+## v2.0.0-dev.1 - 23 March 2024
+- Initial preview release of `fpdart` v2
+  - Refactoring to use `Effect` class
+
 ## v1.1.0 - 13 August 2023
 
 - Improved performance of some iterable based functions in `Iterable` and `Map` extension (thanks to [lrhn](https://github.com/lrhn) 🎉)
