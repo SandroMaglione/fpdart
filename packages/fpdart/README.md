@@ -239,7 +239,7 @@ final option = right.toOption();
 ```
 
 ### [IO](/packages/fpdart/lib/src/io.dart)
-Wrapper around an **sync** function. Allows to compose synchronous functions **that never fail**.
+Wrapper around a **sync** function. Allows to compose synchronous functions **that never fail**.
 
 ```dart
 /// Create instance of [IO] from a value
