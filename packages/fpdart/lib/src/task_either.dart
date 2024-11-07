@@ -50,6 +50,22 @@ final class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
         }
       });
 
+  /// Initialize a **Try to Do Notation** chain.
+  // ignore: non_constant_identifier_names
+  factory TaskEither.TryToDo(
+    DoFunctionTaskEither<L, R> f,
+    L Function(Object error, StackTrace stackTrace) onError,
+  ) =>
+      TaskEither(() async {
+        try {
+          return Either.of(await f(_doAdapter<L>()));
+        } on _TaskEitherThrow<L> catch (e) {
+          return Either.left(e.value);
+        } catch (error, stack) {
+          return Left<L, R>(onError(error, stack));
+        }
+      });
+
   /// Used to chain multiple functions that return a [TaskEither].
   ///
   /// You can extract the value of every [Right] in the chain without
