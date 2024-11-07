@@ -45,6 +45,19 @@ fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://t
 
 ***
 
+### `fpdart` v2.0.0
+Version 2 of `fpdart` is currently in development. `v2` is a rewrite based on a new `Effect` class, that aims to **simplify the API** and make it easier to use and learn.
+
+You can learn more and [follow the progress here](https://github.com/SandroMaglione/fpdart/pull/147).
+
+> As [mentioned in the PR](https://github.com/SandroMaglione/fpdart/pull/147#issuecomment-2248144800), some patterns for `v2` are expected to benefit from new upcoming features in Dart (static metaprogramming).
+>
+> We are waiting for [updates on the language](https://github.com/orgs/dart-lang/projects/90) before the final release of `v2`. 
+
+
+
+***
+
 - [Introduction](#introduction)
 - [📖 Learn `functional programming` and `fpdart`](#-learn-functional-programming-and-fpdart)
   - [✍️ Blog posts and tutorials](#️-blog-posts-and-tutorials)
