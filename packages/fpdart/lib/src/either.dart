@@ -57,11 +57,15 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
     }
   }
 
+  /// This method folds the value from right to left.
+  ///
   /// Return the result of `f` called with `b` and the value of [Right].
   /// If this [Either] is [Left], return `b`.
   @override
   C foldRight<C>(C b, C Function(C acc, R b) f);
 
+  /// This method folds the value from left to right.
+  ///
   /// Return the result of `f` called with `b` and the value of [Right].
   /// If this [Either] is [Left], return `b`.
   @override
