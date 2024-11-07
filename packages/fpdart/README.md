@@ -546,4 +546,4 @@ For more frequent updates you can also follow me on my [**Twitter**](https://twi
 
 ## 👀 License
 
-MIT License, see the [LICENSE.md](https://github.com/SandroMaglione/fpdart/blob/main/LICENSE) file for details.
+MIT License, see the [LICENSE](https://github.com/SandroMaglione/fpdart/blob/main/packages/fpdart/LICENSE) file for details.
