@@ -1,3 +1,6 @@
+## v1.1.1 - 7 November 2024
+- Fixed broken documentation links
+
 ## v1.1.0 - 13 August 2023
 
 - Improved performance of some iterable based functions in `Iterable` and `Map` extension (thanks to [lrhn](https://github.com/lrhn) 🎉)
@@ -284,8 +287,8 @@ final result = switch (boolValue) { true => 1, false => -1 };
 - Removed extension methods on nullable types (`toOption`, `toEither`, `toTaskOption`, `toIOEither`, `toTaskEither`, `toTaskEitherAsync`) ⚠️
 - Organized all extensions inside internal `extension` folder
 - Updated [README](./README.md)
-  - [**Getting started with `fpdart` complete guide**](https://www.sandromaglione.com/techblog/getting-started-with-fpdart-v1-functional-programming)
-  - [**Full history of `fpdart` and functional programming in dart**](https://www.sandromaglione.com/techblog/the-history-of-fpdart-functional-programming-in-dart)
+  - [**Getting started with `fpdart` complete guide**](https://www.sandromaglione.com/articles/getting-started-with-fpdart-v1-functional-programming)
+  - [**Full history of `fpdart` and functional programming in dart**](https://www.sandromaglione.com/articles/the-history-of-fpdart-functional-programming-in-dart)
 
 ***
 
@@ -459,12 +462,12 @@ final firstEither = wellYeah.map((list) => list.first);
 ```
 - Added [**Open API Meteo example**](./example/open_meteo_api/) (from imperative to functional programming)
 - Added new articles
-  - [Option type and Null Safety in dart](https://www.sandromaglione.com/techblog/option_type_and_null_safety_dart)
-  - [Either - Error Handling in Functional Programming](https://www.sandromaglione.com/techblog/either-error-handling-functional-programming)
-  - [Future & Task: asynchronous Functional Programming](https://www.sandromaglione.com/techblog/async-requests-future-and-task-dart)
-  - [Flutter Supabase Functional Programming with fpdart](https://www.sandromaglione.com/techblog/flutter-dart-functional-programming-fpdart-supabase-app)
-  - [Open Meteo API - Functional programming with fpdart (Part 1)](https://www.sandromaglione.com/techblog/real_example_fpdart_open_meteo_api_part_1)
-  - [Open Meteo API - Functional programming with fpdart (Part 2)](https://www.sandromaglione.com/techblog/real_example_fpdart_open_meteo_api_part_2)
+  - [Option type and Null Safety in dart](https://www.sandromaglione.com/articles/option_type_and_null_safety_dart)
+  - [Either - Error Handling in Functional Programming](https://www.sandromaglione.com/articles/either-error-handling-functional-programming)
+  - [Future & Task: asynchronous Functional Programming](https://www.sandromaglione.com/articles/async-requests-future-and-task-dart)
+  - [Flutter Supabase Functional Programming with fpdart](https://www.sandromaglione.com/articles/flutter-dart-functional-programming-fpdart-supabase-app)
+  - [Open Meteo API - Functional programming with fpdart (Part 1)](https://www.sandromaglione.com/articles/real_example_fpdart_open_meteo_api_part_1)
+  - [Open Meteo API - Functional programming with fpdart (Part 2)](https://www.sandromaglione.com/articles/real_example_fpdart_open_meteo_api_part_2)
 
 ## v0.3.0 - 11 October 2022
 - Inverted `onSome` and `onNone` functions parameters in `match` method of `Option` [⚠️ **BREAKING CHANGE**] (*Read more on why* 👉 [#56](https://github.com/SandroMaglione/fpdart/pull/56))
@@ -533,8 +536,8 @@ environment:
 ```
 - Updated [README](README.md) and documentation
   - **New tutorial articles**
-    - [How to make API requests with validation in fpdart](https://www.sandromaglione.com/techblog/fpdart-api-request-with-validation-functional-programming)
-    - [How to use TaskEither in fpdart](https://www.sandromaglione.com/techblog/how-to-use-task-either-fpdart-functional-programming) 
+    - [How to make API requests with validation in fpdart](https://www.sandromaglione.com/articles/fpdart-api-request-with-validation-functional-programming)
+    - [How to use TaskEither in fpdart](https://www.sandromaglione.com/articles/how-to-use-task-either-fpdart-functional-programming) 
     - [Collection of tutorials on fpdart](https://www.sandromaglione.com/course/fpdart-functional-programming-dart-and-flutter)
 
 - Testing improvements (*internal*)
@@ -576,7 +579,7 @@ environment:
   - `toTaskEither` (`Either`)
   - `toTaskOption` (`Option`)
 - New **Blog posts and tutorials** section in [`README`](README.md)
-  - New blog post [How to map an Either to a Future in fpdart](https://blog.sandromaglione.com/techblog/from-sync-to-async-functional-programming)
+  - New blog post [How to map an Either to a Future in fpdart](https://sandromaglione.com/articles/from-sync-to-async-functional-programming)
 
 ## v0.0.12 - 24 October 2021
 
