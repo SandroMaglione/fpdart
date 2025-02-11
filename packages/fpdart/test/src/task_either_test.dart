@@ -507,6 +507,22 @@ void main() {
       });
     });
 
+    group('fold', () {
+      test('Right', () async {
+        final task = TaskEither<String, int>(() async => Either.of(10));
+        final ex = task.fold((l) => l.length, (r) => r + 10);
+        final r = await ex.run();
+        expect(r, 20);
+      });
+
+      test('Left', () async {
+        final task = TaskEither<String, int>(() async => Either.left('none'));
+        final ex = task.fold((l) => l.length, (r) => r + 10);
+        final r = await ex.run();
+        expect(r, 4);
+      });
+    });
+
     group('getOrElse', () {
       test('Right', () async {
         final task = TaskEither<String, int>(() async => Either.of(10));

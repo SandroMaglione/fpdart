@@ -164,8 +164,17 @@ final class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   ///
   /// Execute `onLeft` when running this [TaskEither] returns a [Left].
   /// Otherwise execute `onRight`.
+  /// Same as `fold`.
   Task<A> match<A>(A Function(L l) onLeft, A Function(R r) onRight) =>
       Task(() async => (await run()).match(onLeft, onRight));
+
+  /// Pattern matching to convert a [TaskEither] to a [Task].
+  ///
+  /// Execute `onLeft` when running this [TaskEither] returns a [Left].
+  /// Otherwise execute `onRight`.
+  /// Same as `match`.
+  Task<A> fold<A>(A Function(L l) onLeft, A Function(R r) onRight) =>
+    Task(() async => (await run()).fold(onLeft, onRight));
 
   /// Creates a [TaskEither] that will complete after a time delay specified by a [Duration].
   TaskEither<L, R> delay(Duration duration) =>
