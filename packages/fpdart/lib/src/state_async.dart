@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import 'function.dart';
 import 'state.dart';
 import 'typeclass/typeclass.export.dart';
@@ -6,6 +8,7 @@ import 'unit.dart';
 /// Tag the [HKT2] interface for the actual [StateAsync].
 abstract final class _StateAsyncHKT {}
 
+@immutable
 /// `StateAsync<S, A>` is used to store, update, and extract async state in a functional way.
 ///
 /// `S` is a State (e.g. the current _State_ of your Bank Account).

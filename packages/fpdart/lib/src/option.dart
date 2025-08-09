@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import 'either.dart';
 import 'extension/option_extension.dart';
 import 'function.dart';
@@ -499,6 +501,7 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   Object? toJson(Object? Function(T) toJsonT);
 }
 
+@immutable
 class Some<T> extends Option<T> {
   final T _value;
   const Some(this._value);
@@ -564,6 +567,7 @@ class Some<T> extends Option<T> {
   TaskOption<T> toTaskOption() => TaskOption.of(_value);
 }
 
+@immutable
 class None extends Option<Never> {
   const None();
 

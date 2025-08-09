@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import 'function.dart';
 import 'typeclass/applicative.dart';
 import 'typeclass/functor.dart';
@@ -7,6 +9,7 @@ import 'typeclass/monad.dart';
 /// Tag the [HKT2] interface for the actual [Reader].
 abstract final class ReaderHKT {}
 
+@immutable
 /// `Reader<R, A>` allows to read values `A` from a dependency/context `R`
 /// without explicitly passing the dependency between multiple nested
 /// function calls.

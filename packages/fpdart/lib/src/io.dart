@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import 'either.dart';
 import 'function.dart';
 import 'io_either.dart';
@@ -19,10 +21,12 @@ typedef DoFunctionIO<A> = A Function(DoAdapterIO $);
 /// Tag the [HKT] interface for the actual [Option].
 abstract final class _IOHKT {}
 
+@immutable
 /// `IO<A>` represents a **non-deterministic synchronous** computation that
 /// can **cause side effects**, yields a value of type `A` and **never fails**.
 ///
 /// If you want to represent a synchronous computation that may fail, see [IOEither].
+///
 final class IO<A> extends HKT<_IOHKT, A>
     with Functor<_IOHKT, A>, Applicative<_IOHKT, A>, Monad<_IOHKT, A> {
   final A Function() _run;

@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import 'function.dart';
 import 'state_async.dart';
 import 'typeclass/typeclass.export.dart';
@@ -6,6 +8,7 @@ import 'unit.dart';
 /// Tag the [HKT2] interface for the actual [State].
 abstract final class _StateHKT {}
 
+@immutable
 /// `State<S, A>` is used to store, update, and extract state in a functional way.
 ///
 /// `S` is a State (e.g. the current _State_ of your Bank Account).
