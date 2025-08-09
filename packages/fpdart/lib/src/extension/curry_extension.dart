@@ -5,6 +5,7 @@
 /// {@template fpdart_curry_last_extension}
 /// Extract **last** parameter from this function to allow curring.
 /// {@endtemplate}
+library;
 
 extension CurryExtension2<Input1, Input2, Output> on Output Function(
     Input1, Input2) {
@@ -90,7 +91,7 @@ extension UncurryExtension4<Input1, Input2, Input3, Input4, Output>
   ///
   /// Inverse of `curry`.
   Output Function(Input1, Input2, Input3, Input4) get uncurry =>
-      (Input1 input1, Input2 input2, Input3 input3, Input4 input4) =>
+      (input1, input2, input3, input4) =>
           this(input1)(input2)(input3)(input4);
 }
 

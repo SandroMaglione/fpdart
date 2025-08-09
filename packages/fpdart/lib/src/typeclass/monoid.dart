@@ -33,7 +33,7 @@ mixin Monoid<T> on Semigroup<T> {
   T combineN(T a, int n) {
     if (n < 0) {
       throw const FormatException(
-          "Repeated combining for monoids must have n >= 0");
+          'Repeated combining for monoids must have n >= 0');
     } else if (n == 0) {
       return empty;
     }
@@ -72,10 +72,10 @@ class _Monoid<T> with Semigroup<T>, Monoid<T> {
 }
 
 Monoid<Endo<A>> endoMonoid<A>() =>
-    Monoid.instance<Endo<A>>(identity, (e1, e2) => (A a) => e1(e2(a)));
+    Monoid.instance<Endo<A>>(identity, (e1, e2) => (a) => e1(e2(a)));
 
 Monoid<Endo<A>> dualEndoMonoid<A>() =>
-    Monoid.instance<Endo<A>>(identity, (e1, e2) => (A a) => e2(e1(a)));
+    Monoid.instance<Endo<A>>(identity, (e1, e2) => (a) => e2(e1(a)));
 
 Monoid<bool> boolOrMonoid() => Monoid.instance(false, (a1, a2) => a1 || a2);
 Monoid<bool> boolAndMonoid() => Monoid.instance(true, (a1, a2) => a1 && a2);

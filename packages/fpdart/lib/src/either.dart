@@ -139,7 +139,7 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// type `R` to a value of type `C`.
   @override
   Either<L, C> ap<C>(covariant Either<L, C Function(R r)> a) =>
-      a.flatMap((f) => map(f));
+      a.flatMap(map);
 
   /// If this [Either] is a [Right], then return the result of calling `then`.
   /// Otherwise return [Left].
@@ -415,7 +415,7 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// - If [Option] is [None], then return [Left] containing the result of `onNone`
   factory Either.fromOption(Option<R> m, L Function() onNone) => m.match(
         () => Either.left(onNone()),
-        (r) => Either.of(r),
+        Either<L, R>.of,
       );
 
   /// If calling `predicate` with `r` returns `true`, then return `Right(r)`.

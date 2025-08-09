@@ -58,7 +58,7 @@ final class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
   IOEither<L, C> flatMap<C>(covariant IOEither<L, C> Function(R r) f) =>
       IOEither(
         () => run().match(
-          (l) => Either.left(l),
+          Either.left,
           (r) => f(r).run(),
         ),
       );
@@ -70,7 +70,7 @@ final class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
   TaskEither<L, C> flatMapTask<C>(TaskEither<L, C> Function(R r) f) =>
       TaskEither(
         () async => run().match(
-          (l) => Either.left(l),
+          Either.left,
           (r) => f(r).run(),
         ),
       );
@@ -110,7 +110,7 @@ final class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
 
   /// Change the value in the [Left] of [IOEither].
   IOEither<C, R> mapLeft<C>(C Function(L l) f) => IOEither(
-        () => (run()).match((l) => Either.left(f(l)), Either.of),
+        () => run().match((l) => Either.left(f(l)), Either.of),
       );
 
   /// Define two functions to change both the [Left] and [Right] value of the
@@ -128,7 +128,7 @@ final class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
 
   /// Change this [IOEither] from `IOEither<L, R>` to `IOEither<R, L>`.
   IOEither<R, L> swap() =>
-      IOEither(() => run().match((l) => Right(l), (r) => Left(r)));
+      IOEither(() => run().match(Right.new, Left.new));
 
   /// When this [IOEither] returns [Right], then return the current [IOEither].
   /// Otherwise return the result of `orElse`.

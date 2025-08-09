@@ -1,5 +1,6 @@
 /// https://marcosh.github.io/post/2020/04/15/higher-kinded-types-php-solution.html
 /// https://medium.com/@gcanti/higher-kinded-types-in-flow-275b657992b7
+library;
 
 /// - [A]: Type parameter
 /// - [G]: Type constructor

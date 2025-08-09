@@ -1,4 +1,7 @@
+import '../../fpdart.dart' show Order;
 import 'eq.dart';
+import 'order.dart' show Order;
+import 'typeclass.export.dart' show Order;
 
 /// The `PartialOrder` type class is used to define a
 /// [partial ordering](https://en.wikipedia.org/wiki/Partially_ordered_set) on some type `A`.

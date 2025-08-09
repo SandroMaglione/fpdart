@@ -15,7 +15,7 @@ mixin Semigroup<T> {
   T combineN(T a, int n) {
     if (n <= 0) {
       throw const FormatException(
-          "Repeated combining for semigroups must have n > 0");
+          'Repeated combining for semigroups must have n > 0');
     }
 
     return _repeatedCombineN(a, n);

@@ -1,3 +1,5 @@
+import '../../fpdart.dart' show None, Option;
+import '../option.dart' show None, Option;
 import 'functor.dart';
 import 'hkt.dart';
 

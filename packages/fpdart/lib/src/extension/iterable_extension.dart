@@ -17,7 +17,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
   ///
   /// Same as `firstOption`.
   Option<T> get head {
-    var it = iterator;
+    final it = iterator;
     if (it.moveNext()) return some(it.current);
     return const None();
   }
@@ -66,7 +66,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
   ///
   /// The [count] must be non-negative.
   Iterable<T> dropRight([int count = 1]) {
-    if (count < 0) throw RangeError.range(count, 0, null, "count");
+    if (count < 0) throw RangeError.range(count, 0, null, 'count');
     if (count == 0) return this;
     if (count == 1) return _dropLastHelper(this);
     return _dropRightHelper(this, count);
@@ -74,11 +74,11 @@ extension FpdartOnIterable<T> on Iterable<T> {
 
   // Simpler version of [_dropRightHelper] for single element drop.
   static Iterable<E> _dropLastHelper<E>(Iterable<E> elements) sync* {
-    var it = elements.iterator;
+    final it = elements.iterator;
     if (!it.moveNext()) return;
     var last = it.current;
     while (it.moveNext()) {
-      var element = last;
+      final element = last;
       last = it.current;
       yield element;
     }
@@ -86,14 +86,14 @@ extension FpdartOnIterable<T> on Iterable<T> {
 
   static Iterable<E> _dropRightHelper<E>(
       Iterable<E> elements, int count) sync* {
-    var it = elements.iterator;
-    var queue = Queue<E>();
+    final it = elements.iterator;
+    final queue = Queue<E>();
     for (var i = 0; i < count; i++) {
       if (!it.moveNext()) return;
       queue.add(it.current);
     }
     while (it.moveNext()) {
-      var element = queue.removeFirst();
+      final element = queue.removeFirst();
       queue.add(it.current);
       yield element;
     }
@@ -108,7 +108,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// Returns the list of those elements that satisfy `test`.
   Iterable<T> filterWithIndex(bool Function(T t, int index) test) sync* {
     var index = 0;
-    for (var value in this) {
+    for (final value in this) {
       if (test(value, index)) {
         yield value;
       }
@@ -188,7 +188,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
   ///
   /// Returns `None` if no such element.
   Option<T> lookupEq(Eq<T> eq, T element) {
-    for (var e in this) {
+    for (final e in this) {
       if (eq.eqv(e, element)) return some(e);
     }
     return const None();
@@ -209,7 +209,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
   ) {
     var index = 0;
     var value = initialValue;
-    for (var element in this) {
+    for (final element in this) {
       value = combine(value, element, index);
       index += 1;
     }
@@ -232,8 +232,8 @@ extension FpdartOnIterable<T> on Iterable<T> {
     C Function(T t, B b) combine,
     Iterable<B> iterable,
   ) sync* {
-    var it = iterator;
-    var otherIt = iterable.iterator;
+    final it = iterator;
+    final otherIt = iterable.iterator;
     while (it.moveNext() && otherIt.moveNext()) {
       yield combine(it.current, otherIt.current);
     }
@@ -255,7 +255,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
   ///
   /// Note: The element is added **before** an equal element already in the [Iterable].
   Iterable<T> insertBy(Order<T> order, T element) sync* {
-    var it = iterator;
+    final it = iterator;
     while (it.moveNext()) {
       if (order.compare(it.current, element) < 0) {
         yield it.current;
@@ -283,8 +283,8 @@ extension FpdartOnIterable<T> on Iterable<T> {
     Order<A> order,
     T element,
   ) sync* {
-    var it = iterator;
-    var elementValue = extract(element);
+    final it = iterator;
+    final elementValue = extract(element);
     while (it.moveNext()) {
       if (order.compare(extract(it.current), elementValue) < 0) {
         yield it.current;
@@ -302,7 +302,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// Remove the **first occurrence** of `element` from this [Iterable].
   Iterable<T> delete(T element) sync* {
     var deleted = false;
-    for (var current in this) {
+    for (final current in this) {
       if (deleted || current != element) {
         yield current;
       } else {
@@ -315,7 +315,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// element in the mapping function (`toElement`).
   Iterable<B> mapWithIndex<B>(B Function(T t, int index) toElement) sync* {
     var index = 0;
-    for (var value in this) {
+    for (final value in this) {
       yield toElement(value, index);
       index += 1;
     }
@@ -327,7 +327,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
     Iterable<B> Function(T t, int index) toElements,
   ) sync* {
     var index = 0;
-    for (var value in this) {
+    for (final value in this) {
       yield* toElements(value, index);
       index += 1;
     }
@@ -337,9 +337,9 @@ extension FpdartOnIterable<T> on Iterable<T> {
   ///
   /// If the list is empty, return [None].
   Option<T> maximumBy(Order<T> order) {
-    var it = iterator;
+    final it = iterator;
     if (it.moveNext()) {
-      T min = it.current;
+      var min = it.current;
       while (it.moveNext()) {
         if (order.compare(it.current, min) > 0) {
           min = it.current;
@@ -354,9 +354,9 @@ extension FpdartOnIterable<T> on Iterable<T> {
   ///
   /// If the list is empty, return [None].
   Option<T> minimumBy(Order<T> order) {
-    var it = iterator;
+    final it = iterator;
     if (it.moveNext()) {
-      T min = it.current;
+      var min = it.current;
       while (it.moveNext()) {
         if (order.compare(it.current, min) < 0) {
           min = it.current;
@@ -379,7 +379,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
     // If it's not important that [iterable] can change between
     // `element`s, consider creating a set from it first,
     // for faster `contains`.
-    for (var element in this) {
+    for (final element in this) {
       if (iterable.contains(element)) yield element;
     }
   }
@@ -387,7 +387,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// Return an [Iterable] containing the values of this [Iterable] not included
   /// in `other` based on `eq`.
   Iterable<T> difference(Eq<T> eq, Iterable<T> other) sync* {
-    for (var element in this) {
+    for (final element in this) {
       if (!other.any((e) => eq.eqv(e, element))) {
         yield element;
       }
@@ -396,7 +396,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
 
   /// Return an [Iterable] placing an `middle` in between elements of the this [Iterable].
   Iterable<T> intersperse(T middle) sync* {
-    var it = iterator;
+    final it = iterator;
     if (!it.moveNext()) return;
     yield it.current;
     while (it.moveNext()) {

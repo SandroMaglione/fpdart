@@ -1,4 +1,6 @@
+import '../fpdart.dart' show State;
 import 'io.dart';
+import 'state.dart' show State;
 import 'typeclass/eq.dart';
 import 'typedef.dart';
 import 'unit.dart';
@@ -44,7 +46,7 @@ final class IORef<T> {
 }
 
 /// [Eq] instance to compare [IORef]s using pointer equality
-final ioRefEq = Eq.instance<IORef<Object?>>((a, b) => identical(a, b));
+final ioRefEq = Eq.instance<IORef<Object?>>(identical);
 
 /// {@macro create_io_ref}
 IO<IORef<T>> newIORef<T>(T initial) => IORef.create(initial);
