@@ -58,7 +58,7 @@ final class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   @override
   TaskEither<L, C> flatMap<C>(covariant TaskEither<L, C> Function(R r) f) =>
       TaskEither(() => run().then(
-            (either) async => either.match(
+            (either) => either.match(
               left,
               (r) => f(r).run(),
             ),

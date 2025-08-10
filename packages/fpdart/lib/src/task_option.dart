@@ -60,7 +60,7 @@ final class TaskOption<R> extends HKT<_TaskOptionHKT, R>
   @override
   TaskOption<C> flatMap<C>(covariant TaskOption<C> Function(R r) f) =>
       TaskOption(() => run().then(
-            (option) async => option.match(
+            (option) => option.match(
               Option.none,
               (r) => f(r).run(),
             ),
