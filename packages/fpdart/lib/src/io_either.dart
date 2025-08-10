@@ -9,7 +9,7 @@ import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
-final class _IOEitherThrow<L> {
+final class _IOEitherThrow<L> implements Exception {
   final L value;
   const _IOEitherThrow(this.value);
 }

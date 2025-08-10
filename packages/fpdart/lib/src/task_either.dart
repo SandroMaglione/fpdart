@@ -8,7 +8,7 @@ import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
-final class _TaskEitherThrow<L> {
+final class _TaskEitherThrow<L> implements Exception {
   final L value;
   const _TaskEitherThrow(this.value);
 }

@@ -10,7 +10,7 @@ import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
-final class _TaskOptionThrow {
+final class _TaskOptionThrow implements Exception {
   const _TaskOptionThrow();
 }
 

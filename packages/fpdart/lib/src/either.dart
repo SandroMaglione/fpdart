@@ -17,7 +17,7 @@ Either<L, R> right<L, R>(R r) => Right<L, R>(r);
 /// Shortcut for `Either.left(l)`.
 Either<L, R> left<L, R>(L l) => Left<L, R>(l);
 
-final class _EitherThrow<L> {
+final class _EitherThrow<L> implements Exception {
   final L value;
   const _EitherThrow(this.value);
 }

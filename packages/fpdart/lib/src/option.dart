@@ -37,7 +37,7 @@ Option<T> optionOf<T>(T? t) => Option.fromNullable(t);
 /// Same as initializing `Option.fromPredicate(value, predicate)`.
 Option<T> option<T>(T value, bool Function(T) predicate) => Option.fromPredicate(value, predicate);
 
-final class _OptionThrow {
+final class _OptionThrow implements Exception {
   const _OptionThrow();
 }
 
