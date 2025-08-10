@@ -6,3 +6,4 @@ export 'map_extension.dart';
 export 'option_extension.dart';
 export 'predicate_extension.dart';
 export 'string_extension.dart';
+export 'task_extension.dart';
