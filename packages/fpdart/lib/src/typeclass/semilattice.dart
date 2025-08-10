@@ -16,7 +16,7 @@ import 'semigroup.dart';
 /// > For all elements `x` and `y` of `A`, the [**least upper bound**](https://en.wikipedia.org/wiki/Infimum_and_supremum)
 /// > of the set `{x, y}` exists.
 ///
-/// See also [CommutativeSemigroup], [Bind].
+/// See also [CommutativeSemigroup].
 mixin Semilattice<T> on Band<T>, CommutativeSemigroup<T> {
   /// Given `Eq<T>`, return a `PartialOrder<T>` using the `combine`
   /// operator of `Semilattice` to determine the partial ordering. This method assumes

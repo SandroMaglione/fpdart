@@ -24,7 +24,7 @@ final class _EitherThrow<L> {
 
 typedef DoAdapterEither<L> = R Function<R>(Either<L, R>);
 DoAdapterEither<L> _doAdapter<L>() =>
-    <R>(Either<L, R> either) => either.getOrElse(
+    <R>(either) => either.getOrElse(
           (l) => throw _EitherThrow(l),
         );
 
@@ -73,7 +73,7 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// If this [Either] is [Left], return `b`.
   @override
   C foldLeft<C>(C b, C Function(C acc, R b) f) =>
-      foldMap<Endo<C>>(dualEndoMonoid(), (b) => (C c) => f(c, b))(b);
+      foldMap<Endo<C>>(dualEndoMonoid(), (b) => (c) => f(c, b))(b);
 
   /// Use `monoid` to combine the value of [Right] applied to `f`.
   @override
@@ -314,7 +314,7 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
         resultList.add(e._value);
       } else {
         throw Exception(
-          "[fpdart]: Error when mapping Either, it should be either Left or Right.",
+          '[fpdart]: Error when mapping Either, it should be either Left or Right.',
         );
       }
     }
@@ -386,7 +386,7 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
         resultListRights.add(e._value);
       } else {
         throw Exception(
-          "[fpdart]: Error when mapping Either, it should be either Left or Right.",
+          '[fpdart]: Error when mapping Either, it should be either Left or Right.',
         );
       }
     }
@@ -580,7 +580,7 @@ class Right<L, R> extends Either<L, R> {
 
   @override
   TaskEither<L, R2> bindFuture<R2>(Future<Either<L, R2>> Function(R r) f) =>
-      TaskEither(() async => f(_value));
+      TaskEither(() => f(_value));
 
   @override
   TaskEither<L, R> toTaskEither() => TaskEither.of(_value);
