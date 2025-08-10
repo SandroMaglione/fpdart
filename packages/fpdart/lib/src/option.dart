@@ -422,7 +422,7 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   factory Option.tryCatch(T Function() f) {
     try {
       return Some(f());
-    } catch (_) {
+    } on Exception catch (_) {
       return const Option.none();
     }
   }

@@ -200,7 +200,7 @@ final class TaskOption<R> extends HKT<_TaskOptionHKT, R>
       TaskOption<R>(() async {
         try {
           return Option.of(await run());
-        } catch (_) {
+        } on Exception catch (_) {
           return const Option.none();
         }
       });

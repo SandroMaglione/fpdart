@@ -260,7 +260,7 @@ final class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   /// Future<int> imperative(String str) async {
   ///   try {
   ///     return int.parse(str);
-  ///   } catch (e) {
+  ///   } on Exception catch (e) {
   ///     return -1; /// What does -1 means? 🤨
   ///   }
   /// }
@@ -278,7 +278,7 @@ final class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
       TaskEither<L, R>(() async {
         try {
           return Right<L, R>(await run());
-        } catch (error, stack) {
+        } on Exception catch (error, stack) {
           return Left<L, R>(onError(error, stack));
         }
       });
