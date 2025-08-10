@@ -41,6 +41,8 @@ Future<T> identityFuture<T>(T a) => Future.value(a);
 /// print(c('any')); // -> 10
 /// print(c(112.12)); // -> 10
 /// ```
+// `dynamic b` is just a placeholder
+//ignore: avoid_annotating_with_dynamic
 A Function(dynamic b) constF<A>(A a) => <B>(B b) => a;
 
 /// {@template fpdart_string_extension_to_num_option}
