@@ -249,7 +249,7 @@ final class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
       TaskEither(() async => either);
 
   /// Build a [TaskEither] from a `Task<Either<L, R>>`.
-  factory TaskEither.fromComposition(Task<Either<L, R>> composedTaskEither) =>
+  factory TaskEither.fromTaskFlatten(Task<Either<L, R>> composedTaskEither) =>
       TaskEither(() => composedTaskEither.run());
 
   /// {@template fpdart_try_catch_task_either}

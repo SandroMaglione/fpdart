@@ -5,9 +5,9 @@ import '../task_either.dart';
 import '../task_option.dart';
 
 extension CompositionOptionExtension<T> on Task<Option<T>> {
-  TaskOption<T> toCompositionTaskOption() => TaskOption.fromComposition(this);
+  TaskOption<T> toTaskOption() => TaskOption.fromTaskFlatten(this);
 }
 
 extension CompositionEitherExtension<L, R> on Task<Either<L, R>> {
-  TaskEither<L, R> toCompositionTaskEither() => TaskEither.fromComposition(this);
+  TaskEither<L, R> toTaskEither() => TaskEither.fromTaskFlatten(this);
 }

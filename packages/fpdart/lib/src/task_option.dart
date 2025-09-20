@@ -193,7 +193,7 @@ final class TaskOption<R> extends HKT<_TaskOptionHKT, R>
       );
 
   /// Build a [TaskOption] from a `Task<Option<R>>`.
-  factory TaskOption.fromComposition(Task<Option<R>> composedTaskOption) =>
+  factory TaskOption.fromTaskFlatten(Task<Option<R>> composedTaskOption) =>
       TaskOption(() => composedTaskOption.run());
 
   /// Converts a [Future] that may throw to a [Future] that never throws
