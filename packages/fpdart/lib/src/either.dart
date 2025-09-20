@@ -33,7 +33,6 @@ typedef DoFunctionEither<L, R> = R Function(DoAdapterEither<L> $);
 abstract final class _EitherHKT {}
 
 @immutable
-
 /// Represents a value of one of two possible types, [Left] or [Right].
 ///
 /// [Either] is commonly used to **handle errors**. Instead of returning placeholder

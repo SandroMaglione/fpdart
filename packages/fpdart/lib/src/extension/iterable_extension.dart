@@ -27,6 +27,9 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// Same as `head`.
   Option<T> get firstOption => head;
 
+  /// Optional version of [singleOrNull].
+  Option<T> get singleOption => Option.fromNullable(singleOrNull);
+
   /// Get the last element of the [Iterable].
   /// If the [Iterable] is empty, return [None].
   ///
@@ -417,6 +420,16 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// Sorting [DateTime] in **ascending** order (older dates first).
   List<T> sortWithDate(DateTime Function(T instance) getDate) =>
       sortWith(getDate, Order.orderDate);
+
+  /// Optional version of [elementAt].
+  Option<T> elementAtOption(int index) => Option.fromNullable(elementAt(index));
+
+  /// Optional version of [singleWhere].
+  Option<T> singleWhereOption(bool Function(T element) test) => Option.fromNullable(singleWhere(test));
+
+  /// Optional version of [lastWhere].
+  Option<T> lastWhereOption(bool Function(T element) test) => Option.fromNullable(lastWhere(test));
+
 }
 
 /// Functional programming functions on `Iterable<Iterable<T>>` using `fpdart`.
