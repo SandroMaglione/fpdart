@@ -56,7 +56,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// as if this iterable has only one element.
   Option<Iterable<T>> get init {
     if (isEmpty) return const None();
-    return some(this.dropRight(1));
+    return some(dropRight(1));
   }
 
   /// Drops the last [count] element of this iterable.
