@@ -1,3 +1,5 @@
+// Should always be available.
+//ignore: depend_on_referenced_packages
 import 'package:meta/meta.dart';
 
 import 'either.dart';
