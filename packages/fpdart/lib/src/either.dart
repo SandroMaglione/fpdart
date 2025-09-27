@@ -1,7 +1,3 @@
-// Should always be available.
-//ignore: depend_on_referenced_packages
-import 'package:meta/meta.dart';
-
 import 'function.dart';
 import 'io_either.dart';
 import 'option.dart';
@@ -34,7 +30,6 @@ typedef DoFunctionEither<L, R> = R Function(DoAdapterEither<L> $);
 /// Tag the [HKT2] interface for the actual [Either].
 abstract final class _EitherHKT {}
 
-@immutable
 /// Represents a value of one of two possible types, [Left] or [Right].
 ///
 /// [Either] is commonly used to **handle errors**. Instead of returning placeholder

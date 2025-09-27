@@ -5,7 +5,6 @@
 /// {@template fpdart_curry_last_extension}
 /// Extract **last** parameter from this function to allow curring.
 /// {@endtemplate}
-library;
 
 extension CurryExtension2<Input1, Input2, Output> on Output Function(
     Input1, Input2) {

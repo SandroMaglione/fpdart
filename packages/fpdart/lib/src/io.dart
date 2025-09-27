@@ -1,7 +1,3 @@
-// Should always be available.
-//ignore: depend_on_referenced_packages
-import 'package:meta/meta.dart';
-
 import 'either.dart';
 import 'function.dart';
 import 'io_either.dart';
@@ -23,7 +19,6 @@ typedef DoFunctionIO<A> = A Function(DoAdapterIO $);
 /// Tag the [HKT] interface for the actual [Option].
 abstract final class _IOHKT {}
 
-@immutable
 /// `IO<A>` represents a **non-deterministic synchronous** computation that
 /// can **cause side effects**, yields a value of type `A` and **never fails**.
 ///
