@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:collection/collection.dart';
 
 import '../function.dart';
 import '../option.dart';
@@ -424,11 +425,11 @@ extension FpdartOnIterable<T> on Iterable<T> {
   /// Optional version of [elementAt].
   Option<T> elementAtOption(int index) => Option.fromNullable(elementAt(index));
 
-  /// Optional version of [singleWhere].
-  Option<T> singleWhereOption(bool Function(T element) test) => Option.fromNullable(singleWhere(test));
+  /// Optional version of [singleWhereOrNull].
+  Option<T> singleWhereOption(bool Function(T element) test) => Option.fromNullable(singleWhereOrNull(test));
 
-  /// Optional version of [lastWhere].
-  Option<T> lastWhereOption(bool Function(T element) test) => Option.fromNullable(lastWhere(test));
+  /// Optional version of [lastWhereOrNull].
+  Option<T> lastWhereOption(bool Function(T element) test) => Option.fromNullable(lastWhereOrNull(test));
 
 }
 

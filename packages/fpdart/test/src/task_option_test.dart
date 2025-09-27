@@ -240,6 +240,22 @@ void main() {
       });
     });
 
+    group('fromTaskFlatten', () {
+      test('Some', () async {
+        final task = TaskOption<int>.fromTaskFlatten(Task.of(some(10)));
+        final result = await task.run();
+        result.matchTestSome((r) {
+          expect(r, 10);
+        });
+      });
+
+      test('None', () async {
+        final taskOption = TaskOption<int>.fromTaskFlatten(Task.of(none()));
+        final result = await taskOption.run();
+        expect(result, isA<None>());
+      });
+    });
+
     test('fromTask', () async {
       final task = TaskOption<int>.fromTask(Task(() async => 10));
       final r = await task.run();
