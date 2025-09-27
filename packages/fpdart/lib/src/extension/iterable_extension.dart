@@ -423,7 +423,7 @@ extension FpdartOnIterable<T> on Iterable<T> {
       sortWith(getDate, Order.orderDate);
 
   /// Optional version of [elementAt].
-  Option<T> elementAtOption(int index) => Option.fromNullable(elementAt(index));
+  Option<T> elementAtOption(int index) => Option.fromNullable(elementAtOrNull(index));
 
   /// Optional version of [singleWhereOrNull].
   Option<T> singleWhereOption(bool Function(T element) test) => Option.fromNullable(singleWhereOrNull(test));
