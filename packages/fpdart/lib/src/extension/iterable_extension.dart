@@ -423,14 +423,16 @@ extension FpdartOnIterable<T> on Iterable<T> {
       sortWith(getDate, Order.orderDate);
 
   /// Optional version of [elementAt].
-  Option<T> elementAtOption(int index) => Option.fromNullable(elementAtOrNull(index));
+  Option<T> elementAtOption(int index) =>
+      Option.fromNullable(elementAtOrNull(index));
 
   /// Optional version of [singleWhereOrNull].
-  Option<T> singleWhereOption(bool Function(T element) test) => Option.fromNullable(singleWhereOrNull(test));
+  Option<T> singleWhereOption(bool Function(T element) test) =>
+      Option.fromNullable(singleWhereOrNull(test));
 
   /// Optional version of [lastWhereOrNull].
-  Option<T> lastWhereOption(bool Function(T element) test) => Option.fromNullable(lastWhereOrNull(test));
-
+  Option<T> lastWhereOption(bool Function(T element) test) =>
+      Option.fromNullable(lastWhereOrNull(test));
 }
 
 /// Functional programming functions on `Iterable<Iterable<T>>` using `fpdart`.

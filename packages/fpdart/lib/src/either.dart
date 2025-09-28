@@ -79,7 +79,8 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// Return the result of `f` called with `b` and the value of [Right].
   /// If this [Either] is [Left], return `b`.
   @override
-  C foldRightWithIndex<C>(C c, C Function(int i, C acc, R b) f) => foldRight<(C, int)>(
+  C foldRightWithIndex<C>(C c, C Function(int i, C acc, R b) f) =>
+      foldRight<(C, int)>(
         (c, length() - 1),
         (t, b) => (f(t.$2, t.$1, b), t.$2 - 1),
       ).$1;
@@ -87,7 +88,8 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// Return the result of `f` called with `b` and the value of [Right].
   /// If this [Either] is [Left], return `b`.
   @override
-  C foldLeftWithIndex<C>(C c, C Function(int i, C acc, R b) f) => foldLeft<(C, int)>(
+  C foldLeftWithIndex<C>(C c, C Function(int i, C acc, R b) f) =>
+      foldLeft<(C, int)>(
         (c, 0),
         (t, b) => (f(t.$2, t.$1, b), t.$2 + 1),
       ).$1;
@@ -137,7 +139,8 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// If this [Either] is a [Right], then return the result of calling `then`.
   /// Otherwise return [Left].
   @override
-  Either<L, R2> andThen<R2>(covariant Either<L, R2> Function() then) => flatMap((_) => then());
+  Either<L, R2> andThen<R2>(covariant Either<L, R2> Function() then) =>
+      flatMap((_) => then());
 
   /// Return the current [Either] if it is a [Right], otherwise return the result of `orElse`.
   ///
@@ -155,8 +158,8 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// value of type `C` of a second [Either], and the value of type `D`
   /// of a third [Either].
   @override
-  Either<L, E> map3<C, D, E>(
-          covariant Either<L, C> m1, covariant Either<L, D> m2, E Function(R b, C c, D d) f) =>
+  Either<L, E> map3<C, D, E>(covariant Either<L, C> m1,
+          covariant Either<L, D> m2, E Function(R b, C c, D d) f) =>
       flatMap((b) => m1.flatMap((c) => m2.map((d) => f(b, c, d))));
 
   /// Change the value of [Either] from type `R` to type `Z` based on the
@@ -273,7 +276,8 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// Execute `onLeft` when value is [Left], otherwise execute `onRight`.
   ///
   /// Same as `match`.
-  C fold<C>(C Function(L l) onLeft, C Function(R r) onRight) => match<C>(onLeft, onRight);
+  C fold<C>(C Function(L l) onLeft, C Function(R r) onRight) =>
+      match<C>(onLeft, onRight);
 
   /// Return `true` when value of `r` is equal to the value inside this [Either].
   /// If this [Either] is [Left], then return `false`.
@@ -411,7 +415,8 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
 
   /// If calling `predicate` with `r` returns `true`, then return `Right(r)`.
   /// Otherwise return [Left] containing the result of `onFalse`.
-  factory Either.fromPredicate(R r, bool Function(R r) predicate, L Function(R r) onFalse) =>
+  factory Either.fromPredicate(
+          R r, bool Function(R r) predicate, L Function(R r) onFalse) =>
       predicate(r) ? Either.of(r) : Either.left(onFalse(r));
 
   /// If `r` is `null`, then return the result of `onNull` in [Left].
@@ -421,7 +426,8 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
 
   /// Try to execute `run`. If no error occurs, then return [Right].
   /// Otherwise return [Left] containing the result of `onError`.
-  factory Either.tryCatch(R Function() run, L Function(Object o, StackTrace s) onError) {
+  factory Either.tryCatch(
+      R Function() run, L Function(Object o, StackTrace s) onError) {
     try {
       return Either.of(run());
     } on Exception catch (e, s) {
@@ -477,10 +483,11 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
   ///
   /// Return `true` when the two [Either] are equal or when both are [Left] or
   /// [Right] and comparing using `eqL` or `eqR` returns `true`.
-  static Eq<Either<L, R>> getEq<L, R>(Eq<L> eqL, Eq<R> eqR) => Eq.instance((e1, e2) =>
-      e1 == e2 ||
-      (e1.match((l1) => e2.match((l2) => eqL.eqv(l1, l2), (_) => false),
-          (r1) => e2.match((_) => false, (r2) => eqR.eqv(r1, r2)))));
+  static Eq<Either<L, R>> getEq<L, R>(Eq<L> eqL, Eq<R> eqR) =>
+      Eq.instance((e1, e2) =>
+          e1 == e2 ||
+          (e1.match((l1) => e2.match((l2) => eqL.eqv(l1, l2), (_) => false),
+              (r1) => e2.match((_) => false, (r2) => eqR.eqv(r1, r2)))));
 
   /// Build a `Semigroup<Either>` from a [Semigroup].
   ///
@@ -490,7 +497,9 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// When both are [Left], return the first [Either].
   static Semigroup<Either<L, R>> getSemigroup<L, R>(Semigroup<R> semigroup) =>
       Semigroup.instance((e1, e2) => e2.match(
-          (_) => e1, (r2) => e1.match((_) => e2, (r1) => Either.of(semigroup.combine(r1, r2)))));
+          (_) => e1,
+          (r2) => e1.match(
+              (_) => e2, (r1) => Either.of(semigroup.combine(r1, r2)))));
 }
 
 class Right<L, R> extends Either<L, R> {
@@ -505,8 +514,8 @@ class Right<L, R> extends Either<L, R> {
       flatMap((b) => m1.map((c) => f(b, c)));
 
   @override
-  Either<L, E> map3<C, D, E>(
-          covariant Either<L, C> m1, covariant Either<L, D> m2, E Function(R b, C c, D d) f) =>
+  Either<L, E> map3<C, D, E>(covariant Either<L, C> m1,
+          covariant Either<L, D> m2, E Function(R b, C c, D d) f) =>
       flatMap((b) => m1.flatMap((c) => m2.map((d) => f(b, c, d))));
 
   @override
@@ -519,7 +528,8 @@ class Right<L, R> extends Either<L, R> {
   C foldRight<C>(C b, C Function(C acc, R a) f) => f(b, _value);
 
   @override
-  C match<C>(C Function(L l) onLeft, C Function(R r) onRight) => onRight(_value);
+  C match<C>(C Function(L l) onLeft, C Function(R r) onRight) =>
+      onRight(_value);
 
   @override
   Either<L, C> flatMap<C>(covariant Either<L, C> Function(R a) f) => f(_value);
@@ -546,7 +556,8 @@ class Right<L, R> extends Either<L, R> {
   Either<L, Z> extend<Z>(Z Function(Either<L, R> t) f) => Either.of(f(this));
 
   @override
-  Either<L1, R> orElse<L1>(Either<L1, R> Function(L l) onLeft) => Either.of(_value);
+  Either<L1, R> orElse<L1>(Either<L1, R> Function(L l) onLeft) =>
+      Either.of(_value);
 
   @override
   R getOrElse(R Function(L l) orElse) => _value;
@@ -592,8 +603,8 @@ class Left<L, R> extends Either<L, R> {
       flatMap((b) => m1.map((c) => f(b, c)));
 
   @override
-  Either<L, E> map3<C, D, E>(
-          covariant Either<L, C> m1, covariant Either<L, D> m2, E Function(R b, C c, D d) f) =>
+  Either<L, E> map3<C, D, E>(covariant Either<L, C> m1,
+          covariant Either<L, D> m2, E Function(R b, C c, D d) f) =>
       flatMap((b) => m1.flatMap((c) => m2.map((d) => f(b, c, d))));
 
   @override
@@ -609,7 +620,8 @@ class Left<L, R> extends Either<L, R> {
   C match<C>(C Function(L l) onLeft, C Function(R r) onRight) => onLeft(_value);
 
   @override
-  Either<L, C> flatMap<C>(covariant Either<L, C> Function(R a) f) => Left<L, C>(_value);
+  Either<L, C> flatMap<C>(covariant Either<L, C> Function(R a) f) =>
+      Left<L, C>(_value);
 
   @override
   Option<R> toOption() => Option.none();
@@ -633,7 +645,8 @@ class Left<L, R> extends Either<L, R> {
   Either<L, Z> extend<Z>(Z Function(Either<L, R> t) f) => Either.left(_value);
 
   @override
-  Either<L1, R> orElse<L1>(Either<L1, R> Function(L l) onLeft) => onLeft(_value);
+  Either<L1, R> orElse<L1>(Either<L1, R> Function(L l) onLeft) =>
+      onLeft(_value);
 
   @override
   R getOrElse(R Function(L l) orElse) => orElse(_value);

@@ -33,14 +33,16 @@ Option<T> optionOf<T>(T? t) => Option.fromNullable(t);
 /// [None] otherwise.
 ///
 /// Same as initializing `Option.fromPredicate(value, predicate)`.
-Option<T> option<T>(T value, bool Function(T) predicate) => Option.fromPredicate(value, predicate);
+Option<T> option<T>(T value, bool Function(T) predicate) =>
+    Option.fromPredicate(value, predicate);
 
 final class _OptionThrow implements Exception {
   const _OptionThrow();
 }
 
 typedef DoAdapterOption = A Function<A>(Option<A>);
-A _doAdapter<A>(Option<A> option) => option.getOrElse(() => throw const _OptionThrow());
+A _doAdapter<A>(Option<A> option) =>
+    option.getOrElse(() => throw const _OptionThrow());
 
 typedef DoFunctionOption<A> = A Function(DoAdapterOption $);
 
@@ -187,7 +189,8 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   ///   Option.of(456),
   /// );
   /// ```
-  Option<B> flatMapNullable<B>(B? Function(T t) f) => flatMap((t) => Option.fromNullable(f(t)));
+  Option<B> flatMapNullable<B>(B? Function(T t) f) =>
+      flatMap((t) => Option.fromNullable(f(t)));
 
   /// Return a new [Option] that calls [Option.tryCatch] with the given function [f].
   ///
@@ -198,7 +201,8 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   ///   Option.of(456),
   /// );
   /// ```
-  Option<B> flatMapThrowable<B>(B Function(T t) f) => flatMap((t) => Option.tryCatch(() => f(t)));
+  Option<B> flatMapThrowable<B>(B Function(T t) f) =>
+      flatMap((t) => Option.tryCatch(() => f(t)));
 
   /// Change the value of [Option] from type `T` to type `Z` based on the
   /// value of `Option<T>` using function `f`.
@@ -212,7 +216,8 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   /// If this [Option] is a [Some] and calling `f` returns `true`, then return this [Some].
   /// Otherwise return [None].
   @override
-  Option<T> filter(bool Function(T t) f) => flatMap((t) => f(t) ? this : const Option.none());
+  Option<T> filter(bool Function(T t) f) =>
+      flatMap((t) => f(t) ? this : const Option.none());
 
   /// If this [Option] is a [Some] and calling `f` returns [Some], then return this [Some].
   /// Otherwise return [None].
@@ -224,7 +229,8 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   /// - if `f` applied to its value returns `false`, then the tuple contains this [Option] as first value
   /// Otherwise the tuple contains both [None].
   @override
-  (Option<T>, Option<T>) partition(bool Function(T t) f) => (filter((a) => !f(a)), filter(f));
+  (Option<T>, Option<T>) partition(bool Function(T t) f) =>
+      (filter((a) => !f(a)), filter(f));
 
   /// Return a record that contains as first value a [Some] when `f` returns [Left],
   /// otherwise the [Some] will be the second value of the tuple.
@@ -239,7 +245,8 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   /// [_].andThen(() => [🍎]) -> [_]
   /// ```
   @override
-  Option<B> andThen<B>(covariant Option<B> Function() then) => flatMap((_) => then());
+  Option<B> andThen<B>(covariant Option<B> Function() then) =>
+      flatMap((_) => then());
 
   /// Chain multiple [Option]s.
   @override
@@ -255,8 +262,8 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   /// value of type `C` of a second [Option], and the value of type `D`
   /// of a third [Option].
   @override
-  Option<E> map3<C, D, E>(
-          covariant Option<C> mc, covariant Option<D> md, E Function(T t, C c, D d) f) =>
+  Option<E> map3<C, D, E>(covariant Option<C> mc, covariant Option<D> md,
+          E Function(T t, C c, D d) f) =>
       flatMap((a) => mc.flatMap((c) => md.map((d) => f(a, c, d))));
 
   /// {@template fpdart_option_match}
@@ -277,7 +284,8 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   /// ```
   ///
   /// Same as `match`.
-  B fold<B>(B Function() onNone, B Function(T t) onSome) => match(onNone, onSome);
+  B fold<B>(B Function() onNone, B Function(T t) onSome) =>
+      match(onNone, onSome);
 
   /// Return `true` when value is [Some].
   bool isSome();
@@ -368,7 +376,8 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   /// instead of `Option.safeCast`), otherwise this will always return [Some]!
   // `dynamic`s are use for safe-casting
   //ignore: avoid_annotating_with_dynamic
-  factory Option.safeCast(dynamic value) => Option.safeCastStrict<T, dynamic>(value);
+  factory Option.safeCast(dynamic value) =>
+      Option.safeCastStrict<T, dynamic>(value);
 
   /// {@macro fpdart_safe_cast_option}
   ///
@@ -422,7 +431,8 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   ///
   /// The value on the left of the [Either] will be the first value of the tuple,
   /// while the right value of the [Either] will be the second of the tuple.
-  static (Option<A>, Option<B>) separate<A, B>(Option<Either<A, B>> m) => m.match(
+  static (Option<A>, Option<B>) separate<A, B>(Option<Either<A, B>> m) =>
+      m.match(
         () => (const Option.none(), const Option.none()),
         (either) => (either.getLeft(), either.getRight()),
       );
@@ -434,7 +444,9 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   /// It returns `false` in all other cases.
   static Eq<Option<T>> getEq<T>(Eq<T> eq) => Eq.instance((a1, a2) =>
       a1 == a2 ||
-      a1.flatMap((j1) => a2.flatMap((j2) => Some(eq.eqv(j1, j2)))).getOrElse(() => false));
+      a1
+          .flatMap((j1) => a2.flatMap((j2) => Some(eq.eqv(j1, j2))))
+          .getOrElse(() => false));
 
   /// Build an instance of [Monoid] in which the `empty` value is [None] and the
   /// `combine` function is based on the **first** [Option] if it is [Some], otherwise the second.
@@ -451,11 +463,12 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   /// if they are both [Some].
   ///
   /// If one of the [Option] is [None], then calling `combine` returns [None].
-  static Monoid<Option<T>> getMonoid<T>(Semigroup<T> semigroup) => Monoid.instance(
-      const Option.none(),
-      (a1, a2) => a1.flatMap((v1) => a2.flatMap(
-            (v2) => Some(semigroup.combine(v1, v2)),
-          )));
+  static Monoid<Option<T>> getMonoid<T>(Semigroup<T> semigroup) =>
+      Monoid.instance(
+          const Option.none(),
+          (a1, a2) => a1.flatMap((v1) => a2.flatMap(
+                (v2) => Some(semigroup.combine(v1, v2)),
+              )));
 
   /// Return an [Order] to order instances of [Option].
   ///
@@ -504,8 +517,8 @@ class Some<T> extends Option<T> {
       flatMap((a) => mc.map((c) => f(a, c)));
 
   @override
-  Option<E> map3<C, D, E>(
-          covariant Option<C> mc, covariant Option<D> md, E Function(T t, C c, D d) f) =>
+  Option<E> map3<C, D, E>(covariant Option<C> mc, covariant Option<D> md,
+          E Function(T t, C c, D d) f) =>
       flatMap((a) => mc.flatMap((c) => md.map((d) => f(a, c, d))));
 
   @override
@@ -561,7 +574,8 @@ class None extends Option<Never> {
   const None();
 
   @override
-  Option<D> map2<C, D>(covariant Option<C> mc, D Function(Never t, C c) f) => this;
+  Option<D> map2<C, D>(covariant Option<C> mc, D Function(Never t, C c) f) =>
+      this;
 
   @override
   Option<E> map3<C, D, E>(

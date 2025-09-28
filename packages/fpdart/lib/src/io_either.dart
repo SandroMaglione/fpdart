@@ -127,8 +127,7 @@ final class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
       a.flatMap((f) => flatMap((v) => pure(f(v))));
 
   /// Change this [IOEither] from `IOEither<L, R>` to `IOEither<R, L>`.
-  IOEither<R, L> swap() =>
-      IOEither(() => run().match(Right.new, Left.new));
+  IOEither<R, L> swap() => IOEither(() => run().match(Right.new, Left.new));
 
   /// When this [IOEither] returns [Right], then return the current [IOEither].
   /// Otherwise return the result of `orElse`.

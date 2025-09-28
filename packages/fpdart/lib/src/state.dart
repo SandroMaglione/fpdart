@@ -125,16 +125,17 @@ final class State<S, A> extends HKT2<_StateHKT, S, A>
   ///
   /// Same as `State.traverseList` but passing `index` in the map function.
   static State<S, List<B>> traverseListWithIndex<S, A, B>(
-      List<A> list, State<S, B> Function(A a, int i) f) => State((state) {
-      final resultList = <B>[];
-      var out = state;
-      for (var i = 0; i < list.length; i++) {
-        final (b, s) = f(list[i], i).run(out);
-        resultList.add(b);
-        out = s;
-      }
-      return (resultList, out);
-    });
+          List<A> list, State<S, B> Function(A a, int i) f) =>
+      State((state) {
+        final resultList = <B>[];
+        var out = state;
+        for (var i = 0; i < list.length; i++) {
+          final (b, s) = f(list[i], i).run(out);
+          resultList.add(b);
+          out = s;
+        }
+        return (resultList, out);
+      });
 
   /// {@macro fpdart_traverse_list_state}
   ///

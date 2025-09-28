@@ -90,8 +90,7 @@ extension UncurryExtension4<Input1, Input2, Input3, Input4, Output>
   ///
   /// Inverse of `curry`.
   Output Function(Input1, Input2, Input3, Input4) get uncurry =>
-      (input1, input2, input3, input4) =>
-          this(input1)(input2)(input3)(input4);
+      (input1, input2, input3, input4) => this(input1)(input2)(input3)(input4);
 }
 
 extension CurryExtension5<Input1, Input2, Input3, Input4, Input5, Output>
