@@ -429,15 +429,12 @@ extension FpdartOnIterable<T> on Iterable<T> {
   Option<T> singleWhereOption(bool Function(T element) test) {
     T? result;
     var found = false;
+
     for (final element in this) {
       if (test(element)) {
-        if (!found) {
-          result = element;
-          found = true;
-        } else {
-          result = null;
-          break;
-        }
+        if (found) return const Option.none();
+        result = element;
+        found = true;
       }
     }
 
