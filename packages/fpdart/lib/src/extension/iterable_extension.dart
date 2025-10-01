@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'package:collection/collection.dart';
 
 import '../function.dart';
 import '../option.dart';
@@ -424,15 +423,36 @@ extension FpdartOnIterable<T> on Iterable<T> {
 
   /// Optional version of [elementAt].
   Option<T> elementAtOption(int index) =>
-      Option.fromNullable(elementAtOrNull(index));
+      Option.fromNullable(skip(index).firstOrNull);
 
   /// Optional version of [singleWhereOrNull].
-  Option<T> singleWhereOption(bool Function(T element) test) =>
-      Option.fromNullable(singleWhereOrNull(test));
+  Option<T> singleWhereOption(bool Function(T element) test) {
+    T? result;
+    var found = false;
+    for (final element in this) {
+      if (test(element)) {
+        if (!found) {
+          result = element;
+          found = true;
+        } else {
+          result = null;
+          break;
+        }
+      }
+    }
+
+    return Option.fromNullable(result);
+  }
 
   /// Optional version of [lastWhereOrNull].
-  Option<T> lastWhereOption(bool Function(T element) test) =>
-      Option.fromNullable(lastWhereOrNull(test));
+  Option<T> lastWhereOption(bool Function(T element) test) {
+    T? result;
+    for (final element in this) {
+      if (test(element)) result = element;
+    }
+
+    return Option.fromNullable(result);
+  }
 }
 
 /// Functional programming functions on `Iterable<Iterable<T>>` using `fpdart`.
