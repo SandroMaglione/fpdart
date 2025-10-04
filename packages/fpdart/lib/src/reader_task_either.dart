@@ -354,7 +354,7 @@ final class ReaderTaskEither<E, L, R>
       ReaderTaskEither<E, L, R>((env) async {
         try {
           return Right<L, R>(await run(env));
-        } on Exception catch (error, stack) {
+        } catch (error, stack) {
           return Left<L, R>(onError(error, stack));
         }
       });

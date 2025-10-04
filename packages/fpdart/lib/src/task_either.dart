@@ -282,7 +282,7 @@ final class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
       TaskEither<L, R>(() async {
         try {
           return Right<L, R>(await run());
-        } on Exception catch (error, stack) {
+        } catch (error, stack) {
           return Left<L, R>(onError(error, stack));
         }
       });

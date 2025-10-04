@@ -241,7 +241,7 @@ final class IOEither<L, R> extends HKT2<_IOEitherHKT, L, R>
       IOEither<L, R>(() {
         try {
           return Right<L, R>(run());
-        } on Exception catch (error, stack) {
+        } catch (error, stack) {
           return Left<L, R>(onError(error, stack));
         }
       });

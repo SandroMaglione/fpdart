@@ -430,7 +430,7 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
       R Function() run, L Function(Object o, StackTrace s) onError) {
     try {
       return Either.of(run());
-    } on Exception catch (e, s) {
+    } catch (e, s) {
       return Either.left(onError(e, s));
     }
   }

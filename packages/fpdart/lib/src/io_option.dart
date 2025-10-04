@@ -198,7 +198,7 @@ final class IOOption<R> extends HKT<_IOOptionHKT, R>
   factory IOOption.tryCatch(R Function() run) => IOOption<R>(() {
         try {
           return Option.of(run());
-        } on Exception catch (_) {
+        } catch (_) {
           return const Option.none();
         }
       });
