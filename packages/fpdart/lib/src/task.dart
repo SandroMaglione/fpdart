@@ -148,7 +148,7 @@ final class Task<A> extends HKT<_TaskHKT, A>
     Task<B> Function(A a, int i) f,
   ) =>
       Task<List<B>>(() async {
-        List<B> collect = [];
+        final collect = <B>[];
         for (var i = 0; i < list.length; i++) {
           collect.add(await f(list[i], i).run());
         }

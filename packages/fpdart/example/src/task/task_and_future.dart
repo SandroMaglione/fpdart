@@ -20,17 +20,17 @@ Future<bool> withFuture() async {
 
   try {
     usernameOrName = await getUsername();
-  } catch (e) {
+  } on Exception catch (e) {
     try {
       usernameOrName = decodeName(await getEncodedName());
-    } catch (e) {
+    } on Exception catch (e) {
       throw Exception("Missing both username and name");
     }
   }
 
   try {
     email = await getEmail();
-  } catch (e) {
+  } on Exception catch (e) {
     throw Exception("Missing email");
   }
 
@@ -38,7 +38,7 @@ Future<bool> withFuture() async {
     final usernameOrNamePrefix = addNamePrefix(usernameOrName);
     final emailPrefix = addEmailPrefix(email);
     return await sendInformation(usernameOrNamePrefix, emailPrefix);
-  } catch (e) {
+  } on Exception catch (e) {
     throw Exception("Error when sending information");
   }
 }

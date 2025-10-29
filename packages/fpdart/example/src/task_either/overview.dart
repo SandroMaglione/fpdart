@@ -4,7 +4,7 @@ import 'package:fpdart/fpdart.dart';
 Future<int> imperative(String str) async {
   try {
     return int.parse(str);
-  } catch (e) {
+  } on Exception catch (e) {
     return -1; // What does -1 means? 🤨
   }
 }

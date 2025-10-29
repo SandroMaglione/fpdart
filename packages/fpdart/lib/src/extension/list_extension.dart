@@ -17,7 +17,7 @@ extension FpdartOnList<T> on List<T> {
     B Function(B previousValue, T element) combine,
   ) {
     var value = initialValue;
-    for (var element in reversed) {
+    for (final element in reversed) {
       value = combine(value, element);
     }
     return value;
@@ -31,7 +31,7 @@ extension FpdartOnList<T> on List<T> {
   ) {
     var index = 0;
     var value = initialValue;
-    for (var element in reversed) {
+    for (final element in reversed) {
       value = combine(value, element, index);
       index += 1;
     }

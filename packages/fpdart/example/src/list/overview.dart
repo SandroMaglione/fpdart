@@ -8,8 +8,8 @@ void main() {
   [1, 2, 3, 4].head;
 
   /// Dart: Throws a [StateError] ⚠️
-  [].first;
+  <int>[].first;
 
   /// fpdart: `None()`
-  [].head;
+  <int>[].head;
 }

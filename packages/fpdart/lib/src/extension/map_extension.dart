@@ -12,33 +12,33 @@ extension FpdartOnMap<K, V> on Map<K, V> {
   /// Convert each **value** of the [Map] using
   /// the `update` function and returns a new [Map].
   Map<K, A> mapValue<A>(A Function(V value) update) =>
-      {for (var MapEntry(:key, :value) in entries) key: update(value)};
+      {for (final MapEntry(:key, :value) in entries) key: update(value)};
 
   /// Convert each **value** of the [Map] using
   /// the `update` function and returns a new [Map].
   Map<K, A> mapWithIndex<A>(A Function(V value, int index) update) => {
-        for (var (index, MapEntry(:key, :value)) in entries.indexed)
+        for (final (index, MapEntry(:key, :value)) in entries.indexed)
           key: update(value, index)
       };
 
   /// Returns a new [Map] containing all the elements of this [Map]
   /// where the **value** satisfies `test`.
   Map<K, V> filter(bool Function(V value) test) => {
-        for (var MapEntry(:key, :value) in entries)
+        for (final MapEntry(:key, :value) in entries)
           if (test(value)) key: value
       };
 
   /// Returns a new [Map] containing all the elements of this [Map]
   /// where the **value** satisfies `test`.
   Map<K, V> filterWithIndex(bool Function(V value, int index) test) => {
-        for (var (index, MapEntry(:key, :value)) in entries.indexed)
+        for (final (index, MapEntry(:key, :value)) in entries.indexed)
           if (test(value, index)) key: value
       };
 
   /// Returns a new [Map] containing all the elements of this [Map]
   /// where **key/value** satisfies `test`.
   Map<K, V> filterWithKey(bool Function(K key, V value) test) => {
-        for (var (MapEntry(:key, :value)) in entries)
+        for (final (MapEntry(:key, :value)) in entries)
           if (test(key, value)) key: value
       };
 
@@ -48,13 +48,13 @@ extension FpdartOnMap<K, V> on Map<K, V> {
     bool Function(K key, V value, int index) test,
   ) =>
       {
-        for (var (index, MapEntry(:key, :value)) in entries.indexed)
+        for (final (index, MapEntry(:key, :value)) in entries.indexed)
           if (test(key, value, index)) key: value
       };
 
   /// Get the value at given `key` if present, otherwise return [None].
   Option<V> lookup(K key) {
-    var value = this[key];
+    final value = this[key];
     if (value != null) return some(value);
     if (containsKey(key)) return some(value as V);
     return const None();
@@ -73,7 +73,7 @@ extension FpdartOnMap<K, V> on Map<K, V> {
 
   /// Get the value at given `key` if present using `eq`, otherwise return [None].
   Option<V> lookupEq(Eq<K> eq, K key) {
-    for (var entry in entries) {
+    for (final entry in entries) {
       if (eq.eqv(entry.key, key)) return some(entry.value);
     }
     return const None();
@@ -81,7 +81,7 @@ extension FpdartOnMap<K, V> on Map<K, V> {
 
   /// Get the value and key at given `key` if present using `eq`, otherwise return [None].
   Option<(K, V)> lookupWithKeyEq(Eq<K> eq, K key) {
-    for (var entry in entries) {
+    for (final entry in entries) {
       if (eq.eqv(entry.key, key)) return some((entry.key, entry.value));
     }
     return const None();
@@ -123,11 +123,11 @@ extension FpdartOnMap<K, V> on Map<K, V> {
     V Function(V value) update,
     K key,
   ) {
-    for (var entryKey in keys) {
+    for (final entryKey in keys) {
       if (eq.eqv(entryKey, key)) {
         // At least one equal key exists in map.
         return some({
-          for (var entry in entries)
+          for (final entry in entries)
             entry.key:
                 eq.eqv(entry.key, key) ? update(entry.value) : entry.value
         });
@@ -319,9 +319,9 @@ extension FpdartOnMap<K, V> on Map<K, V> {
     V Function(V x, V y) combine,
     Map<K, V> map,
   ) {
-    var result = {...this};
-    for (var entry in map.entries) {
-      if (lookupKeyEq(eq, entry.key) case Some(value: var key)) {
+    final result = {...this};
+    for (final entry in map.entries) {
+      if (lookupKeyEq(eq, entry.key) case Some(value: final key)) {
         result.update(key, (v) => combine(entry.value, v));
       } else {
         result[entry.key] = entry.value;
@@ -337,8 +337,8 @@ extension FpdartOnMap<K, V> on Map<K, V> {
     Map<K, V> map,
   ) =>
       {
-        for (var entry in map.entries)
-          if (lookupEq(eq, entry.key) case Some(:var value))
+        for (final entry in map.entries)
+          if (lookupEq(eq, entry.key) case Some(:final value))
             entry.key: combine(value, entry.value)
       };
 

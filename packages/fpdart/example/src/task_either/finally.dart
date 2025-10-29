@@ -9,7 +9,7 @@ Future<void> imperative() async {
   try {
     final response = await apiRequestMock();
     print(response);
-  } catch (e) {
+  } on Exception catch (e) {
     print("Error: $e");
   } finally {
     print("Complete!");

@@ -5,7 +5,7 @@
 ///
 /// There is only one value of type [Unit].
 final class Unit {
-  static const Unit _unit = Unit._instance();
+  static const _unit = Unit._instance();
   const Unit._instance();
 
   @override

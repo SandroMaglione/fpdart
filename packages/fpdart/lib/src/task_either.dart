@@ -8,7 +8,7 @@ import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
-final class _TaskEitherThrow<L> {
+final class _TaskEitherThrow<L> implements Exception {
   final L value;
   const _TaskEitherThrow(this.value);
 }
@@ -58,7 +58,7 @@ final class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   @override
   TaskEither<L, C> flatMap<C>(covariant TaskEither<L, C> Function(R r) f) =>
       TaskEither(() => run().then(
-            (either) async => either.match(
+            (either) => either.match(
               left,
               (r) => f(r).run(),
             ),
@@ -248,6 +248,10 @@ final class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   factory TaskEither.fromEither(Either<L, R> either) =>
       TaskEither(() async => either);
 
+  /// Build a [TaskEither] from a `Task<Either<L, R>>`.
+  factory TaskEither.fromTaskFlatten(Task<Either<L, R>> composedTaskEither) =>
+      TaskEither(() => composedTaskEither.run());
+
   /// {@template fpdart_try_catch_task_either}
   /// Execute an async function ([Future]) and convert the result to [Either]:
   /// - If the execution is successful, returns a [Right]
@@ -260,7 +264,7 @@ final class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
   /// Future<int> imperative(String str) async {
   ///   try {
   ///     return int.parse(str);
-  ///   } catch (e) {
+  ///   } on Exception catch (e) {
   ///     return -1; /// What does -1 means? 🤨
   ///   }
   /// }

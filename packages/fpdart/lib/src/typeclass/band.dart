@@ -11,7 +11,7 @@ mixin Band<T> on Semigroup<T> {
   T combineN(T a, int n) {
     if (n <= 0) {
       throw const FormatException(
-          "Repeated combining for bands must have n > 0");
+          'Repeated combining for bands must have n > 0');
     }
 
     return n == 1 ? a : combine(a, a);

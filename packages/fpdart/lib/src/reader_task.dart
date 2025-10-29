@@ -7,8 +7,7 @@ import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
 typedef DoAdapterReaderTask<E> = Future<A> Function<A>(ReaderTask<E, A>);
-DoAdapterReaderTask<E> _doAdapter<E>(E env) =>
-    <A>(ReaderTask<E, A> task) => task.run(env);
+DoAdapterReaderTask<E> _doAdapter<E>(E env) => <A>(task) => task.run(env);
 
 typedef DoFunctionReaderTask<E, A> = Future<A> Function(
     DoAdapterReaderTask<E> $);

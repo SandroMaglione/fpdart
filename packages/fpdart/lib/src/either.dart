@@ -15,16 +15,15 @@ Either<L, R> right<L, R>(R r) => Right<L, R>(r);
 /// Shortcut for `Either.left(l)`.
 Either<L, R> left<L, R>(L l) => Left<L, R>(l);
 
-final class _EitherThrow<L> {
+final class _EitherThrow<L> implements Exception {
   final L value;
   const _EitherThrow(this.value);
 }
 
 typedef DoAdapterEither<L> = R Function<R>(Either<L, R>);
-DoAdapterEither<L> _doAdapter<L>() =>
-    <R>(Either<L, R> either) => either.getOrElse(
-          (l) => throw _EitherThrow(l),
-        );
+DoAdapterEither<L> _doAdapter<L>() => <R>(either) => either.getOrElse(
+      (l) => throw _EitherThrow(l),
+    );
 
 typedef DoFunctionEither<L, R> = R Function(DoAdapterEither<L> $);
 
@@ -70,7 +69,7 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// If this [Either] is [Left], return `b`.
   @override
   C foldLeft<C>(C b, C Function(C acc, R b) f) =>
-      foldMap<Endo<C>>(dualEndoMonoid(), (b) => (C c) => f(c, b))(b);
+      foldMap<Endo<C>>(dualEndoMonoid(), (b) => (c) => f(c, b))(b);
 
   /// Use `monoid` to combine the value of [Right] applied to `f`.
   @override
@@ -135,8 +134,7 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// Apply the function contained inside `a` to change the value on the [Right] from
   /// type `R` to a value of type `C`.
   @override
-  Either<L, C> ap<C>(covariant Either<L, C Function(R r)> a) =>
-      a.flatMap((f) => map(f));
+  Either<L, C> ap<C>(covariant Either<L, C Function(R r)> a) => a.flatMap(map);
 
   /// If this [Either] is a [Right], then return the result of calling `then`.
   /// Otherwise return [Left].
@@ -311,7 +309,7 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
         resultList.add(e._value);
       } else {
         throw Exception(
-          "[fpdart]: Error when mapping Either, it should be either Left or Right.",
+          '[fpdart]: Error when mapping Either, it should be either Left or Right.',
         );
       }
     }
@@ -383,7 +381,7 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
         resultListRights.add(e._value);
       } else {
         throw Exception(
-          "[fpdart]: Error when mapping Either, it should be either Left or Right.",
+          '[fpdart]: Error when mapping Either, it should be either Left or Right.',
         );
       }
     }
@@ -412,7 +410,7 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// - If [Option] is [None], then return [Left] containing the result of `onNone`
   factory Either.fromOption(Option<R> m, L Function() onNone) => m.match(
         () => Either.left(onNone()),
-        (r) => Either.of(r),
+        Either<L, R>.of,
       );
 
   /// If calling `predicate` with `r` returns `true`, then return `Right(r)`.
@@ -450,7 +448,11 @@ sealed class Either<L, R> extends HKT2<_EitherHKT, L, R>
   /// **Note**: Make sure to specify the types of [Either] (`Either<L, R>.safeCast`
   /// instead of `Either.safeCast`), otherwise this will always return [Right]!
   factory Either.safeCast(
+    // `dynamic`s are use for safe-casting
+    //ignore: avoid_annotating_with_dynamic
     dynamic value,
+    // `dynamic`s are use for safe-casting
+    //ignore: avoid_annotating_with_dynamic
     L Function(dynamic value) onError,
   ) =>
       Either.safeCastStrict<L, R, dynamic>(value, onError);
@@ -577,7 +579,7 @@ class Right<L, R> extends Either<L, R> {
 
   @override
   TaskEither<L, R2> bindFuture<R2>(Future<Either<L, R2>> Function(R r) f) =>
-      TaskEither(() async => f(_value));
+      TaskEither(() => f(_value));
 
   @override
   TaskEither<L, R> toTaskEither() => TaskEither.of(_value);

@@ -15,7 +15,7 @@ import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
-final class _ReaderTaskEitherThrow<L> {
+final class _ReaderTaskEitherThrow<L> implements Exception {
   final L value;
   const _ReaderTaskEitherThrow(this.value);
 }
@@ -83,7 +83,7 @@ final class ReaderTaskEither<E, L, R>
     covariant ReaderTaskEither<E, L, C> Function(R r) f,
   ) =>
       ReaderTaskEither((env) => run(env).then(
-            (either) async => either.match(
+            (either) => either.match(
               left,
               (r) => f(r).run(env),
             ),
@@ -97,7 +97,7 @@ final class ReaderTaskEither<E, L, R>
     TaskEither<L, C> Function(R r) f,
   ) =>
       ReaderTaskEither((env) => run(env).then(
-            (either) async => either.match(
+            (either) => either.match(
               left,
               (r) => f(r).run(),
             ),
@@ -285,7 +285,7 @@ final class ReaderTaskEither<E, L, R>
   /// Build a [ReaderTaskEither] that returns a [Right] containing the result of running `task`.
   factory ReaderTaskEither.fromTaskEither(TaskEither<L, R> task) =>
       ReaderTaskEither(
-        (_) async => task.run(),
+        (_) => task.run(),
       );
 
   /// Build a [ReaderTaskEither] that returns a [Right] containing the result of running `io`.

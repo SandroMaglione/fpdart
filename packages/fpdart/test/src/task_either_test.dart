@@ -373,6 +373,26 @@ void main() {
       });
     });
 
+    group('fromTaskFlatten', () {
+      test('Right', () async {
+        final task =
+            TaskEither<String, int>.fromTaskFlatten(Task.of(Either.of(10)));
+        final r = await task.run();
+        r.match((_) {
+          fail('should be right');
+        }, (r) => expect(r, 10));
+      });
+
+      test('Left', () async {
+        final task = TaskEither<String, int>.fromTaskFlatten(
+            Task.of(Either.left('error')));
+        final r = await task.run();
+        r.match((l) => expect(l, 'error'), (_) {
+          fail('should be left');
+        });
+      });
+    });
+
     group('fromOption', () {
       test('Right', () async {
         final task =

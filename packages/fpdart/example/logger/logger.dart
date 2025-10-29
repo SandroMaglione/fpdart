@@ -68,7 +68,7 @@ class Logger {
         var outputEvent = OutputEvent(level, output);
         try {
           _output.output(outputEvent);
-        } catch (e, s) {
+        } on Exception catch (e, s) {
           print(e);
           print(s);
         }

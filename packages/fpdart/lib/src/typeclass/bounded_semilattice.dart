@@ -26,7 +26,7 @@ mixin BoundedSemilattice<T> on CommutativeMonoid<T>, Semilattice<T> {
   T combineN(T a, int n) {
     if (n < 0) {
       throw const FormatException(
-          "Repeated combining for monoids must have n >= 0");
+          'Repeated combining for monoids must have n >= 0');
     } else if (n == 0) {
       return empty;
     }

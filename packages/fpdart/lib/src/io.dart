@@ -23,6 +23,7 @@ abstract final class _IOHKT {}
 /// can **cause side effects**, yields a value of type `A` and **never fails**.
 ///
 /// If you want to represent a synchronous computation that may fail, see [IOEither].
+///
 final class IO<A> extends HKT<_IOHKT, A>
     with Functor<_IOHKT, A>, Applicative<_IOHKT, A>, Monad<_IOHKT, A> {
   final A Function() _run;

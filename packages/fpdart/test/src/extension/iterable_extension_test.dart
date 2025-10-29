@@ -203,6 +203,54 @@ void main() {
       });
     });
 
+    group('singleOption', () {
+      test('Some', () {
+        const list1 = [1];
+        final ap = list1.singleOption;
+        expect(ap, isA<Some>());
+        expect(ap.getOrElse(() => -1), 1);
+      });
+      test('None (empty list)', () {
+        const list1 = <int>[];
+        final ap = list1.singleOption;
+        expect(ap, isA<None>());
+        expect(ap.getOrElse(() => -1), -1);
+      });
+      test('None (multiple elements)', () {
+        const list1 = [1, 2];
+        final ap = list1.singleOption;
+        expect(ap, isA<None>());
+        expect(ap.getOrElse(() => -1), -1);
+      });
+    });
+
+    group('singleWhereOption', () {
+      test('Some', () {
+        const list1 = [1];
+        final ap = list1.singleWhereOption((elem) => elem == 1);
+        expect(ap, isA<Some>());
+        expect(ap.getOrElse(() => -1), 1);
+      });
+      test('None (empy list)', () {
+        const list1 = [];
+        final ap = list1.singleWhereOption((elem) => elem == 1);
+        expect(ap, isA<None>());
+        expect(ap.getOrElse(() => -1), -1);
+      });
+      test('None (no matching element)', () {
+        const list1 = [1];
+        final ap = list1.singleWhereOption((elem) => elem == 2);
+        expect(ap, isA<None>());
+        expect(ap.getOrElse(() => -1), -1);
+      });
+      test('None (multiple matching element)', () {
+        const list1 = [1, 1];
+        final ap = list1.singleWhereOption((elem) => elem == 1);
+        expect(ap, isA<None>());
+        expect(ap.getOrElse(() => -1), -1);
+      });
+    });
+
     group('init', () {
       test('Some', () {
         final list1 = [1, 2, 3, 4];
@@ -218,6 +266,40 @@ void main() {
         final ap = list1.lastOption;
         expect(ap, isA<Some>());
         expect(ap.getOrElse(() => -1), 4);
+      });
+    });
+
+    group('lastWhereOption', () {
+      test('Some', () {
+        const list1 = [1, 2, 3, 4, 5, 6];
+        final ap = list1.lastWhereOption((elem) => elem.isEven);
+        expect(ap, isA<Some>());
+        expect(ap.getOrElse(() => -1), 6);
+      });
+      test('None (empy list)', () {
+        const list1 = [];
+        final ap = list1.lastWhereOption((elem) => elem == 1);
+        expect(ap, isA<None>());
+        expect(ap.getOrElse(() => -1), -1);
+      });
+      test('None (no matching element)', () {
+        const list1 = [1, 3, 5, 7];
+        final ap = list1.lastWhereOption((elem) => elem.isEven);
+        expect(ap, isA<None>());
+        expect(ap.getOrElse(() => -1), -1);
+      });
+      test('Handles first/last element edge cases correctly', () {
+        const list1 = [2, 1, 3, 4];
+
+        final ap1 = list1.lastWhereOption((elem) => elem == 2);
+        // First element is last matching
+        expect(ap1, isA<Some>());
+        expect(ap1.getOrElse(() => -1), 2);
+
+        final ap2 = list1.lastWhereOption((elem) => elem == 4);
+        // Last element is matching
+        expect(ap2, isA<Some>());
+        expect(ap2.getOrElse(() => -1), 4);
       });
     });
 

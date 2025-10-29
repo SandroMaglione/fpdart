@@ -12,7 +12,7 @@ import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
-final class _IOOptionThrow {
+final class _IOOptionThrow implements Exception {
   const _IOOptionThrow();
 }
 

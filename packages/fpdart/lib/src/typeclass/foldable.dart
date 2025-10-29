@@ -7,7 +7,7 @@ mixin Foldable<G, A> on HKT<G, A> {
   B foldRight<B>(B b, B Function(B acc, A a) f);
 
   B foldLeft<B>(B b, B Function(B acc, A a) f) =>
-      foldMap<Endo<B>>(dualEndoMonoid(), (a) => (B b) => f(b, a))(b);
+      foldMap<Endo<B>>(dualEndoMonoid(), (a) => (b) => f(b, a))(b);
 
   /// Fold implemented by mapping `A` values into `B` and then
   /// combining them using the given `Monoid<B>` instance.
@@ -50,7 +50,7 @@ mixin Foldable2<G, A, B> on HKT2<G, A, B> {
   C foldRight<C>(C b, C Function(C acc, B b) f);
 
   C foldLeft<C>(C b, C Function(C acc, B b) f) =>
-      foldMap<Endo<C>>(dualEndoMonoid(), (b) => (C c) => f(c, b))(b);
+      foldMap<Endo<C>>(dualEndoMonoid(), (b) => (c) => f(c, b))(b);
 
   C foldMap<C>(Monoid<C> monoid, C Function(B b) f) =>
       foldRight(monoid.empty, (c, b) => monoid.combine(f(b), c));

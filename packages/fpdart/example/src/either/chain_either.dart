@@ -50,7 +50,7 @@ Future<void> placeOrder() async {
     await ordersRepository.addOrder(uid, order);
     // third await call
     await cartRepository.setCart(uid, const Cart());
-  } catch (e) {
+  } on Exception catch (e) {
     // TODO: Handle exceptions from any of the methods above
   }
 

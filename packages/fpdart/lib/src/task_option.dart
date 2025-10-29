@@ -10,7 +10,7 @@ import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
-final class _TaskOptionThrow {
+final class _TaskOptionThrow implements Exception {
   const _TaskOptionThrow();
 }
 
@@ -60,7 +60,7 @@ final class TaskOption<R> extends HKT<_TaskOptionHKT, R>
   @override
   TaskOption<C> flatMap<C>(covariant TaskOption<C> Function(R r) f) =>
       TaskOption(() => run().then(
-            (option) async => option.match(
+            (option) => option.match(
               Option.none,
               (r) => f(r).run(),
             ),
@@ -191,6 +191,10 @@ final class TaskOption<R> extends HKT<_TaskOptionHKT, R>
       TaskOption(
         () async => predicate(value) ? Option.of(value) : const Option.none(),
       );
+
+  /// Build a [TaskOption] from a `Task<Option<R>>`.
+  factory TaskOption.fromTaskFlatten(Task<Option<R>> composedTaskOption) =>
+      TaskOption(() => composedTaskOption.run());
 
   /// Converts a [Future] that may throw to a [Future] that never throws
   /// but returns a [Option] instead.

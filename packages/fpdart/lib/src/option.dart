@@ -36,7 +36,7 @@ Option<T> optionOf<T>(T? t) => Option.fromNullable(t);
 Option<T> option<T>(T value, bool Function(T) predicate) =>
     Option.fromPredicate(value, predicate);
 
-final class _OptionThrow {
+final class _OptionThrow implements Exception {
   const _OptionThrow();
 }
 
@@ -125,8 +125,8 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   /// ```
   @override
   Option<B> ap<B>(covariant Option<B Function(T t)> a) => a.match(
-        () => Option<B>.none(),
-        (f) => map(f),
+        Option<B>.none,
+        map,
       );
 
   /// Return a [Some] containing the value `b`.
@@ -361,7 +361,7 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   /// Build a [Option] from a [Either] by returning [Some] when `either` is [Right],
   /// [None] otherwise.
   static Option<R> fromEither<L, R>(Either<L, R> either) =>
-      either.match((_) => const Option.none(), (r) => Some(r));
+      either.match((_) => const Option.none(), Some.new);
 
   /// {@template fpdart_safe_cast_option}
   /// Safely cast a value to type `T`.
@@ -374,6 +374,8 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   ///
   /// **Note**: Make sure to specify the type of [Option] (`Option<T>.safeCast`
   /// instead of `Option.safeCast`), otherwise this will always return [Some]!
+  // `dynamic`s are use for safe-casting
+  //ignore: avoid_annotating_with_dynamic
   factory Option.safeCast(dynamic value) =>
       Option.safeCastStrict<T, dynamic>(value);
 
@@ -488,7 +490,11 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   ///
   /// Json serialization support for `json_serializable` with `@JsonSerializable`.
   factory Option.fromJson(
+    // nature of JSON
+    //ignore: avoid_annotating_with_dynamic
     dynamic json,
+    // nature of JSON
+    //ignore: avoid_annotating_with_dynamic
     T Function(dynamic json) fromJsonT,
   ) =>
       json != null ? Option.tryCatch(() => fromJsonT(json)) : Option.none();
