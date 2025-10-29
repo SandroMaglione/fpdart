@@ -1,3 +1,10 @@
+## v1.2.0 - 29 October 2025
+- Added `toTaskOptionFlat`, `toTaskEitherFlat`, `fromTaskFlatten` to `TaskOption` and `TaskEither`
+- Added new iterable extension functions `singleOption`, `elementAtOption`, `singleWhereOption`, `lastWhereOption`
+- Minor internal improvements
+- Status update for fpdart v2 (full discussion [here](https://github.com/SandroMaglione/fpdart/pull/147#issuecomment-2994243387))
+
+
 ## v1.1.1 - 7 November 2024
 - Fixed broken documentation links
 

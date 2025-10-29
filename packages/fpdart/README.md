@@ -41,7 +41,7 @@ All the main functional programming types and patterns <strong>fully documented<
 
 fpdart is inspired by [fp-ts](https://gcanti.github.io/fp-ts/), [cats](https://typelevel.org/cats/typeclasses.html#type-classes-in-cats), and [dartz](https://github.com/spebbe/dartz).
 
-> Follow my [**Twitter**](https://twitter.com/SandroMaglione) or [BlueSky](https://bsky.app/profile/sandromaglione.bsky.social) for updates, or [subscribe to the newsletter](https://www.sandromaglione.com/newsletter)
+> Follow my [**Twitter**](https://twitter.com/SandroMaglione) for updates, or [subscribe to the newsletter](https://www.sandromaglione.com/newsletter)
 
 ***
 
@@ -50,9 +50,11 @@ Version 2 of `fpdart` is currently in development. `v2` is a rewrite based on a 
 
 You can learn more and [follow the progress here](https://github.com/SandroMaglione/fpdart/pull/147).
 
-> As [mentioned in the PR](https://github.com/SandroMaglione/fpdart/pull/147#issuecomment-2248144800), some patterns for `v2` are expected to benefit from new upcoming features in Dart (static metaprogramming).
+> fpdart v2 is planned to **remain in pre-release stage** because of some usability issues caused by limitations with the Dart language. 
 >
-> We are waiting for [updates on the language](https://github.com/orgs/dart-lang/projects/90) before the final release of `v2`. 
+> Meanwhile, fpdart is open for PRs if anyone is interested in contributing with improvements and bug fixes.
+>
+> Read the full discussion [here](https://github.com/SandroMaglione/fpdart/pull/147#issuecomment-2994243387).
 
 
 
@@ -132,7 +134,7 @@ Interested in what `fpdart` is and how it came to be?
 ```yaml
 # pubspec.yaml
 dependencies:
-  fpdart: ^1.1.1
+  fpdart: ^1.2.0
 ```
 
 ## ✨ Examples
@@ -508,6 +510,7 @@ In general, **any contribution or feedback is welcome** (and encouraged!).
 
 ## 📃 Versioning
 
+- v1.2.0 - 29 October 2025
 - v1.1.1 - 7 November 2024
 - v1.1.0 - 13 August 2023
 - **v1.0.0** - 26 July 2023
@@ -542,7 +545,7 @@ If you are interested in my work you can [subscribe to my newsletter](https://ww
 
 I share tutorials, guides, and code snippets about `fpdart` and functional programming: [**Subscribe to the Newsletter here** 📧](https://www.sandromaglione.com/newsletter)
 
-For more frequent updates you can also follow me on my [**Twitter**](https://twitter.com/SandroMaglione) or [BlueSky](https://bsky.app/profile/sandromaglione.bsky.social).
+For more frequent updates you can also follow me on my [**Twitter**](https://twitter.com/SandroMaglione).
 
 ## 👀 License
 
