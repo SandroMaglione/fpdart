@@ -690,6 +690,68 @@ void main() {
       expect(map1, map3);
       expect(map1 == map4, false);
     });
+
+    group('sequenceRecord2', () {
+      test('Some', () {
+        final record = (Option.of(1), Option.of('two'));
+        final result = Option.sequenceRecord2(record);
+        result.matchTestSome((t) {
+          expect(t, (1, 'two'));
+        });
+      });
+
+      test('None first', () {
+        final record = (Option<int>.none(), Option.of('two'));
+        final result = Option.sequenceRecord2(record);
+        expect(result, isA<None>());
+      });
+
+      test('None second', () {
+        final record = (Option.of(1), Option<String>.none());
+        final result = Option.sequenceRecord2(record);
+        expect(result, isA<None>());
+      });
+    });
+
+    group('sequenceRecord3', () {
+      test('Some', () {
+        final record = (Option.of(1), Option.of('two'), Option.of(3.0));
+        final result = Option.sequenceRecord3(record);
+        result.matchTestSome((t) {
+          expect(t, (1, 'two', 3.0));
+        });
+      });
+
+      test('None middle', () {
+        final record = (Option.of(1), Option<String>.none(), Option.of(3.0));
+        final result = Option.sequenceRecord3(record);
+        expect(result, isA<None>());
+      });
+    });
+
+    group('traverseRecord2', () {
+      test('Some', () {
+        final record = (1, 'two');
+        final result = Option.traverseRecord2<int, String, String, int>(
+          record,
+          (a) => Option.of('$a'),
+          (b) => Option.of(b.length),
+        );
+        result.matchTestSome((t) {
+          expect(t, ('1', 3));
+        });
+      });
+
+      test('None', () {
+        final record = (1, 'two');
+        final result = Option.traverseRecord2<int, String, String, int>(
+          record,
+          (a) => Option<String>.none(),
+          (b) => Option.of(b.length),
+        );
+        expect(result, isA<None>());
+      });
+    });
   });
 
   group('safeCastStrict', () {

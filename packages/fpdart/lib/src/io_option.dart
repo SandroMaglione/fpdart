@@ -12,6 +12,8 @@ import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
+part 'io_option_extension.dart';
+
 final class _IOOptionThrow implements Exception {
   const _IOOptionThrow();
 }
@@ -255,4 +257,221 @@ final class IOOption<R> extends HKT<_IOOptionHKT, R>
   /// easier.
   static IOOption<R> Function(A a) tryCatchK<R, A>(R Function(A a) run) =>
       (a) => IOOption.tryCatch(() => run(a));
+
+  /// {@template fpdart_traverse_record_io_option}
+  /// Apply the provided functions to each element of the record,
+  /// and collect the results in an [IOOption] of a record.
+  ///
+  /// If any result is [None], the entire result is [None].
+  /// {@endtemplate}
+  static IOOption<(B1, B2)> traverseRecord2<A1, A2, B1, B2>(
+    (A1, A2) record,
+    IOOption<B1> Function(A1) f1,
+    IOOption<B2> Function(A2) f2,
+  ) =>
+      f1(record.$1).flatMap((b1) => f2(record.$2).map((b2) => (b1, b2)));
+
+  /// {@macro fpdart_traverse_record_io_option}
+  static IOOption<(B1, B2, B3)> traverseRecord3<A1, A2, A3, B1, B2, B3>(
+    (A1, A2, A3) record,
+    IOOption<B1> Function(A1) f1,
+    IOOption<B2> Function(A2) f2,
+    IOOption<B3> Function(A3) f3,
+  ) =>
+      f1(record.$1).flatMap((b1) =>
+          f2(record.$2).flatMap((b2) => f3(record.$3).map((b3) => (b1, b2, b3))));
+
+  /// {@macro fpdart_traverse_record_io_option}
+  static IOOption<(B1, B2, B3, B4)>
+      traverseRecord4<A1, A2, A3, A4, B1, B2, B3, B4>(
+    (A1, A2, A3, A4) record,
+    IOOption<B1> Function(A1) f1,
+    IOOption<B2> Function(A2) f2,
+    IOOption<B3> Function(A3) f3,
+    IOOption<B4> Function(A4) f4,
+  ) =>
+          f1(record.$1).flatMap((b1) => f2(record.$2).flatMap((b2) =>
+              f3(record.$3)
+                  .flatMap((b3) => f4(record.$4).map((b4) => (b1, b2, b3, b4)))));
+
+  /// {@macro fpdart_traverse_record_io_option}
+  static IOOption<(B1, B2, B3, B4, B5)>
+      traverseRecord5<A1, A2, A3, A4, A5, B1, B2, B3, B4, B5>(
+    (A1, A2, A3, A4, A5) record,
+    IOOption<B1> Function(A1) f1,
+    IOOption<B2> Function(A2) f2,
+    IOOption<B3> Function(A3) f3,
+    IOOption<B4> Function(A4) f4,
+    IOOption<B5> Function(A5) f5,
+  ) =>
+          f1(record.$1).flatMap((b1) => f2(record.$2).flatMap((b2) =>
+              f3(record.$3).flatMap((b3) => f4(record.$4)
+                  .flatMap((b4) => f5(record.$5).map((b5) => (b1, b2, b3, b4, b5))))));
+
+  /// {@macro fpdart_traverse_record_io_option}
+  static IOOption<(B1, B2, B3, B4, B5, B6)>
+      traverseRecord6<A1, A2, A3, A4, A5, A6, B1, B2, B3, B4, B5, B6>(
+    (A1, A2, A3, A4, A5, A6) record,
+    IOOption<B1> Function(A1) f1,
+    IOOption<B2> Function(A2) f2,
+    IOOption<B3> Function(A3) f3,
+    IOOption<B4> Function(A4) f4,
+    IOOption<B5> Function(A5) f5,
+    IOOption<B6> Function(A6) f6,
+  ) =>
+          f1(record.$1).flatMap((b1) => f2(record.$2).flatMap((b2) =>
+              f3(record.$3).flatMap((b3) => f4(record.$4).flatMap((b4) =>
+                  f5(record.$5).flatMap(
+                      (b5) => f6(record.$6).map((b6) => (b1, b2, b3, b4, b5, b6)))))));
+
+  /// {@macro fpdart_traverse_record_io_option}
+  static IOOption<(B1, B2, B3, B4, B5, B6, B7)>
+      traverseRecord7<A1, A2, A3, A4, A5, A6, A7, B1, B2, B3, B4, B5, B6, B7>(
+    (A1, A2, A3, A4, A5, A6, A7) record,
+    IOOption<B1> Function(A1) f1,
+    IOOption<B2> Function(A2) f2,
+    IOOption<B3> Function(A3) f3,
+    IOOption<B4> Function(A4) f4,
+    IOOption<B5> Function(A5) f5,
+    IOOption<B6> Function(A6) f6,
+    IOOption<B7> Function(A7) f7,
+  ) =>
+          f1(record.$1).flatMap((b1) => f2(record.$2).flatMap((b2) =>
+              f3(record.$3).flatMap((b3) => f4(record.$4).flatMap((b4) =>
+                  f5(record.$5).flatMap((b5) => f6(record.$6).flatMap((b6) =>
+                      f7(record.$7).map((b7) => (b1, b2, b3, b4, b5, b6, b7))))))));
+
+  /// {@macro fpdart_traverse_record_io_option}
+  static IOOption<(B1, B2, B3, B4, B5, B6, B7, B8)>
+      traverseRecord8<A1, A2, A3, A4, A5, A6, A7, A8, B1, B2, B3, B4, B5, B6, B7,
+              B8>(
+    (A1, A2, A3, A4, A5, A6, A7, A8) record,
+    IOOption<B1> Function(A1) f1,
+    IOOption<B2> Function(A2) f2,
+    IOOption<B3> Function(A3) f3,
+    IOOption<B4> Function(A4) f4,
+    IOOption<B5> Function(A5) f5,
+    IOOption<B6> Function(A6) f6,
+    IOOption<B7> Function(A7) f7,
+    IOOption<B8> Function(A8) f8,
+  ) =>
+          f1(record.$1).flatMap((b1) => f2(record.$2).flatMap((b2) =>
+              f3(record.$3).flatMap((b3) => f4(record.$4).flatMap((b4) =>
+                  f5(record.$5).flatMap((b5) => f6(record.$6).flatMap((b6) =>
+                      f7(record.$7).flatMap((b7) => f8(record.$8)
+                          .map((b8) => (b1, b2, b3, b4, b5, b6, b7, b8)))))))));
+
+  /// {@macro fpdart_traverse_record_io_option}
+  static IOOption<(B1, B2, B3, B4, B5, B6, B7, B8, B9)>
+      traverseRecord9<A1, A2, A3, A4, A5, A6, A7, A8, A9, B1, B2, B3, B4, B5, B6,
+              B7, B8, B9>(
+    (A1, A2, A3, A4, A5, A6, A7, A8, A9) record,
+    IOOption<B1> Function(A1) f1,
+    IOOption<B2> Function(A2) f2,
+    IOOption<B3> Function(A3) f3,
+    IOOption<B4> Function(A4) f4,
+    IOOption<B5> Function(A5) f5,
+    IOOption<B6> Function(A6) f6,
+    IOOption<B7> Function(A7) f7,
+    IOOption<B8> Function(A8) f8,
+    IOOption<B9> Function(A9) f9,
+  ) =>
+          f1(record.$1).flatMap((b1) => f2(record.$2).flatMap((b2) =>
+              f3(record.$3).flatMap((b3) => f4(record.$4).flatMap((b4) =>
+                  f5(record.$5).flatMap((b5) => f6(record.$6).flatMap((b6) =>
+                      f7(record.$7).flatMap((b7) => f8(record.$8).flatMap((b8) =>
+                          f9(record.$9)
+                              .map((b9) => (b1, b2, b3, b4, b5, b6, b7, b8, b9))))))))));
+
+  /// {@template fpdart_sequence_record_io_option}
+  /// Combine all [IOOption] in the record and collect results.
+  ///
+  /// If any [IOOption] is [None], the result is [None].
+  /// {@endtemplate}
+  static IOOption<(A, B)> sequenceRecord2<A, B>(
+    (IOOption<A>, IOOption<B>) record,
+  ) =>
+      traverseRecord2(record, identity, identity);
+
+  /// {@macro fpdart_sequence_record_io_option}
+  static IOOption<(A, B, C)> sequenceRecord3<A, B, C>(
+    (IOOption<A>, IOOption<B>, IOOption<C>) record,
+  ) =>
+      traverseRecord3(record, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_io_option}
+  static IOOption<(A, B, C, D)> sequenceRecord4<A, B, C, D>(
+    (IOOption<A>, IOOption<B>, IOOption<C>, IOOption<D>) record,
+  ) =>
+      traverseRecord4(record, identity, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_io_option}
+  static IOOption<(A, B, C, D, F)> sequenceRecord5<A, B, C, D, F>(
+    (IOOption<A>, IOOption<B>, IOOption<C>, IOOption<D>, IOOption<F>) record,
+  ) =>
+      traverseRecord5(record, identity, identity, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_io_option}
+  static IOOption<(A, B, C, D, F, G)> sequenceRecord6<A, B, C, D, F, G>(
+    (
+      IOOption<A>,
+      IOOption<B>,
+      IOOption<C>,
+      IOOption<D>,
+      IOOption<F>,
+      IOOption<G>
+    ) record,
+  ) =>
+      traverseRecord6(
+          record, identity, identity, identity, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_io_option}
+  static IOOption<(A, B, C, D, F, G, H)> sequenceRecord7<A, B, C, D, F, G, H>(
+    (
+      IOOption<A>,
+      IOOption<B>,
+      IOOption<C>,
+      IOOption<D>,
+      IOOption<F>,
+      IOOption<G>,
+      IOOption<H>
+    ) record,
+  ) =>
+      traverseRecord7(record, identity, identity, identity, identity, identity,
+          identity, identity);
+
+  /// {@macro fpdart_sequence_record_io_option}
+  static IOOption<(A, B, C, D, F, G, H, I)>
+      sequenceRecord8<A, B, C, D, F, G, H, I>(
+    (
+      IOOption<A>,
+      IOOption<B>,
+      IOOption<C>,
+      IOOption<D>,
+      IOOption<F>,
+      IOOption<G>,
+      IOOption<H>,
+      IOOption<I>
+    ) record,
+  ) =>
+          traverseRecord8(record, identity, identity, identity, identity,
+              identity, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_io_option}
+  static IOOption<(A, B, C, D, F, G, H, I, J)>
+      sequenceRecord9<A, B, C, D, F, G, H, I, J>(
+    (
+      IOOption<A>,
+      IOOption<B>,
+      IOOption<C>,
+      IOOption<D>,
+      IOOption<F>,
+      IOOption<G>,
+      IOOption<H>,
+      IOOption<I>,
+      IOOption<J>
+    ) record,
+  ) =>
+          traverseRecord9(record, identity, identity, identity, identity,
+              identity, identity, identity, identity, identity);
 }

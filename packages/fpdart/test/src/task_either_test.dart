@@ -961,6 +961,345 @@ void main() {
       });
     });
 
+    group('sequenceRecord2', () {
+      test('Right', () async {
+        var sideEffect = 0;
+        final record = (
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return right<String, int>(1);
+          }),
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return right<String, String>('two');
+          }),
+        );
+        final sequence = TaskEither.sequenceRecord2(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        result.matchTestRight((t) {
+          expect(t, (1, 'two'));
+        });
+        expect(sideEffect, 2);
+      });
+
+      test('Left first', () async {
+        var sideEffect = 0;
+        final record = (
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return left<String, int>('Error1');
+          }),
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return right<String, String>('two');
+          }),
+        );
+        final sequence = TaskEither.sequenceRecord2(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        result.matchTestLeft((l) {
+          expect(l, 'Error1');
+        });
+        expect(sideEffect, 2);
+      });
+
+      test('Left second', () async {
+        var sideEffect = 0;
+        final record = (
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return right<String, int>(1);
+          }),
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return left<String, String>('Error2');
+          }),
+        );
+        final sequence = TaskEither.sequenceRecord2(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        result.matchTestLeft((l) {
+          expect(l, 'Error2');
+        });
+        expect(sideEffect, 2);
+      });
+    });
+
+    group('sequenceRecord2Seq', () {
+      test('Right', () async {
+        var sideEffect = 0;
+        final record = (
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 1;
+            return right<String, int>(1);
+          }),
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 2;
+            return right<String, String>('two');
+          }),
+        );
+        final sequence = TaskEither.sequenceRecord2Seq(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        result.matchTestRight((t) {
+          expect(t, (1, 'two'));
+        });
+        expect(sideEffect, 2);
+      });
+
+      test('Left first stops execution', () async {
+        var sideEffect = 0;
+        final record = (
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 1;
+            return left<String, int>('Error1');
+          }),
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 2;
+            return right<String, String>('two');
+          }),
+        );
+        final sequence = TaskEither.sequenceRecord2Seq(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        result.matchTestLeft((l) {
+          expect(l, 'Error1');
+        });
+        expect(sideEffect, 1);
+      });
+    });
+
+    group('traverseRecord2', () {
+      test('Right', () async {
+        var sideEffect = 0;
+        final record = (1, 'two');
+        final traverse = TaskEither.traverseRecord2<String, int, String, String,
+            int>(
+          record,
+          (a) => TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return right<String, String>('$a');
+          }),
+          (b) => TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return right<String, int>(b.length);
+          }),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestRight((t) {
+          expect(t, ('1', 3));
+        });
+        expect(sideEffect, 2);
+      });
+
+      test('Left first', () async {
+        var sideEffect = 0;
+        final record = (1, 'two');
+        final traverse = TaskEither.traverseRecord2<String, int, String, String,
+            int>(
+          record,
+          (a) => TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return left<String, String>('Error1');
+          }),
+          (b) => TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return right<String, int>(b.length);
+          }),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestLeft((l) {
+          expect(l, 'Error1');
+        });
+        expect(sideEffect, 2);
+      });
+    });
+
+    group('traverseRecord2Seq', () {
+      test('Right', () async {
+        var sideEffect = 0;
+        final record = (1, 'two');
+        final traverse = TaskEither.traverseRecord2Seq<String, int, String,
+            String, int>(
+          record,
+          (a) => TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 1;
+            return right<String, String>('$a');
+          }),
+          (b) => TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 2;
+            return right<String, int>(b.length);
+          }),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestRight((t) {
+          expect(t, ('1', 3));
+        });
+        expect(sideEffect, 2);
+      });
+
+      test('Left first stops execution', () async {
+        var sideEffect = 0;
+        final record = (1, 'two');
+        final traverse = TaskEither.traverseRecord2Seq<String, int, String,
+            String, int>(
+          record,
+          (a) => TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 1;
+            return left<String, String>('Error1');
+          }),
+          (b) => TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 2;
+            return right<String, int>(b.length);
+          }),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestLeft((l) {
+          expect(l, 'Error1');
+        });
+        expect(sideEffect, 1);
+      });
+    });
+
+    group('sequenceRecord3', () {
+      test('Right', () async {
+        var sideEffect = 0;
+        final record = (
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return right<String, int>(1);
+          }),
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return right<String, String>('two');
+          }),
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return right<String, double>(3.0);
+          }),
+        );
+        final sequence = TaskEither.sequenceRecord3(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        result.matchTestRight((t) {
+          expect(t, (1, 'two', 3.0));
+        });
+        expect(sideEffect, 3);
+      });
+
+      test('Left middle', () async {
+        var sideEffect = 0;
+        final record = (
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return right<String, int>(1);
+          }),
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return left<String, String>('Error2');
+          }),
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return right<String, double>(3.0);
+          }),
+        );
+        final sequence = TaskEither.sequenceRecord3(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        result.matchTestLeft((l) {
+          expect(l, 'Error2');
+        });
+        expect(sideEffect, 3);
+      });
+    });
+
+    group('sequenceRecord3Seq', () {
+      test('Right', () async {
+        var sideEffect = 0;
+        final record = (
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 1;
+            return right<String, int>(1);
+          }),
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 2;
+            return right<String, String>('two');
+          }),
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 3;
+            return right<String, double>(3.0);
+          }),
+        );
+        final sequence = TaskEither.sequenceRecord3Seq(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        result.matchTestRight((t) {
+          expect(t, (1, 'two', 3.0));
+        });
+        expect(sideEffect, 3);
+      });
+
+      test('Left middle stops execution', () async {
+        var sideEffect = 0;
+        final record = (
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 1;
+            return right<String, int>(1);
+          }),
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 2;
+            return left<String, String>('Error2');
+          }),
+          TaskEither(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 3;
+            return right<String, double>(3.0);
+          }),
+        );
+        final sequence = TaskEither.sequenceRecord3Seq(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        result.matchTestLeft((l) {
+          expect(l, 'Error2');
+        });
+        expect(sideEffect, 2);
+      });
+    });
+
     group('Do Notation', () {
       test('should return the correct value', () async {
         final doTaskEither =

@@ -1218,4 +1218,91 @@ void main() {
       });
     });
   });
+
+  group('sequenceRecord2', () {
+    test('Right', () {
+      final record = (
+        right<String, int>(1),
+        right<String, String>('two'),
+      );
+      final result = Either.sequenceRecord2(record);
+      result.matchTestRight((t) {
+        expect(t, (1, 'two'));
+      });
+    });
+
+    test('Left first', () {
+      final record = (
+        left<String, int>('Error1'),
+        right<String, String>('two'),
+      );
+      final result = Either.sequenceRecord2(record);
+      result.matchTestLeft((l) {
+        expect(l, 'Error1');
+      });
+    });
+
+    test('Left second', () {
+      final record = (
+        right<String, int>(1),
+        left<String, String>('Error2'),
+      );
+      final result = Either.sequenceRecord2(record);
+      result.matchTestLeft((l) {
+        expect(l, 'Error2');
+      });
+    });
+  });
+
+  group('sequenceRecord3', () {
+    test('Right', () {
+      final record = (
+        right<String, int>(1),
+        right<String, String>('two'),
+        right<String, double>(3.0),
+      );
+      final result = Either.sequenceRecord3(record);
+      result.matchTestRight((t) {
+        expect(t, (1, 'two', 3.0));
+      });
+    });
+
+    test('Left middle', () {
+      final record = (
+        right<String, int>(1),
+        left<String, String>('Error2'),
+        right<String, double>(3.0),
+      );
+      final result = Either.sequenceRecord3(record);
+      result.matchTestLeft((l) {
+        expect(l, 'Error2');
+      });
+    });
+  });
+
+  group('traverseRecord2', () {
+    test('Right', () {
+      final record = (1, 'two');
+      final result = Either.traverseRecord2<String, int, String, String, int>(
+        record,
+        (a) => right('$a'),
+        (b) => right(b.length),
+      );
+      result.matchTestRight((t) {
+        expect(t, ('1', 3));
+      });
+    });
+
+    test('Left', () {
+      final record = (1, 'two');
+      final result = Either.traverseRecord2<String, int, String, String, int>(
+        record,
+        (a) => left('Error1'),
+        (b) => right(b.length),
+      );
+      result.matchTestLeft((l) {
+        expect(l, 'Error1');
+      });
+    });
+  });
 }

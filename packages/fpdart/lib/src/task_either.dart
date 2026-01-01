@@ -8,6 +8,8 @@ import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
+part 'task_either_extension.dart';
+
 final class _TaskEitherThrow<L> implements Exception {
   final L value;
   const _TaskEitherThrow(this.value);
@@ -388,4 +390,546 @@ final class TaskEither<L, R> extends HKT2<_TaskEitherHKT, L, R>
             () => run(a),
             onError,
           );
+
+  /// {@template fpdart_traverse_record_task_either}
+  /// Apply the provided functions to each element of the record, executing each
+  /// resulting [TaskEither] in **parallel**, and collect the results in a record.
+  ///
+  /// If any [TaskEither] returns [Left], the result is [Left] with the first
+  /// error encountered.
+  ///
+  /// For sequential execution, use the `Seq` variant.
+  /// {@endtemplate}
+  static TaskEither<E, (B1, B2)> traverseRecord2<E, A1, A2, B1, B2>(
+    (A1, A2) record,
+    TaskEither<E, B1> Function(A1) f1,
+    TaskEither<E, B2> Function(A2) f2,
+  ) =>
+      TaskEither(() async {
+        final results = await (f1(record.$1).run(), f2(record.$2).run()).wait;
+        return results.$1.flatMap((b1) => results.$2.map((b2) => (b1, b2)));
+      });
+
+  /// {@macro fpdart_traverse_record_task_either}
+  static TaskEither<E, (B1, B2, B3)> traverseRecord3<E, A1, A2, A3, B1, B2, B3>(
+    (A1, A2, A3) record,
+    TaskEither<E, B1> Function(A1) f1,
+    TaskEither<E, B2> Function(A2) f2,
+    TaskEither<E, B3> Function(A3) f3,
+  ) =>
+      TaskEither(() async {
+        final results = await (
+          f1(record.$1).run(),
+          f2(record.$2).run(),
+          f3(record.$3).run(),
+        ).wait;
+        return results.$1.flatMap((b1) =>
+            results.$2.flatMap((b2) => results.$3.map((b3) => (b1, b2, b3))));
+      });
+
+  /// {@macro fpdart_traverse_record_task_either}
+  static TaskEither<E, (B1, B2, B3, B4)>
+      traverseRecord4<E, A1, A2, A3, A4, B1, B2, B3, B4>(
+    (A1, A2, A3, A4) record,
+    TaskEither<E, B1> Function(A1) f1,
+    TaskEither<E, B2> Function(A2) f2,
+    TaskEither<E, B3> Function(A3) f3,
+    TaskEither<E, B4> Function(A4) f4,
+  ) =>
+          TaskEither(() async {
+            final results = await (
+              f1(record.$1).run(),
+              f2(record.$2).run(),
+              f3(record.$3).run(),
+              f4(record.$4).run(),
+            ).wait;
+            return results.$1.flatMap((b1) => results.$2.flatMap((b2) =>
+                results.$3
+                    .flatMap((b3) => results.$4.map((b4) => (b1, b2, b3, b4)))));
+          });
+
+  /// {@macro fpdart_traverse_record_task_either}
+  static TaskEither<E, (B1, B2, B3, B4, B5)>
+      traverseRecord5<E, A1, A2, A3, A4, A5, B1, B2, B3, B4, B5>(
+    (A1, A2, A3, A4, A5) record,
+    TaskEither<E, B1> Function(A1) f1,
+    TaskEither<E, B2> Function(A2) f2,
+    TaskEither<E, B3> Function(A3) f3,
+    TaskEither<E, B4> Function(A4) f4,
+    TaskEither<E, B5> Function(A5) f5,
+  ) =>
+          TaskEither(() async {
+            final results = await (
+              f1(record.$1).run(),
+              f2(record.$2).run(),
+              f3(record.$3).run(),
+              f4(record.$4).run(),
+              f5(record.$5).run(),
+            ).wait;
+            return results.$1.flatMap((b1) => results.$2.flatMap((b2) =>
+                results.$3.flatMap((b3) => results.$4.flatMap(
+                    (b4) => results.$5.map((b5) => (b1, b2, b3, b4, b5))))));
+          });
+
+  /// {@macro fpdart_traverse_record_task_either}
+  static TaskEither<E, (B1, B2, B3, B4, B5, B6)>
+      traverseRecord6<E, A1, A2, A3, A4, A5, A6, B1, B2, B3, B4, B5, B6>(
+    (A1, A2, A3, A4, A5, A6) record,
+    TaskEither<E, B1> Function(A1) f1,
+    TaskEither<E, B2> Function(A2) f2,
+    TaskEither<E, B3> Function(A3) f3,
+    TaskEither<E, B4> Function(A4) f4,
+    TaskEither<E, B5> Function(A5) f5,
+    TaskEither<E, B6> Function(A6) f6,
+  ) =>
+          TaskEither(() async {
+            final results = await (
+              f1(record.$1).run(),
+              f2(record.$2).run(),
+              f3(record.$3).run(),
+              f4(record.$4).run(),
+              f5(record.$5).run(),
+              f6(record.$6).run(),
+            ).wait;
+            return results.$1.flatMap((b1) => results.$2.flatMap((b2) =>
+                results.$3.flatMap((b3) => results.$4.flatMap((b4) =>
+                    results.$5.flatMap((b5) =>
+                        results.$6.map((b6) => (b1, b2, b3, b4, b5, b6)))))));
+          });
+
+  /// {@macro fpdart_traverse_record_task_either}
+  static TaskEither<E, (B1, B2, B3, B4, B5, B6, B7)>
+      traverseRecord7<E, A1, A2, A3, A4, A5, A6, A7, B1, B2, B3, B4, B5, B6, B7>(
+    (A1, A2, A3, A4, A5, A6, A7) record,
+    TaskEither<E, B1> Function(A1) f1,
+    TaskEither<E, B2> Function(A2) f2,
+    TaskEither<E, B3> Function(A3) f3,
+    TaskEither<E, B4> Function(A4) f4,
+    TaskEither<E, B5> Function(A5) f5,
+    TaskEither<E, B6> Function(A6) f6,
+    TaskEither<E, B7> Function(A7) f7,
+  ) =>
+          TaskEither(() async {
+            final results = await (
+              f1(record.$1).run(),
+              f2(record.$2).run(),
+              f3(record.$3).run(),
+              f4(record.$4).run(),
+              f5(record.$5).run(),
+              f6(record.$6).run(),
+              f7(record.$7).run(),
+            ).wait;
+            return results.$1.flatMap((b1) => results.$2.flatMap((b2) =>
+                results.$3.flatMap((b3) => results.$4.flatMap((b4) =>
+                    results.$5.flatMap((b5) => results.$6.flatMap((b6) =>
+                        results.$7
+                            .map((b7) => (b1, b2, b3, b4, b5, b6, b7))))))));
+          });
+
+  /// {@macro fpdart_traverse_record_task_either}
+  static TaskEither<E, (B1, B2, B3, B4, B5, B6, B7, B8)>
+      traverseRecord8<E, A1, A2, A3, A4, A5, A6, A7, A8, B1, B2, B3, B4, B5, B6,
+              B7, B8>(
+    (A1, A2, A3, A4, A5, A6, A7, A8) record,
+    TaskEither<E, B1> Function(A1) f1,
+    TaskEither<E, B2> Function(A2) f2,
+    TaskEither<E, B3> Function(A3) f3,
+    TaskEither<E, B4> Function(A4) f4,
+    TaskEither<E, B5> Function(A5) f5,
+    TaskEither<E, B6> Function(A6) f6,
+    TaskEither<E, B7> Function(A7) f7,
+    TaskEither<E, B8> Function(A8) f8,
+  ) =>
+          TaskEither(() async {
+            final results = await (
+              f1(record.$1).run(),
+              f2(record.$2).run(),
+              f3(record.$3).run(),
+              f4(record.$4).run(),
+              f5(record.$5).run(),
+              f6(record.$6).run(),
+              f7(record.$7).run(),
+              f8(record.$8).run(),
+            ).wait;
+            return results.$1.flatMap((b1) => results.$2.flatMap((b2) =>
+                results.$3.flatMap((b3) => results.$4.flatMap((b4) =>
+                    results.$5.flatMap((b5) => results.$6.flatMap((b6) =>
+                        results.$7.flatMap((b7) => results.$8
+                            .map((b8) => (b1, b2, b3, b4, b5, b6, b7, b8)))))))));
+          });
+
+  /// {@macro fpdart_traverse_record_task_either}
+  static TaskEither<E, (B1, B2, B3, B4, B5, B6, B7, B8, B9)>
+      traverseRecord9<E, A1, A2, A3, A4, A5, A6, A7, A8, A9, B1, B2, B3, B4, B5,
+              B6, B7, B8, B9>(
+    (A1, A2, A3, A4, A5, A6, A7, A8, A9) record,
+    TaskEither<E, B1> Function(A1) f1,
+    TaskEither<E, B2> Function(A2) f2,
+    TaskEither<E, B3> Function(A3) f3,
+    TaskEither<E, B4> Function(A4) f4,
+    TaskEither<E, B5> Function(A5) f5,
+    TaskEither<E, B6> Function(A6) f6,
+    TaskEither<E, B7> Function(A7) f7,
+    TaskEither<E, B8> Function(A8) f8,
+    TaskEither<E, B9> Function(A9) f9,
+  ) =>
+          TaskEither(() async {
+            final results = await (
+              f1(record.$1).run(),
+              f2(record.$2).run(),
+              f3(record.$3).run(),
+              f4(record.$4).run(),
+              f5(record.$5).run(),
+              f6(record.$6).run(),
+              f7(record.$7).run(),
+              f8(record.$8).run(),
+              f9(record.$9).run(),
+            ).wait;
+            return results.$1.flatMap((b1) => results.$2.flatMap((b2) =>
+                results.$3.flatMap((b3) => results.$4.flatMap((b4) =>
+                    results.$5.flatMap((b5) => results.$6.flatMap((b6) =>
+                        results.$7.flatMap((b7) => results.$8.flatMap((b8) =>
+                            results.$9.map((b9) =>
+                                (b1, b2, b3, b4, b5, b6, b7, b8, b9))))))))));
+          });
+
+  /// {@template fpdart_sequence_record_task_either}
+  /// Execute all [TaskEither] in the record in **parallel** and collect results.
+  ///
+  /// If any [TaskEither] returns [Left], the result is [Left] with the first error.
+  ///
+  /// For sequential execution, use the `Seq` variant.
+  /// {@endtemplate}
+  static TaskEither<E, (A, B)> sequenceRecord2<E, A, B>(
+    (TaskEither<E, A>, TaskEither<E, B>) record,
+  ) =>
+      traverseRecord2(record, identity, identity);
+
+  /// {@macro fpdart_sequence_record_task_either}
+  static TaskEither<E, (A, B, C)> sequenceRecord3<E, A, B, C>(
+    (TaskEither<E, A>, TaskEither<E, B>, TaskEither<E, C>) record,
+  ) =>
+      traverseRecord3(record, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_task_either}
+  static TaskEither<E, (A, B, C, D)> sequenceRecord4<E, A, B, C, D>(
+    (
+      TaskEither<E, A>,
+      TaskEither<E, B>,
+      TaskEither<E, C>,
+      TaskEither<E, D>
+    ) record,
+  ) =>
+      traverseRecord4(record, identity, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_task_either}
+  static TaskEither<E, (A, B, C, D, F)> sequenceRecord5<E, A, B, C, D, F>(
+    (
+      TaskEither<E, A>,
+      TaskEither<E, B>,
+      TaskEither<E, C>,
+      TaskEither<E, D>,
+      TaskEither<E, F>
+    ) record,
+  ) =>
+      traverseRecord5(record, identity, identity, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_task_either}
+  static TaskEither<E, (A, B, C, D, F, G)> sequenceRecord6<E, A, B, C, D, F, G>(
+    (
+      TaskEither<E, A>,
+      TaskEither<E, B>,
+      TaskEither<E, C>,
+      TaskEither<E, D>,
+      TaskEither<E, F>,
+      TaskEither<E, G>
+    ) record,
+  ) =>
+      traverseRecord6(
+          record, identity, identity, identity, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_task_either}
+  static TaskEither<E, (A, B, C, D, F, G, H)>
+      sequenceRecord7<E, A, B, C, D, F, G, H>(
+    (
+      TaskEither<E, A>,
+      TaskEither<E, B>,
+      TaskEither<E, C>,
+      TaskEither<E, D>,
+      TaskEither<E, F>,
+      TaskEither<E, G>,
+      TaskEither<E, H>
+    ) record,
+  ) =>
+          traverseRecord7(record, identity, identity, identity, identity,
+              identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_task_either}
+  static TaskEither<E, (A, B, C, D, F, G, H, I)>
+      sequenceRecord8<E, A, B, C, D, F, G, H, I>(
+    (
+      TaskEither<E, A>,
+      TaskEither<E, B>,
+      TaskEither<E, C>,
+      TaskEither<E, D>,
+      TaskEither<E, F>,
+      TaskEither<E, G>,
+      TaskEither<E, H>,
+      TaskEither<E, I>
+    ) record,
+  ) =>
+          traverseRecord8(record, identity, identity, identity, identity,
+              identity, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_task_either}
+  static TaskEither<E, (A, B, C, D, F, G, H, I, J)>
+      sequenceRecord9<E, A, B, C, D, F, G, H, I, J>(
+    (
+      TaskEither<E, A>,
+      TaskEither<E, B>,
+      TaskEither<E, C>,
+      TaskEither<E, D>,
+      TaskEither<E, F>,
+      TaskEither<E, G>,
+      TaskEither<E, H>,
+      TaskEither<E, I>,
+      TaskEither<E, J>
+    ) record,
+  ) =>
+          traverseRecord9(record, identity, identity, identity, identity,
+              identity, identity, identity, identity, identity);
+
+  /// {@template fpdart_traverse_record_seq_task_either}
+  /// Apply the provided functions to each element of the record, executing each
+  /// resulting [TaskEither] in **sequence**, and collect the results in a record.
+  ///
+  /// For parallel execution, use the non-Seq variant.
+  /// {@endtemplate}
+  static TaskEither<E, (B1, B2)> traverseRecord2Seq<E, A1, A2, B1, B2>(
+    (A1, A2) record,
+    TaskEither<E, B1> Function(A1) f1,
+    TaskEither<E, B2> Function(A2) f2,
+  ) =>
+      f1(record.$1).flatMap((b1) => f2(record.$2).map((b2) => (b1, b2)));
+
+  /// {@macro fpdart_traverse_record_seq_task_either}
+  static TaskEither<E, (B1, B2, B3)>
+      traverseRecord3Seq<E, A1, A2, A3, B1, B2, B3>(
+    (A1, A2, A3) record,
+    TaskEither<E, B1> Function(A1) f1,
+    TaskEither<E, B2> Function(A2) f2,
+    TaskEither<E, B3> Function(A3) f3,
+  ) =>
+          f1(record.$1).flatMap((b1) =>
+              f2(record.$2).flatMap((b2) => f3(record.$3).map((b3) => (b1, b2, b3))));
+
+  /// {@macro fpdart_traverse_record_seq_task_either}
+  static TaskEither<E, (B1, B2, B3, B4)>
+      traverseRecord4Seq<E, A1, A2, A3, A4, B1, B2, B3, B4>(
+    (A1, A2, A3, A4) record,
+    TaskEither<E, B1> Function(A1) f1,
+    TaskEither<E, B2> Function(A2) f2,
+    TaskEither<E, B3> Function(A3) f3,
+    TaskEither<E, B4> Function(A4) f4,
+  ) =>
+          f1(record.$1).flatMap((b1) => f2(record.$2).flatMap((b2) =>
+              f3(record.$3)
+                  .flatMap((b3) => f4(record.$4).map((b4) => (b1, b2, b3, b4)))));
+
+  /// {@macro fpdart_traverse_record_seq_task_either}
+  static TaskEither<E, (B1, B2, B3, B4, B5)>
+      traverseRecord5Seq<E, A1, A2, A3, A4, A5, B1, B2, B3, B4, B5>(
+    (A1, A2, A3, A4, A5) record,
+    TaskEither<E, B1> Function(A1) f1,
+    TaskEither<E, B2> Function(A2) f2,
+    TaskEither<E, B3> Function(A3) f3,
+    TaskEither<E, B4> Function(A4) f4,
+    TaskEither<E, B5> Function(A5) f5,
+  ) =>
+          f1(record.$1).flatMap((b1) => f2(record.$2).flatMap((b2) =>
+              f3(record.$3).flatMap((b3) => f4(record.$4).flatMap(
+                  (b4) => f5(record.$5).map((b5) => (b1, b2, b3, b4, b5))))));
+
+  /// {@macro fpdart_traverse_record_seq_task_either}
+  static TaskEither<E, (B1, B2, B3, B4, B5, B6)>
+      traverseRecord6Seq<E, A1, A2, A3, A4, A5, A6, B1, B2, B3, B4, B5, B6>(
+    (A1, A2, A3, A4, A5, A6) record,
+    TaskEither<E, B1> Function(A1) f1,
+    TaskEither<E, B2> Function(A2) f2,
+    TaskEither<E, B3> Function(A3) f3,
+    TaskEither<E, B4> Function(A4) f4,
+    TaskEither<E, B5> Function(A5) f5,
+    TaskEither<E, B6> Function(A6) f6,
+  ) =>
+          f1(record.$1).flatMap((b1) => f2(record.$2).flatMap((b2) =>
+              f3(record.$3).flatMap((b3) => f4(record.$4).flatMap((b4) =>
+                  f5(record.$5).flatMap((b5) =>
+                      f6(record.$6).map((b6) => (b1, b2, b3, b4, b5, b6)))))));
+
+  /// {@macro fpdart_traverse_record_seq_task_either}
+  static TaskEither<E, (B1, B2, B3, B4, B5, B6, B7)>
+      traverseRecord7Seq<E, A1, A2, A3, A4, A5, A6, A7, B1, B2, B3, B4, B5, B6,
+              B7>(
+    (A1, A2, A3, A4, A5, A6, A7) record,
+    TaskEither<E, B1> Function(A1) f1,
+    TaskEither<E, B2> Function(A2) f2,
+    TaskEither<E, B3> Function(A3) f3,
+    TaskEither<E, B4> Function(A4) f4,
+    TaskEither<E, B5> Function(A5) f5,
+    TaskEither<E, B6> Function(A6) f6,
+    TaskEither<E, B7> Function(A7) f7,
+  ) =>
+          f1(record.$1).flatMap((b1) => f2(record.$2).flatMap((b2) =>
+              f3(record.$3).flatMap((b3) => f4(record.$4).flatMap((b4) =>
+                  f5(record.$5).flatMap((b5) => f6(record.$6).flatMap((b6) =>
+                      f7(record.$7)
+                          .map((b7) => (b1, b2, b3, b4, b5, b6, b7))))))));
+
+  /// {@macro fpdart_traverse_record_seq_task_either}
+  static TaskEither<E, (B1, B2, B3, B4, B5, B6, B7, B8)>
+      traverseRecord8Seq<E, A1, A2, A3, A4, A5, A6, A7, A8, B1, B2, B3, B4, B5,
+              B6, B7, B8>(
+    (A1, A2, A3, A4, A5, A6, A7, A8) record,
+    TaskEither<E, B1> Function(A1) f1,
+    TaskEither<E, B2> Function(A2) f2,
+    TaskEither<E, B3> Function(A3) f3,
+    TaskEither<E, B4> Function(A4) f4,
+    TaskEither<E, B5> Function(A5) f5,
+    TaskEither<E, B6> Function(A6) f6,
+    TaskEither<E, B7> Function(A7) f7,
+    TaskEither<E, B8> Function(A8) f8,
+  ) =>
+          f1(record.$1).flatMap((b1) => f2(record.$2).flatMap((b2) =>
+              f3(record.$3).flatMap((b3) => f4(record.$4).flatMap((b4) =>
+                  f5(record.$5).flatMap((b5) => f6(record.$6).flatMap((b6) =>
+                      f7(record.$7).flatMap((b7) => f8(record.$8)
+                          .map((b8) => (b1, b2, b3, b4, b5, b6, b7, b8)))))))));
+
+  /// {@macro fpdart_traverse_record_seq_task_either}
+  static TaskEither<E, (B1, B2, B3, B4, B5, B6, B7, B8, B9)>
+      traverseRecord9Seq<E, A1, A2, A3, A4, A5, A6, A7, A8, A9, B1, B2, B3, B4,
+              B5, B6, B7, B8, B9>(
+    (A1, A2, A3, A4, A5, A6, A7, A8, A9) record,
+    TaskEither<E, B1> Function(A1) f1,
+    TaskEither<E, B2> Function(A2) f2,
+    TaskEither<E, B3> Function(A3) f3,
+    TaskEither<E, B4> Function(A4) f4,
+    TaskEither<E, B5> Function(A5) f5,
+    TaskEither<E, B6> Function(A6) f6,
+    TaskEither<E, B7> Function(A7) f7,
+    TaskEither<E, B8> Function(A8) f8,
+    TaskEither<E, B9> Function(A9) f9,
+  ) =>
+          f1(record.$1).flatMap((b1) => f2(record.$2).flatMap((b2) =>
+              f3(record.$3).flatMap((b3) => f4(record.$4).flatMap((b4) =>
+                  f5(record.$5).flatMap((b5) => f6(record.$6).flatMap((b6) =>
+                      f7(record.$7).flatMap((b7) => f8(record.$8).flatMap((b8) =>
+                          f9(record.$9).map((b9) =>
+                              (b1, b2, b3, b4, b5, b6, b7, b8, b9))))))))));
+
+  /// {@template fpdart_sequence_record_seq_task_either}
+  /// Execute all [TaskEither] in the record in **sequence** and collect results.
+  ///
+  /// For parallel execution, use the non-Seq variant.
+  /// {@endtemplate}
+  static TaskEither<E, (A, B)> sequenceRecord2Seq<E, A, B>(
+    (TaskEither<E, A>, TaskEither<E, B>) record,
+  ) =>
+      traverseRecord2Seq(record, identity, identity);
+
+  /// {@macro fpdart_sequence_record_seq_task_either}
+  static TaskEither<E, (A, B, C)> sequenceRecord3Seq<E, A, B, C>(
+    (TaskEither<E, A>, TaskEither<E, B>, TaskEither<E, C>) record,
+  ) =>
+      traverseRecord3Seq(record, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_seq_task_either}
+  static TaskEither<E, (A, B, C, D)> sequenceRecord4Seq<E, A, B, C, D>(
+    (
+      TaskEither<E, A>,
+      TaskEither<E, B>,
+      TaskEither<E, C>,
+      TaskEither<E, D>
+    ) record,
+  ) =>
+      traverseRecord4Seq(record, identity, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_seq_task_either}
+  static TaskEither<E, (A, B, C, D, F)> sequenceRecord5Seq<E, A, B, C, D, F>(
+    (
+      TaskEither<E, A>,
+      TaskEither<E, B>,
+      TaskEither<E, C>,
+      TaskEither<E, D>,
+      TaskEither<E, F>
+    ) record,
+  ) =>
+      traverseRecord5Seq(
+          record, identity, identity, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_seq_task_either}
+  static TaskEither<E, (A, B, C, D, F, G)>
+      sequenceRecord6Seq<E, A, B, C, D, F, G>(
+    (
+      TaskEither<E, A>,
+      TaskEither<E, B>,
+      TaskEither<E, C>,
+      TaskEither<E, D>,
+      TaskEither<E, F>,
+      TaskEither<E, G>
+    ) record,
+  ) =>
+          traverseRecord6Seq(record, identity, identity, identity, identity,
+              identity, identity);
+
+  /// {@macro fpdart_sequence_record_seq_task_either}
+  static TaskEither<E, (A, B, C, D, F, G, H)>
+      sequenceRecord7Seq<E, A, B, C, D, F, G, H>(
+    (
+      TaskEither<E, A>,
+      TaskEither<E, B>,
+      TaskEither<E, C>,
+      TaskEither<E, D>,
+      TaskEither<E, F>,
+      TaskEither<E, G>,
+      TaskEither<E, H>
+    ) record,
+  ) =>
+          traverseRecord7Seq(record, identity, identity, identity, identity,
+              identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_seq_task_either}
+  static TaskEither<E, (A, B, C, D, F, G, H, I)>
+      sequenceRecord8Seq<E, A, B, C, D, F, G, H, I>(
+    (
+      TaskEither<E, A>,
+      TaskEither<E, B>,
+      TaskEither<E, C>,
+      TaskEither<E, D>,
+      TaskEither<E, F>,
+      TaskEither<E, G>,
+      TaskEither<E, H>,
+      TaskEither<E, I>
+    ) record,
+  ) =>
+          traverseRecord8Seq(record, identity, identity, identity, identity,
+              identity, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_seq_task_either}
+  static TaskEither<E, (A, B, C, D, F, G, H, I, J)>
+      sequenceRecord9Seq<E, A, B, C, D, F, G, H, I, J>(
+    (
+      TaskEither<E, A>,
+      TaskEither<E, B>,
+      TaskEither<E, C>,
+      TaskEither<E, D>,
+      TaskEither<E, F>,
+      TaskEither<E, G>,
+      TaskEither<E, H>,
+      TaskEither<E, I>,
+      TaskEither<E, J>
+    ) record,
+  ) =>
+          traverseRecord9Seq(record, identity, identity, identity, identity,
+              identity, identity, identity, identity, identity);
 }

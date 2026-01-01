@@ -283,6 +283,156 @@ void main() {
       expect(sideEffect, 11);
     });
 
+    group('sequenceRecord2', () {
+      test('returns record of values', () async {
+        var sideEffect = 0;
+        final record = (
+          Task(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return 1;
+          }),
+          Task(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return 'two';
+          }),
+        );
+        final sequence = Task.sequenceRecord2(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        expect(result, (1, 'two'));
+        expect(sideEffect, 2);
+      });
+    });
+
+    group('sequenceRecord2Seq', () {
+      test('returns record of values sequentially', () async {
+        var sideEffect = 0;
+        final record = (
+          Task(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 1;
+            return 1;
+          }),
+          Task(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 2;
+            return 'two';
+          }),
+        );
+        final sequence = Task.sequenceRecord2Seq(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        expect(result, (1, 'two'));
+        expect(sideEffect, 2);
+      });
+    });
+
+    group('sequenceRecord3', () {
+      test('returns record of values', () async {
+        var sideEffect = 0;
+        final record = (
+          Task(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return 1;
+          }),
+          Task(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return 'two';
+          }),
+          Task(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return 3.0;
+          }),
+        );
+        final sequence = Task.sequenceRecord3(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        expect(result, (1, 'two', 3.0));
+        expect(sideEffect, 3);
+      });
+    });
+
+    group('sequenceRecord3Seq', () {
+      test('returns record of values sequentially', () async {
+        var sideEffect = 0;
+        final record = (
+          Task(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 1;
+            return 1;
+          }),
+          Task(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 2;
+            return 'two';
+          }),
+          Task(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 3;
+            return 3.0;
+          }),
+        );
+        final sequence = Task.sequenceRecord3Seq(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        expect(result, (1, 'two', 3.0));
+        expect(sideEffect, 3);
+      });
+    });
+
+    group('traverseRecord2', () {
+      test('transforms and returns record of values', () async {
+        var sideEffect = 0;
+        final record = (1, 'two');
+        final traverse = Task.traverseRecord2<int, String, String, int>(
+          record,
+          (a) => Task(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return '$a';
+          }),
+          (b) => Task(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return b.length;
+          }),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        expect(result, ('1', 3));
+        expect(sideEffect, 2);
+      });
+    });
+
+    group('traverseRecord2Seq', () {
+      test('transforms and returns record of values sequentially', () async {
+        var sideEffect = 0;
+        final record = (1, 'two');
+        final traverse = Task.traverseRecord2Seq<int, String, String, int>(
+          record,
+          (a) => Task(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 1;
+            return '$a';
+          }),
+          (b) => Task(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 2;
+            return b.length;
+          }),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        expect(result, ('1', 3));
+        expect(sideEffect, 2);
+      });
+    });
+
     group('Do Notation', () {
       test('should return the correct value', () async {
         final doTask = Task.Do((_) => _(Task.of(10)));

@@ -771,4 +771,169 @@ void main() {
       });
     });
   });
+
+  group('sequenceRecord2', () {
+    test('Right', () {
+      var sideEffect = 0;
+      final record = (
+        IOEither(() {
+          sideEffect += 1;
+          return right<String, int>(1);
+        }),
+        IOEither(() {
+          sideEffect += 1;
+          return right<String, String>('two');
+        }),
+      );
+      final sequence = IOEither.sequenceRecord2(record);
+      expect(sideEffect, 0);
+      final result = sequence.run();
+      result.matchTestRight((t) {
+        expect(t, (1, 'two'));
+      });
+      expect(sideEffect, 2);
+    });
+
+    test('Left first', () {
+      var sideEffect = 0;
+      final record = (
+        IOEither(() {
+          sideEffect += 1;
+          return left<String, int>('Error1');
+        }),
+        IOEither(() {
+          sideEffect += 1;
+          return right<String, String>('two');
+        }),
+      );
+      final sequence = IOEither.sequenceRecord2(record);
+      expect(sideEffect, 0);
+      final result = sequence.run();
+      result.matchTestLeft((l) {
+        expect(l, 'Error1');
+      });
+      expect(sideEffect, 1);
+    });
+
+    test('Left second', () {
+      var sideEffect = 0;
+      final record = (
+        IOEither(() {
+          sideEffect += 1;
+          return right<String, int>(1);
+        }),
+        IOEither(() {
+          sideEffect += 1;
+          return left<String, String>('Error2');
+        }),
+      );
+      final sequence = IOEither.sequenceRecord2(record);
+      expect(sideEffect, 0);
+      final result = sequence.run();
+      result.matchTestLeft((l) {
+        expect(l, 'Error2');
+      });
+      expect(sideEffect, 2);
+    });
+  });
+
+  group('sequenceRecord3', () {
+    test('Right', () {
+      var sideEffect = 0;
+      final record = (
+        IOEither(() {
+          sideEffect += 1;
+          return right<String, int>(1);
+        }),
+        IOEither(() {
+          sideEffect += 1;
+          return right<String, String>('two');
+        }),
+        IOEither(() {
+          sideEffect += 1;
+          return right<String, double>(3.0);
+        }),
+      );
+      final sequence = IOEither.sequenceRecord3(record);
+      expect(sideEffect, 0);
+      final result = sequence.run();
+      result.matchTestRight((t) {
+        expect(t, (1, 'two', 3.0));
+      });
+      expect(sideEffect, 3);
+    });
+
+    test('Left middle', () {
+      var sideEffect = 0;
+      final record = (
+        IOEither(() {
+          sideEffect += 1;
+          return right<String, int>(1);
+        }),
+        IOEither(() {
+          sideEffect += 1;
+          return left<String, String>('Error2');
+        }),
+        IOEither(() {
+          sideEffect += 1;
+          return right<String, double>(3.0);
+        }),
+      );
+      final sequence = IOEither.sequenceRecord3(record);
+      expect(sideEffect, 0);
+      final result = sequence.run();
+      result.matchTestLeft((l) {
+        expect(l, 'Error2');
+      });
+      expect(sideEffect, 2);
+    });
+  });
+
+  group('traverseRecord2', () {
+    test('Right', () {
+      var sideEffect = 0;
+      final record = (1, 'two');
+      final traverse =
+          IOEither.traverseRecord2<String, int, String, String, int>(
+        record,
+        (a) => IOEither(() {
+          sideEffect += 1;
+          return right<String, String>('$a');
+        }),
+        (b) => IOEither(() {
+          sideEffect += 1;
+          return right<String, int>(b.length);
+        }),
+      );
+      expect(sideEffect, 0);
+      final result = traverse.run();
+      result.matchTestRight((t) {
+        expect(t, ('1', 3));
+      });
+      expect(sideEffect, 2);
+    });
+
+    test('Left', () {
+      var sideEffect = 0;
+      final record = (1, 'two');
+      final traverse =
+          IOEither.traverseRecord2<String, int, String, String, int>(
+        record,
+        (a) => IOEither(() {
+          sideEffect += 1;
+          return left<String, String>('Error1');
+        }),
+        (b) => IOEither(() {
+          sideEffect += 1;
+          return right<String, int>(b.length);
+        }),
+      );
+      expect(sideEffect, 0);
+      final result = traverse.run();
+      result.matchTestLeft((l) {
+        expect(l, 'Error1');
+      });
+      expect(sideEffect, 1);
+    });
+  });
 }

@@ -218,5 +218,73 @@ void main() {
         expect(run, 15);
       });
     });
+
+    group('sequenceRecord2', () {
+      test('returns record of values', () {
+        var sideEffect = 0;
+        final record = (
+          IO(() {
+            sideEffect += 1;
+            return 1;
+          }),
+          IO(() {
+            sideEffect += 1;
+            return 'two';
+          }),
+        );
+        final sequence = IO.sequenceRecord2(record);
+        expect(sideEffect, 0);
+        final result = sequence.run();
+        expect(result, (1, 'two'));
+        expect(sideEffect, 2);
+      });
+    });
+
+    group('sequenceRecord3', () {
+      test('returns record of values', () {
+        var sideEffect = 0;
+        final record = (
+          IO(() {
+            sideEffect += 1;
+            return 1;
+          }),
+          IO(() {
+            sideEffect += 1;
+            return 'two';
+          }),
+          IO(() {
+            sideEffect += 1;
+            return 3.0;
+          }),
+        );
+        final sequence = IO.sequenceRecord3(record);
+        expect(sideEffect, 0);
+        final result = sequence.run();
+        expect(result, (1, 'two', 3.0));
+        expect(sideEffect, 3);
+      });
+    });
+
+    group('traverseRecord2', () {
+      test('transforms and returns record of values', () {
+        var sideEffect = 0;
+        final record = (1, 'two');
+        final traverse = IO.traverseRecord2<int, String, String, int>(
+          record,
+          (a) => IO(() {
+            sideEffect += 1;
+            return '$a';
+          }),
+          (b) => IO(() {
+            sideEffect += 1;
+            return b.length;
+          }),
+        );
+        expect(sideEffect, 0);
+        final result = traverse.run();
+        expect(result, ('1', 3));
+        expect(sideEffect, 2);
+      });
+    });
   });
 }

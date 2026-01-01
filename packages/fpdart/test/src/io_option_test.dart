@@ -575,5 +575,160 @@ void main() {
         });
       });
     });
+
+    group('sequenceRecord2', () {
+      test('Some', () {
+        var sideEffect = 0;
+        final record = (
+          IOOption(() {
+            sideEffect += 1;
+            return Option.of(1);
+          }),
+          IOOption(() {
+            sideEffect += 1;
+            return Option.of('two');
+          }),
+        );
+        final sequence = IOOption.sequenceRecord2(record);
+        expect(sideEffect, 0);
+        final result = sequence.run();
+        result.matchTestSome((t) {
+          expect(t, (1, 'two'));
+        });
+        expect(sideEffect, 2);
+      });
+
+      test('None first', () {
+        var sideEffect = 0;
+        final record = (
+          IOOption(() {
+            sideEffect += 1;
+            return Option<int>.none();
+          }),
+          IOOption(() {
+            sideEffect += 1;
+            return Option.of('two');
+          }),
+        );
+        final sequence = IOOption.sequenceRecord2(record);
+        expect(sideEffect, 0);
+        final result = sequence.run();
+        expect(result, isA<None>());
+        expect(sideEffect, 1);
+      });
+
+      test('None second', () {
+        var sideEffect = 0;
+        final record = (
+          IOOption(() {
+            sideEffect += 1;
+            return Option.of(1);
+          }),
+          IOOption(() {
+            sideEffect += 1;
+            return Option<String>.none();
+          }),
+        );
+        final sequence = IOOption.sequenceRecord2(record);
+        expect(sideEffect, 0);
+        final result = sequence.run();
+        expect(result, isA<None>());
+        expect(sideEffect, 2);
+      });
+    });
+
+    group('sequenceRecord3', () {
+      test('Some', () {
+        var sideEffect = 0;
+        final record = (
+          IOOption(() {
+            sideEffect += 1;
+            return Option.of(1);
+          }),
+          IOOption(() {
+            sideEffect += 1;
+            return Option.of('two');
+          }),
+          IOOption(() {
+            sideEffect += 1;
+            return Option.of(3.0);
+          }),
+        );
+        final sequence = IOOption.sequenceRecord3(record);
+        expect(sideEffect, 0);
+        final result = sequence.run();
+        result.matchTestSome((t) {
+          expect(t, (1, 'two', 3.0));
+        });
+        expect(sideEffect, 3);
+      });
+
+      test('None middle', () {
+        var sideEffect = 0;
+        final record = (
+          IOOption(() {
+            sideEffect += 1;
+            return Option.of(1);
+          }),
+          IOOption(() {
+            sideEffect += 1;
+            return Option<String>.none();
+          }),
+          IOOption(() {
+            sideEffect += 1;
+            return Option.of(3.0);
+          }),
+        );
+        final sequence = IOOption.sequenceRecord3(record);
+        expect(sideEffect, 0);
+        final result = sequence.run();
+        expect(result, isA<None>());
+        expect(sideEffect, 2);
+      });
+    });
+
+    group('traverseRecord2', () {
+      test('Some', () {
+        var sideEffect = 0;
+        final record = (1, 'two');
+        final traverse = IOOption.traverseRecord2<int, String, String, int>(
+          record,
+          (a) => IOOption(() {
+            sideEffect += 1;
+            return Option.of('$a');
+          }),
+          (b) => IOOption(() {
+            sideEffect += 1;
+            return Option.of(b.length);
+          }),
+        );
+        expect(sideEffect, 0);
+        final result = traverse.run();
+        result.matchTestSome((t) {
+          expect(t, ('1', 3));
+        });
+        expect(sideEffect, 2);
+      });
+
+      test('None', () {
+        var sideEffect = 0;
+        final record = (1, 'two');
+        final traverse = IOOption.traverseRecord2<int, String, String, int>(
+          record,
+          (a) => IOOption(() {
+            sideEffect += 1;
+            return Option<String>.none();
+          }),
+          (b) => IOOption(() {
+            sideEffect += 1;
+            return Option.of(b.length);
+          }),
+        );
+        expect(sideEffect, 0);
+        final result = traverse.run();
+        expect(result, isA<None>());
+        expect(sideEffect, 1);
+      });
+    });
   });
 }

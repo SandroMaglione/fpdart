@@ -9,6 +9,8 @@ import 'typeclass/functor.dart';
 import 'typeclass/hkt.dart';
 import 'typeclass/monad.dart';
 
+part 'task_extension.dart';
+
 typedef DoAdapterTask = Future<A> Function<A>(Task<A>);
 Future<A> _doAdapter<A>(Task<A> task) => task.run();
 
@@ -187,4 +189,446 @@ final class Task<A> extends HKT<_TaskHKT, A>
     List<Task<A>> list,
   ) =>
       traverseListSeq(list, identity);
+
+  /// {@template fpdart_traverse_record_task}
+  /// Apply the provided functions to each element of the record, executing each
+  /// resulting [Task] in **parallel**, and collect the results in a record.
+  ///
+  /// For sequential execution, use the `Seq` variant.
+  /// {@endtemplate}
+  static Task<(B1, B2)> traverseRecord2<A1, A2, B1, B2>(
+    (A1, A2) record,
+    Task<B1> Function(A1) f1,
+    Task<B2> Function(A2) f2,
+  ) =>
+      Task(() async {
+        final results = await (f1(record.$1).run(), f2(record.$2).run()).wait;
+        return (results.$1, results.$2);
+      });
+
+  /// {@macro fpdart_traverse_record_task}
+  static Task<(B1, B2, B3)> traverseRecord3<A1, A2, A3, B1, B2, B3>(
+    (A1, A2, A3) record,
+    Task<B1> Function(A1) f1,
+    Task<B2> Function(A2) f2,
+    Task<B3> Function(A3) f3,
+  ) =>
+      Task(() async {
+        final results = await (
+          f1(record.$1).run(),
+          f2(record.$2).run(),
+          f3(record.$3).run(),
+        ).wait;
+        return (results.$1, results.$2, results.$3);
+      });
+
+  /// {@macro fpdart_traverse_record_task}
+  static Task<(B1, B2, B3, B4)> traverseRecord4<A1, A2, A3, A4, B1, B2, B3, B4>(
+    (A1, A2, A3, A4) record,
+    Task<B1> Function(A1) f1,
+    Task<B2> Function(A2) f2,
+    Task<B3> Function(A3) f3,
+    Task<B4> Function(A4) f4,
+  ) =>
+      Task(() async {
+        final results = await (
+          f1(record.$1).run(),
+          f2(record.$2).run(),
+          f3(record.$3).run(),
+          f4(record.$4).run(),
+        ).wait;
+        return (results.$1, results.$2, results.$3, results.$4);
+      });
+
+  /// {@macro fpdart_traverse_record_task}
+  static Task<(B1, B2, B3, B4, B5)>
+      traverseRecord5<A1, A2, A3, A4, A5, B1, B2, B3, B4, B5>(
+    (A1, A2, A3, A4, A5) record,
+    Task<B1> Function(A1) f1,
+    Task<B2> Function(A2) f2,
+    Task<B3> Function(A3) f3,
+    Task<B4> Function(A4) f4,
+    Task<B5> Function(A5) f5,
+  ) =>
+          Task(() async {
+            final results = await (
+              f1(record.$1).run(),
+              f2(record.$2).run(),
+              f3(record.$3).run(),
+              f4(record.$4).run(),
+              f5(record.$5).run(),
+            ).wait;
+            return (results.$1, results.$2, results.$3, results.$4, results.$5);
+          });
+
+  /// {@macro fpdart_traverse_record_task}
+  static Task<(B1, B2, B3, B4, B5, B6)>
+      traverseRecord6<A1, A2, A3, A4, A5, A6, B1, B2, B3, B4, B5, B6>(
+    (A1, A2, A3, A4, A5, A6) record,
+    Task<B1> Function(A1) f1,
+    Task<B2> Function(A2) f2,
+    Task<B3> Function(A3) f3,
+    Task<B4> Function(A4) f4,
+    Task<B5> Function(A5) f5,
+    Task<B6> Function(A6) f6,
+  ) =>
+          Task(() async {
+            final results = await (
+              f1(record.$1).run(),
+              f2(record.$2).run(),
+              f3(record.$3).run(),
+              f4(record.$4).run(),
+              f5(record.$5).run(),
+              f6(record.$6).run(),
+            ).wait;
+            return (results.$1, results.$2, results.$3, results.$4, results.$5,
+                results.$6);
+          });
+
+  /// {@macro fpdart_traverse_record_task}
+  static Task<(B1, B2, B3, B4, B5, B6, B7)>
+      traverseRecord7<A1, A2, A3, A4, A5, A6, A7, B1, B2, B3, B4, B5, B6, B7>(
+    (A1, A2, A3, A4, A5, A6, A7) record,
+    Task<B1> Function(A1) f1,
+    Task<B2> Function(A2) f2,
+    Task<B3> Function(A3) f3,
+    Task<B4> Function(A4) f4,
+    Task<B5> Function(A5) f5,
+    Task<B6> Function(A6) f6,
+    Task<B7> Function(A7) f7,
+  ) =>
+          Task(() async {
+            final results = await (
+              f1(record.$1).run(),
+              f2(record.$2).run(),
+              f3(record.$3).run(),
+              f4(record.$4).run(),
+              f5(record.$5).run(),
+              f6(record.$6).run(),
+              f7(record.$7).run(),
+            ).wait;
+            return (results.$1, results.$2, results.$3, results.$4, results.$5,
+                results.$6, results.$7);
+          });
+
+  /// {@macro fpdart_traverse_record_task}
+  static Task<(B1, B2, B3, B4, B5, B6, B7, B8)>
+      traverseRecord8<A1, A2, A3, A4, A5, A6, A7, A8, B1, B2, B3, B4, B5, B6, B7,
+              B8>(
+    (A1, A2, A3, A4, A5, A6, A7, A8) record,
+    Task<B1> Function(A1) f1,
+    Task<B2> Function(A2) f2,
+    Task<B3> Function(A3) f3,
+    Task<B4> Function(A4) f4,
+    Task<B5> Function(A5) f5,
+    Task<B6> Function(A6) f6,
+    Task<B7> Function(A7) f7,
+    Task<B8> Function(A8) f8,
+  ) =>
+          Task(() async {
+            final results = await (
+              f1(record.$1).run(),
+              f2(record.$2).run(),
+              f3(record.$3).run(),
+              f4(record.$4).run(),
+              f5(record.$5).run(),
+              f6(record.$6).run(),
+              f7(record.$7).run(),
+              f8(record.$8).run(),
+            ).wait;
+            return (results.$1, results.$2, results.$3, results.$4, results.$5,
+                results.$6, results.$7, results.$8);
+          });
+
+  /// {@macro fpdart_traverse_record_task}
+  static Task<(B1, B2, B3, B4, B5, B6, B7, B8, B9)>
+      traverseRecord9<A1, A2, A3, A4, A5, A6, A7, A8, A9, B1, B2, B3, B4, B5, B6,
+              B7, B8, B9>(
+    (A1, A2, A3, A4, A5, A6, A7, A8, A9) record,
+    Task<B1> Function(A1) f1,
+    Task<B2> Function(A2) f2,
+    Task<B3> Function(A3) f3,
+    Task<B4> Function(A4) f4,
+    Task<B5> Function(A5) f5,
+    Task<B6> Function(A6) f6,
+    Task<B7> Function(A7) f7,
+    Task<B8> Function(A8) f8,
+    Task<B9> Function(A9) f9,
+  ) =>
+          Task(() async {
+            final results = await (
+              f1(record.$1).run(),
+              f2(record.$2).run(),
+              f3(record.$3).run(),
+              f4(record.$4).run(),
+              f5(record.$5).run(),
+              f6(record.$6).run(),
+              f7(record.$7).run(),
+              f8(record.$8).run(),
+              f9(record.$9).run(),
+            ).wait;
+            return (results.$1, results.$2, results.$3, results.$4, results.$5,
+                results.$6, results.$7, results.$8, results.$9);
+          });
+
+  /// {@template fpdart_sequence_record_task}
+  /// Execute all [Task] in the record in **parallel** and collect results.
+  ///
+  /// For sequential execution, use the `Seq` variant.
+  /// {@endtemplate}
+  static Task<(A, B)> sequenceRecord2<A, B>(
+    (Task<A>, Task<B>) record,
+  ) =>
+      traverseRecord2(record, identity, identity);
+
+  /// {@macro fpdart_sequence_record_task}
+  static Task<(A, B, C)> sequenceRecord3<A, B, C>(
+    (Task<A>, Task<B>, Task<C>) record,
+  ) =>
+      traverseRecord3(record, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_task}
+  static Task<(A, B, C, D)> sequenceRecord4<A, B, C, D>(
+    (Task<A>, Task<B>, Task<C>, Task<D>) record,
+  ) =>
+      traverseRecord4(record, identity, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_task}
+  static Task<(A, B, C, D, F)> sequenceRecord5<A, B, C, D, F>(
+    (Task<A>, Task<B>, Task<C>, Task<D>, Task<F>) record,
+  ) =>
+      traverseRecord5(record, identity, identity, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_task}
+  static Task<(A, B, C, D, F, G)> sequenceRecord6<A, B, C, D, F, G>(
+    (Task<A>, Task<B>, Task<C>, Task<D>, Task<F>, Task<G>) record,
+  ) =>
+      traverseRecord6(
+          record, identity, identity, identity, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_task}
+  static Task<(A, B, C, D, F, G, H)> sequenceRecord7<A, B, C, D, F, G, H>(
+    (Task<A>, Task<B>, Task<C>, Task<D>, Task<F>, Task<G>, Task<H>) record,
+  ) =>
+      traverseRecord7(record, identity, identity, identity, identity, identity,
+          identity, identity);
+
+  /// {@macro fpdart_sequence_record_task}
+  static Task<(A, B, C, D, F, G, H, I)> sequenceRecord8<A, B, C, D, F, G, H, I>(
+    (Task<A>, Task<B>, Task<C>, Task<D>, Task<F>, Task<G>, Task<H>, Task<I>)
+        record,
+  ) =>
+      traverseRecord8(record, identity, identity, identity, identity, identity,
+          identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_task}
+  static Task<(A, B, C, D, F, G, H, I, J)>
+      sequenceRecord9<A, B, C, D, F, G, H, I, J>(
+    (
+      Task<A>,
+      Task<B>,
+      Task<C>,
+      Task<D>,
+      Task<F>,
+      Task<G>,
+      Task<H>,
+      Task<I>,
+      Task<J>
+    ) record,
+  ) =>
+          traverseRecord9(record, identity, identity, identity, identity,
+              identity, identity, identity, identity, identity);
+
+  /// {@template fpdart_traverse_record_seq_task}
+  /// Apply the provided functions to each element of the record, executing each
+  /// resulting [Task] in **sequence**, and collect the results in a record.
+  ///
+  /// For parallel execution, use the non-Seq variant.
+  /// {@endtemplate}
+  static Task<(B1, B2)> traverseRecord2Seq<A1, A2, B1, B2>(
+    (A1, A2) record,
+    Task<B1> Function(A1) f1,
+    Task<B2> Function(A2) f2,
+  ) =>
+      f1(record.$1).flatMap((b1) => f2(record.$2).map((b2) => (b1, b2)));
+
+  /// {@macro fpdart_traverse_record_seq_task}
+  static Task<(B1, B2, B3)> traverseRecord3Seq<A1, A2, A3, B1, B2, B3>(
+    (A1, A2, A3) record,
+    Task<B1> Function(A1) f1,
+    Task<B2> Function(A2) f2,
+    Task<B3> Function(A3) f3,
+  ) =>
+      f1(record.$1).flatMap((b1) =>
+          f2(record.$2).flatMap((b2) => f3(record.$3).map((b3) => (b1, b2, b3))));
+
+  /// {@macro fpdart_traverse_record_seq_task}
+  static Task<(B1, B2, B3, B4)> traverseRecord4Seq<A1, A2, A3, A4, B1, B2, B3, B4>(
+    (A1, A2, A3, A4) record,
+    Task<B1> Function(A1) f1,
+    Task<B2> Function(A2) f2,
+    Task<B3> Function(A3) f3,
+    Task<B4> Function(A4) f4,
+  ) =>
+      f1(record.$1).flatMap((b1) => f2(record.$2).flatMap((b2) =>
+          f3(record.$3).flatMap((b3) => f4(record.$4).map((b4) => (b1, b2, b3, b4)))));
+
+  /// {@macro fpdart_traverse_record_seq_task}
+  static Task<(B1, B2, B3, B4, B5)>
+      traverseRecord5Seq<A1, A2, A3, A4, A5, B1, B2, B3, B4, B5>(
+    (A1, A2, A3, A4, A5) record,
+    Task<B1> Function(A1) f1,
+    Task<B2> Function(A2) f2,
+    Task<B3> Function(A3) f3,
+    Task<B4> Function(A4) f4,
+    Task<B5> Function(A5) f5,
+  ) =>
+          f1(record.$1).flatMap((b1) => f2(record.$2).flatMap((b2) =>
+              f3(record.$3).flatMap((b3) => f4(record.$4)
+                  .flatMap((b4) => f5(record.$5).map((b5) => (b1, b2, b3, b4, b5))))));
+
+  /// {@macro fpdart_traverse_record_seq_task}
+  static Task<(B1, B2, B3, B4, B5, B6)>
+      traverseRecord6Seq<A1, A2, A3, A4, A5, A6, B1, B2, B3, B4, B5, B6>(
+    (A1, A2, A3, A4, A5, A6) record,
+    Task<B1> Function(A1) f1,
+    Task<B2> Function(A2) f2,
+    Task<B3> Function(A3) f3,
+    Task<B4> Function(A4) f4,
+    Task<B5> Function(A5) f5,
+    Task<B6> Function(A6) f6,
+  ) =>
+          f1(record.$1).flatMap((b1) => f2(record.$2).flatMap((b2) =>
+              f3(record.$3).flatMap((b3) => f4(record.$4).flatMap((b4) =>
+                  f5(record.$5).flatMap(
+                      (b5) => f6(record.$6).map((b6) => (b1, b2, b3, b4, b5, b6)))))));
+
+  /// {@macro fpdart_traverse_record_seq_task}
+  static Task<(B1, B2, B3, B4, B5, B6, B7)>
+      traverseRecord7Seq<A1, A2, A3, A4, A5, A6, A7, B1, B2, B3, B4, B5, B6, B7>(
+    (A1, A2, A3, A4, A5, A6, A7) record,
+    Task<B1> Function(A1) f1,
+    Task<B2> Function(A2) f2,
+    Task<B3> Function(A3) f3,
+    Task<B4> Function(A4) f4,
+    Task<B5> Function(A5) f5,
+    Task<B6> Function(A6) f6,
+    Task<B7> Function(A7) f7,
+  ) =>
+          f1(record.$1).flatMap((b1) => f2(record.$2).flatMap((b2) =>
+              f3(record.$3).flatMap((b3) => f4(record.$4).flatMap((b4) =>
+                  f5(record.$5).flatMap((b5) => f6(record.$6).flatMap((b6) =>
+                      f7(record.$7).map((b7) => (b1, b2, b3, b4, b5, b6, b7))))))));
+
+  /// {@macro fpdart_traverse_record_seq_task}
+  static Task<(B1, B2, B3, B4, B5, B6, B7, B8)>
+      traverseRecord8Seq<A1, A2, A3, A4, A5, A6, A7, A8, B1, B2, B3, B4, B5, B6,
+              B7, B8>(
+    (A1, A2, A3, A4, A5, A6, A7, A8) record,
+    Task<B1> Function(A1) f1,
+    Task<B2> Function(A2) f2,
+    Task<B3> Function(A3) f3,
+    Task<B4> Function(A4) f4,
+    Task<B5> Function(A5) f5,
+    Task<B6> Function(A6) f6,
+    Task<B7> Function(A7) f7,
+    Task<B8> Function(A8) f8,
+  ) =>
+          f1(record.$1).flatMap((b1) => f2(record.$2).flatMap((b2) =>
+              f3(record.$3).flatMap((b3) => f4(record.$4).flatMap((b4) =>
+                  f5(record.$5).flatMap((b5) => f6(record.$6).flatMap((b6) =>
+                      f7(record.$7).flatMap((b7) => f8(record.$8)
+                          .map((b8) => (b1, b2, b3, b4, b5, b6, b7, b8)))))))));
+
+  /// {@macro fpdart_traverse_record_seq_task}
+  static Task<(B1, B2, B3, B4, B5, B6, B7, B8, B9)>
+      traverseRecord9Seq<A1, A2, A3, A4, A5, A6, A7, A8, A9, B1, B2, B3, B4, B5,
+              B6, B7, B8, B9>(
+    (A1, A2, A3, A4, A5, A6, A7, A8, A9) record,
+    Task<B1> Function(A1) f1,
+    Task<B2> Function(A2) f2,
+    Task<B3> Function(A3) f3,
+    Task<B4> Function(A4) f4,
+    Task<B5> Function(A5) f5,
+    Task<B6> Function(A6) f6,
+    Task<B7> Function(A7) f7,
+    Task<B8> Function(A8) f8,
+    Task<B9> Function(A9) f9,
+  ) =>
+          f1(record.$1).flatMap((b1) => f2(record.$2).flatMap((b2) =>
+              f3(record.$3).flatMap((b3) => f4(record.$4).flatMap((b4) =>
+                  f5(record.$5).flatMap((b5) => f6(record.$6).flatMap((b6) =>
+                      f7(record.$7).flatMap((b7) => f8(record.$8).flatMap((b8) =>
+                          f9(record.$9)
+                              .map((b9) => (b1, b2, b3, b4, b5, b6, b7, b8, b9))))))))));
+
+  /// {@template fpdart_sequence_record_seq_task}
+  /// Execute all [Task] in the record in **sequence** and collect results.
+  ///
+  /// For parallel execution, use the non-Seq variant.
+  /// {@endtemplate}
+  static Task<(A, B)> sequenceRecord2Seq<A, B>(
+    (Task<A>, Task<B>) record,
+  ) =>
+      traverseRecord2Seq(record, identity, identity);
+
+  /// {@macro fpdart_sequence_record_seq_task}
+  static Task<(A, B, C)> sequenceRecord3Seq<A, B, C>(
+    (Task<A>, Task<B>, Task<C>) record,
+  ) =>
+      traverseRecord3Seq(record, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_seq_task}
+  static Task<(A, B, C, D)> sequenceRecord4Seq<A, B, C, D>(
+    (Task<A>, Task<B>, Task<C>, Task<D>) record,
+  ) =>
+      traverseRecord4Seq(record, identity, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_seq_task}
+  static Task<(A, B, C, D, F)> sequenceRecord5Seq<A, B, C, D, F>(
+    (Task<A>, Task<B>, Task<C>, Task<D>, Task<F>) record,
+  ) =>
+      traverseRecord5Seq(
+          record, identity, identity, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_seq_task}
+  static Task<(A, B, C, D, F, G)> sequenceRecord6Seq<A, B, C, D, F, G>(
+    (Task<A>, Task<B>, Task<C>, Task<D>, Task<F>, Task<G>) record,
+  ) =>
+      traverseRecord6Seq(record, identity, identity, identity, identity,
+          identity, identity);
+
+  /// {@macro fpdart_sequence_record_seq_task}
+  static Task<(A, B, C, D, F, G, H)> sequenceRecord7Seq<A, B, C, D, F, G, H>(
+    (Task<A>, Task<B>, Task<C>, Task<D>, Task<F>, Task<G>, Task<H>) record,
+  ) =>
+      traverseRecord7Seq(record, identity, identity, identity, identity,
+          identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_seq_task}
+  static Task<(A, B, C, D, F, G, H, I)>
+      sequenceRecord8Seq<A, B, C, D, F, G, H, I>(
+    (Task<A>, Task<B>, Task<C>, Task<D>, Task<F>, Task<G>, Task<H>, Task<I>)
+        record,
+  ) =>
+          traverseRecord8Seq(record, identity, identity, identity, identity,
+              identity, identity, identity, identity);
+
+  /// {@macro fpdart_sequence_record_seq_task}
+  static Task<(A, B, C, D, F, G, H, I, J)>
+      sequenceRecord9Seq<A, B, C, D, F, G, H, I, J>(
+    (
+      Task<A>,
+      Task<B>,
+      Task<C>,
+      Task<D>,
+      Task<F>,
+      Task<G>,
+      Task<H>,
+      Task<I>,
+      Task<J>
+    ) record,
+  ) =>
+          traverseRecord9Seq(record, identity, identity, identity, identity,
+              identity, identity, identity, identity, identity);
 }

@@ -683,6 +683,327 @@ void main() {
       });
     });
 
+    group('sequenceRecord2', () {
+      test('Some', () async {
+        var sideEffect = 0;
+        final record = (
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return some(1);
+          }),
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return some('two');
+          }),
+        );
+        final sequence = TaskOption.sequenceRecord2(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        result.matchTestSome((t) {
+          expect(t, (1, 'two'));
+        });
+        expect(sideEffect, 2);
+      });
+
+      test('None first', () async {
+        var sideEffect = 0;
+        final record = (
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return none<int>();
+          }),
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return some('two');
+          }),
+        );
+        final sequence = TaskOption.sequenceRecord2(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        expect(result, isA<None>());
+        expect(sideEffect, 2);
+      });
+
+      test('None second', () async {
+        var sideEffect = 0;
+        final record = (
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return some(1);
+          }),
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return none<String>();
+          }),
+        );
+        final sequence = TaskOption.sequenceRecord2(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        expect(result, isA<None>());
+        expect(sideEffect, 2);
+      });
+    });
+
+    group('sequenceRecord2Seq', () {
+      test('Some', () async {
+        var sideEffect = 0;
+        final record = (
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 1;
+            return some(1);
+          }),
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 2;
+            return some('two');
+          }),
+        );
+        final sequence = TaskOption.sequenceRecord2Seq(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        result.matchTestSome((t) {
+          expect(t, (1, 'two'));
+        });
+        expect(sideEffect, 2);
+      });
+
+      test('None first stops execution', () async {
+        var sideEffect = 0;
+        final record = (
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 1;
+            return none<int>();
+          }),
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 2;
+            return some('two');
+          }),
+        );
+        final sequence = TaskOption.sequenceRecord2Seq(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        expect(result, isA<None>());
+        expect(sideEffect, 1);
+      });
+    });
+
+    group('sequenceRecord3', () {
+      test('Some', () async {
+        var sideEffect = 0;
+        final record = (
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return some(1);
+          }),
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return some('two');
+          }),
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return some(3.0);
+          }),
+        );
+        final sequence = TaskOption.sequenceRecord3(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        result.matchTestSome((t) {
+          expect(t, (1, 'two', 3.0));
+        });
+        expect(sideEffect, 3);
+      });
+
+      test('None middle', () async {
+        var sideEffect = 0;
+        final record = (
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return some(1);
+          }),
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return none<String>();
+          }),
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return some(3.0);
+          }),
+        );
+        final sequence = TaskOption.sequenceRecord3(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        expect(result, isA<None>());
+        expect(sideEffect, 3);
+      });
+    });
+
+    group('sequenceRecord3Seq', () {
+      test('Some', () async {
+        var sideEffect = 0;
+        final record = (
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 1;
+            return some(1);
+          }),
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 2;
+            return some('two');
+          }),
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 3;
+            return some(3.0);
+          }),
+        );
+        final sequence = TaskOption.sequenceRecord3Seq(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        result.matchTestSome((t) {
+          expect(t, (1, 'two', 3.0));
+        });
+        expect(sideEffect, 3);
+      });
+
+      test('None middle stops execution', () async {
+        var sideEffect = 0;
+        final record = (
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 1;
+            return some(1);
+          }),
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 2;
+            return none<String>();
+          }),
+          TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 3;
+            return some(3.0);
+          }),
+        );
+        final sequence = TaskOption.sequenceRecord3Seq(record);
+        expect(sideEffect, 0);
+        final result = await sequence.run();
+        expect(result, isA<None>());
+        expect(sideEffect, 2);
+      });
+    });
+
+    group('traverseRecord2', () {
+      test('Some', () async {
+        var sideEffect = 0;
+        final record = (1, 'two');
+        final traverse = TaskOption.traverseRecord2<int, String, String, int>(
+          record,
+          (a) => TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return some('$a');
+          }),
+          (b) => TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return some(b.length);
+          }),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestSome((t) {
+          expect(t, ('1', 3));
+        });
+        expect(sideEffect, 2);
+      });
+
+      test('None first', () async {
+        var sideEffect = 0;
+        final record = (1, 'two');
+        final traverse = TaskOption.traverseRecord2<int, String, String, int>(
+          record,
+          (a) => TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return none<String>();
+          }),
+          (b) => TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect += 1;
+            return some(b.length);
+          }),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        expect(result, isA<None>());
+        expect(sideEffect, 2);
+      });
+    });
+
+    group('traverseRecord2Seq', () {
+      test('Some', () async {
+        var sideEffect = 0;
+        final record = (1, 'two');
+        final traverse = TaskOption.traverseRecord2Seq<int, String, String, int>(
+          record,
+          (a) => TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 1;
+            return some('$a');
+          }),
+          (b) => TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 2;
+            return some(b.length);
+          }),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        result.matchTestSome((t) {
+          expect(t, ('1', 3));
+        });
+        expect(sideEffect, 2);
+      });
+
+      test('None first stops execution', () async {
+        var sideEffect = 0;
+        final record = (1, 'two');
+        final traverse = TaskOption.traverseRecord2Seq<int, String, String, int>(
+          record,
+          (a) => TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 1;
+            return none<String>();
+          }),
+          (b) => TaskOption(() async {
+            await AsyncUtils.waitFuture();
+            sideEffect = 2;
+            return some(b.length);
+          }),
+        );
+        expect(sideEffect, 0);
+        final result = await traverse.run();
+        expect(result, isA<None>());
+        expect(sideEffect, 1);
+      });
+    });
+
     group('Do Notation', () {
       test('should return the correct value', () async {
         final doTaskOption = TaskOption<int>.Do((_) => _(TaskOption.of(10)));
