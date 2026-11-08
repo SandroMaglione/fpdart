@@ -90,6 +90,14 @@ final class IOOption<R> extends HKT<_IOOptionHKT, R>
   IOOption<C> andThen<C>(covariant IOOption<C> Function() then) =>
       flatMap((_) => then());
 
+  /// Chain a request that returns another [IOOption], execute it, ignore
+  /// the result, and return the same value as the current [IOOption].
+  @override
+  IOOption<R> chainFirst<C>(
+    covariant IOOption<C> Function(R b) chain,
+  ) =>
+      flatMap((b) => chain(b).map((c) => b));
+
   /// Chain multiple [IOOption] functions.
   @override
   IOOption<B> call<B>(covariant IOOption<B> chain) => flatMap((_) => chain);

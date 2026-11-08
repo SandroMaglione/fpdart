@@ -460,6 +460,16 @@ void main() {
       expect(m2.andThen(() => Option.of('abc')), isA<None>());
     });
 
+    test('chainFirst', () {
+      final m1 = Option.of(10);
+      final m2 = Option<int>.none();
+      m1
+          .chainFirst((b) => Option.of('abc'))
+          .matchTestSome((some) => expect(some, 10));
+      expect(m1.chainFirst((b) => Option<String>.none()), isA<None>());
+      expect(m2.chainFirst((b) => Option.of('abc')), isA<None>());
+    });
+
     test('call', () {
       final m1 = Option.of(10);
       final m2 = Option<int>.none();

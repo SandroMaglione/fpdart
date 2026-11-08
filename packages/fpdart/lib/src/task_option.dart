@@ -91,6 +91,14 @@ final class TaskOption<R> extends HKT<_TaskOptionHKT, R>
   TaskOption<C> andThen<C>(covariant TaskOption<C> Function() then) =>
       flatMap((_) => then());
 
+  /// Chain a request that returns another [TaskOption], execute it, ignore
+  /// the result, and return the same value as the current [TaskOption].
+  @override
+  TaskOption<R> chainFirst<C>(
+    covariant TaskOption<C> Function(R b) chain,
+  ) =>
+      flatMap((b) => chain(b).map((c) => b));
+
   /// Chain multiple [TaskOption] functions.
   @override
   TaskOption<B> call<B>(covariant TaskOption<B> chain) => flatMap((_) => chain);

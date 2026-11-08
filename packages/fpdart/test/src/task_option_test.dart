@@ -165,6 +165,27 @@ void main() {
       });
     });
 
+    group('chainFirst', () {
+      test('Some', () async {
+        final task = TaskOption<int>(() async => Option.of(10));
+        var sideEffect = 0;
+        final ap = task.chainFirst((b) => TaskOption<String>(() async {
+              sideEffect = b;
+              return Option.of('abc');
+            }));
+        final r = await ap.run();
+        r.matchTestSome((r) => expect(r, 10));
+        expect(sideEffect, 10);
+      });
+
+      test('None', () async {
+        final task = TaskOption<int>(() async => Option.none());
+        final ap = task.chainFirst((b) => TaskOption.of('abc'));
+        final r = await ap.run();
+        expect(r, isA<None>());
+      });
+    });
+
     group('call', () {
       test('Some', () async {
         final task = TaskOption<int>(() async => Option.of(10));
