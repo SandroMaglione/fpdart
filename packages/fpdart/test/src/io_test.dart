@@ -112,6 +112,18 @@ void main() {
       expect(r, 'abc');
     });
 
+    test('chainFirst', () {
+      final io = IO(() => 10);
+      var sideEffect = 0;
+      final ap = io.chainFirst((b) => IO(() {
+            sideEffect = b;
+            return 'abc';
+          }));
+      final r = ap.run();
+      expect(r, 10);
+      expect(sideEffect, 10);
+    });
+
     test('call', () {
       final io = IO(() => 10);
       final ap = io(IO(() => 'abc'));

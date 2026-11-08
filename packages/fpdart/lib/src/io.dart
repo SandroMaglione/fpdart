@@ -97,6 +97,10 @@ final class IO<A> extends HKT<_IOHKT, A>
           E Function(A a, C c, D d) f) =>
       flatMap((a) => mc.flatMap((c) => md.map((d) => f(a, c, d))));
 
+  @override
+  IO<A> chainFirst<B>(covariant IO<B> Function(A a) chain) =>
+      flatMap((a) => chain(a).map((b) => a));
+
   /// Chain multiple [IO] functions.
   @override
   IO<B> call<B>(covariant IO<B> chain) => flatMap((_) => chain);

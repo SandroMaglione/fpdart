@@ -248,6 +248,12 @@ sealed class Option<T> extends HKT<_OptionHKT, T>
   Option<B> andThen<B>(covariant Option<B> Function() then) =>
       flatMap((_) => then());
 
+  /// Chain a request that returns another [Option], execute it, ignore
+  /// the result, and return the same value as the current [Option].
+  @override
+  Option<T> chainFirst<B>(covariant Option<B> Function(T t) chain) =>
+      flatMap((t) => chain(t).map((_) => t));
+
   /// Chain multiple [Option]s.
   @override
   Option<B> call<B>(covariant Option<B> chain) => flatMap((_) => chain);

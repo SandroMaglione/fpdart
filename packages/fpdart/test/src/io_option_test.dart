@@ -140,6 +140,27 @@ void main() {
       });
     });
 
+    group('chainFirst', () {
+      test('Some', () {
+        final io = IOOption<int>(() => Option.of(10));
+        var sideEffect = 0;
+        final ap = io.chainFirst((b) => IOOption<String>(() {
+              sideEffect = b;
+              return Option.of('abc');
+            }));
+        final r = ap.run();
+        r.matchTestSome((r) => expect(r, 10));
+        expect(sideEffect, 10);
+      });
+
+      test('None', () {
+        final io = IOOption<int>(() => Option.none());
+        final ap = io.chainFirst((b) => IOOption.of('abc'));
+        final r = ap.run();
+        expect(r, isA<None>());
+      });
+    });
+
     group('call', () {
       test('Some', () {
         final io = IOOption<int>(() => Option.of(10));
